@@ -151,14 +151,14 @@ export const PATTERNS_AND_SYMMETRY_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- PICTORIAL (labeled shapes for symmetry; sequences for patterns) ---
+  // --- PICTORIAL (shape diagrams for symmetry; a labeled sequence for patterns) ---
   {
     id: "ps-p-remember",
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "remember",
     subskill: "line-symmetry",
-    prompt: "The shape shown is a square. How many lines of symmetry does it have?",
+    prompt: "How many lines of symmetry does the shape shown have?",
     representation: { kind: "shape", shape: "square" },
     choices: [
       { id: "a", text: "4" },
@@ -174,7 +174,7 @@ export const PATTERNS_AND_SYMMETRY_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "understand",
     subskill: "line-symmetry",
-    prompt: "The shape shown is a rectangle (not a square). How many lines of symmetry does it have?",
+    prompt: "How many lines of symmetry does the rectangle shown have?",
     representation: { kind: "shape", shape: "rectangle" },
     choices: [
       { id: "a", text: "2" },
@@ -190,7 +190,7 @@ export const PATTERNS_AND_SYMMETRY_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "apply",
     subskill: "rotational-symmetry",
-    prompt: "The equilateral triangle shown has 3 equal angles. Through how many degrees must it be rotated about its centre to look the same again for the first time?",
+    prompt: "Through how many degrees must the triangle shown be rotated about its centre to look the same again for the first time?",
     representation: { kind: "shape", shape: "triangle", angleLabels: ["60°", "60°", "60°"] },
     choices: [
       { id: "a", text: "120°" },
@@ -206,7 +206,7 @@ export const PATTERNS_AND_SYMMETRY_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "analyze",
     subskill: "number-patterns",
-    prompt: "The pattern of numbers shown is 3, 6, 12, 24. What operation generates each next term, and what is the next number?",
+    prompt: "What operation generates each next term, and what comes next?",
     representation: {
       kind: "concrete",
       icon: "🔢",
@@ -234,7 +234,7 @@ export const PATTERNS_AND_SYMMETRY_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "evaluate",
     subskill: "rotational-symmetry",
-    prompt: "The regular pentagon shown has 5 equal sides and angles. Evaluate: does it have rotational symmetry, and if so, of what order?",
+    prompt: "Evaluate: does the pentagon shown have rotational symmetry, and if so, of what order?",
     representation: { kind: "shape", shape: "pentagon" },
     choices: [
       { id: "a", text: "Yes — order 5 (it looks the same 5 times in one full turn)" },
@@ -245,14 +245,14 @@ export const PATTERNS_AND_SYMMETRY_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- ABSTRACT ---
+  // --- ABSTRACT (bare given/find — no scenario) ---
   {
     id: "ps-a-remember",
     topicId: TOPIC,
     cpa: "abstract",
     bloom: "remember",
     subskill: "number-patterns",
-    prompt: "What is the next number in the pattern 5, 10, 15, 20, ___?",
+    prompt: "Next in 5, 10, 15, 20, ___ = ?",
     representation: null,
     choices: [
       { id: "a", text: "25" },
@@ -268,7 +268,7 @@ export const PATTERNS_AND_SYMMETRY_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "line-symmetry",
-    prompt: "How many lines of symmetry does a regular hexagon have?",
+    prompt: "Lines of symmetry in a regular hexagon = ?",
     representation: null,
     choices: [
       { id: "a", text: "6" },
@@ -284,7 +284,7 @@ export const PATTERNS_AND_SYMMETRY_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "number-patterns",
-    prompt: "Find the missing number: 2, 5, 11, 23, ___ — each term is double the previous term, plus 1.",
+    prompt: "Next in 2, 5, 11, 23, ___ (double previous, +1) = ?",
     representation: null,
     choices: [
       { id: "a", text: "47" },
@@ -300,7 +300,7 @@ export const PATTERNS_AND_SYMMETRY_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "rotational-symmetry",
-    prompt: "A shape has rotational symmetry of order 4. Through how many degrees does it repeat its appearance?",
+    prompt: "Rotational symmetry of order 4 repeats every ? degrees.",
     representation: null,
     choices: [
       { id: "a", text: "90°" },
@@ -316,7 +316,7 @@ export const PATTERNS_AND_SYMMETRY_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "line-symmetry",
-    prompt: "A student claims every quadrilateral has at least one line of symmetry. Evaluate this claim.",
+    prompt: "Claim: every quadrilateral has at least one line of symmetry. Evaluate.",
     representation: null,
     choices: [
       { id: "a", text: "False — an irregular quadrilateral (an arbitrary four-sided shape) can have no lines of symmetry at all" },

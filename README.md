@@ -249,13 +249,41 @@ each with a matching client component:
 | `grid` | `Grid.tsx` | Multiplication/factor arrays, area, volume (one layer + stacking described in words), simple coordinate maps |
 | `shape` | `Shape.tsx` | Geometry (labeled angles/sides), symmetry |
 
-Two subskills still fall back to plain text (`representation: null`) even
-at the Concrete/Pictorial stages, the same as every Abstract-stage item
-across the whole bank: "angles on a line/at a point" in Geometry isn't a
-shape at all, and line graphs in Data Handling have no dedicated diagram
-in this build. Forcing either into a fabricated visual seemed less honest
-than a clearly worded prompt — see the comments in `geometry.ts` and
-`dataHandling.ts`.
+Two subskills have no natural diagram at all — "angles on a line/at a
+point" in Geometry isn't a shape, and line graphs in Data Handling have no
+dedicated component in this build. Rather than give a Pictorial cell
+`representation: null` (which would defeat the point of that stage), those
+subskills are pushed entirely into Abstract, where no picture was ever
+expected; every Pictorial cell across all 15 topics has a real diagram. See
+the comments in `geometry.ts`, `volumeAndNets.ts`, and `dataHandling.ts`.
+
+## Concrete / Pictorial / Abstract have to actually look different
+
+Early drafts of this item bank blurred the CPA stages: Pictorial prompts
+often restated in prose exactly what the diagram already showed (e.g. "The
+number line shows 243,000 — round it..."), and Abstract prompts were
+frequently full word problems ("A factory produced 458,300 toys...")
+instead of bare computation. That defeats the diagnostic's own premise —
+if all three stages read like the same kind of question, a child's
+performance can't actually distinguish "understands the concept only with
+a manipulative" from "can compute symbolically with no support." Every
+item in every topic was rewritten against two rules:
+
+- **Pictorial prompts carry no information the diagram doesn't already
+  show.** Every number, label, or fact needed to answer lives in the
+  `representation` object (a marker label, a grid's `unitLabel`, a bar's
+  `totalLabel`) — the prompt itself is just a short instruction ("What
+  does the marked point round to?"), not a restated scenario. This also
+  caught a second, more serious bug while fixing it: a few items narrated
+  a *second* diagram ("Two arrays are shown...", "Rectangle B, not
+  shown...") that never actually rendered, since each item only ever
+  renders the one `representation` it's given. Those were rewritten to
+  only ask about what's genuinely on screen.
+- **Abstract prompts are bare expressions or minimal given/find
+  notation, never a narrative.** "A shopkeeper buys 10 pens for ₹200..."
+  became "CP: 10 items for ₹200 total. SP: ₹25 each. Profit or loss = ?"
+  — same computation, no characters or scenario. `representation` stays
+  `null` throughout, as before.
 
 ## Known simplifications (pilot scope, matching the doc's own open questions)
 

@@ -2,6 +2,15 @@ import { Item } from "../types.js";
 
 const TOPIC = "volume-nets";
 
+/**
+ * "Nets of solids" only ever gets a real diagram at the Concrete stage
+ * (unfolded squares laid out as emoji, via ConcreteSpec) — there's no
+ * dedicated net-folding component for Pictorial. Rather than leave a
+ * Pictorial cell with representation: null, every Pictorial item here is a
+ * volume-cuboid question with a real Grid diagram; nets-of-solids questions
+ * live in Concrete (where a real layout is drawn) and Abstract (where no
+ * picture was ever expected). See README.
+ */
 export const VOLUME_AND_NETS_ITEMS: Item[] = [
   // --- CONCRETE (unit cubes stacked in layers) ---
   {
@@ -85,15 +94,15 @@ export const VOLUME_AND_NETS_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- PICTORIAL (one layer shown as a grid; stacking described in words) ---
+  // --- PICTORIAL (one layer shown as a grid; the stack height is written into the label, not narrated) ---
   {
     id: "vn-p-remember",
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "remember",
     subskill: "volume-cuboid",
-    prompt: "The grid shows one layer of a box: 3 rows of 4 unit cubes. If the box is stacked 2 layers high, what is its total volume?",
-    representation: { kind: "grid", rows: 3, cols: 4, shadedCells: 12, unitLabel: "cubes in one layer" },
+    prompt: "What is the total volume, in cubic units?",
+    representation: { kind: "grid", rows: 3, cols: 4, shadedCells: 12, unitLabel: "cubes in one layer — stacked 2 layers high" },
     choices: [
       { id: "a", text: "24 cubic units" },
       { id: "b", text: "12 cubic units" },
@@ -108,8 +117,8 @@ export const VOLUME_AND_NETS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "understand",
     subskill: "volume-cuboid",
-    prompt: "One layer of a box has 2 rows of 5 cubes, as shown. Stacked 4 layers high, what is the volume?",
-    representation: { kind: "grid", rows: 2, cols: 5, shadedCells: 10, unitLabel: "cubes in one layer" },
+    prompt: "What is the total volume, in cubic units?",
+    representation: { kind: "grid", rows: 2, cols: 5, shadedCells: 10, unitLabel: "cubes in one layer — stacked 4 layers high" },
     choices: [
       { id: "a", text: "40 cubic units" },
       { id: "b", text: "10 cubic units" },
@@ -124,8 +133,8 @@ export const VOLUME_AND_NETS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "apply",
     subskill: "volume-cuboid",
-    prompt: "A cuboid's base layer is a 4-by-4 square of unit cubes, as shown, and it is 3 layers tall. What is its volume?",
-    representation: { kind: "grid", rows: 4, cols: 4, shadedCells: 16, unitLabel: "cubes in one layer" },
+    prompt: "What is the total volume, in cubic units?",
+    representation: { kind: "grid", rows: 4, cols: 4, shadedCells: 16, unitLabel: "cubes in one layer — stacked 3 layers high" },
     choices: [
       { id: "a", text: "48 cubic units" },
       { id: "b", text: "16 cubic units" },
@@ -139,14 +148,14 @@ export const VOLUME_AND_NETS_ITEMS: Item[] = [
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "analyze",
-    subskill: "nets-of-solids",
-    prompt: "A net is described as six squares arranged in a straight row (a 1-by-6 strip). Would this fold into a closed cube?",
-    representation: null,
+    subskill: "volume-cuboid",
+    prompt: "What is the total volume, in cubic units?",
+    representation: { kind: "grid", rows: 3, cols: 6, shadedCells: 18, unitLabel: "cubes in one layer — stacked 3 layers high" },
     choices: [
-      { id: "a", text: "No — a straight row of 6 leaves the shape open or overlapping; it isn't one of the arrangements that folds into a cube" },
-      { id: "b", text: "Yes — any 6 connected squares fold into a cube" },
-      { id: "c", text: "Yes, because a cube has 6 faces" },
-      { id: "d", text: "No, because a cube's net needs 8 squares" },
+      { id: "a", text: "54 cubic units" },
+      { id: "b", text: "18 cubic units" },
+      { id: "c", text: "21 cubic units" },
+      { id: "d", text: "108 cubic units" },
     ],
     correctChoiceId: "a",
   },
@@ -156,8 +165,8 @@ export const VOLUME_AND_NETS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "evaluate",
     subskill: "volume-cuboid",
-    prompt: "A fish tank's base layer is 5-by-5 unit cubes, as shown, and the tank is filled 4 layers deep out of a possible 6 layers tall. What is the volume of water currently in the tank?",
-    representation: { kind: "grid", rows: 5, cols: 5, shadedCells: 25, unitLabel: "cubes in one layer" },
+    prompt: "The tank is only filled to 4 of its possible 6 layers. What volume of water is in it now?",
+    representation: { kind: "grid", rows: 5, cols: 5, shadedCells: 25, unitLabel: "cubes in one layer — filled 4 of 6 possible layers" },
     choices: [
       { id: "a", text: "100 cubic units" },
       { id: "b", text: "150 cubic units" },
@@ -167,14 +176,14 @@ export const VOLUME_AND_NETS_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- ABSTRACT ---
+  // --- ABSTRACT (bare numeric/symbolic — no scenario) ---
   {
     id: "vn-a-remember",
     topicId: TOPIC,
     cpa: "abstract",
     bloom: "remember",
     subskill: "volume-cuboid",
-    prompt: "What is the formula for the volume of a cuboid?",
+    prompt: "Formula for the volume of a cuboid = ?",
     representation: null,
     choices: [
       { id: "a", text: "length × width × height" },
@@ -190,7 +199,7 @@ export const VOLUME_AND_NETS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "volume-cuboid",
-    prompt: "Find the volume of a cuboid measuring 5 cm × 4 cm × 3 cm.",
+    prompt: "Volume of a 5 cm × 4 cm × 3 cm cuboid = ?",
     representation: null,
     choices: [
       { id: "a", text: "60 cubic cm" },
@@ -206,7 +215,7 @@ export const VOLUME_AND_NETS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "volume-cuboid",
-    prompt: "A cube has a side length of 6 cm. What is its volume?",
+    prompt: "Volume of a cube with side 6 cm = ?",
     representation: null,
     choices: [
       { id: "a", text: "216 cubic cm" },
@@ -222,7 +231,7 @@ export const VOLUME_AND_NETS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "nets-of-solids",
-    prompt: "A net has 4 rectangles and 2 squares, arranged so it folds into a solid with 6 flat faces, 2 of which are square. What solid is this the net of?",
+    prompt: "A net of 4 rectangles + 2 squares folds into a solid with 6 flat faces, 2 of them square. Solid = ?",
     representation: null,
     choices: [
       { id: "a", text: "A cuboid (a rectangular box with two square ends)" },
@@ -238,7 +247,7 @@ export const VOLUME_AND_NETS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "volume-cuboid",
-    prompt: "A rectangular tank 40 cm × 25 cm × 20 cm is filled with water to a depth of 15 cm. What volume of water is in the tank?",
+    prompt: "Tank: 40 cm × 25 cm × 20 cm, filled to a depth of 15 cm. Volume of water = ?",
     representation: null,
     choices: [
       { id: "a", text: "15,000 cubic cm" },

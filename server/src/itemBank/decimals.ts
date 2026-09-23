@@ -85,14 +85,14 @@ export const DECIMALS_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- PICTORIAL (decimal number line) ---
+  // --- PICTORIAL (decimal number line only — read straight off the marks) ---
   {
     id: "dec-p-remember",
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "remember",
     subskill: "place-value-decimals",
-    prompt: "What decimal is marked on the number line?",
+    prompt: "What decimal is marked?",
     representation: { kind: "number-line", min: 0, max: 1, step: 0.1, markers: [{ value: 0.6, label: "0.6" }] },
     choices: [
       { id: "a", text: "0.6" },
@@ -108,7 +108,7 @@ export const DECIMALS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "understand",
     subskill: "comparing-ordering-decimals",
-    prompt: "Two points are marked: 0.3 and 0.35. Which decimal is greater?",
+    prompt: "Which marked decimal is greater?",
     representation: {
       kind: "number-line",
       min: 0,
@@ -133,7 +133,7 @@ export const DECIMALS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "apply",
     subskill: "fraction-decimal-conversion",
-    prompt: "The marked point sits three-quarters of the way from 0 to 1. What decimal and fraction does it represent?",
+    prompt: "What decimal and fraction does the marked point represent?",
     representation: { kind: "number-line", min: 0, max: 1, step: 0.25, markers: [{ value: 0.75, label: "?" }] },
     choices: [
       { id: "a", text: "0.75 = 3/4" },
@@ -149,7 +149,7 @@ export const DECIMALS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "analyze",
     subskill: "comparing-ordering-decimals",
-    prompt: "Three points are marked: 1.02, 1.2, and 1.22. Which lists them from smallest to largest?",
+    prompt: "Which lists the three marked decimals from smallest to largest?",
     representation: {
       kind: "number-line",
       min: 1,
@@ -175,7 +175,7 @@ export const DECIMALS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "evaluate",
     subskill: "four-operations-decimals",
-    prompt: "The marked point 2.46 lies between 2.4 and 2.5. Rounded to 1 decimal place, what is 2.46?",
+    prompt: "Rounded to 1 decimal place, what is the marked point?",
     representation: { kind: "number-line", min: 2.4, max: 2.5, step: 0.02, markers: [{ value: 2.46, label: "2.46" }], highlightRange: [2.4, 2.5] },
     choices: [
       { id: "a", text: "2.5" },
@@ -186,14 +186,14 @@ export const DECIMALS_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- ABSTRACT ---
+  // --- ABSTRACT (bare numeric/symbolic — no scenario) ---
   {
     id: "dec-a-remember",
     topicId: TOPIC,
     cpa: "abstract",
     bloom: "remember",
     subskill: "place-value-decimals",
-    prompt: "What is the value of the digit 5 in 3.258?",
+    prompt: "Value of the digit 5 in 3.258 = ?",
     representation: null,
     choices: [
       { id: "a", text: "5 hundredths (0.05)" },
@@ -209,7 +209,7 @@ export const DECIMALS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "fraction-decimal-conversion",
-    prompt: "Which fraction is equivalent to 0.125?",
+    prompt: "0.125 as a fraction = ?",
     representation: null,
     choices: [
       { id: "a", text: "1/8" },
@@ -225,7 +225,7 @@ export const DECIMALS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "four-operations-decimals",
-    prompt: "Compute 4.75 + 2.6.",
+    prompt: "4.75 + 2.6 = ?",
     representation: null,
     choices: [
       { id: "a", text: "7.35" },
@@ -241,7 +241,7 @@ export const DECIMALS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "four-operations-decimals",
-    prompt: "Compute 3.6 × 4.",
+    prompt: "3.6 × 4 = ?",
     representation: null,
     choices: [
       { id: "a", text: "14.4" },
@@ -257,7 +257,7 @@ export const DECIMALS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "comparing-ordering-decimals",
-    prompt: "Arrange in descending order: 0.8, 0.08, 0.88, 0.008.",
+    prompt: "Descending order of 0.8, 0.08, 0.88, 0.008 = ?",
     representation: null,
     choices: [
       { id: "a", text: "0.88, 0.8, 0.08, 0.008" },

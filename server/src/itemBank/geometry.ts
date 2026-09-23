@@ -3,15 +3,16 @@ import { Item } from "../types.js";
 const TOPIC = "geometry";
 
 /**
- * Geometry leans more on plain description than the other topics: a
- * labeled-shape diagram (ShapeSpec) covers the triangle/quadrilateral
- * subskill well, but "angles on a line / at a point" isn't a shape at all —
- * forcing it into a fabricated diagram would be less honest than a clearly
- * worded text prompt. Those cells use representation: null, the same as
- * every abstract-stage item across the item bank. See README.
+ * "Angles on a line / at a point" isn't a shape at all, so there's no
+ * diagram that could carry it — putting it in Pictorial anyway would mean
+ * a "pictorial" item with representation: null, which defeats the whole
+ * point of the CPA stages being visually distinct. Instead every Pictorial
+ * item here uses a real ShapeSpec diagram (triangle/quadrilateral facts,
+ * which do have a natural picture), and the line/point-angle facts live
+ * only in Abstract, where no picture was ever expected. See README.
  */
 export const GEOMETRY_ITEMS: Item[] = [
-  // --- CONCRETE (real-object framing) ---
+  // --- CONCRETE (real-object framing + shape diagram) ---
   {
     id: "geo-c-remember",
     topicId: TOPIC,
@@ -93,20 +94,20 @@ export const GEOMETRY_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- PICTORIAL ---
+  // --- PICTORIAL (every item is a real shape diagram — no unpictured facts) ---
   {
     id: "geo-p-remember",
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "remember",
-    subskill: "angles-on-a-line-at-a-point",
-    prompt: "Two angles sit on a straight line. One of them measures 110°. What is the other angle?",
-    representation: null,
+    subskill: "angle-types",
+    prompt: "What type of angle is the one marked on the shape?",
+    representation: { kind: "shape", shape: "right-triangle", angleLabels: ["90°", "", ""] },
     choices: [
-      { id: "a", text: "70°" },
-      { id: "b", text: "110°" },
-      { id: "c", text: "250°" },
-      { id: "d", text: "90°" },
+      { id: "a", text: "Right angle" },
+      { id: "b", text: "Acute angle" },
+      { id: "c", text: "Obtuse angle" },
+      { id: "d", text: "Straight angle" },
     ],
     correctChoiceId: "a",
   },
@@ -115,14 +116,14 @@ export const GEOMETRY_ITEMS: Item[] = [
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "understand",
-    subskill: "angles-on-a-line-at-a-point",
-    prompt: "Four angles meet at a single point. Three of them measure 90°, 90°, and 100°. What is the fourth angle?",
-    representation: null,
+    subskill: "triangle-properties",
+    prompt: "What is this type of triangle called?",
+    representation: { kind: "shape", shape: "right-triangle", angleLabels: ["90°", "", ""] },
     choices: [
-      { id: "a", text: "80°" },
-      { id: "b", text: "100°" },
-      { id: "c", text: "280°" },
-      { id: "d", text: "90°" },
+      { id: "a", text: "Right-angled triangle" },
+      { id: "b", text: "Equilateral triangle" },
+      { id: "c", text: "Obtuse triangle" },
+      { id: "d", text: "There's no such classification" },
     ],
     correctChoiceId: "a",
   },
@@ -132,7 +133,7 @@ export const GEOMETRY_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "apply",
     subskill: "triangle-properties",
-    prompt: "A triangle has two angles measuring 50° and 60°, as marked. What is the third angle?",
+    prompt: "What is the third angle of the triangle shown?",
     representation: { kind: "shape", shape: "triangle", angleLabels: ["50°", "60°", "?"] },
     choices: [
       { id: "a", text: "70°" },
@@ -148,13 +149,13 @@ export const GEOMETRY_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "analyze",
     subskill: "quadrilateral-properties",
-    prompt: "In the parallelogram shown, one angle measures 70°. Opposite angles in a parallelogram are equal, and neighbouring angles add to 180°. What are the other three angles?",
+    prompt: "Opposite angles are equal; neighbouring angles sum to 180°. What are the two unmarked angles?",
     representation: { kind: "shape", shape: "parallelogram", angleLabels: ["70°", "?", "70°", "?"] },
     choices: [
-      { id: "a", text: "70°, 110°, and 110°" },
-      { id: "b", text: "70°, 70°, and 70°" },
-      { id: "c", text: "110°, 110°, and 110°" },
-      { id: "d", text: "90°, 90°, and 90°" },
+      { id: "a", text: "110° and 110°" },
+      { id: "b", text: "70° and 70°" },
+      { id: "c", text: "90° and 90°" },
+      { id: "d", text: "180° and 180°" },
     ],
     correctChoiceId: "a",
   },
@@ -163,26 +164,26 @@ export const GEOMETRY_ITEMS: Item[] = [
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "evaluate",
-    subskill: "angles-on-a-line-at-a-point",
-    prompt: "Three angles are arranged around a single point: two of them are equal (call each x), and the third measures 160°. Since they must sum to 360°, what is x?",
-    representation: null,
+    subskill: "quadrilateral-properties",
+    prompt: "Evaluate x.",
+    representation: { kind: "shape", shape: "parallelogram", angleLabels: ["90°", "90°", "100°", "x"] },
     choices: [
-      { id: "a", text: "100°" },
-      { id: "b", text: "200°" },
-      { id: "c", text: "80°" },
-      { id: "d", text: "50°" },
+      { id: "a", text: "80°" },
+      { id: "b", text: "100°" },
+      { id: "c", text: "60°" },
+      { id: "d", text: "90°" },
     ],
     correctChoiceId: "a",
   },
 
-  // --- ABSTRACT ---
+  // --- ABSTRACT (bare facts — includes the angle-on-a-line/at-a-point subskill, which has no diagram) ---
   {
     id: "geo-a-remember",
     topicId: TOPIC,
     cpa: "abstract",
     bloom: "remember",
     subskill: "angle-types",
-    prompt: "Which term describes an angle that is greater than 90° but less than 180°?",
+    prompt: "Term for an angle greater than 90° but less than 180° = ?",
     representation: null,
     choices: [
       { id: "a", text: "Obtuse" },
@@ -198,7 +199,7 @@ export const GEOMETRY_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "triangle-properties",
-    prompt: "What is the sum of the interior angles of any triangle?",
+    prompt: "Sum of the interior angles of any triangle = ?",
     representation: null,
     choices: [
       { id: "a", text: "180°" },
@@ -213,13 +214,13 @@ export const GEOMETRY_ITEMS: Item[] = [
     topicId: TOPIC,
     cpa: "abstract",
     bloom: "apply",
-    subskill: "quadrilateral-properties",
-    prompt: "A quadrilateral has three angles measuring 85°, 95°, and 100°. What is the fourth angle?",
+    subskill: "angles-on-a-line-at-a-point",
+    prompt: "Two angles on a straight line: one is 110°. Other angle = ?",
     representation: null,
     choices: [
-      { id: "a", text: "80°" },
-      { id: "b", text: "100°" },
-      { id: "c", text: "60°" },
+      { id: "a", text: "70°" },
+      { id: "b", text: "110°" },
+      { id: "c", text: "250°" },
       { id: "d", text: "90°" },
     ],
     correctChoiceId: "a",
@@ -230,13 +231,13 @@ export const GEOMETRY_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "angles-on-a-line-at-a-point",
-    prompt: "Two angles on a straight line are in the ratio 2:3. What are their measures?",
+    prompt: "Angles at a point: x, x, and 160° sum to 360°. x = ?",
     representation: null,
     choices: [
-      { id: "a", text: "72° and 108°" },
-      { id: "b", text: "60° and 120°" },
-      { id: "c", text: "90° and 90°" },
-      { id: "d", text: "80° and 100°" },
+      { id: "a", text: "100°" },
+      { id: "b", text: "200°" },
+      { id: "c", text: "80°" },
+      { id: "d", text: "50°" },
     ],
     correctChoiceId: "a",
   },
@@ -246,13 +247,13 @@ export const GEOMETRY_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "triangle-properties",
-    prompt: "A triangle has angles x, 2x, and 3x. What type of triangle is it, based on the angles once you solve for x?",
+    prompt: "A triangle has angles x, 2x, 3x. Solve for x and classify the triangle.",
     representation: null,
     choices: [
-      { id: "a", text: "Right-angled — the angles work out to 30°, 60°, and 90°" },
-      { id: "b", text: "Equilateral" },
-      { id: "c", text: "Obtuse" },
-      { id: "d", text: "It can't be determined" },
+      { id: "a", text: "x = 30° — angles are 30°, 60°, 90°: a right-angled triangle" },
+      { id: "b", text: "x = 60° — equilateral" },
+      { id: "c", text: "x = 45° — obtuse" },
+      { id: "d", text: "Cannot be determined" },
     ],
     correctChoiceId: "a",
   },

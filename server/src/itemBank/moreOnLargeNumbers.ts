@@ -135,14 +135,14 @@ export const MORE_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- PICTORIAL (number line) ---
+  // --- PICTORIAL (number line only — no restated values, read straight off the marks) ---
   {
     id: "mln-p-remember",
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "remember",
     subskill: "rounding",
-    prompt: "The number line shows 243,000. Which multiple of 10,000 is it closest to?",
+    prompt: "Which multiple of 10,000 is the marked number closest to?",
     representation: { kind: "number-line", min: 200000, max: 300000, step: 20000, markers: [{ value: 243000, label: "243,000" }] },
     choices: [
       { id: "a", text: "240,000" },
@@ -158,7 +158,7 @@ export const MORE_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "understand",
     subskill: "comparing-ordering",
-    prompt: "Two numbers are marked on the number line: 512,300 and 521,300. Which one is greater?",
+    prompt: "Which marked number is greater?",
     representation: {
       kind: "number-line",
       min: 500000,
@@ -183,7 +183,7 @@ export const MORE_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "apply",
     subskill: "rounding",
-    prompt: "The number line shows 768,000. Round it to the nearest ten thousand.",
+    prompt: "Round the marked number to the nearest ten thousand.",
     representation: { kind: "number-line", min: 760000, max: 780000, step: 10000, markers: [{ value: 768000, label: "768,000" }] },
     choices: [
       { id: "a", text: "770,000" },
@@ -199,7 +199,7 @@ export const MORE_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "analyze",
     subskill: "comparing-ordering",
-    prompt: "Three numbers are marked on the line: 300,520, 305,200, and 350,200. Which lists them from smallest to largest?",
+    prompt: "Which lists the three marked numbers from smallest to largest?",
     representation: {
       kind: "number-line",
       min: 300000,
@@ -225,7 +225,7 @@ export const MORE_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "evaluate",
     subskill: "rounding",
-    prompt: "The point marked is exactly halfway between 450,000 and 460,000. Using the 'round halfway points up' rule, what does it round to?",
+    prompt: "Using the 'round halfway points up' rule, what does the marked point round to?",
     representation: { kind: "number-line", min: 450000, max: 460000, step: 2000, markers: [{ value: 455000, label: "455,000" }], highlightRange: [450000, 460000] },
     choices: [
       { id: "a", text: "460,000" },
@@ -236,14 +236,14 @@ export const MORE_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- ABSTRACT ---
+  // --- ABSTRACT (bare numeric/symbolic — no scenario) ---
   {
     id: "mln-a-remember",
     topicId: TOPIC,
     cpa: "abstract",
     bloom: "remember",
     subskill: "place-value",
-    prompt: "What is the value of the digit 7 in 3,782,410?",
+    prompt: "Value of the digit 7 in 3,782,410 = ?",
     representation: null,
     choices: [
       { id: "a", text: "700,000" },
@@ -259,7 +259,7 @@ export const MORE_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "reading-writing-numbers",
-    prompt: "How is the number 4,050,900 written in words?",
+    prompt: "4,050,900 in words = ?",
     representation: null,
     choices: [
       { id: "a", text: "Four million, fifty thousand, nine hundred" },
@@ -275,7 +275,7 @@ export const MORE_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "rounding",
-    prompt: "Round 6,842,900 to the nearest hundred thousand.",
+    prompt: "6,842,900 rounded to the nearest hundred thousand = ?",
     representation: null,
     choices: [
       { id: "a", text: "6,800,000" },
@@ -291,7 +291,7 @@ export const MORE_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "comparing-ordering",
-    prompt: "Which of these numbers is the greatest — 2,905,610, 2,950,160, or 2,509,610?",
+    prompt: "Greatest of 2,905,610 / 2,950,160 / 2,509,610 = ?",
     representation: null,
     choices: [
       { id: "a", text: "2,950,160" },
@@ -307,7 +307,7 @@ export const MORE_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "place-value",
-    prompt: "A 6-digit number has 5 in the hundred-thousands place, 0 in every other place except a 3 in the ones place. What is the number?",
+    prompt: "6-digit number — hundred-thousands digit: 5. All other digits: 0, except ones digit: 3. Number = ?",
     representation: null,
     choices: [
       { id: "a", text: "500,003" },

@@ -85,14 +85,14 @@ export const TIME_AND_TEMPERATURE_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- PICTORIAL (timeline / thermometer scale) ---
+  // --- PICTORIAL (timeline / thermometer scale only — read straight off the marks) ---
   {
     id: "tt-p-remember",
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "remember",
     subskill: "24-hour-time",
-    prompt: "The 24-hour timeline shows 14:00. What time is this in 12-hour (am/pm) format?",
+    prompt: "What is the marked 24-hour time in 12-hour (am/pm) format?",
     representation: { kind: "number-line", min: 0, max: 24, step: 6, markers: [{ value: 14, label: "14:00" }] },
     choices: [
       { id: "a", text: "2:00 pm" },
@@ -108,7 +108,7 @@ export const TIME_AND_TEMPERATURE_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "understand",
     subskill: "temperature-reading",
-    prompt: "The thermometer scale shows -5°C. Is this above or below freezing point (0°C)?",
+    prompt: "Is the marked temperature above or below freezing point (0°C)?",
     representation: { kind: "number-line", min: -10, max: 40, step: 10, markers: [{ value: -5, label: "-5°C" }] },
     choices: [
       { id: "a", text: "Below freezing, by 5°C" },
@@ -124,15 +124,15 @@ export const TIME_AND_TEMPERATURE_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "apply",
     subskill: "duration",
-    prompt: "A workshop starts at 9:00 and ends at 13:00, as marked on the timeline. How long did it last?",
+    prompt: "What is the gap between the two marked times?",
     representation: {
       kind: "number-line",
       min: 0,
       max: 24,
       step: 3,
       markers: [
-        { value: 9, label: "9:00 start" },
-        { value: 13, label: "13:00 end" },
+        { value: 9, label: "9:00" },
+        { value: 13, label: "13:00" },
       ],
       highlightRange: [9, 13],
     },
@@ -150,7 +150,7 @@ export const TIME_AND_TEMPERATURE_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "analyze",
     subskill: "temperature-comparison",
-    prompt: "Morning temperature is -3°C and afternoon temperature is 18°C, as marked on the scale. By how much did the temperature rise?",
+    prompt: "By how much does the temperature rise between the two marked points?",
     representation: {
       kind: "number-line",
       min: -10,
@@ -175,7 +175,7 @@ export const TIME_AND_TEMPERATURE_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "evaluate",
     subskill: "24-hour-time",
-    prompt: "A flight departs at 23:00, as marked, and lands 5 hours later, crossing midnight. What time does it land, and on which day relative to departure?",
+    prompt: "Adding 5 hours to the marked time, what time results, and on which day relative to the mark?",
     representation: { kind: "number-line", min: 0, max: 24, step: 6, markers: [{ value: 23, label: "23:00" }], highlightRange: [23, 24] },
     choices: [
       { id: "a", text: "04:00, the next day" },
@@ -186,14 +186,14 @@ export const TIME_AND_TEMPERATURE_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- ABSTRACT ---
+  // --- ABSTRACT (bare numeric/symbolic — no scenario) ---
   {
     id: "tt-a-remember",
     topicId: TOPIC,
     cpa: "abstract",
     bloom: "remember",
     subskill: "24-hour-time",
-    prompt: "Convert 15:45 to 12-hour (am/pm) format.",
+    prompt: "15:45 in 12-hour (am/pm) format = ?",
     representation: null,
     choices: [
       { id: "a", text: "3:45 pm" },
@@ -209,7 +209,7 @@ export const TIME_AND_TEMPERATURE_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "duration",
-    prompt: "A movie starts at 7:20 pm and ends at 9:05 pm. How long is the movie?",
+    prompt: "7:20 pm to 9:05 pm = ? (duration)",
     representation: null,
     choices: [
       { id: "a", text: "1 h 45 min" },
@@ -225,7 +225,7 @@ export const TIME_AND_TEMPERATURE_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "temperature-comparison",
-    prompt: "The temperature was 12°C at noon and dropped by 15°C by midnight. What was the midnight temperature?",
+    prompt: "12°C − 15°C = ?",
     representation: null,
     choices: [
       { id: "a", text: "-3°C" },
@@ -241,7 +241,7 @@ export const TIME_AND_TEMPERATURE_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "duration",
-    prompt: "A bus leaves at 22:40, and the journey takes 2 h 35 min. What time does it arrive, in 24-hour format?",
+    prompt: "22:40 + 2 h 35 min = ? (24-hour format)",
     representation: null,
     choices: [
       { id: "a", text: "01:15 (the next day)" },
@@ -257,7 +257,7 @@ export const TIME_AND_TEMPERATURE_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "temperature-comparison",
-    prompt: "Three cities recorded temperatures of -8°C, 4°C, and -2°C. Which lists them from coldest to warmest?",
+    prompt: "Coldest to warmest: -8°C, 4°C, -2°C = ?",
     representation: null,
     choices: [
       { id: "a", text: "-8°C, -2°C, 4°C" },

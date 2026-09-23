@@ -8,9 +8,10 @@ const TOPIC = "data-handling";
  * pictorial representation of a small dataset in Singapore Math, and a
  * literal physical sorted collection is the concrete version of the same
  * idea, so reusing the component across both stages (differentiated by
- * question complexity, not a different diagram) is intentional here rather
- * than a shortcut. Line graphs have no dedicated diagram in this build —
- * those items are described in words. See README.
+ * question complexity, not a different diagram) is intentional. Line
+ * graphs have no dedicated diagram in this build, so that subskill lives
+ * only in Abstract — every Pictorial item here has a real pictograph.
+ * See README.
  */
 export const DATA_HANDLING_ITEMS: Item[] = [
   // --- CONCRETE (a real, physically counted collection) ---
@@ -151,14 +152,14 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- PICTORIAL (the same pictograph idea, read as a graph/table) ---
+  // --- PICTORIAL (the same pictograph idea — every item has a real picture) ---
   {
     id: "dh-p-remember",
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "remember",
     subskill: "bar-graphs",
-    prompt: "The graph records books read by three students this month. Who read the most books?",
+    prompt: "Who read the most books?",
     representation: {
       kind: "concrete",
       icon: "📕",
@@ -185,7 +186,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "understand",
     subskill: "reading-tables-graphs",
-    prompt: "The graph shows votes for a favourite fruit. How many more votes did Mango get than Grape?",
+    prompt: "How many more votes did Mango get than Grape?",
     representation: {
       kind: "concrete",
       icon: "🥭",
@@ -212,7 +213,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "apply",
     subskill: "average-mean",
-    prompt: "The graph shows rainfall (mm) recorded on 5 days. What is the average daily rainfall?",
+    prompt: "What is the average daily rainfall shown?",
     representation: {
       kind: "concrete",
       icon: "💧",
@@ -240,14 +241,26 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "analyze",
-    subskill: "line-graphs",
-    prompt: "A line graph shows a shop's daily sales rising by the same amount each day from Monday to Friday. Analyze the trend: what does the shape of the line suggest?",
-    representation: null,
+    subskill: "reading-tables-graphs",
+    prompt: "Analyze the pattern across the four grades shown. Which best describes it?",
+    representation: {
+      kind: "concrete",
+      icon: "📚",
+      itemCount: 0,
+      groups: 1,
+      groupLabel: "books borrowed",
+      segments: [
+        { icon: "📚", count: 3, label: "Grade A" },
+        { icon: "📚", count: 6, label: "Grade B" },
+        { icon: "📚", count: 9, label: "Grade C" },
+        { icon: "📚", count: 12, label: "Grade D" },
+      ],
+    },
     choices: [
-      { id: "a", text: "Sales are increasing at a steady, constant rate each day" },
-      { id: "b", text: "Sales are decreasing" },
-      { id: "c", text: "Sales stay exactly the same each day" },
-      { id: "d", text: "The trend can't be described from a line graph" },
+      { id: "a", text: "Each grade has 3 more than the one before — a steady increase" },
+      { id: "b", text: "The values decrease from Grade A to Grade D" },
+      { id: "c", text: "All four grades are equal" },
+      { id: "d", text: "No pattern is visible" },
     ],
     correctChoiceId: "a",
   },
@@ -257,8 +270,18 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "evaluate",
     subskill: "bar-graphs",
-    prompt: "Two graphs compare total rainfall over 5 days: City X had 60 mm total, City Y had 90 mm total. Evaluate which city had the higher average daily rainfall, and by how much.",
-    representation: null,
+    prompt: "Each drop = 10 mm of rainfall over 5 days. Evaluate which city had the higher average daily rainfall, and by how much.",
+    representation: {
+      kind: "concrete",
+      icon: "💧",
+      itemCount: 0,
+      groups: 1,
+      groupLabel: "× 10 mm over 5 days",
+      segments: [
+        { icon: "💧", count: 6, label: "City X" },
+        { icon: "💧", count: 9, label: "City Y" },
+      ],
+    },
     choices: [
       { id: "a", text: "City Y, by 6 mm/day on average" },
       { id: "b", text: "City X, by 6 mm/day on average" },
@@ -268,14 +291,14 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- ABSTRACT ---
+  // --- ABSTRACT (bare given/find — no scenario; line graphs live only here) ---
   {
     id: "dh-a-remember",
     topicId: TOPIC,
     cpa: "abstract",
     bloom: "remember",
     subskill: "average-mean",
-    prompt: "What is the average (mean) of 4, 8, and 12?",
+    prompt: "Average (mean) of 4, 8, 12 = ?",
     representation: null,
     choices: [
       { id: "a", text: "8" },
@@ -291,7 +314,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "reading-tables-graphs",
-    prompt: "A table shows sales of 120, 150, and 180 units over three months. What is the total sold across all three months?",
+    prompt: "Monthly sales: 120, 150, 180. Total = ?",
     representation: null,
     choices: [
       { id: "a", text: "450" },
@@ -307,7 +330,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "bar-graphs",
-    prompt: "A bar graph has 4 categories with values 10, 15, 20, and 25. What fraction of the total does the largest category (25) represent?",
+    prompt: "4 category values: 10, 15, 20, 25. Largest as a fraction of the total = ?",
     representation: null,
     choices: [
       { id: "a", text: "5/14" },
@@ -323,7 +346,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "average-mean",
-    prompt: "The average of 5 numbers is 20. Four of them are 18, 22, 19, and 21. What is the fifth number?",
+    prompt: "Average of 5 numbers = 20. Four of them: 18, 22, 19, 21. Fifth number = ?",
     representation: null,
     choices: [
       { id: "a", text: "20" },
@@ -339,7 +362,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "line-graphs",
-    prompt: "A line graph of a day's temperature rises from morning to early afternoon, then falls toward evening. What real-world pattern does this best match?",
+    prompt: "A day's temperature line rises (morning → afternoon), then falls (afternoon → evening). Which real-world pattern does this match?",
     representation: null,
     choices: [
       { id: "a", text: "A typical day — warming through the morning, peaking in early afternoon, then cooling in the evening" },

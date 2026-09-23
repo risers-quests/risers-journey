@@ -85,14 +85,14 @@ export const FACTORS_AND_MULTIPLES_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- PICTORIAL (array model — factor pairs) ---
+  // --- PICTORIAL (array model — every question is about the one array actually drawn) ---
   {
     id: "fam-p-remember",
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "remember",
     subskill: "factors",
-    prompt: "The array shows 3 rows and 8 columns, all shaded, making 24 unit squares. What factor pair of 24 does this array show?",
+    prompt: "What factor pair of 24 does this array show?",
     representation: { kind: "grid", rows: 3, cols: 8, shadedCells: 24, unitLabel: "squares" },
     choices: [
       { id: "a", text: "3 and 8" },
@@ -108,7 +108,7 @@ export const FACTORS_AND_MULTIPLES_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "understand",
     subskill: "prime-numbers",
-    prompt: "A number's squares can only ever be arranged as a single row of 13 (no other whole-number rectangle fits). What does this tell you about 13?",
+    prompt: "This is the only rectangular array that 13 squares can form — one row. What does that tell you about 13?",
     representation: { kind: "grid", rows: 1, cols: 13, shadedCells: 13, unitLabel: "squares" },
     choices: [
       { id: "a", text: "13 is a prime number — its only factors are 1 and itself" },
@@ -124,7 +124,7 @@ export const FACTORS_AND_MULTIPLES_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "apply",
     subskill: "multiples",
-    prompt: "The array shows 4 rows of 5 (20 squares). If this same array is repeated 3 times, what is the total, and is it a multiple of 5?",
+    prompt: "If this array appears 3 times, what is the total, and is it a multiple of 5?",
     representation: { kind: "grid", rows: 4, cols: 5, shadedCells: 20, unitLabel: "squares (× 3 copies)" },
     choices: [
       { id: "a", text: "60, and yes — 60 = 5 × 12" },
@@ -140,13 +140,13 @@ export const FACTORS_AND_MULTIPLES_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "analyze",
     subskill: "common-factors-multiples",
-    prompt: "One array shows 4 rows × 6 columns (24 squares); another shows 3 rows × 8 columns (24 squares too). What does this tell you about 4, 6, 3, and 8?",
+    prompt: "The array's 24 squares are arranged 4 rows by 6 columns. Without adding or removing any squares, could the same 24 be rearranged into 3 rows by 8 columns?",
     representation: { kind: "grid", rows: 4, cols: 6, shadedCells: 24, unitLabel: "squares" },
     choices: [
-      { id: "a", text: "All four numbers — 4, 6, 3, and 8 — are factors of 24" },
-      { id: "b", text: "Only 4 and 6 are factors of 24" },
-      { id: "c", text: "24 is not evenly divisible by any of them" },
-      { id: "d", text: "3 and 8 are multiples of 24, not factors" },
+      { id: "a", text: "Yes — 3 × 8 = 24 too, so the same squares regroup evenly" },
+      { id: "b", text: "No — only 4 × 6 makes 24" },
+      { id: "c", text: "No — regrouping would need extra squares" },
+      { id: "d", text: "Yes, but only by using different squares" },
     ],
     correctChoiceId: "a",
   },
@@ -156,25 +156,25 @@ export const FACTORS_AND_MULTIPLES_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "evaluate",
     subskill: "common-factors-multiples",
-    prompt: "Two arrays are shown for 12: one is 2 rows × 6 columns, the other is 3 rows × 4 columns. A student claims 2, 3, 4, and 6 are all common factors of 12. Evaluate this claim.",
+    prompt: "The array shows 12 as 2 rows of 6. A student claims 3 and 4 are also factors of 12, just from this one array. Evaluate the claim.",
     representation: { kind: "grid", rows: 2, cols: 6, shadedCells: 12, unitLabel: "squares" },
     choices: [
-      { id: "a", text: "True — each pair multiplies to 12, so all four numbers are factors of 12" },
-      { id: "b", text: "False — only 2 and 6 are factors" },
+      { id: "a", text: "True — 12 ÷ 3 = 4 and 12 ÷ 4 = 3 divide evenly too, so both are factors, even though only this one array is drawn" },
+      { id: "b", text: "False — only 2 and 6 are factors of 12" },
       { id: "c", text: "False — 12 has no factors besides 1 and 12" },
-      { id: "d", text: "True, but only 3 and 4 actually count" },
+      { id: "d", text: "True, but only 4 counts, not 3" },
     ],
     correctChoiceId: "a",
   },
 
-  // --- ABSTRACT ---
+  // --- ABSTRACT (bare numeric/symbolic — no scenario) ---
   {
     id: "fam-a-remember",
     topicId: TOPIC,
     cpa: "abstract",
     bloom: "remember",
     subskill: "factors",
-    prompt: "Which of the following is a factor of 36?",
+    prompt: "Factor of 36 = ?",
     representation: null,
     choices: [
       { id: "a", text: "9" },
@@ -190,7 +190,7 @@ export const FACTORS_AND_MULTIPLES_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "multiples",
-    prompt: "Which of these is a multiple of 7?",
+    prompt: "Multiple of 7 = ?",
     representation: null,
     choices: [
       { id: "a", text: "63" },
@@ -206,7 +206,7 @@ export const FACTORS_AND_MULTIPLES_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "prime-numbers",
-    prompt: "Which of these numbers is prime?",
+    prompt: "Prime number, from: 29, 27, 33, 35 = ?",
     representation: null,
     choices: [
       { id: "a", text: "29" },
@@ -222,7 +222,7 @@ export const FACTORS_AND_MULTIPLES_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "common-factors-multiples",
-    prompt: "What is the highest common factor (HCF) of 18 and 24?",
+    prompt: "HCF(18, 24) = ?",
     representation: null,
     choices: [
       { id: "a", text: "6" },
@@ -238,7 +238,7 @@ export const FACTORS_AND_MULTIPLES_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "common-factors-multiples",
-    prompt: "What is the lowest common multiple (LCM) of 4 and 6?",
+    prompt: "LCM(4, 6) = ?",
     representation: null,
     choices: [
       { id: "a", text: "12" },

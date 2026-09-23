@@ -85,14 +85,14 @@ export const FRACTIONS_DIVISION_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- PICTORIAL ---
+  // --- PICTORIAL (bar model only — read straight off the bar, no restated scenario) ---
   {
     id: "fd-p-remember",
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "remember",
     subskill: "fraction-notation",
-    prompt: "The bar below shows 3 rotis divided into 4 equal parts. What fraction of a roti does one part represent?",
+    prompt: "What fraction of the whole does one part of the bar represent?",
     representation: { kind: "bar-model", totalLabel: "3 rotis", parts: 4 },
     choices: [
       { id: "a", text: "1/4" },
@@ -108,7 +108,7 @@ export const FRACTIONS_DIVISION_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "understand",
     subskill: "equal-sharing",
-    prompt: "Amma divides 3 rotis equally among 4 children. Which bar model correctly shows how much roti each child gets?",
+    prompt: "Based on the bar, how much roti does each child get?",
     representation: { kind: "bar-model", totalLabel: "3 rotis / 4 children", parts: 4 },
     choices: [
       { id: "a", text: "Each child gets ¾ of a roti" },
@@ -124,7 +124,7 @@ export const FRACTIONS_DIVISION_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "apply",
     subskill: "word-problem-setup",
-    prompt: "5 cakes are shared equally among 4 friends. Using the bar model idea, how much cake does each friend get?",
+    prompt: "How much does each of the 4 equal parts of the bar represent?",
     representation: { kind: "bar-model", totalLabel: "5 cakes", parts: 4 },
     choices: [
       { id: "a", text: "5/4 (1¼) cakes" },
@@ -140,13 +140,13 @@ export const FRACTIONS_DIVISION_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "analyze",
     subskill: "unit-fraction-reasoning",
-    prompt: "The bar model shows 7 sandwiches shared equally among 3 children. Which statement about each child's share is correct?",
+    prompt: "Which statement about one equal part of the bar is correct?",
     representation: { kind: "bar-model", totalLabel: "7 sandwiches", parts: 3 },
     choices: [
-      { id: "a", text: "Each child gets 7/3 sandwiches, which is more than 2 whole sandwiches" },
-      { id: "b", text: "Each child gets 3/7 of a sandwich" },
-      { id: "c", text: "Each child gets exactly 2 sandwiches" },
-      { id: "d", text: "Each child gets less than 1 sandwich" },
+      { id: "a", text: "Each part is 7/3 sandwiches, which is more than 2 whole sandwiches" },
+      { id: "b", text: "Each part is 3/7 of a sandwich" },
+      { id: "c", text: "Each part is exactly 2 sandwiches" },
+      { id: "d", text: "Each part is less than 1 sandwich" },
     ],
     correctChoiceId: "a",
   },
@@ -156,8 +156,8 @@ export const FRACTIONS_DIVISION_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "evaluate",
     subskill: "word-problem-setup",
-    prompt: "Two students drew different bar models for '4 pizzas shared equally among 5 people.' Which bar model correctly represents the situation?",
-    representation: { kind: "bar-model", totalLabel: "4 pizzas", parts: 5 },
+    prompt: "Which description matches the bar model shown?",
+    representation: { kind: "bar-model", totalLabel: "4 pizzas / 5 people", parts: 5 },
     choices: [
       { id: "a", text: "A bar of 4 units split into 5 equal parts, each part = 4/5" },
       { id: "b", text: "A bar of 5 units split into 4 equal parts, each part = 5/4" },
@@ -167,14 +167,14 @@ export const FRACTIONS_DIVISION_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- ABSTRACT ---
+  // --- ABSTRACT (bare numeric/symbolic — no scenario) ---
   {
     id: "fd-a-remember",
     topicId: TOPIC,
     cpa: "abstract",
     bloom: "remember",
     subskill: "fraction-notation",
-    prompt: "Which expression is equivalent to 3 ÷ 4?",
+    prompt: "3 ÷ 4 = ?",
     representation: null,
     choices: [
       { id: "a", text: "3/4" },
@@ -190,7 +190,7 @@ export const FRACTIONS_DIVISION_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "fraction-notation",
-    prompt: "What does the fraction 5/8 represent in terms of division?",
+    prompt: "5/8 in terms of division = ?",
     representation: null,
     choices: [
       { id: "a", text: "5 divided by 8" },
@@ -206,7 +206,7 @@ export const FRACTIONS_DIVISION_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "fraction-notation",
-    prompt: "Compute 9 ÷ 6, giving your answer as a fraction in simplest form.",
+    prompt: "9 ÷ 6 = ? (simplest fraction form)",
     representation: null,
     choices: [
       { id: "a", text: "3/2" },
@@ -222,7 +222,7 @@ export const FRACTIONS_DIVISION_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "unit-fraction-reasoning",
-    prompt: "If a ÷ b = 5/3, which of the following must be true?",
+    prompt: "If a ÷ b = 5/3, which must be true?",
     representation: null,
     choices: [
       { id: "a", text: "a is greater than b" },
@@ -238,13 +238,13 @@ export const FRACTIONS_DIVISION_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "word-problem-setup",
-    prompt: "A recipe divides 11 cups of flour equally among 4 batches. Which expression and reasoning correctly finds the amount per batch?",
+    prompt: "11 ÷ 4 = ?",
     representation: null,
     choices: [
-      { id: "a", text: "11 ÷ 4 = 11/4, because dividing a quantity into equal groups is the same as writing it as a fraction" },
-      { id: "b", text: "4 ÷ 11 = 4/11, because the smaller number goes on top" },
-      { id: "c", text: "11 × 4 = 44, because sharing means multiplying" },
-      { id: "d", text: "11 − 4 = 7, because sharing means subtracting the groups" },
+      { id: "a", text: "11/4, because dividing a quantity into equal groups is the same as writing it as a fraction" },
+      { id: "b", text: "4/11, because the smaller number goes on top" },
+      { id: "c", text: "44, because sharing means multiplying" },
+      { id: "d", text: "7, because sharing means subtracting" },
     ],
     correctChoiceId: "a",
   },

@@ -85,14 +85,14 @@ export const LIFE_MATHEMATICS_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- PICTORIAL (larger bar-model percentage/rate problems) ---
+  // --- PICTORIAL (bar model only — every value needed is already in the label) ---
   {
     id: "lm-p-remember",
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "remember",
     subskill: "percentage-basics",
-    prompt: "The bar has 20 equal parts representing 100%. 15 of them are shaded. What percentage is this?",
+    prompt: "What percentage does the shaded part of the bar represent?",
     representation: { kind: "bar-model", totalLabel: "20 equal parts = 100%", parts: 20, highlightParts: 15 },
     choices: [
       { id: "a", text: "75%" },
@@ -108,7 +108,7 @@ export const LIFE_MATHEMATICS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "understand",
     subskill: "discount-percentage",
-    prompt: "A jacket's original price of ₹400 is shown split into 4 equal parts. The discount is 1 of these parts. What is the sale price?",
+    prompt: "If the shaded part is the discount, what is the sale price?",
     representation: { kind: "bar-model", totalLabel: "Original price ₹400", parts: 4, highlightParts: 1 },
     choices: [
       { id: "a", text: "₹300" },
@@ -124,7 +124,7 @@ export const LIFE_MATHEMATICS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "apply",
     subskill: "profit-loss",
-    prompt: "A shopkeeper's ₹250 selling price is shown split into 5 equal parts; the cost price took up 4 of those parts. Was there a profit or a loss, and how much?",
+    prompt: "If the shaded parts are the cost price, was there a profit or a loss, and how much?",
     representation: { kind: "bar-model", totalLabel: "Selling price ₹250", parts: 5, highlightParts: 4 },
     choices: [
       { id: "a", text: "A profit of ₹50" },
@@ -140,7 +140,7 @@ export const LIFE_MATHEMATICS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "analyze",
     subskill: "rate",
-    prompt: "The bar shows a 360 km trip split into 6 equal hourly segments. What is the average speed?",
+    prompt: "Based on the bar, what is the average speed?",
     representation: { kind: "bar-model", totalLabel: "360 km over 6 hours", parts: 6, highlightParts: 6 },
     choices: [
       { id: "a", text: "60 km/h" },
@@ -156,7 +156,7 @@ export const LIFE_MATHEMATICS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "evaluate",
     subskill: "discount-percentage",
-    prompt: "A ₹500 item is shown split into 10 equal parts. A 30% discount removes 3 of these parts. What is the final price after the discount?",
+    prompt: "If the shaded 3 parts are removed as a discount, what is the final price?",
     representation: { kind: "bar-model", totalLabel: "₹500 item", parts: 10, highlightParts: 3 },
     choices: [
       { id: "a", text: "₹350" },
@@ -167,14 +167,14 @@ export const LIFE_MATHEMATICS_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- ABSTRACT ---
+  // --- ABSTRACT (bare given/find — no scenario) ---
   {
     id: "lm-a-remember",
     topicId: TOPIC,
     cpa: "abstract",
     bloom: "remember",
     subskill: "percentage-basics",
-    prompt: "What is 25% of 200?",
+    prompt: "25% of 200 = ?",
     representation: null,
     choices: [
       { id: "a", text: "50" },
@@ -190,7 +190,7 @@ export const LIFE_MATHEMATICS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "discount-percentage",
-    prompt: "A shirt originally priced at ₹600 is on sale with a 15% discount. What is the discount amount?",
+    prompt: "15% discount on ₹600 = ?",
     representation: null,
     choices: [
       { id: "a", text: "₹90" },
@@ -206,7 +206,7 @@ export const LIFE_MATHEMATICS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "profit-loss",
-    prompt: "A trader buys a bicycle for ₹3,000 and sells it for ₹3,450. What is the profit percentage?",
+    prompt: "CP ₹3,000, SP ₹3,450. Profit % = ?",
     representation: null,
     choices: [
       { id: "a", text: "15%" },
@@ -222,7 +222,7 @@ export const LIFE_MATHEMATICS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "rate",
-    prompt: "A car covers 180 km in 3 hours. At the same speed, how long will it take to cover 300 km?",
+    prompt: "180 km in 3 h. Time for 300 km at the same speed = ?",
     representation: null,
     choices: [
       { id: "a", text: "5 hours" },
@@ -238,7 +238,7 @@ export const LIFE_MATHEMATICS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "profit-loss",
-    prompt: "A shopkeeper buys 10 pens for ₹200 in total and sells each one for ₹25. Evaluate the total profit or loss.",
+    prompt: "CP: 10 items for ₹200 total. SP: ₹25 each. Profit or loss = ?",
     representation: null,
     choices: [
       { id: "a", text: "A profit of ₹50" },

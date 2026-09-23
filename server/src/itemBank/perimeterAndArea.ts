@@ -2,6 +2,16 @@ import { Item } from "../types.js";
 
 const TOPIC = "perimeter-area";
 
+/**
+ * The Grid component renders a plain rows×cols rectangle with some number
+ * of cells shaded from the top-left — it can't draw an actual notch or
+ * L-shape. Earlier drafts of this file described "L-shaped rooms" and a
+ * second, unshown rectangle for comparison, neither of which the picture
+ * actually showed. Every Pictorial item below now only asks about what a
+ * plain shaded rectangle can really represent; composite/notched-shape
+ * reasoning is pushed to Abstract, where it's honestly just a word-free
+ * given/find computation, not a claim about a picture. See README.
+ */
 export const PERIMETER_AND_AREA_ITEMS: Item[] = [
   // --- CONCRETE (physical tiling / walking the boundary) ---
   {
@@ -57,7 +67,7 @@ export const PERIMETER_AND_AREA_ITEMS: Item[] = [
     topicId: TOPIC,
     cpa: "concrete",
     bloom: "analyze",
-    subskill: "perimeter-composite",
+    subskill: "perimeter-rectangle",
     prompt: "Ravi walks once all the way around the edge of the rectangular field shown, 5 units by 9 units. How far does he walk in total?",
     representation: { kind: "grid", rows: 5, cols: 9, shadedCells: 45, unitLabel: "units" },
     choices: [
@@ -73,7 +83,7 @@ export const PERIMETER_AND_AREA_ITEMS: Item[] = [
     topicId: TOPIC,
     cpa: "concrete",
     bloom: "evaluate",
-    subskill: "area-composite",
+    subskill: "area-rectangle",
     prompt: "Two square tabletops, each 4 units by 4 units, are pushed together to form one 4-by-8 rectangle, as shown. What is the combined area?",
     representation: { kind: "grid", rows: 4, cols: 8, shadedCells: 32, unitLabel: "sq units" },
     choices: [
@@ -85,14 +95,14 @@ export const PERIMETER_AND_AREA_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- PICTORIAL (labeled grid diagrams) ---
+  // --- PICTORIAL (plain shaded rectangle only — everything askable is visible) ---
   {
     id: "pa-p-remember",
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "remember",
     subskill: "area-rectangle",
-    prompt: "The grid shows a rectangle 6 units by 3 units. What is its area?",
+    prompt: "What is the area of the rectangle shown?",
     representation: { kind: "grid", rows: 6, cols: 3, shadedCells: 18, unitLabel: "sq units" },
     choices: [
       { id: "a", text: "18 sq units" },
@@ -108,7 +118,7 @@ export const PERIMETER_AND_AREA_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "understand",
     subskill: "perimeter-rectangle",
-    prompt: "The grid shows a rectangle 5 units by 8 units. What is its perimeter?",
+    prompt: "What is the perimeter of the rectangle shown?",
     representation: { kind: "grid", rows: 5, cols: 8, shadedCells: 40, unitLabel: "units" },
     choices: [
       { id: "a", text: "26 units" },
@@ -123,14 +133,14 @@ export const PERIMETER_AND_AREA_ITEMS: Item[] = [
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "apply",
-    subskill: "area-composite",
-    prompt: "The diagram shows an L-shaped room: a 6-by-4 unit rectangle with a 2-by-3 unit rectangle removed from one corner. What is the remaining area?",
-    representation: { kind: "grid", rows: 6, cols: 4, shadedCells: 18, unitLabel: "sq units (notch removed)" },
+    subskill: "area-rectangle",
+    prompt: "What is the shaded area?",
+    representation: { kind: "grid", rows: 9, cols: 6, shadedCells: 54, unitLabel: "sq units" },
     choices: [
-      { id: "a", text: "18 sq units" },
-      { id: "b", text: "24 sq units" },
-      { id: "c", text: "6 sq units" },
-      { id: "d", text: "30 sq units" },
+      { id: "a", text: "54 sq units" },
+      { id: "b", text: "15 sq units" },
+      { id: "c", text: "45 sq units" },
+      { id: "d", text: "108 sq units" },
     ],
     correctChoiceId: "a",
   },
@@ -139,14 +149,14 @@ export const PERIMETER_AND_AREA_ITEMS: Item[] = [
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "analyze",
-    subskill: "area-composite",
-    prompt: "A step-shaped room is a 6-by-10 unit rectangle with a 2-by-3 unit rectangular notch cut from one corner, as shown. What is its area now?",
-    representation: { kind: "grid", rows: 6, cols: 10, shadedCells: 54, unitLabel: "sq units (notch removed)" },
+    subskill: "area-scaling",
+    prompt: "If both the rows and columns of this grid were doubled, what would happen to the total area?",
+    representation: { kind: "grid", rows: 6, cols: 10, shadedCells: 60, unitLabel: "sq units" },
     choices: [
-      { id: "a", text: "54 sq units" },
-      { id: "b", text: "60 sq units" },
-      { id: "c", text: "66 sq units" },
-      { id: "d", text: "6 sq units" },
+      { id: "a", text: "It would become 4 times as large (240 sq units)" },
+      { id: "b", text: "It would double (120 sq units)" },
+      { id: "c", text: "It would stay the same" },
+      { id: "d", text: "It would triple" },
     ],
     correctChoiceId: "a",
   },
@@ -156,25 +166,25 @@ export const PERIMETER_AND_AREA_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "evaluate",
     subskill: "area-rectangle",
-    prompt: "Rectangle A is 4 units by 9 units, as shown. Rectangle B (not shown) is 6 units by 6 units. Which statement is true?",
-    representation: { kind: "grid", rows: 4, cols: 9, shadedCells: 36, unitLabel: "sq units (Rectangle A)" },
+    prompt: "The rectangle shown is 4 units by 9 units (area 36 sq units). Evaluate: could a different rectangle also have an area of 36 sq units but a smaller perimeter?",
+    representation: { kind: "grid", rows: 4, cols: 9, shadedCells: 36, unitLabel: "sq units" },
     choices: [
-      { id: "a", text: "They have equal area (36 sq units each) but different perimeters (26 vs 24 units)" },
-      { id: "b", text: "They have equal perimeters but different areas" },
-      { id: "c", text: "Both their area and perimeter are equal" },
-      { id: "d", text: "Neither their area nor their perimeter are equal" },
+      { id: "a", text: "Yes — e.g. 6 by 6 has the same area (36) but a smaller perimeter (24 vs 26)" },
+      { id: "b", text: "No, all 36-sq-unit rectangles have the same perimeter" },
+      { id: "c", text: "No, a smaller perimeter would mean less area" },
+      { id: "d", text: "Not possible to know" },
     ],
     correctChoiceId: "a",
   },
 
-  // --- ABSTRACT ---
+  // --- ABSTRACT (bare given/find — no scenario, composite shapes live only here) ---
   {
     id: "pa-a-remember",
     topicId: TOPIC,
     cpa: "abstract",
     bloom: "remember",
     subskill: "area-rectangle",
-    prompt: "What is the area of a rectangle 12 cm by 7 cm?",
+    prompt: "Area of a 12 cm × 7 cm rectangle = ?",
     representation: null,
     choices: [
       { id: "a", text: "84 sq cm" },
@@ -190,7 +200,7 @@ export const PERIMETER_AND_AREA_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "perimeter-rectangle",
-    prompt: "What is the perimeter of a rectangle 15 m by 9 m?",
+    prompt: "Perimeter of a 15 m × 9 m rectangle = ?",
     representation: null,
     choices: [
       { id: "a", text: "48 m" },
@@ -206,7 +216,7 @@ export const PERIMETER_AND_AREA_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "area-composite",
-    prompt: "A room is L-shaped: an 8 m by 6 m rectangle with a 3 m by 2 m rectangle cut from one corner. What is the room's floor area?",
+    prompt: "Area = (8 m × 6 m) − (3 m × 2 m) = ?",
     representation: null,
     choices: [
       { id: "a", text: "42 sq m" },
@@ -222,13 +232,13 @@ export const PERIMETER_AND_AREA_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "perimeter-composite",
-    prompt: "A rectangular plot 20 m by 15 m has a square pond of side 5 m built entirely inside it, not touching the plot's edges. How does the pond change the plot's outer perimeter?",
+    prompt: "A 20 m × 15 m rectangle's perimeter. A 5 m square sits entirely inside it, not touching any edge. Does the outer perimeter change?",
     representation: null,
     choices: [
-      { id: "a", text: "It doesn't change it — the pond is inside, not on the boundary" },
-      { id: "b", text: "The perimeter increases by 20 m" },
-      { id: "c", text: "The perimeter decreases by 20 m" },
-      { id: "d", text: "The perimeter doubles" },
+      { id: "a", text: "No — the square is inside, not on the boundary" },
+      { id: "b", text: "Yes, it increases by 20 m" },
+      { id: "c", text: "Yes, it decreases by 20 m" },
+      { id: "d", text: "Yes, it doubles" },
     ],
     correctChoiceId: "a",
   },
@@ -238,7 +248,7 @@ export const PERIMETER_AND_AREA_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "area-rectangle",
-    prompt: "A rectangular garden has an area of 96 sq m and a length of 12 m. What is its width, and what is its perimeter?",
+    prompt: "Area = 96 sq m, length = 12 m. Width = ? Perimeter = ?",
     representation: null,
     choices: [
       { id: "a", text: "Width 8 m, perimeter 40 m" },

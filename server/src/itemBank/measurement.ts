@@ -85,14 +85,14 @@ export const MEASUREMENT_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- PICTORIAL (measuring scale as a number line) ---
+  // --- PICTORIAL (measuring scale only — read straight off the marks) ---
   {
     id: "mea-p-remember",
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "remember",
     subskill: "unit-conversion-length",
-    prompt: "A distance of 3 km is marked on the scale. How many metres is that?",
+    prompt: "How many metres does the marked distance equal?",
     representation: { kind: "number-line", min: 0, max: 5000, step: 1000, markers: [{ value: 3000, label: "3 km" }] },
     choices: [
       { id: "a", text: "3,000 m" },
@@ -108,7 +108,7 @@ export const MEASUREMENT_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "understand",
     subskill: "unit-conversion-mass",
-    prompt: "A mass of 2.5 kg is marked on the scale. How many grams is that?",
+    prompt: "How many grams does the marked mass equal?",
     representation: { kind: "number-line", min: 0, max: 5, step: 1, markers: [{ value: 2.5, label: "2.5 kg" }] },
     choices: [
       { id: "a", text: "2,500 g" },
@@ -124,7 +124,7 @@ export const MEASUREMENT_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "apply",
     subskill: "mixed-units-arithmetic",
-    prompt: "The scale shows two readings: 1,250 g and 1,750 g. What is the difference between them?",
+    prompt: "What is the difference between the two marked readings?",
     representation: {
       kind: "number-line",
       min: 0,
@@ -150,7 +150,7 @@ export const MEASUREMENT_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "analyze",
     subskill: "unit-conversion-volume",
-    prompt: "A container is filled to 1.5 L, as marked on the scale. How many millilitres is that, and is it more or less than 1,200 ml?",
+    prompt: "How many millilitres does the marked point equal, and is it more or less than 1,200 ml?",
     representation: { kind: "number-line", min: 0, max: 2, step: 0.5, markers: [{ value: 1.5, label: "1.5 L" }] },
     choices: [
       { id: "a", text: "1,500 ml — more than 1,200 ml" },
@@ -166,7 +166,7 @@ export const MEASUREMENT_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "evaluate",
     subskill: "mixed-units-arithmetic",
-    prompt: "A plank measures 2.4 m, as marked on the scale. A builder needs pieces of exactly 80 cm each. How many full pieces can be cut from it?",
+    prompt: "Using the marked length, how many 80 cm pieces can be cut from it?",
     representation: { kind: "number-line", min: 0, max: 3, step: 0.4, markers: [{ value: 2.4, label: "2.4 m" }] },
     choices: [
       { id: "a", text: "3" },
@@ -177,14 +177,14 @@ export const MEASUREMENT_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- ABSTRACT ---
+  // --- ABSTRACT (bare numeric/symbolic — no scenario) ---
   {
     id: "mea-a-remember",
     topicId: TOPIC,
     cpa: "abstract",
     bloom: "remember",
     subskill: "unit-conversion-length",
-    prompt: "Convert 4.5 km to metres.",
+    prompt: "4.5 km in metres = ?",
     representation: null,
     choices: [
       { id: "a", text: "4,500 m" },
@@ -200,7 +200,7 @@ export const MEASUREMENT_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "unit-conversion-mass",
-    prompt: "Convert 3,200 g into kilograms and grams.",
+    prompt: "3,200 g in kg and g = ?",
     representation: null,
     choices: [
       { id: "a", text: "3 kg 200 g" },
@@ -216,7 +216,7 @@ export const MEASUREMENT_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "unit-conversion-volume",
-    prompt: "A bottle holds 750 ml. How many such bottles are needed to make up 6 litres?",
+    prompt: "6 L ÷ 750 ml = ? bottles",
     representation: null,
     choices: [
       { id: "a", text: "8" },
@@ -232,7 +232,7 @@ export const MEASUREMENT_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "mixed-units-arithmetic",
-    prompt: "A wire 3 m 25 cm long is cut into 5 equal pieces. How long is each piece, in centimetres?",
+    prompt: "3 m 25 cm ÷ 5 = ? (in cm)",
     representation: null,
     choices: [
       { id: "a", text: "65 cm" },
@@ -248,7 +248,7 @@ export const MEASUREMENT_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "mixed-units-arithmetic",
-    prompt: "A recipe needs 1 kg 250 g of flour, but only a 900 g bag is available. How much more flour is needed, in grams?",
+    prompt: "1 kg 250 g − 900 g = ?",
     representation: null,
     choices: [
       { id: "a", text: "350 g" },

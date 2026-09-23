@@ -96,14 +96,14 @@ export const FOUR_OPERATIONS_FRACTIONS_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- PICTORIAL (word-problem / model-setup heavy, per design doc) ---
+  // --- PICTORIAL (bar model only — every fact needed is already labeled on the bar) ---
   {
     id: "fo-p-remember",
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "remember",
     subskill: "add-subtract-like",
-    prompt: "The bar model shows 3/4 shaded out of a whole bar split into 4 equal parts. What fraction is NOT shaded?",
+    prompt: "What fraction of the bar is NOT shaded?",
     representation: { kind: "bar-model", totalLabel: "1 whole", parts: 4, highlightParts: 3 },
     choices: [
       { id: "a", text: "1/4" },
@@ -119,7 +119,7 @@ export const FOUR_OPERATIONS_FRACTIONS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "understand",
     subskill: "add-subtract-like",
-    prompt: "Raj eats 2/6 of a cake and Mia eats 1/6 of the same cake, shown on the bar model. What fraction of the cake did they eat together?",
+    prompt: "What fraction of the bar do the two shaded groups take up together?",
     representation: {
       kind: "bar-model",
       totalLabel: "1 cake",
@@ -143,10 +143,10 @@ export const FOUR_OPERATIONS_FRACTIONS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "apply",
     subskill: "word-problem-setup",
-    prompt: "A ribbon is 5/6 m long. Priya uses 1/3 m of it. Using the bar model, how much ribbon is left?",
+    prompt: "How much of the bar's total remains unused, based on the shaded groups?",
     representation: {
       kind: "bar-model",
-      totalLabel: "5/6 m ribbon (the 6th part is not part of the ribbon at all)",
+      totalLabel: "5/6 m ribbon (6th part is not part of the ribbon at all)",
       parts: 6,
       highlightGroups: [
         { count: 2, label: "used: 1/3 m (2/6)" },
@@ -167,10 +167,10 @@ export const FOUR_OPERATIONS_FRACTIONS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "analyze",
     subskill: "word-problem-setup",
-    prompt: "A jug has 3/4 L of juice, shown on the bar model (drawn in eighths so the half-pour splits evenly). Half of it is poured into a glass. Which amount was poured?",
+    prompt: "How much was poured into the glass, based on the shaded group?",
     representation: {
       kind: "bar-model",
-      totalLabel: "3/4 L juice = 6/8 L (the last 2/8 is not part of the juice at all)",
+      totalLabel: "3/4 L juice = 6/8 L (last 2/8 is not part of the juice at all)",
       parts: 8,
       highlightGroups: [
         { count: 3, label: "poured into glass: 3/8 L" },
@@ -191,18 +191,18 @@ export const FOUR_OPERATIONS_FRACTIONS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "evaluate",
     subskill: "word-problem-setup",
-    prompt: "Tom has 2/3 of a pizza. He gives 1/4 of his share to his sister. Which bar-model setup correctly represents 'his share' before finding 1/4 of it?",
+    prompt: "The shaded part is Tom's share of the pizza. To find 1/4 of his share, what should happen to it?",
     representation: { kind: "bar-model", totalLabel: "1 pizza", parts: 3, highlightParts: 2 },
     choices: [
-      { id: "a", text: "A bar showing the whole pizza split into 3 parts, with 2 of those parts marked as Tom's share, then split further into 4" },
-      { id: "b", text: "A bar split into 4 parts directly, ignoring the 2/3" },
-      { id: "c", text: "A bar split into 3 parts representing the sister's share" },
-      { id: "d", text: "A bar split into 7 parts (3 + 4)" },
+      { id: "a", text: "Split the shaded 2 parts into 4 equal smaller pieces and take 1 of them" },
+      { id: "b", text: "Split the whole bar into 4 parts directly, ignoring the shading" },
+      { id: "c", text: "Use the 1 unshaded part instead" },
+      { id: "d", text: "Split the bar into 7 total parts (3 + 4)" },
     ],
     correctChoiceId: "a",
   },
 
-  // --- ABSTRACT (pure computation) ---
+  // --- ABSTRACT (bare computation — no scenario) ---
   {
     id: "fo-a-remember",
     topicId: TOPIC,
@@ -225,7 +225,7 @@ export const FOUR_OPERATIONS_FRACTIONS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "add-subtract-unlike",
-    prompt: "Why is 1/2 + 1/3 NOT equal to 2/5?",
+    prompt: "Why isn't 1/2 + 1/3 = 2/5?",
     representation: null,
     choices: [
       { id: "a", text: "Because fractions need a common denominator before adding numerators" },
@@ -241,7 +241,7 @@ export const FOUR_OPERATIONS_FRACTIONS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "add-subtract-unlike",
-    prompt: "Compute: 5/6 − 1/3 = ?",
+    prompt: "5/6 − 1/3 = ?",
     representation: null,
     choices: [
       { id: "a", text: "1/2" },
@@ -273,7 +273,7 @@ export const FOUR_OPERATIONS_FRACTIONS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "multiply-fractions",
-    prompt: "A student says: '3/4 × 2/3 will always give a bigger number than 3/4, because multiplication makes things bigger.' Evaluate this claim.",
+    prompt: "Claim: '3/4 × 2/3 will always give a bigger number than 3/4, because multiplication makes things bigger.' Evaluate this claim.",
     representation: null,
     choices: [
       { id: "a", text: "False — multiplying by a fraction less than 1 makes the result smaller (3/4 × 2/3 = 1/2, which is less than 3/4)" },

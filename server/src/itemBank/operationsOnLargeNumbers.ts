@@ -85,14 +85,14 @@ export const OPERATIONS_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- PICTORIAL (array / grid model) ---
+  // --- PICTORIAL (array / grid model only — no restated dimensions) ---
   {
     id: "oln-p-remember",
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "remember",
     subskill: "equal-groups-multiplication",
-    prompt: "The grid shows an array with 4 rows and 6 columns, all shaded. Which multiplication fact does it represent?",
+    prompt: "Which multiplication fact does this array represent?",
     representation: { kind: "grid", rows: 4, cols: 6, shadedCells: 24, unitLabel: "squares" },
     choices: [
       { id: "a", text: "4 × 6 = 24" },
@@ -108,7 +108,7 @@ export const OPERATIONS_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "understand",
     subskill: "equal-groups-multiplication",
-    prompt: "The grid array has 5 rows and 9 columns, all shaded. How many unit squares are shaded in total?",
+    prompt: "How many unit squares are shaded in total?",
     representation: { kind: "grid", rows: 5, cols: 9, shadedCells: 45, unitLabel: "squares" },
     choices: [
       { id: "a", text: "45" },
@@ -124,12 +124,12 @@ export const OPERATIONS_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "apply",
     subskill: "order-of-operations",
-    prompt: "The array shows 7 rows of 12. Which is the easiest way to compute the total by breaking 12 apart first?",
+    prompt: "What is the easiest way to find the array's total by breaking one side apart first?",
     representation: { kind: "grid", rows: 7, cols: 12, shadedCells: 84, unitLabel: "squares" },
     choices: [
       { id: "a", text: "(7 × 10) + (7 × 2) = 70 + 14 = 84" },
       { id: "b", text: "7 + 12 = 19" },
-      { id: "c", text: "7 × 12 cannot be broken into smaller parts" },
+      { id: "c", text: "The array total cannot be broken into smaller parts" },
       { id: "d", text: "(7 × 1) × (2 × 10) = 140" },
     ],
     correctChoiceId: "a",
@@ -140,10 +140,10 @@ export const OPERATIONS_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "analyze",
     subskill: "estimation",
-    prompt: "The grid represents a large array of 19 rows by 21 columns. Which is the best estimate of the total, rounding each number first?",
+    prompt: "Which is the best estimate of the array's total, rounding its side lengths first?",
     representation: { kind: "grid", rows: 19, cols: 21, shadedCells: 190, unitLabel: "squares" },
     choices: [
-      { id: "a", text: "About 400 (rounding both to 20 → 20 × 20)" },
+      { id: "a", text: "About 400 (rounding both sides to 20 → 20 × 20)" },
       { id: "b", text: "About 21" },
       { id: "c", text: "About 40" },
       { id: "d", text: "About 4,000" },
@@ -156,7 +156,7 @@ export const OPERATIONS_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "evaluate",
     subskill: "order-of-operations",
-    prompt: "The diagram shows one 6-row-by-4-column array, repeated 3 times. Which expression correctly matches the total shown?",
+    prompt: "Which expression matches the total shown?",
     representation: { kind: "grid", rows: 6, cols: 4, shadedCells: 24, unitLabel: "squares (× 3 identical arrays)" },
     choices: [
       { id: "a", text: "3 × (6 × 4) = 72" },
@@ -167,14 +167,14 @@ export const OPERATIONS_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- ABSTRACT (genuinely large numbers) ---
+  // --- ABSTRACT (bare numeric/symbolic — no scenario) ---
   {
     id: "oln-a-remember",
     topicId: TOPIC,
     cpa: "abstract",
     bloom: "remember",
     subskill: "order-of-operations",
-    prompt: "In 250,000 + 40,000 × 2, which part is computed first?",
+    prompt: "250,000 + 40,000 × 2 — which part is computed first?",
     representation: null,
     choices: [
       { id: "a", text: "40,000 × 2" },
@@ -190,7 +190,7 @@ export const OPERATIONS_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "multiplication-division",
-    prompt: "What is 12,000 × 5?",
+    prompt: "12,000 × 5 = ?",
     representation: null,
     choices: [
       { id: "a", text: "60,000" },
@@ -206,7 +206,7 @@ export const OPERATIONS_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "addition-subtraction",
-    prompt: "A factory produced 458,300 toys one month and 372,650 the next. How many toys in total across both months?",
+    prompt: "458,300 + 372,650 = ?",
     representation: null,
     choices: [
       { id: "a", text: "830,950" },
@@ -238,7 +238,7 @@ export const OPERATIONS_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "estimation",
-    prompt: "A stadium sold 289,700 tickets over 3 days, roughly evenly. Which is the best estimate of tickets sold per day, using compatible numbers?",
+    prompt: "289,700 ÷ 3 ≈ ? (best estimate, using compatible numbers)",
     representation: null,
     choices: [
       { id: "a", text: "About 100,000 (rounding to 300,000 ÷ 3)" },

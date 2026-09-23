@@ -85,14 +85,14 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- PICTORIAL (grid map) ---
+  // --- PICTORIAL (grid map only — read positions straight off the markers) ---
   {
     id: "sd-p-remember",
     topicId: TOPIC,
     cpa: "pictorial",
     bloom: "remember",
     subskill: "compass-directions",
-    prompt: "On the map grid, which direction is 'N' from 'You'?",
+    prompt: "Which direction is 'N' from 'You'?",
     representation: {
       kind: "grid",
       rows: 5,
@@ -116,7 +116,7 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "understand",
     subskill: "map-scale",
-    prompt: "The map grid shows Town A and Town B, 4 squares apart, where each square represents 2 km. What is the real distance between them?",
+    prompt: "What is the real distance between Town A and Town B?",
     representation: {
       kind: "grid",
       rows: 1,
@@ -141,7 +141,7 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "apply",
     subskill: "distance-calculation",
-    prompt: "On the grid, a path goes from Start to Mid (3 squares East), then Mid to End (3 squares South). If each square = 1 km, what is the total distance walked?",
+    prompt: "Following the path Start → Mid → End along the grid lines, what is the total distance walked?",
     representation: {
       kind: "grid",
       rows: 4,
@@ -167,7 +167,7 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "analyze",
     subskill: "bearings",
-    prompt: "Camp is 2 squares North and 2 squares East of You, as marked. Which compass direction best describes this?",
+    prompt: "Which compass direction best describes Camp's position relative to You?",
     representation: {
       kind: "grid",
       rows: 5,
@@ -191,7 +191,7 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "evaluate",
     subskill: "map-scale",
-    prompt: "Points A and B are marked on a grid where each square = 5 km. Walking along the grid lines from A to B covers 4 squares total. Evaluate the real walking distance.",
+    prompt: "Walking along the grid lines from A to B, evaluate the real distance covered.",
     representation: {
       kind: "grid",
       rows: 3,
@@ -211,14 +211,14 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     correctChoiceId: "a",
   },
 
-  // --- ABSTRACT ---
+  // --- ABSTRACT (bare given/find — no scenario) ---
   {
     id: "sd-a-remember",
     topicId: TOPIC,
     cpa: "abstract",
     bloom: "remember",
     subskill: "compass-directions",
-    prompt: "Which direction is directly opposite to South-West?",
+    prompt: "Direction directly opposite to South-West = ?",
     representation: null,
     choices: [
       { id: "a", text: "North-East" },
@@ -234,7 +234,7 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "map-scale",
-    prompt: "A map has a scale of 1 cm : 5 km. If two towns are 6 cm apart on the map, what is the real distance between them?",
+    prompt: "Scale 1 cm : 5 km. Map distance 6 cm. Real distance = ?",
     representation: null,
     choices: [
       { id: "a", text: "30 km" },
@@ -250,7 +250,7 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "bearings",
-    prompt: "A ship sails on a bearing of 090°. Which compass direction is it heading?",
+    prompt: "Bearing 090° = which compass direction?",
     representation: null,
     choices: [
       { id: "a", text: "East" },
@@ -266,7 +266,7 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "distance-calculation",
-    prompt: "A cyclist rides 8 km North, then 6 km East — two legs at right angles to each other. What is the straight-line distance back to the start?",
+    prompt: "8 km North, then 6 km East (right angle). Straight-line distance back to start = ?",
     representation: null,
     choices: [
       { id: "a", text: "10 km" },
@@ -282,7 +282,7 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "map-scale",
-    prompt: "A room measuring 8 m by 6 m is drawn on a plan with a scale of 1 cm : 2 m. Evaluate the plan's dimensions in cm.",
+    prompt: "Room 8 m × 6 m. Plan scale 1 cm : 2 m. Plan dimensions = ?",
     representation: null,
     choices: [
       { id: "a", text: "4 cm by 3 cm" },
