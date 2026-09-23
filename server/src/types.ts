@@ -40,7 +40,38 @@ export interface ConcreteSpec {
   segments?: { icon: string; count: number; label: string }[];
 }
 
-export type Representation = BarModelSpec | ConcreteSpec | null;
+export interface NumberLineSpec {
+  kind: "number-line";
+  min: number;
+  max: number;
+  step: number;
+  markers: { value: number; label: string }[];
+  /** Shades a sub-range of the line, e.g. to show "between 4,000 and 5,000" while rounding. */
+  highlightRange?: [number, number];
+}
+
+export interface GridSpec {
+  kind: "grid";
+  rows: number;
+  cols: number;
+  unitLabel?: string;
+  /** Shades this many cells in reading order from the top-left — for area/array/factor-pair models. */
+  shadedCells?: number;
+  /** Named points on the grid (1-indexed row/col) — for simple coordinate/map-style items. */
+  markers?: { row: number; col: number; label: string }[];
+}
+
+export type ShapeKind = "triangle" | "right-triangle" | "rectangle" | "square" | "circle" | "pentagon" | "parallelogram";
+
+export interface ShapeSpec {
+  kind: "shape";
+  shape: ShapeKind;
+  sideLabels?: string[];
+  angleLabels?: string[];
+  note?: string;
+}
+
+export type Representation = BarModelSpec | ConcreteSpec | NumberLineSpec | GridSpec | ShapeSpec | null;
 
 export interface Choice {
   id: string;

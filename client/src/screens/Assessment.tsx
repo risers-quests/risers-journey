@@ -3,6 +3,9 @@ import { getNextQuestion, submitAnswer } from "../api";
 import { NextQuestionResponse } from "../types";
 import { BarModel } from "../components/BarModel";
 import { ConcreteObjects } from "../components/ConcreteObjects";
+import { NumberLine } from "../components/NumberLine";
+import { Grid } from "../components/Grid";
+import { Shape } from "../components/Shape";
 import { CPABloomGrid } from "../components/CPABloomGrid";
 import { SessionMap } from "../components/SessionMap";
 import { EngineTrace } from "../components/EngineTrace";
@@ -107,6 +110,9 @@ export function Assessment({
 
         {item.representation?.kind === "bar-model" && <BarModel spec={item.representation} />}
         {item.representation?.kind === "concrete" && <ConcreteObjects spec={item.representation} />}
+        {item.representation?.kind === "number-line" && <NumberLine spec={item.representation} />}
+        {item.representation?.kind === "grid" && <Grid spec={item.representation} />}
+        {item.representation?.kind === "shape" && <Shape spec={item.representation} />}
 
         <div className="choices">
           {item.choices.map((choice) => (

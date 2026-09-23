@@ -20,7 +20,35 @@ export interface ConcreteSpec {
   segments?: { icon: string; count: number; label: string }[];
 }
 
-export type Representation = BarModelSpec | ConcreteSpec | null;
+export interface NumberLineSpec {
+  kind: "number-line";
+  min: number;
+  max: number;
+  step: number;
+  markers: { value: number; label: string }[];
+  highlightRange?: [number, number];
+}
+
+export interface GridSpec {
+  kind: "grid";
+  rows: number;
+  cols: number;
+  unitLabel?: string;
+  shadedCells?: number;
+  markers?: { row: number; col: number; label: string }[];
+}
+
+export type ShapeKind = "triangle" | "right-triangle" | "rectangle" | "square" | "circle" | "pentagon" | "parallelogram";
+
+export interface ShapeSpec {
+  kind: "shape";
+  shape: ShapeKind;
+  sideLabels?: string[];
+  angleLabels?: string[];
+  note?: string;
+}
+
+export type Representation = BarModelSpec | ConcreteSpec | NumberLineSpec | GridSpec | ShapeSpec | null;
 
 export interface ClientChoice {
   id: string;

@@ -288,6 +288,34 @@ button {
 .mixed-icons { margin-right: 4px; }
 .concrete-mixed-legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.78rem; color: var(--ink-soft); }
 
+/* ---- Number line ---- */
+.number-line { margin: 18px 0 34px; padding: 0 10px; }
+.nl-track { position: relative; height: 2px; margin: 30px 0; }
+.nl-baseline { position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--line); }
+.nl-highlight { position: absolute; top: -3px; height: 8px; background: #fdf3e8; border: 1px solid var(--warm-amber); border-radius: 4px; }
+.nl-tick { position: absolute; top: -4px; transform: translateX(-50%); text-align: center; }
+.nl-tick-mark { width: 2px; height: 10px; background: var(--ink-soft); margin: 0 auto; }
+.nl-tick-label { font-size: 0.68rem; color: var(--ink-soft); margin-top: 4px; white-space: nowrap; }
+.nl-marker { position: absolute; top: -9px; transform: translateX(-50%); text-align: center; }
+.nl-marker-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--soft-clay); border: 2px solid white; box-shadow: 0 0 0 1.5px var(--soft-clay); margin: 0 auto; }
+.nl-marker-label { font-size: 0.74rem; font-weight: 700; color: var(--soft-clay); margin-top: 6px; white-space: nowrap; }
+
+/* ---- Grid diagram (area / array / map) ---- */
+.grid-diagram { margin: 10px 0 18px; }
+.grid-diagram-label { font-size: 0.78rem; color: var(--ink-soft); margin-bottom: 6px; font-weight: 600; }
+.grid-diagram-grid { display: grid; gap: 2px; max-width: 100%; border: 1.5px solid var(--deep-teal); border-radius: 6px; padding: 4px; background: #dce9e4; }
+.grid-diagram-cell { aspect-ratio: 1; background: #f3efe4; border-radius: 2px; position: relative; display: flex; align-items: center; justify-content: center; min-width: 8px; }
+.grid-diagram-cell.shaded { background: var(--deep-teal); }
+.grid-diagram-cell.marked { background: var(--warm-amber); }
+.grid-diagram-marker { position: absolute; font-size: 0.62rem; font-weight: 700; color: var(--ink); white-space: nowrap; top: 100%; margin-top: 2px; background: white; padding: 1px 4px; border-radius: 4px; border: 1px solid var(--line); z-index: 1; }
+
+/* ---- Shape diagram (geometry / symmetry) ---- */
+.shape-diagram { margin: 10px 0 18px; max-width: 260px; }
+.shape-svg { width: 100%; height: auto; }
+.shape-outline { fill: #eef6f3; stroke: var(--deep-teal); stroke-width: 3; }
+.shape-label { font-size: 11px; font-weight: 700; fill: var(--soft-clay); font-family: var(--font-sans); }
+.shape-note { font-size: 0.76rem; color: var(--ink-soft); margin-top: 6px; }
+
 /* ---- Side panel ---- */
 .panel-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-soft); margin-bottom: 10px; }
 .panel-section { margin-bottom: 18px; }
@@ -370,7 +398,7 @@ button {
 .summary-card.skill .num { color: var(--soft-clay); }
 .summary-card.procedural .num { color: var(--muted-violet); }
 
-.pyramid-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 26px; }
+.pyramid-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 26px; }
 @media (max-width: 800px) { .pyramid-row { grid-template-columns: 1fr; } }
 .pyramid-card { background: var(--card-bg); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
 .pyramid-card h4 { font-size: 0.95rem; margin-bottom: 2px; }

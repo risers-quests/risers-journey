@@ -1,9 +1,38 @@
 import { Item, CPAStage, BloomLevel } from "../types.js";
+import { MORE_ON_LARGE_NUMBERS_ITEMS } from "./moreOnLargeNumbers.js";
+import { OPERATIONS_ON_LARGE_NUMBERS_ITEMS } from "./operationsOnLargeNumbers.js";
+import { FACTORS_AND_MULTIPLES_ITEMS } from "./factorsAndMultiples.js";
 import { FRACTIONS_DIVISION_ITEMS } from "./fractionsDivision.js";
 import { FOUR_OPERATIONS_FRACTIONS_ITEMS } from "./fourOperationsFractions.js";
+import { DECIMALS_ITEMS } from "./decimals.js";
+import { GEOMETRY_ITEMS } from "./geometry.js";
+import { MEASUREMENT_ITEMS } from "./measurement.js";
+import { PERIMETER_AND_AREA_ITEMS } from "./perimeterAndArea.js";
+import { VOLUME_AND_NETS_ITEMS } from "./volumeAndNets.js";
+import { TIME_AND_TEMPERATURE_ITEMS } from "./timeAndTemperature.js";
+import { LIFE_MATHEMATICS_ITEMS } from "./lifeMathematics.js";
+import { SCALES_AND_DIRECTIONS_ITEMS } from "./scalesAndDirections.js";
+import { DATA_HANDLING_ITEMS } from "./dataHandling.js";
+import { PATTERNS_AND_SYMMETRY_ITEMS } from "./patternsAndSymmetry.js";
 import { TOPICS } from "./topics.js";
 
-export const ALL_ITEMS: Item[] = [...FRACTIONS_DIVISION_ITEMS, ...FOUR_OPERATIONS_FRACTIONS_ITEMS];
+export const ALL_ITEMS: Item[] = [
+  ...MORE_ON_LARGE_NUMBERS_ITEMS,
+  ...OPERATIONS_ON_LARGE_NUMBERS_ITEMS,
+  ...FACTORS_AND_MULTIPLES_ITEMS,
+  ...FRACTIONS_DIVISION_ITEMS,
+  ...FOUR_OPERATIONS_FRACTIONS_ITEMS,
+  ...DECIMALS_ITEMS,
+  ...GEOMETRY_ITEMS,
+  ...MEASUREMENT_ITEMS,
+  ...PERIMETER_AND_AREA_ITEMS,
+  ...VOLUME_AND_NETS_ITEMS,
+  ...TIME_AND_TEMPERATURE_ITEMS,
+  ...LIFE_MATHEMATICS_ITEMS,
+  ...SCALES_AND_DIRECTIONS_ITEMS,
+  ...DATA_HANDLING_ITEMS,
+  ...PATTERNS_AND_SYMMETRY_ITEMS,
+];
 
 export { TOPICS };
 

@@ -56,7 +56,7 @@ const TAG_RECOMMENDATION: Record<DiagnosisTag, string> = {
   not_yet_reached: "Will be assessed once its prerequisite gap closes.",
 };
 
-const ALL_STRANDS = ["Number & Algebra", "Measurement & Geometry", "Ratio & Proportion"];
+const ALL_STRANDS = ["Number & Algebra", "Measurement & Geometry", "Ratio & Proportion", "Data Handling"];
 
 function fmtSec(ms: number) {
   return `${(ms / 1000).toFixed(1)}s`;

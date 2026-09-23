@@ -5,9 +5,10 @@ import { BloomPyramid } from "../components/BloomPyramid";
 import { ChildSummary } from "../components/ChildSummary";
 
 const STRAND_SUB: Record<string, string> = {
-  "Number & Algebra": "Whole numbers, four operations, fractions, decimals",
-  "Measurement & Geometry": "Area of triangle, volume, angles",
-  "Ratio & Proportion": "Percentage, rate",
+  "Number & Algebra": "Large numbers, factors & multiples, fractions, decimals",
+  "Measurement & Geometry": "Angles, area, volume, time, patterns & symmetry",
+  "Ratio & Proportion": "Percentage, rate, scale",
+  "Data Handling": "Tables, graphs, averages",
 };
 
 const TAG_LABEL: Record<string, string> = {

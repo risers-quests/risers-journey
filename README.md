@@ -7,9 +7,19 @@ topic to tag each topic as **Mastered**, **Skill gap**, or **Procedural,
 not conceptual** — instead of a single score — plus a separate,
 standalone math-anxiety self-report questionnaire.
 
-This build covers the two pilot topics the design doc itself recommends
-starting with (Section 10, "Suggested immediate next step"): **Fractions
-and Division** and **Four Operations of Fractions**.
+This build covers the **full Grade 5 syllabus**, in the same order as the
+textbook's own table of contents — 15 topics covering all 14 chapters (the
+"Fractions" chapter is split into the two topics the pilot originally
+started with, per the design doc's Section 10 "suggested immediate next
+step"): More on Large Numbers → Operations on Large Numbers → Factors and
+Multiples → Fractions and Division → Four Operations of Fractions →
+Decimals → Geometry → Measurement → Perimeter and Area → Volume and Nets
+of Solids → Time and Temperature → Life Mathematics → Scales and
+Directions → Data Handling → Patterns and Symmetry. Each topic depends on
+the one directly before it, so the engine only unlocks a topic once its
+immediate predecessor is mastered — a single linear building-blocks chain
+matching how the textbook sequences the year (see `itemBank/topics.ts` for
+why this is a deliberate simplification of the "true" prerequisite graph).
 
 **Methodology note (read this before the rest):** the original design doc
 proposed detecting anxiety *live, from within the math questions*, via a
@@ -222,12 +232,38 @@ Sources consulted for this change:
 - [Time on Their Side: visual timers and anticipatory anxiety](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12731990/)
 - [Distinguishing math learning and evaluation anxiety (competing theoretical models)](https://pmc.ncbi.nlm.nih.gov/articles/PMC13326596/)
 
+## The item bank's four representation kinds
+
+The original two topics only ever needed two diagram types — a bar model
+(`BarModelSpec`) for part-whole/sharing relationships, and grouped icons
+(`ConcreteSpec`) for equal-groups scenarios — because both were fraction
+topics. Covering the full syllabus meant three more topics don't fit
+either: place value, geometry, measurement, time, and maps aren't
+part-whole relationships. Rather than force those into a fraction-shaped
+diagram, `server/src/types.ts` adds three more `Representation` kinds,
+each with a matching client component:
+
+| Kind | Component | Used for |
+|---|---|---|
+| `number-line` | `NumberLine.tsx` | Large numbers (rounding/ordering), decimals, measurement scales, time (24-hour line), temperature |
+| `grid` | `Grid.tsx` | Multiplication/factor arrays, area, volume (one layer + stacking described in words), simple coordinate maps |
+| `shape` | `Shape.tsx` | Geometry (labeled angles/sides), symmetry |
+
+Two subskills still fall back to plain text (`representation: null`) even
+at the Concrete/Pictorial stages, the same as every Abstract-stage item
+across the whole bank: "angles on a line/at a point" in Geometry isn't a
+shape at all, and line graphs in Data Handling have no dedicated diagram
+in this build. Forcing either into a fabricated visual seemed less honest
+than a clearly worded prompt — see the comments in `geometry.ts` and
+`dataHandling.ts`.
+
 ## Known simplifications (pilot scope, matching the doc's own open questions)
 
-- **Item bank depth**: 1 authored item per CPA×Bloom cell (15 per topic, 30
-  total) rather than the multiple-items-per-cell the doc flags as an open
-  statistical-confidence question (Section 10). The engine falls back
-  gracefully but a revisited cell currently repeats its one item.
+- **Item bank depth**: 1 authored item per CPA×Bloom cell (15 per topic,
+  225 total across all 15 topics) rather than the multiple-items-per-cell
+  the doc flags as an open statistical-confidence question (Section 10).
+  The engine falls back gracefully but a revisited cell currently repeats
+  its one item.
 - **Lag threshold**: hard-coded at 4 consecutive struggles
   (`LAG_THRESHOLD` in `skillEngine.ts`), still just a starting assumption,
   not a validated number — needs real piloting.
@@ -235,8 +271,22 @@ Sources consulted for this change:
   norms — see *Two separate instruments* above.
 - **No auth, no multi-session history, no teacher/remediation-system
   integration** — all flagged as unresolved in Section 10.
-- Only 2 of the 12 Grade 5 topics are implemented; the report's other two
-  strand pyramids render as "Not yet assessed in this pilot."
+- **The prerequisite graph is a single linear chain**, matching the
+  textbook's own chapter order, rather than the "real" dependency graph
+  (e.g. Perimeter and Area doesn't strictly require Time and Temperature
+  first). This makes one weak topic block everything after it in a single
+  sitting — a reasonable tradeoff for a pilot testing "does the engine
+  correctly diagnose one topic," but worth revisiting before this is used
+  to plan a full year's remediation order.
+- **Geometry/Patterns/Data Handling lean on lighter representations** than
+  the original two fraction topics — see *The item bank's four
+  representation kinds* above.
+- **The default 40-question session cap** (`maxQuestions` in `state.ts`)
+  was sized for a 2-topic pilot; across all 15 topics a child who clears
+  everything on the first try reaches roughly topic 6–7 before the cap,
+  same as any single diagnostic sitting wouldn't cover a full year's
+  material in one go — not a bug, but worth knowing when reading a report
+  with several "Not yet reached" topics.
 
 ## Project layout
 
@@ -245,7 +295,8 @@ server/
   api/index.ts      Vercel serverless entry point (exports the Express app)
   vercel.json        rewrites every request to api/index.ts
   src/
-    itemBank/       topics + skill items + anxietyQuestionnaire.ts
+    itemBank/       topics.ts (the 15-topic prerequisite chain) + one file
+                    per topic's 15 CPA×Bloom items + anxietyQuestionnaire.ts
     engine/         state, skillEngine, signalEngine (raw timing only), synthesis, view
     db.ts           Turso/libSQL client + schema migration
     sessionStore.ts persistence layer (async)
@@ -256,8 +307,9 @@ server/
 client/
   src/
     screens/        Setup, Assessment, AnxietyCheck, Report
-    components/      BarModel, ConcreteObjects, CPABloomGrid, SessionMap,
-                     EngineTrace, PulseCheck, BloomPyramid, ChildSummary
+    components/      BarModel, ConcreteObjects, NumberLine, Grid, Shape,
+                     CPABloomGrid, SessionMap, EngineTrace, PulseCheck,
+                     BloomPyramid, ChildSummary
     styles/theme.css
     api.ts          fetch layer (VITE_API_BASE_URL-aware)
 ```
