@@ -1,0 +1,17 @@
+/* Staff — Quests detail page. Reuses dashboard.css's .dash-header/.dash-crumb
+   and .quest-badge status-* classes, and eot2.css's picker/field/button
+   styles; this file is just the week-row list. */
+.staff-quest-list {
+  background: #fff; border: 1.5px solid var(--border); border-radius: 16px;
+  padding: 6px 22px; box-shadow: 0 2px 10px rgba(0,0,0,.03);
+}
+.staff-quest-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  padding: 16px 0; border-bottom: 1px solid var(--border);
+}
+.staff-quest-row:last-child { border-bottom: none; }
+.staff-quest-week { flex: 1; min-width: 0; font-weight: 600; font-size: .95rem; }
+.staff-quest-link { color: var(--accent-dark); font-weight: 700; font-size: .85rem; text-decoration: none; white-space: nowrap; }
+.staff-quest-link:hover { text-decoration: underline; }
+.quest-badge.status-loading { background: var(--paper-soft); color: var(--ink-soft); }
+.quest-badge.status-incomplete { background: #fde3e3; color: #b3261e; }
