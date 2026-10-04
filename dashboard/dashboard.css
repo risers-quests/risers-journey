@@ -54,6 +54,10 @@ body {
 .btn-primary:hover { background: var(--accent-dark); }
 .gate-msg { margin-top: 12px; font-size: .88rem; color: var(--accent-dark); min-height: 1.2em; }
 
+.dash-crumb { font-size: .85rem; margin-bottom: 10px; }
+.dash-crumb a { color: var(--ink-soft); text-decoration: none; }
+.dash-crumb a:hover { color: var(--accent-dark); text-decoration: underline; }
+
 /* ---- Header ---- */
 .dash-header { position: relative; padding-top: 4px; }
 .dash-header h1 { font-family: var(--font-head); font-size: 2.2rem; margin: 0 0 4px; padding-right: 110px; }

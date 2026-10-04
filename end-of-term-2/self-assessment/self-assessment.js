@@ -20,6 +20,7 @@
 
   function showKidGate() {
     app.innerHTML = '';
+    app.appendChild(el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">End of Term 2</a>'));
     var card = el('div', 'eot2-picker');
     card.innerHTML =
       '<h1>Self-Assessment</h1>' +
@@ -41,6 +42,7 @@
 
   function showStaffPicker() {
     app.innerHTML = '';
+    app.appendChild(el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">End of Term 2</a>'));
     var card = el('div', 'eot2-picker');
     var options = window.EOT2_KIDS.map(function (k) { return '<option value="' + k.slug + '">' + k.name + '</option>'; }).join('');
     card.innerHTML =
@@ -50,8 +52,9 @@
       '<button class="eot2-btn" id="kid-go">Open form</button>';
     app.appendChild(card);
     document.getElementById('kid-go').addEventListener('click', function () {
-      var slug = document.getElementById('kid-select').value;
-      renderForm(window.EOT2_findKid(slug));
+      var kid = window.EOT2_findKid(document.getElementById('kid-select').value);
+      window.EOT2_setLastStaffKid(kid.slug);
+      renderForm(kid);
     });
   }
 
@@ -59,7 +62,7 @@
     var weekKey = 'term2-self-assessment-' + rater;
     app.innerHTML = '';
 
-    var crumb = el('div', 'eot2-crumb', '<a href="../index.html">&larr; End of Term 2</a>' + (isStaff ? ' &middot; <a href="index.html?rater=' + rater + '">switch kid</a>' : ''));
+    var crumb = el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">End of Term 2</a>' + (isStaff ? ' &middot; <a href="index.html?rater=' + rater + '&pick=1">switch kid</a>' : ''));
     app.appendChild(crumb);
 
     var header = el('div', 'eot2-form-header');
@@ -166,8 +169,14 @@
 
   if (isStaff) {
     var deepLinkSlug = params.get('kid');
-    var deepLinkKid = deepLinkSlug ? window.EOT2_findKid(deepLinkSlug) : null;
-    if (deepLinkKid) { renderForm(deepLinkKid); } else { showStaffPicker(); }
+    var forcePicker = params.get('pick') === '1';
+    var pickedKid = forcePicker ? null : ((deepLinkSlug ? window.EOT2_findKid(deepLinkSlug) : null) || window.EOT2_getLastStaffKid());
+    if (pickedKid) {
+      window.EOT2_setLastStaffKid(pickedKid.slug);
+      renderForm(pickedKid);
+    } else {
+      showStaffPicker();
+    }
   } else {
     var savedName = null;
     try { savedName = localStorage.getItem(KID_KEY); } catch (e) {}

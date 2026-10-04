@@ -33,6 +33,8 @@
     return a;
   }
 
+  app.appendChild(el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">End of Term 2</a>'));
+
   var head = el('div', 'eot2-head');
   head.innerHTML = '<h1>End of Term 2 — Staff View</h1><p>Completion across every kid and every form. Click a badge to open that record.</p>';
   app.appendChild(head);

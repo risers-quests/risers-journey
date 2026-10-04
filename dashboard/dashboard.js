@@ -222,6 +222,8 @@
     var app = document.getElementById('app');
     app.innerHTML = '';
 
+    app.appendChild(el('div', 'dash-crumb', '<a href="../index.html">&larr; Home</a>'));
+
     var header = el('div', 'dash-header');
     header.innerHTML =
       '<a href="#" id="logout-link" class="switch-kid-link">Log out</a>' +
@@ -303,6 +305,7 @@
   function showGate(roster) {
     var app = document.getElementById('app');
     app.innerHTML = '';
+    app.appendChild(el('div', 'dash-crumb', '<a href="../index.html">&larr; Home</a>'));
     var gate = el('div', 'name-gate');
     gate.innerHTML =
       '<h1>My Quests</h1>' +

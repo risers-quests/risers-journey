@@ -36,3 +36,15 @@ window.EOT2_findKidByName = function (name) {
   var needle = String(name || '').trim().toLowerCase();
   return window.EOT2_KIDS.filter(function (k) { return k.name.toLowerCase() === needle; })[0] || null;
 };
+
+/* Remembers which kid a staff member was just working on, so moving from
+   one form to another (Self-Assessment -> MOM, say) for the same kid
+   doesn't mean picking them from the list all over again. Kid-facing
+   pages don't use this — they already stay signed in via KID_KEY. */
+var EOT2_LAST_STAFF_KID = 'eot2-last-staff-kid';
+window.EOT2_getLastStaffKid = function () {
+  try { return window.EOT2_findKid(localStorage.getItem(EOT2_LAST_STAFF_KID)); } catch (e) { return null; }
+};
+window.EOT2_setLastStaffKid = function (slug) {
+  try { localStorage.setItem(EOT2_LAST_STAFF_KID, slug); } catch (e) {}
+};
