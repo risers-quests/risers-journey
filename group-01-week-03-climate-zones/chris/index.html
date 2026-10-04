@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Climate Zones — Climate Detective</title>
+<script>
+  (function () {
+    // Facilitator View: ?fac=1 must be read and set BEFORE quest.js or any
+    // of its init calls run, so tracking never has a chance to start before
+    // this takes effect — see initFacilitatorCheck's comment in quest.js.
+    try {
+      window.QUEST_FACILITATOR_MODE = new URLSearchParams(window.location.search).get('fac') === '1';
+    } catch (e) { window.QUEST_FACILITATOR_MODE = false; }
+    try {
+      var kid = localStorage.getItem('imm-l3-kid');
+      if (!kid || kid.toLowerCase() !== 'chris') document.documentElement.classList.add('gate-locked');
+    } catch (e) { document.documentElement.classList.add('gate-locked'); }
+  })();
+</script>
+<style>
+  html.gate-locked main, html.gate-locked .progress-summary { display: none !important; }
+  html.facilitator-mode #facilitator-banner { display: block; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="lens-chris">
+
+<div id="facilitator-banner" style="display:none;">🧑‍🏫 Facilitator View — nothing on this page is being timed, saved, or synced. <a href="?" id="facilitator-banner-exit">Exit Facilitator View →</a></div>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand-group">
+      <a href="../index.html" class="brand">🌍 Climate Zones<small>Climate Detective</small></a>
+      <span class="day-badge" id="quest-day-badge"></span>
+      <span class="session-timer" id="session-timer"></span>
+    </div>
+    <nav class="day-nav">
+      <a href="#day1">Day 1</a>
+      <a href="#day2">Day 2</a>
+      <a href="#day3">Day 3</a>
+      <button class="notes-toggle-btn" id="glossary-toggle-btn" type="button">📖 Glossary</button>
+      <button class="notes-toggle-btn" id="notes-toggle-btn" type="button">📝 My Notes</button>
+      <button class="print-btn" id="print-slip-btn" type="button">🖨️ Print my bringing slip</button>
+    </nav>
+  </div>
+</header>
+
+<div class="progress-summary">
+  <div class="container">
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 1</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day1-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day1-label">0/4</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 2</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day2-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day2-label">0/5</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 3</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day3-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="quest-gate-block">
+  <div class="gate-block-wrap">
+    <div class="gate-icon">🔒</div>
+    <h2>This is Chris's investigation</h2>
+    <p>Confirm it's you to continue.</p>
+    <div class="name-gate-card">
+      <button class="btn btn-primary gate-confirm-btn" id="gate-confirm-btn" type="button">✅ Yes, I'm Chris — Continue</button>
+      <div class="name-gate-msg" id="gate-name-msg"></div>
+    </div>
+    <a class="gate-not-you" href="../index.html">Not you? Find your own quest link →</a>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- COVER -->
+  <section class="cover">
+    <div class="cover-watermark" aria-hidden="true">🔎</div>
+    <div class="format-pill">Discovery Quest</div><br>
+    <span class="lens-pill">🔎 Climate Detective</span>
+    <h1>Every Location Leaves Behind Evidence of Its Own Climate</h1>
+    <p class="subtitle">You can't visit every biome on Earth in one lifetime — but you can read the evidence any location leaves behind. Match the sun angle, the temperature record, and the rainfall pattern, and you can identify any location's climate zone with real proof, not a guess.</p>
+    <div class="kid-name">Prepared for: Chris</div>
+    <div class="framing">
+      <p style="margin:0;">You are a <strong>Climate Detective</strong> — trained to identify any location's climate zone from real environmental evidence. Day 1 briefs you on the full case: what actually controls a location's climate, the five real climate zones, what else can shift the evidence, and how it all adds up to the world's biomes. Day 2, you build a real physical instrument — a sun-angle evidence rig — to prove how angle changes heating, then use your reference chart to identify a set of mystery locations from their climate data alone. This week, a guess without evidence doesn't count as an ID.</p>
+    </div>
+  </section>
+
+  <!-- DAY 1 -->
+  <section class="day-block" id="day1">
+    <span class="day-kicker">Day 1 · Case Briefing</span>
+    <h2>What Actually Controls a Location's Climate</h2>
+    <p class="day-sub">You can't identify a climate zone without knowing what actually builds one. This briefing covers the full case: the one factor that sets the baseline, the five real zones, what else can shift the evidence, and why it all matters.</p>
+
+    <h3>Why the same sun treats every location differently</h3>
+    <p>The sun sends out roughly the same amount of energy toward every part of Earth. Yet the Sahara Desert regularly bakes past 40°C while Antarctica sits locked in ice, and both get hit by the very same star. The reason isn't the sun — it's geography. Every location's real <strong>climate</strong> — the long-term average pattern of temperature and precipitation a place experiences, usually measured over 30 years or more — comes down to a short list of real, checkable factors. That's different from <strong>weather</strong>, the day-to-day conditions outside your window today; one unusually hot or rainy day doesn't change a location's climate, but decades of average conditions do. This case file walks through every real factor, in order, so nothing you conclude tomorrow is a guess.</p>
+
+    <h3 id="sec-latitude"><span class="sec-num">1</span>What actually determines a location's climate</h3>
+    <p>The single biggest factor behind any location's climate is its <strong>latitude</strong> — how far north or south it sits from the equator, measured in degrees from 0° at the <strong>equator</strong> itself to 90° at either pole. Latitude controls something very specific: the angle at which sunlight actually strikes the ground. Near the equator, the sun sits close to directly overhead for most of the year, so sunlight arrives at a steep angle, close to straight down — that energy lands concentrated on a small patch of surface. Near the poles, that exact same amount of sunlight arrives at a shallow, glancing angle instead, so it spreads out over a much larger patch of surface, and it also has to travel through more atmosphere to get there, losing extra energy along the way. Spread the same energy over a bigger patch, and every square meter of that patch gets less of it. That's the entire reason the equator runs hot and the poles run cold — not distance from the sun in space (Earth's distance from the sun barely changes from one location to another), but the angle sunlight lands at.</p>
+
+    <div class="diagram-card">
+      <div class="diagram-title">☀️ Same sunlight, two different angles</div>
+      <div class="diagram-sub">A steep hit concentrates energy into a small patch. A shallow hit spreads it over a much larger one.</div>
+      <div class="diagram-svg-wrap">
+        <svg viewBox="0 0 240 200" width="230" height="190" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8,148 Q120,116 232,148" fill="none" stroke="#57534e" stroke-width="3"/>
+          <line x1="95" y1="12" x2="95" y2="132" stroke="#92400e" stroke-width="4"/>
+          <line x1="152" y1="12" x2="208" y2="126" stroke="#d97706" stroke-width="4"/>
+          <circle cx="95" cy="140" r="11" fill="#92400e"/>
+          <text x="95" y="144" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">1</text>
+          <circle cx="208" cy="138" r="11" fill="#d97706"/>
+          <text x="208" y="142" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">2</text>
+        </svg>
+      </div>
+      <div class="diagram-legend">
+        <div class="diagram-legend-item"><span class="dl-num">1</span><span class="dl-text"><strong>Steep hit (near the equator)</strong> — energy concentrated in a small patch</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">2</span><span class="dl-text"><strong>Shallow hit (near the poles)</strong> — the same energy spread over a much larger patch</span></div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="video-title">📹 Why Is the Equator Hot and the Poles Cold?</div>
+      <div class="video-sub">The sun-angle evidence, explained — watch before answering below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/SDfc8SBYNnM" title="Why is Equator Hot but Poles are Cold?" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔬 Angle Check</span>
+      <p style="margin:0;">Sunlight hits the equator and the poles at very different angles. Which one gets the more direct hit — and why does a more direct hit mean more heat landing on that spot?</p>
+      <textarea id="refl-6" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <p>Earth's 23.5° tilt on its axis adds a seasonal wrinkle — it's why the Northern and Southern Hemispheres take turns leaning toward the sun through the year, giving most locations a warmer season and a cooler one. But the underlying pattern never flips: averaged across a full year, the equator is still Earth's hottest zone, and temperatures still trend colder the farther you travel toward either pole. That latitude-driven gradient is the baseline every climate zone system on file is built on.</p>
+
+    <h3 id="sec-zones"><span class="sec-num">2</span>The five real climate zones — reading the case file</h3>
+    <p>Climatologists sort the whole planet into a small set of real, defined <strong>climate zones</strong> — regions that share a similar temperature pattern and precipitation pattern, based on decades of real recorded data. The most widely used system is the <strong>Köppen climate classification</strong>, and a simplified version of it sorts almost everywhere on Earth into five major zones.</p>
+    <p>The <strong>tropical zone</strong> sits close to the equator, roughly between 23.5°N and 23.5°S. It stays warm to hot all year, with little seasonal temperature swing — instead of a hot season and a cold season, tropical locations usually swing between a wet season and a dry season. The <strong>arid (dry) zone</strong> is defined by something completely different: not temperature, but precipitation. A location counts as arid when it loses more water to evaporation than it receives as rainfall — which means an arid zone can be scorching (the Sahara) or genuinely cold (parts of the Gobi and the high steppe), as long as it stays dry. The <strong>temperate zone</strong> covers the mid-latitudes, roughly 23.5° to 40°, and runs through four real, distinct seasons with a moderate overall temperature range. The <strong>continental zone</strong> sits farther still from the equator, deep in the interior of large landmasses, and swings hard between hot summers and brutally cold winters. The <strong>polar zone</strong> covers the highest latitudes, generally above the Arctic and Antarctic circles near 66.5° — it's the coldest zone on the case file, and even its warmest month averages below about 10°C, with very little precipitation.</p>
+
+    <div class="diagram-card">
+      <div class="diagram-title">🗺️ Five zones, equator to pole</div>
+      <div class="diagram-sub">A simplified cross-section — real zone boundaries curve and overlap, but this is the order that matters.</div>
+      <div class="diagram-svg-wrap">
+        <svg viewBox="0 0 240 200" width="230" height="190" xmlns="http://www.w3.org/2000/svg">
+          <rect x="50" y="160" width="140" height="28" fill="#15803d"/>
+          <rect x="50" y="130" width="140" height="28" fill="#ca8a04"/>
+          <rect x="50" y="100" width="140" height="28" fill="#65a30d"/>
+          <rect x="50" y="70" width="140" height="28" fill="#ea580c"/>
+          <rect x="50" y="40" width="140" height="28" fill="#38bdf8"/>
+          <text x="120" y="178" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">1 Tropical</text>
+          <text x="120" y="148" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">2 Dry (Arid)</text>
+          <text x="120" y="118" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">3 Temperate</text>
+          <text x="120" y="88" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">4 Continental</text>
+          <text x="120" y="58" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">5 Polar</text>
+          <text x="120" y="196" text-anchor="middle" fill="#57534e" font-size="9">☀ Equator (0°)</text>
+          <text x="120" y="30" text-anchor="middle" fill="#57534e" font-size="9">❄ Pole (90°)</text>
+        </svg>
+      </div>
+    </div>
+
+    <table class="data-table">
+      <thead><tr><th>Zone</th><th>Typical latitude</th><th>Temperature pattern</th><th>Precipitation pattern</th><th>Example region</th></tr></thead>
+      <tbody>
+        <tr><td>Tropical</td><td class="num">0°–23.5°</td><td>Warm to hot all year</td><td>Often heavy; wet/dry seasons</td><td>Amazon Basin</td></tr>
+        <tr><td>Dry (Arid)</td><td class="num">varies</td><td>Hot or cold — not the defining trait</td><td>Very low; evaporation &gt; rainfall</td><td>Sahara Desert</td></tr>
+        <tr><td>Temperate</td><td class="num">~23.5°–40°</td><td>Four seasons, moderate range</td><td>Moderate, year-round</td><td>Western Europe</td></tr>
+        <tr><td>Continental</td><td class="num">~40°–60°</td><td>Hot summers, very cold winters</td><td>Moderate, seasonal</td><td>Central Canada</td></tr>
+        <tr><td>Polar</td><td class="num">66.5°–90°</td><td>Cold all year; warmest month &lt;10°C</td><td>Very low</td><td>Antarctica</td></tr>
+      </tbody>
+    </table>
+
+    <div class="video-card">
+      <div class="video-title">📹 Climate Zones for Kids</div>
+      <div class="video-sub">The major zones, laid out — watch before answering below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/Kp7ZhvJXrMc" title="Climate Zones for Kids" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🧾 Evidence Log</span>
+      <p style="margin:0;">A location stays warm to hot all year with heavy rainfall and no real cold season. Which zone is it, and what's the evidence?</p>
+      <textarea id="refl-2" placeholder="Name the zone and the evidence…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔢 Zone-Defining Check</span>
+      <p style="margin:0;">The arid zone can be scorching hot or genuinely cold. So what's the ONE factor that actually defines it as "arid"?</p>
+      <textarea id="refl-7" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">📋 Rookie's Field Note — something doesn't add up</span>
+      <p style="margin:0;">A rookie detective's note claims: <em>"The arid zone is always hot, like a desert."</em> Something in that note is wrong. What is it, and what should the rookie have written instead?</p>
+      <textarea id="refl-1" placeholder="Type your correction here…"></textarea>
+    </div>
+
+    <h3 id="sec-modifiers"><span class="sec-num">3</span>What else can shift the evidence</h3>
+    <p>Latitude sets the baseline, but it isn't the only variable a real climate detective has to check — three more factors can shift a location's actual climate away from what its latitude alone would predict.</p>
+    <p><strong>Elevation</strong> is the first: temperature drops roughly 6.5°C for every 1,000 meters you climb, because air thins and holds less heat at altitude. That's why Mount Kilimanjaro carries snow at its summit despite sitting almost exactly on the equator — elevation overrides the latitude evidence entirely at that height.</p>
+    <p><strong>Ocean currents</strong> are the second: these are large-scale movements of ocean water that carry real heat energy around the planet. A warm current like the Gulf Stream drags heat from the tropics up toward Western Europe's coastline, keeping it noticeably milder than other locations at the same latitude; a cold current does the opposite, chilling — and often drying out — the coastline it passes.</p>
+    <p><strong>Distance from the ocean</strong> is the third, and it's related but different: water heats up and cools down far more slowly than land does. A coastline stays cushioned by that slow-changing water nearby, so its temperature swings stay moderate. Push deep into the interior of a continent, far from any ocean's moderating reach, and that cushion disappears — summers run hotter and winters run colder than a coastline sees at the very same latitude. That's a real part of why the continental zone exists as its own case file entirely.</p>
+
+    <div class="diagram-card">
+      <div class="diagram-title">🏔️ Two more variables on the case</div>
+      <div class="diagram-sub">Elevation and ocean currents can both override what latitude alone would predict.</div>
+      <div class="diagram-svg-wrap">
+        <svg viewBox="0 0 240 200" width="230" height="190" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="40,185 95,55 150,185" fill="#a8a29e"/>
+          <polygon points="80,90 95,55 110,90" fill="#e7e2da"/>
+          <circle cx="95" cy="45" r="11" fill="#92400e"/>
+          <text x="95" y="49" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">1</text>
+          <path d="M195,180 C 215,145 215,95 195,35" fill="none" stroke="#d97706" stroke-width="5"/>
+          <polygon points="195,35 187,49 205,47" fill="#d97706"/>
+          <circle cx="218" cy="108" r="11" fill="#d97706"/>
+          <text x="218" y="112" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">2</text>
+        </svg>
+      </div>
+      <div class="diagram-legend">
+        <div class="diagram-legend-item"><span class="dl-num">1</span><span class="dl-text"><strong>Elevation</strong> — colder air at altitude, even near the equator</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">2</span><span class="dl-text"><strong>Ocean current</strong> — carries heat toward or away from a coastline</span></div>
+      </div>
+    </div>
+
+    <div class="video-card video-placeholder">
+      <div class="video-title">📹 Ocean Currents &amp; Climate</div>
+      <div class="video-sub">No verified video linked for this topic yet — flagged for a facilitator to confirm and add.</div>
+      <div class="video-placeholder-box">
+        <span class="vp-icon">🎬</span>
+        <span class="vp-text">Video placeholder — swap in a verified ocean-currents-and-climate clip here.</span>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">🎓 New Recruit Briefing</span>
+      <p style="margin:0;">A trainee detective on your team asks why a snow-capped mountain can sit almost exactly on the equator. Explain it in two or three sentences, simple enough for them to repeat back correctly.</p>
+      <textarea id="refl-3" placeholder="Explain it simply…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🚧 Conflicting Evidence</span>
+      <p style="margin:0;">Two coastlines sit at the exact same latitude, but one has a much milder climate than the other. What could explain that, given what you know about ocean currents?</p>
+      <textarea id="refl-8" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-system">Putting it together: how climate zones shape life on Earth</h3>
+    <p>Every climate zone's real temperature-and-precipitation pattern determines which <strong>biomes</strong> — large communities of plants and animals adapted to a region's climate — can exist there. A tropical zone's warmth and rainfall support a tropical rainforest biome, packed with more species than almost anywhere else on Earth. A polar zone's cold and near-absent precipitation support tundra, where only a thin layer of soil ever thaws and only low, hardy plants survive. A continental zone's harsh temperature swings support boreal forest (taiga), built from trees tough enough to survive both extremes. None of that is an accident — it's climate evidence written directly into the living world.</p>
+    <p>That same evidence shapes human life just as directly. Agriculture depends on matching crops to a region's real climate zone — rice needs the warmth and standing water of a wet tropical or subtropical climate, while wheat thrives in a temperate zone's moderate rainfall and four real seasons. Where people build cities, how homes get designed and insulated, and even historic trade routes have all followed the same climate-zone evidence for thousands of years. Identifying a location's climate zone isn't just a classification exercise — it's the same evidence people have always used to decide where and how to live.</p>
+
+    <div class="card-grid">
+      <div class="info-card"><h4>🌳 Biome</h4><p>A large community of plants and animals adapted to a region's climate.</p></div>
+      <div class="info-card"><h4>🌾 Agriculture link</h4><p>Crops are matched to a region's real temperature and rainfall pattern.</p></div>
+      <div class="info-card"><h4>🏙️ Settlement link</h4><p>Where and how people build has followed climate evidence for millennia.</p></div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔍 Case File: Region A vs. Region B</span>
+      <p style="margin:0 0 8px;"><strong>Region A:</strong> a hot, wet rainforest full of plant and animal life year-round.<br><strong>Region B:</strong> a frozen, nearly treeless landscape with very few species.</p>
+      <p style="margin:0;">Which climate zone is each region most likely in, and what evidence tells you?</p>
+      <textarea id="refl-4" placeholder="Explain both cases…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🧩 Rule It Out</span>
+      <p style="margin:0;">Two farms sit at the exact same latitude, but one grows rice in flooded fields and the other grows wheat in dry fields. Are they necessarily in the exact same climate zone? What could explain the difference?</p>
+      <textarea id="refl-9" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3>History: how we learned to map the world's climate evidence</h3>
+    <div class="timeline">
+      <div class="timeline-item"><div class="t-year">1817</div><div class="t-body"><strong>Alexander von Humboldt</strong> publishes the first isotherm map — lines connecting points of equal temperature across the globe. It's the first real evidence that latitude alone doesn't decide climate, which sent scientists looking for the other factors, like ocean currents.</div></div>
+      <div class="timeline-item"><div class="t-year">1884</div><div class="t-body"><strong>Wladimir Köppen</strong> publishes an early sketch connecting temperature zones to the vegetation boundaries being mapped at the time — the first real link between climate data and the biomes it produces.</div></div>
+      <div class="timeline-item"><div class="t-year">1900</div><div class="t-body">Köppen publishes the first full version of his <strong>climate classification system</strong>, sorting the world into lettered zones based on real temperature and precipitation data. He revises it further in 1918.</div></div>
+      <div class="timeline-item"><div class="t-year">1936</div><div class="t-body">Köppen, working with <strong>Rudolf Geiger</strong>, publishes the refined, fully mapped version of the system — the direct ancestor of the Köppen-Geiger climate map still used by scientists today.</div></div>
+    </div>
+
+    <h3>Real-world application: climate zones decide how buildings and crops get designed</h3>
+    <p>Building codes use real climate-zone maps — built on exactly this evidence — to set requirements for a home's insulation, heating, and cooling, because a house built for a polar or continental zone needs completely different design than one built for a tropical zone. Farmers use the same kind of evidence in plant hardiness zone maps, based on a region's typical minimum winter temperature, to know which crops and plants will actually survive there. It's the same case file this whole reading is built on, just applied to a construction permit or a seed packet instead of a mystery location.</p>
+
+    <div class="game-card">
+      <div class="game-title">🔬 Climate Term Match</div>
+      <div class="game-sub">Key terms from today's whole examination. Click a term, then its matching definition — no penalty for a wrong guess, just try again.</div>
+      <div id="game-day1"></div>
+    </div>
+
+  </section>
+
+  <!-- MATERIALS -->
+  <section class="day-block">
+    <span class="day-kicker">Before Day 2 · Build Kit</span>
+    <h2>Choose What You're Bringing</h2>
+    <p class="day-sub">This is a pool, not a checklist — pick what your sun-angle evidence rig actually needs. You'll be testing a steep angle (close to 90°, like the equator) against a shallow angle (around 30°, like near a pole) and measuring the difference in the light patch each one leaves.</p>
+
+    <div class="materials-table-wrap">
+      <table class="materials-table">
+      <thead><tr><th>Material</th><th>Stand / base</th><th>Light source</th><th>Angle guide</th><th>Recording surface</th><th>Labels &amp; evidence log</th></tr></thead>
+      <tbody>
+      <tr><td class="mat-name">A small box or wooden block</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A small box or wooden block for Stand / base</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A binder clip and pencil stand</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A binder clip and pencil stand for Stand / base</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A stack of books to prop the light</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A stack of books to prop the light for Stand / base</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A basic flashlight</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A basic flashlight for Light source</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A phone flashlight, taped in place</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A phone flashlight, taped in place for Light source</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A small battery-powered LED light</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A small battery-powered LED light for Light source</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A protractor</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A protractor for Angle guide</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A cardstock angle template you cut yourself</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A cardstock angle template you cut yourself for Angle guide</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A printed angle-guide sheet</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A printed angle-guide sheet for Angle guide</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Graph paper or grid paper</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Graph paper or grid paper for Recording surface</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Plain paper with a ruled grid drawn on</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Plain paper with a ruled grid drawn on for Recording surface</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Butcher paper marked in inch squares</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Butcher paper marked in inch squares for Recording surface</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Index cards or tags</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Index cards or tags for Labels &amp; evidence log</span></label></td></tr>
+      <tr><td class="mat-name">Markers or pens</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Markers or pens for Labels &amp; evidence log</span></label></td></tr>
+      <tr><td class="mat-name">A ruler</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A ruler for Labels &amp; evidence log</span></label></td></tr>
+      <tr><td class="mat-name">Tape or glue</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Tape or glue for Labels &amp; evidence log</span></label></td></tr>
+      </tbody></table></div>
+      <p class="materials-table-note">One stand, one light source, one angle guide, and one recording surface — plus enough labels to log every trial. Check your reference diagram before you start testing.</p>
+          <div class="slip-preview">
+      <h4>📋 What you're bringing to Day 2:</h4>
+      <ul id="slip-list-preview"></ul>
+      <div class="slip-empty" id="slip-empty">Nothing selected yet.</div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section class="day-block" id="day2">
+    <span class="day-kicker">Day 2 · Build the Rig</span>
+    <h2>Build the Evidence Rig — Then Identify the Mystery Locations</h2>
+    <p class="day-sub">Your case this week: build a real physical instrument that proves sun angle changes heating, then use your climate-zone reference chart to identify a set of mystery locations from proton-count-style evidence — their real temperature and precipitation data.</p>
+
+    <h3>What you're building</h3>
+    <p>A real, physical sun-angle evidence rig — not a drawing or a diagram of one. Mount your light source on a fixed stand at a set height above your recording surface. Using your angle guide, shine the light straight down (close to 90°, standing in for the equator) onto the paper and trace the lit patch; then reposition the light to a shallow angle (around 30°, standing in for a location near a pole) and trace that patch too. Every material you use has to represent one real, correctly-set part of the rig — a flashlight propped up at a random angle "because it looks right" doesn't count as evidence.</p>
+    <p>Finished, it should look like this: a fixed light stand over a sheet of grid paper, with two traced-and-labeled patches on it — one small, bright circle labeled "90° — Equator" and one larger, dimmer oval labeled "30° — Near-pole" — with each patch's measured area written right next to it.</p>
+
+    <div class="callout subtle">
+      <span class="callout-label">📎 Reference: expected result</span>
+      <div style="max-width:300px; margin:0 auto;">
+        <svg viewBox="0 0 300 180" width="280" height="168" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="90" cy="90" rx="30" ry="30" fill="#92400e" opacity="0.88"/>
+          <text x="90" y="94" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">90°</text>
+          <ellipse cx="215" cy="90" rx="72" ry="26" fill="#d97706" opacity="0.88"/>
+          <text x="215" y="94" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">30°</text>
+        </svg>
+      </div>
+      <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; font-size:.85rem; margin-top:6px;">
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#92400e;margin-right:5px;"></span>Small, bright patch (steep angle)</span>
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#d97706;margin-right:5px;"></span>Large, dim patch (shallow angle)</span>
+      </div>
+      <p style="margin:10px 0 0;">This is the pattern you're proving: same light, same amount of time, two very different patch sizes. The bigger patch means the same energy is more spread out — dimmer per square inch.</p>
+    </div>
+
+    <div class="model3d-wrap">
+      <div class="model3d">
+        <div class="model3d-stage" id="model-stage">
+          <div class="model3d-face f1" style="background:linear-gradient(135deg,#fbbf24,#92400e);"><span><span class="f-icon">🌍</span>Latitude<br>The baseline evidence</span></div>
+          <div class="model3d-face f2" style="background:linear-gradient(135deg,#f59e0b,#78350f);"><span><span class="f-icon">☀️</span>Sun angle<br>Steep vs. shallow</span></div>
+          <div class="model3d-face f3" style="background:linear-gradient(135deg,#fbbf24,#92400e);"><span><span class="f-icon">🗺️</span>Zones<br>Five real case files</span></div>
+          <div class="model3d-face f4" style="background:linear-gradient(135deg,#f59e0b,#78350f);"><span><span class="f-icon">🏔️</span>Modifiers<br>Elevation &amp; currents</span></div>
+          <div class="model3d-face f5" style="background:linear-gradient(135deg,#fbbf24,#78350f);"><span><span class="f-icon">🔧</span>Build the<br>evidence rig</span></div>
+          <div class="model3d-face f6" style="background:linear-gradient(135deg,#f59e0b,#92400e);"><span><span class="f-icon">🔎</span>ID the<br>mystery locations</span></div>
+        </div>
+      </div>
+      <div class="model3d-hint">🖱️ Hover to pause and read each face.</div>
+      <button class="btn btn-ghost model3d-pause" type="button" id="pause-btn">⏸ Pause rotation</button>
+    </div>
+
+    <h3>Build it, then test it</h3>
+    <div class="build-checklist">
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">1.</span><span class="step-text">Confirm your climate-zone reference chart (temperature and precipitation ranges for all five zones) before you start building.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">2.</span><span class="step-text">Mount your light source on a fixed stand at a set, consistent height above the recording surface.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">3.</span><span class="step-text">Using your angle guide, test and trace the light patch at a steep angle (~90°) and a shallow angle (~30°), measuring the area of each on your grid paper.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">4.</span><span class="step-text">Label each traced patch with its angle and measured area, and record which one concentrates more light per square inch — that's your sun-angle evidence.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">5.</span><span class="step-text">Use your climate reference chart to identify 4 mystery-location case files (temperature and precipitation data) from your facilitator, and write the evidence for each ID.</span></span></label>
+    </div>
+
+    <h3 id="sec-plan">Log your build</h3>
+    <p>Now that it's built, fill this in — the record of exactly what you used for each part, and the evidence it's correct. This becomes your notes for tomorrow's presentation.</p>
+    <table class="justify-table">
+      <thead><tr><th>Evidence element</th><th>Angle &amp; what it stands for</th><th>Material representing it</th><th>Evidence it's set up correctly</th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="e.g. Steep-angle trial"></td><td><input placeholder="e.g. 90°, stands for the equator"></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+      </tbody>
+    </table>
+
+  </section>
+
+  <!-- DAY 3 -->
+  <section class="day-block" id="day3">
+    <span class="day-kicker">Day 3 · Present the Case</span>
+    <h2>Present Your Case File</h2>
+    <p class="day-sub">A real detective defends every call they made. Here's how to open strong and cover everything that matters.</p>
+
+    <div class="hook-box">
+      <div class="hook-label">Your opening move</div>
+      <p style="margin:0;">Don't say "I'm going to talk about climate zones." Instead, hold up your two traced light patches and ask the room: <em>"Which one of these came from a steeper angle — and how can you tell just by looking?"</em> Let a few guesses land before you reveal the case file.</p>
+    </div>
+
+    <div class="prep-form">
+      <h3>Prepare your presentation</h3>
+      <p>None of this gets typed into a box. Grab a stack of index cards and write short answers to each prompt below in your own hand — one card per prompt is plenty. Bring the cards to Day 3 and glance at them while you talk; they're yours to prepare with, not a script to read word for word.</p>
+
+      <div class="prep-field">
+        <label>i. Your role and responsibility</label>
+        <p style="margin:0;">In your own words — who are you in this story, and what were you responsible for figuring out?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>ii. Three new words or ideas you learned, and what they mean</label>
+        <p style="margin:0;">Pick three, and write a short, correct definition for each in your own words.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>iii. One historical fact you found interesting</label>
+        <p style="margin:0;">Which one, and why it stuck with you</p>
+      </div>
+
+      <div class="prep-field">
+        <label>iv. A real-world application</label>
+        <p style="margin:0;">Where does this actually show up outside a classroom?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>v. Explain your build</label>
+        <p style="margin:0;">What you built, why each part represents what it does, and what it explains — look back at your Day 2 build reflection if you need a reminder.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>vi. What you're still not sure about</label>
+        <p style="margin:0;">What would you want more explanation or practice on?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>vii. Cover the whole quest</label>
+        <p style="margin:0;">Walk through everything from the quest, one topic at a time, as if you're teaching it to someone hearing it for the first time: what actually determines a location's climate, the five real climate zones, what else can shift the evidence, how climate zones shape biomes and human life, and the history behind it — Humboldt's isotherm maps and Köppen's classification system.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  Climate Zones · Climate Detective — Chris's instance. <a href="../index.html">All three instances →</a>
+</footer>
+
+<!-- Isolated printable materials slip -->
+<div id="print-slip-page">
+  <div class="print-slip-sheet">
+    <h3>📋 Materials I'm Bringing — Day 2</h3>
+    <div class="slip-kid">Climate Detective · Chris</div>
+    <ul id="slip-list-print"></ul>
+  </div>
+</div>
+
+<!-- Side glossary drawer -->
+<div class="notes-backdrop" id="glossary-backdrop"></div>
+<div class="notes-drawer" id="glossary-drawer">
+  <div class="notes-drawer-head">
+    <h4>📖 Glossary</h4>
+    <button id="glossary-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="glossary">
+      <div class="glossary-item"><div class="word">Climate</div><div class="def">The long-term average pattern of temperature and precipitation in a place, usually measured over many years.</div></div>
+      <div class="glossary-item"><div class="word">Weather</div><div class="def">The day-to-day conditions in a place — today's temperature, rain, or wind — different from climate.</div></div>
+      <div class="glossary-item"><div class="word">Latitude</div><div class="def">A location's distance north or south of the equator, measured in degrees from 0° to 90°.</div></div>
+      <div class="glossary-item"><div class="word">Equator</div><div class="def">The imaginary line around Earth at 0° latitude, halfway between the North and South Poles.</div></div>
+      <div class="glossary-item"><div class="word">Sun angle</div><div class="def">The angle at which sunlight strikes Earth's surface — steep near the equator, shallow near the poles.</div></div>
+      <div class="glossary-item"><div class="word">Tropical zone</div><div class="def">The climate zone near the equator; warm to hot all year, often with heavy rainfall.</div></div>
+      <div class="glossary-item"><div class="word">Arid zone</div><div class="def">A dry climate zone defined by very low precipitation, not by temperature.</div></div>
+      <div class="glossary-item"><div class="word">Temperate zone</div><div class="def">A mid-latitude climate zone with four distinct seasons and a moderate temperature range.</div></div>
+      <div class="glossary-item"><div class="word">Continental zone</div><div class="def">A mid-to-high-latitude climate zone far from the ocean, with big swings between hot summers and cold winters.</div></div>
+      <div class="glossary-item"><div class="word">Polar zone</div><div class="def">The coldest climate zone, near the poles, where even the warmest month stays cold.</div></div>
+      <div class="glossary-item"><div class="word">Elevation</div><div class="def">Height above sea level; temperature drops as elevation increases.</div></div>
+      <div class="glossary-item"><div class="word">Ocean current</div><div class="def">A large-scale movement of ocean water that carries heat toward or away from nearby coastlines.</div></div>
+      <div class="glossary-item"><div class="word">Biome</div><div class="def">A large community of plants and animals adapted to a region's climate.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Side notes drawer -->
+<div class="notes-backdrop" id="notes-backdrop"></div>
+<div class="notes-drawer" id="notes-drawer">
+  <div class="notes-drawer-head">
+    <h4>📝 My Notes</h4>
+    <button id="notes-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="notes-section-label">Highlighted words</div>
+    <ul id="hl-collected-list" class="hl-collected-list"></ul>
+    <div id="hl-collected-empty" style="display:none;">Highlight anything in the reading and it'll show up here.</div>
+    <div class="notes-section-label">Free notes</div>
+    <textarea id="notes-textarea" placeholder="Jot anything down…"></textarea>
+    <div id="notes-saved-msg" class="notes-saved-msg"></div>
+  </div>
+</div>
+
+<script>
+  // Progress-sync Worker — cross-device save. SITE_KEY is a soft deterrent
+  // only (any client-side value is visible in devtools), not real auth.
+  window.QUEST_SYNC_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  window.QUEST_SYNC_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+</script>
+<script src="../js/quest.js"></script>
+<script>
+  QuestUI.initKidGate('Chris');
+  QuestUI.initFacilitatorCheck();
+
+  QuestUI.initProgressSync('chris', 'group-01', 'week-03').then(function () {
+    QuestUI.initHighlighter('chris');
+    QuestUI.initNotesDrawer('chris');
+    QuestUI.initGlossaryDrawer();
+    QuestUI.initMaterialsPool('chris');
+    QuestUI.initBuildChecklist('chris');
+    QuestUI.initFieldAutosave('chris');
+    QuestUI.initPresentationAutofill('chris');
+    QuestUI.initDayTimer('chris');
+    QuestUI.initProgressBar('chris');
+    QuestUI.initSectionLock('chris');
+    QuestUI.initDayLock('chris');
+    QuestUI.initCompleteQuest('chris');
+    QuestUI.initMatchGame('game-day1', [
+      ["Climate", "The long-term average pattern of temperature and precipitation in a place, usually measured over many years."],
+      ["Weather", "The day-to-day conditions in a place — today's temperature, rain, or wind — different from climate."],
+      ["Latitude", "A location's distance north or south of the equator, measured in degrees from 0° to 90°."],
+      ["Equator", "The imaginary line around Earth at 0° latitude, halfway between the North and South Poles."],
+      ["Sun angle", "The angle at which sunlight strikes Earth's surface — steep near the equator, shallow near the poles."],
+      ["Tropical zone", "The climate zone near the equator; warm to hot all year, often with heavy rainfall."],
+      ["Arid zone", "A dry climate zone defined by very low precipitation, not by temperature."],
+      ["Temperate zone", "A mid-latitude climate zone with four distinct seasons and a moderate temperature range."],
+      ["Continental zone", "A mid-to-high-latitude climate zone far from the ocean, with big swings between hot summers and cold winters."],
+      ["Polar zone", "The coldest climate zone, near the poles, where even the warmest month stays cold."],
+      ["Elevation", "Height above sea level; temperature drops as elevation increases."],
+      ["Ocean current", "A large-scale movement of ocean water that carries heat toward or away from nearby coastlines."],
+      ["Biome", "A large community of plants and animals adapted to a region's climate."]
+    ], { pageKey: 'chris' });
+    QuestUI.initReflectionChecks('chris', [
+      { id: 'refl-6', groups: [['equator'], ['angle', 'direct', 'steep', 'straight']],
+        reread: { anchor: 'sec-latitude', label: '1. What actually determines a location\'s climate' } },
+      { id: 'refl-2', groups: [['tropical'], ['rain', 'rainfall', 'precipitation', 'wet']],
+        reread: { anchor: 'sec-zones', label: '2. The five real climate zones' } },
+      { id: 'refl-7', groups: [['precipitation', 'rain', 'rainfall', 'water', 'moisture'], ['hot', 'cold', 'both', 'either']],
+        reread: { anchor: 'sec-zones', label: '2. The five real climate zones' } },
+      { id: 'refl-1', groups: [['cold', 'not always', "isn't always", 'can be cold'], ['precipitation', 'rain', 'water', 'dry']],
+        reread: { anchor: 'sec-zones', label: '2. The five real climate zones' } },
+      { id: 'refl-3', groups: [['elevation', 'altitude', 'height', 'mountain'], ['cold', 'colder', 'drop', 'decrease']],
+        reread: { anchor: 'sec-modifiers', label: '3. What else can shift the evidence' } },
+      { id: 'refl-8', groups: [['current', 'currents', 'ocean'], ['warm', 'cold', 'heat', 'temperature']],
+        reread: { anchor: 'sec-modifiers', label: '3. What else can shift the evidence' } },
+      { id: 'refl-4', groups: [['tropical'], ['polar']],
+        reread: { anchor: 'sec-system', label: 'How climate zones shape life on Earth' } },
+      { id: 'refl-9', groups: [['no', 'different', 'not the same', 'not necessarily'], ['precipitation', 'rain', 'water', 'moisture', 'elevation', 'current', 'ocean']],
+        reread: { anchor: 'sec-system', label: 'How climate zones shape life on Earth' } }
+    ]);
+
+    var modelPaused = false;
+    document.getElementById('pause-btn').addEventListener('click', function () {
+      modelPaused = !modelPaused;
+      document.getElementById('model-stage').classList.toggle('paused', modelPaused);
+      this.textContent = modelPaused ? '▶ Resume rotation' : '⏸ Pause rotation';
+    });
+  });
+
+  window.addEventListener('beforeprint', function () { document.body.classList.add('printing-slip'); });
+  window.addEventListener('afterprint', function () { document.body.classList.remove('printing-slip'); });
+</script>
+</body>
+</html>

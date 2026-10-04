@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digestive System — Gut Systems Engineer</title>
+<script>
+  (function () {
+    // Facilitator View: ?fac=1 must be read and set BEFORE quest.js or any
+    // of its init calls run, so tracking never has a chance to start before
+    // this takes effect — see initFacilitatorCheck's comment in quest.js.
+    try {
+      window.QUEST_FACILITATOR_MODE = new URLSearchParams(window.location.search).get('fac') === '1';
+    } catch (e) { window.QUEST_FACILITATOR_MODE = false; }
+    try {
+      var kid = localStorage.getItem('imm-l3-kid');
+      if (!kid || kid.toLowerCase() !== 'pranavi') document.documentElement.classList.add('gate-locked');
+    } catch (e) { document.documentElement.classList.add('gate-locked'); }
+  })();
+</script>
+<style>
+  html.gate-locked main, html.gate-locked .progress-summary { display: none !important; }
+  html.facilitator-mode #facilitator-banner { display: block; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="lens-pranavi">
+
+<div id="facilitator-banner" style="display:none;">🧑‍🏫 Facilitator View — nothing on this page is being timed, saved, or synced. <a href="?" id="facilitator-banner-exit">Exit Facilitator View →</a></div>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand-group">
+      <a href="../index.html" class="brand">⏱️ Digestive System<small>Gut Systems Engineer</small></a>
+      <span class="day-badge" id="quest-day-badge"></span>
+      <span class="session-timer" id="session-timer"></span>
+    </div>
+    <nav class="day-nav">
+      <a href="#day1">Day 1</a>
+      <a href="#day2">Day 2</a>
+      <a href="#day3">Day 3</a>
+      <button class="notes-toggle-btn" id="glossary-toggle-btn" type="button">📖 Glossary</button>
+      <button class="notes-toggle-btn" id="notes-toggle-btn" type="button">📝 My Notes</button>
+      <button class="print-btn" id="print-slip-btn" type="button">🖨️ Print my bringing slip</button>
+    </nav>
+  </div>
+</header>
+
+<div class="progress-summary">
+  <div class="container">
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 1</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day1-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day1-label">0/17</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 2</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day2-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day2-label">0/5</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 3</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day3-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="quest-gate-block">
+  <div class="gate-block-wrap">
+    <div class="gate-icon">🔒</div>
+    <h2>This is Pranavi's investigation</h2>
+    <p>Confirm it's you to continue.</p>
+    <div class="name-gate-card">
+      <button class="btn btn-primary gate-confirm-btn" id="gate-confirm-btn" type="button">✅ Yes, I'm Pranavi — Continue</button>
+      <div class="name-gate-msg" id="gate-name-msg"></div>
+    </div>
+    <a class="gate-not-you" href="../index.html">Not you? Find your own quest link →</a>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- COVER -->
+  <section class="cover">
+    <div class="cover-watermark" aria-hidden="true">⏱️</div>
+    <div class="format-pill">Discovery Quest</div><br>
+    <span class="lens-pill">⏱️ Gut Systems Engineer</span>
+    <h1>Digestion Is a System You Can Time and Compare</h1>
+    <p class="subtitle">Chewing works faster than crushing. Chemical breakdown works differently than mechanical breakdown. This week, you build two side-by-side tests and time exactly how differently they behave — real seconds, not guesses.</p>
+    <div class="kid-name">Prepared for: Pranavi</div>
+    <div class="framing">
+      <p style="margin:0;">You are a <strong>Gut Systems Engineer</strong>. Day 1 briefs you on the full picture: the path food takes, mechanical digestion versus chemical digestion, how nutrients get absorbed, and how it all works together as one system. Day 2, you build two side-by-side cracker tests — one crushed, one chewed — and time exactly how differently they break down, recording real numbers, not guesses. This week, a claim about which one breaks down faster only counts once you've timed it.</p>
+    </div>
+  </section>
+
+  <!-- DAY 1 -->
+  <section class="day-block" id="day1">
+    <span class="day-kicker">Day 1 · Systems Briefing</span>
+    <h2>The Tube That Turns a Meal Into Fuel</h2>
+    <p class="day-sub">A meal looks like it just disappears once you eat it. It doesn't. It travels down one long tube, getting broken down step by step. This briefing covers exactly how that works, before you build two real timed tests of your own.</p>
+
+    <h3>Why "digestion" isn't just the stomach's job</h3>
+    <p>Ask most people where digestion happens. They'll say "the stomach." That's only part of the answer. Digestion is more like a relay race. It starts the moment you take a bite. It isn't finished until hours later, much further down the tube.</p>
+    <p>The whole path is called the <strong>digestive tract</strong>. It's one long, connected tube. Food never leaves that tube on its way through. Three more organs — the liver, pancreas, and gallbladder — aren't part of the tube itself. They add things into it at just the right spot. Before you can run a fair test, you need to know the real order of stops and what each one actually does.</p>
+
+    <h3 id="sec-path"><span class="sec-num">1</span>The path — five stops, three helpers</h3>
+    <p>Food travels through five main stops, in this order: the <strong>mouth</strong>, the <strong>esophagus</strong>, the <strong>stomach</strong>, the <strong>small intestine</strong>, and the <strong>large intestine</strong>. Each stop has its own job. None of them can skip ahead.</p>
+    <p>The <strong>esophagus</strong> is a short, muscular tube — about 25 cm long. It has one job: push swallowed food down to the stomach. It does this using <strong>peristalsis</strong>, a wave of muscle squeezing. It doesn't digest anything itself. The <strong>stomach</strong> is a stretchy pouch, about 25–30 cm long. It churns food and adds acid. The <strong>small intestine</strong> does most of the real chemistry, and almost all of the absorbing. It's also by far the longest stop — about 6 meters. The <strong>large intestine</strong>, about 1.5 meters, is the last stop before waste leaves the body.</p>
+    <p>Three <strong>accessory organs</strong> feed into the tube at one exact spot: right where the stomach meets the small intestine. These are the <strong>liver</strong>, <strong>pancreas</strong>, and <strong>gallbladder</strong>. Food itself never passes through any of them. The liver makes <strong>bile</strong>. The gallbladder stores that bile and releases it when it's needed. The pancreas makes digestive enzymes, plus something that calms down stomach acid once food reaches the intestine.</p>
+
+    <div class="diagram-card">
+      <div class="diagram-title">🔬 The digestive tract, stop by stop</div>
+      <div class="diagram-sub">Five stops in the tube, plus three helper organs feeding in at one spot.</div>
+      <div class="diagram-svg-wrap">
+        <svg viewBox="0 0 235 195" width="230" height="190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A schematic diagram of the digestive tract: mouth, esophagus, stomach, small intestine, and large intestine stacked in order, with the liver, pancreas, and gallbladder shown feeding into the junction between the stomach and small intestine">
+          <rect x="20" y="8" width="130" height="16" rx="4" fill="#fecaca" stroke="#7f1d1d" stroke-width="2"/>
+          <text x="85" y="20" text-anchor="middle" fill="#7f1d1d" font-size="9" font-weight="700">1</text>
+          <rect x="20" y="26" width="130" height="26" fill="#fca5a5" stroke="#7f1d1d" stroke-width="2"/>
+          <text x="85" y="43" text-anchor="middle" fill="#7f1d1d" font-size="9" font-weight="700">2</text>
+          <rect x="20" y="54" width="130" height="38" fill="#f87171" stroke="#7f1d1d" stroke-width="2"/>
+          <text x="85" y="76" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">3</text>
+          <rect x="20" y="94" width="130" height="58" fill="#ef4444" stroke="#7f1d1d" stroke-width="2"/>
+          <text x="85" y="126" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">4</text>
+          <rect x="20" y="154" width="130" height="34" fill="#dc2626" stroke="#7f1d1d" stroke-width="2"/>
+          <text x="85" y="174" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">5</text>
+
+          <line x1="150" y1="108" x2="188" y2="86" stroke="#7f1d1d" stroke-width="1.5"/>
+          <circle cx="200" cy="78" r="14" fill="#fef2f2" stroke="#7f1d1d" stroke-width="2"/>
+          <text x="200" y="82" text-anchor="middle" fill="#7f1d1d" font-size="9" font-weight="700">L</text>
+
+          <line x1="150" y1="118" x2="188" y2="118" stroke="#7f1d1d" stroke-width="1.5"/>
+          <circle cx="200" cy="118" r="14" fill="#fef2f2" stroke="#7f1d1d" stroke-width="2"/>
+          <text x="200" y="122" text-anchor="middle" fill="#7f1d1d" font-size="9" font-weight="700">P</text>
+
+          <line x1="150" y1="128" x2="188" y2="150" stroke="#7f1d1d" stroke-width="1.5"/>
+          <circle cx="200" cy="158" r="14" fill="#fef2f2" stroke="#7f1d1d" stroke-width="2"/>
+          <text x="200" y="162" text-anchor="middle" fill="#7f1d1d" font-size="9" font-weight="700">G</text>
+        </svg>
+      </div>
+      <div class="diagram-legend">
+        <div class="diagram-legend-item"><span class="dl-num">1</span><span class="dl-text"><strong>Mouth</strong> — chewing + saliva start digestion</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">2</span><span class="dl-text"><strong>Esophagus</strong> — pushes food down by peristalsis</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">3</span><span class="dl-text"><strong>Stomach</strong> — churns food, adds acid</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">4</span><span class="dl-text"><strong>Small intestine</strong> — most chemistry + almost all absorption</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">5</span><span class="dl-text"><strong>Large intestine</strong> — absorbs water, forms waste</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">L</span><span class="dl-text"><strong>Liver</strong> — makes bile</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">P</span><span class="dl-text"><strong>Pancreas</strong> — makes enzymes + neutralizer</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">G</span><span class="dl-text"><strong>Gallbladder</strong> — stores and releases bile</span></div>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="info-card"><h4>🫀 Liver</h4><p>Makes bile all the time. Bile breaks big fat drops into many smaller ones.</p></div>
+      <div class="info-card"><h4>🟡 Pancreas</h4><p>Makes digestive enzymes, plus something that calms down stomach acid in the intestine.</p></div>
+      <div class="info-card"><h4>🟢 Gallbladder</h4><p>Stores bile between meals. Squeezes it out right when fatty food shows up.</p></div>
+    </div>
+
+    <div class="video-card">
+      <div class="video-title">📹 The Digestive System</div>
+      <div class="video-sub">The whole path, mouth to the end — watch before answering below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/ZBZWgrfZFbU" title="Digestive System — Dr. Binocs Show" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+<div class="callout">
+      <span class="callout-label">⚠️ Data Sheet Error — something doesn't add up</span>
+      <p style="margin:0;">A data sheet in your files claims: <em>"All digestion happens in the stomach — the mouth and intestines just move food along."</em> Something in that entry is wrong. What is it, and what should it have said instead?</p>
+      <textarea id="refl-1" placeholder="Type your correction here…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🧾 Field Note</span>
+      <p style="margin:0;">You feel a wave of squeezing push a swallowed bite down a short muscular tube. No digestion happens here — it's just transport. Which organ is this, and what's the name for that wave of squeezing?</p>
+      <textarea id="refl-2" placeholder="Name the organ and the motion…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔍 Which Helper, and What</span>
+      <p style="margin:0;">Three helper organs feed into the tract at one exact spot, but food never actually passes through any of them. Name one of the three, and say exactly what it adds.</p>
+      <textarea id="refl-3" placeholder="Name the organ and what it adds…"></textarea>
+    </div>
+
+    <h3 id="sec-breakdown"><span class="sec-num">2</span>Mechanical vs. chemical digestion</h3>
+    <p>Everything that breaks food down fits into one of two groups. <strong>Mechanical digestion</strong> is physical. It's chewing in the mouth. It's churning and squeezing in the stomach. It makes pieces smaller and mixes them up. But it doesn't change what those pieces are made of.</p>
+    <p><strong>Chemical digestion</strong> is different. It actually breaks molecules apart. <strong>Enzymes</strong> are proteins that speed up a chemical reaction. They start this job in the mouth, where saliva's enzyme begins breaking down starch. In the stomach, strong <strong>gastric acid</strong> kills swallowed germs. It also switches on an enzyme that starts breaking down protein. By the time food leaves the stomach, it's a thick, acidic mix called <strong>chyme</strong>.</p>
+    <p>The small intestine runs both jobs at once. Muscles keep mixing — that's mechanical. Pancreas enzymes and liver-made <strong>bile</strong> keep breaking molecules apart — that's chemical. Bile itself isn't an enzyme. It doesn't break any chemical bonds. Instead, it breaks big fat drops into many smaller drops — the same way dish soap breaks up grease. That gives enzymes much more surface to work on.</p>
+
+    <div class="video-card">
+      <div class="video-title">📹 What Happens When We Eat</div>
+      <div class="video-sub">Mechanical and chemical digestion in action — watch before answering below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/SD8kLAD1jnA" title="The Digestive System for Kids" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+<div class="callout">
+      <span class="callout-label">🎓 New Engineer Briefing</span>
+      <p style="margin:0;">A trainee on your team keeps mixing up "mechanical" and "chemical" digestion. Explain the real difference in two or three sentences, simple enough for them to repeat back correctly.</p>
+      <textarea id="refl-4" placeholder="Explain it simply…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🧪 Two Jobs, One Acid</span>
+      <p style="margin:0;">Gastric acid in the stomach doesn't just help digest food. It does a second job at the same time. Name the acid, and name both jobs.</p>
+      <textarea id="refl-5" placeholder="Name the acid and both jobs…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🧴 Not an Enzyme</span>
+      <p style="margin:0;">Bile is needed to digest fat, but it isn't an enzyme. It doesn't break any chemical bonds itself. What does bile actually do to fat?</p>
+      <textarea id="refl-6" placeholder="Explain what bile does…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">⚙️ Sort the Mechanism</span>
+      <p style="margin:0;">The stomach churning food, and gastric acid breaking down protein, both happen in the same organ at the same time — but they're not the same kind of digestion. Which one is mechanical, and which one is chemical?</p>
+      <textarea id="refl-7" placeholder="Sort both, and explain why…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">⏱️ Predict the Winner</span>
+      <p style="margin:0;">Picture two same-size pieces of cracker: one just crushed with a spoon (mechanical only), one chewed well with real spit (mechanical + chemical). If you dropped both into cups of water and timed how fast each one broke apart, which one do you think would win, and why?</p>
+      <textarea id="refl-17" placeholder="Predict the winner and explain why…"></textarea>
+    </div>
+
+    <h3 id="sec-absorption"><span class="sec-num">3</span>Absorption — where the nutrients actually go</h3>
+    <p>Breaking food apart is only half the job. None of it matters unless the pieces actually get into your body. That happens almost entirely in the small intestine, thanks to <strong>villi</strong>. Villi are millions of tiny, finger-shaped folds covering the intestine's inner wall.</p>
+    <p>A smooth tube the same length would have much less surface to absorb through. Folding the lining into millions of tiny villi packs way more surface area into the same length of tube. That's exactly why nutrients can be absorbed fast enough to matter. Once a nutrient crosses into a villus, it passes into tiny blood vessels inside it. From there, it joins the bloodstream, which carries it everywhere the body needs it.</p>
+    <p>By the time what's left reaches the <strong>large intestine</strong>, almost all the useful nutrients are already gone. The large intestine's real job is different. It absorbs water and some leftover salts, slowly turning liquid material into the solid waste that eventually leaves the body. It isn't doing more chemical digestion. It's doing water cleanup.</p>
+
+    <div class="video-card">
+      <div class="video-title">📹 How Digestion Really Works</div>
+      <div class="video-sub">Following food all the way through — watch before answering below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/JLzX_KSrxDc" title="Journey inside your body to see how digestion works" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+<div class="callout">
+      <span class="callout-label">📐 Surface-Area Check</span>
+      <p style="margin:0;">The small intestine's inner wall isn't smooth — it's covered in millions of tiny, finger-shaped folds instead. Why would that folded shape absorb more nutrients than a smooth tube of the exact same length?</p>
+      <textarea id="refl-8" placeholder="Explain why the shape matters…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🩸 After the Villi</span>
+      <p style="margin:0;">A nutrient molecule just crossed into a villus in the small intestine. Where does it go next, and how does it reach the rest of the body?</p>
+      <textarea id="refl-9" placeholder="Explain what happens next…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">💧 The Large Intestine's Real Job</span>
+      <p style="margin:0;">By the time material reaches the large intestine, almost all the useful nutrients are already gone. So what is the large intestine actually doing with what's left?</p>
+      <textarea id="refl-10" placeholder="Explain its real job…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔍 Compare Two Absorbers</span>
+      <p style="margin:0 0 8px;"><strong>Section A:</strong> lined with millions of tiny villi, absorbs almost all of a meal's real nutrients into the blood.<br><strong>Section B:</strong> absorbs mostly water, turning leftover material into solid waste.</p>
+      <p style="margin:0;">Which organ is A, which is B, and what's the evidence?</p>
+      <textarea id="refl-11" placeholder="Explain both cases…"></textarea>
+    </div>
+
+    <h3 id="sec-system"><span class="sec-num">4</span>Put together, it's one 9-meter system</h3>
+    <p>No single organ digests a meal by itself. The whole tract works like one team, and each stop does a different, sequential job. Mechanical breakdown loosens things up first. Chemical breakdown then takes apart what mechanical breakdown exposed. Absorption only works on pieces small enough to cross into a villus. Skip a step, or do it out of order, and the steps after it can't do their job right either.</p>
+    <p>That whole line — mouth to the very end — adds up to roughly <strong>9 meters</strong> in an adult. It's coiled and folded to fit inside an abdomen not much bigger than a basketball. It has to be that long: a shorter tube would mean less room for chemical digestion, and far less room for villi to absorb from. That's the exact same trade-off your own timed test is about to compare.</p>
+
+    <table class="data-table">
+      <thead><tr><th>Stage</th><th>What it does</th><th>Where it mainly happens</th></tr></thead>
+      <tbody>
+        <tr><td>Mechanical digestion</td><td class="num">Chewing, churning, squeezing — makes pieces smaller</td><td class="num">Mouth, stomach</td></tr>
+        <tr><td>Chemical digestion</td><td class="num">Acid and enzymes break molecules apart</td><td class="num">Mouth, stomach, small intestine</td></tr>
+        <tr><td>Absorption</td><td class="num">Nutrients cross into the blood through villi</td><td class="num">Small intestine</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔍 Compare Two Organs</span>
+      <p style="margin:0 0 8px;"><strong>Organ A:</strong> churns food and adds acid, but barely absorbs any nutrients at all.<br><strong>Organ B:</strong> does most of the chemical breakdown and almost all of the absorbing, and is by far the longest single stop on the tube.</p>
+      <p style="margin:0;">Which organ is A, which is B, and what's the evidence?</p>
+      <textarea id="refl-13" placeholder="Explain both cases…"></textarea>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">🔧 Engineer's Trade-off</span>
+      <p style="margin:0;">The full digestive tract is roughly 9 meters long, but it's tightly coiled to fit inside a much smaller space. Why would a system need to be built this long in the first place, and why coil it instead of building a shorter, straighter tube?</p>
+      <textarea id="refl-12" placeholder="Explain the trade-off…"></textarea>
+    </div>
+
+    <table class="data-table">
+      <thead><tr><th>Organ</th><th>Main job</th><th>Real length</th></tr></thead>
+      <tbody>
+        <tr><td>Mouth</td><td class="num">Starts mechanical + chemical digestion</td><td class="num">—</td></tr>
+        <tr><td>Esophagus</td><td class="num">Pushes food to the stomach (peristalsis)</td><td class="num">~25 cm</td></tr>
+        <tr><td>Stomach</td><td class="num">Churns food, adds acid</td><td class="num">~25–30 cm</td></tr>
+        <tr><td>Small intestine</td><td class="num">Finishes chemical digestion, absorbs nutrients</td><td class="num">~6 m</td></tr>
+        <tr><td>Large intestine</td><td class="num">Absorbs water, forms waste</td><td class="num">~1.5 m</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout subtle">
+      <span class="callout-label">⚙️ Name the Roles</span>
+      <p style="margin:0;">A finished meal goes through three different kinds of work before its nutrients reach your blood. Name what mechanical digestion, chemical digestion, and absorption each actually do.</p>
+      <textarea id="refl-14" placeholder="Name all three contributions…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🟡 The Pancreas's Second Job</span>
+      <p style="margin:0;">The pancreas doesn't just help digestion by making enzymes. It does a second job that has nothing to do with breaking down a meal at all. What's that second job?</p>
+      <textarea id="refl-15" placeholder="Name the second job…"></textarea>
+    </div>
+
+<h3>History: how we learned digestion is chemical, not just mechanical</h3>
+    <div class="timeline">
+      <div class="timeline-item"><div class="t-year">1780s</div><div class="t-body"><strong>Lazzaro Spallanzani</strong> feeds birds food inside small containers with holes, tied to a string, then pulls them back out — proving that gastric juice, not just grinding, chemically dissolves food.</div></div>
+      <div class="timeline-item"><div class="t-year">1824</div><div class="t-body"><strong>William Prout</strong> identifies the acid in gastric juice as <strong>hydrochloric acid</strong> — a discovery many of his peers found hard to believe a stomach could survive.</div></div>
+      <div class="timeline-item"><div class="t-year">1822–1833</div><div class="t-body"><strong>William Beaumont</strong> studies digestion directly through a stomach wound that never fully healed on patient Alexis St. Martin, publishing his findings — the physiology of digestion — in 1833.</div></div>
+      <div class="timeline-item"><div class="t-year">1904</div><div class="t-body"><strong>Ivan Pavlov</strong> wins the Nobel Prize in Physiology or Medicine for his research on the nervous control of digestion — the first Nobel ever awarded to a physiologist.</div></div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🩹 An Accidental Discovery</span>
+      <p style="margin:0;">William Beaumont's most important discoveries came from a patient with a stomach wound that never fully closed. Why would that unhealed opening have been so useful for studying digestion? What could he actually do because of it?</p>
+      <textarea id="refl-16" placeholder="Explain why it was so useful…"></textarea>
+    </div>
+
+    <h3>Real-world application: real digestion gets timed and compared every day</h3>
+    <p>Doctors run timed tests called gastric emptying studies. They compare how fast different people's stomachs empty a meal, which can point to real digestive problems. Food scientists time how quickly raw food breaks down compared to cooked food, since cooking already starts some of the mechanical work chewing would otherwise have to do. Nutrition labels use something called the glycemic index — a timed comparison of how fast different carbohydrate foods get digested and absorbed into the blood, the exact same kind of side-by-side timed test you're about to run yourself.</p>
+
+    <div class="game-card">
+      <div class="game-title">🍽️ Digestion Science Match</div>
+      <div class="game-sub">Key terms from today's whole briefing. Click a term, then its matching definition — no penalty for a wrong guess, just try again.</div>
+      <div id="game-day1"></div>
+    </div>
+
+  </section>
+
+  <!-- MATERIALS -->
+  <section class="day-block">
+    <span class="day-kicker">Before Day 2 · Build Kit</span>
+    <h2>Choose What You're Bringing</h2>
+    <p class="day-sub">This is a pool, not a checklist — pick what your two-cup timed test actually needs. You're building two identical cups tested side by side: one with a crushed cracker (mechanical only), one with a chewed cracker (mechanical + chemical) — pick one cup type (you'll need two of it), one cracker type, a tool to measure equal water for both, and a timer.</p>
+
+    <div class="materials-table-wrap">
+      <table class="materials-table">
+      <thead><tr><th>Material</th><th>Test cups</th><th>Cracker type</th><th>Water &amp; measuring</th><th>Timer</th><th>Labels</th></tr></thead>
+      <tbody>
+      <tr><td class="mat-name">Two clear plastic cups</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Two clear plastic cups for Test cups</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Two small glass jars</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Two small glass jars for Test cups</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Two small bowls</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Two small bowls for Test cups</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Two mason jars</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Two mason jars for Test cups</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Two small deli containers</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Two small deli containers for Test cups</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Saltine crackers</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Saltine crackers for Cracker type</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Graham crackers</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Graham crackers for Cracker type</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Soda crackers</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Soda crackers for Cracker type</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Water crackers</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Water crackers for Cracker type</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Unsalted round crackers</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Unsalted round crackers for Cracker type</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A measuring cup</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A measuring cup for Water &amp; measuring</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A marked plastic cup</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A marked plastic cup for Water &amp; measuring</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A kitchen measuring cup</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A kitchen measuring cup for Water &amp; measuring</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A graduated cylinder</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A graduated cylinder for Water &amp; measuring</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A water bottle with marked lines</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A water bottle with marked lines for Water &amp; measuring</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A stopwatch</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A stopwatch for Timer</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A phone timer</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A phone timer for Timer</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A kitchen timer</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A kitchen timer for Timer</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A clock with a second hand</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A clock with a second hand for Timer</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A timer app</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A timer app for Timer</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Markers</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Markers for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Sticky notes cut into flags</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Sticky notes cut into flags for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Index cards</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Index cards for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Small flags on toothpicks</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Small flags on toothpicks for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Painter's tape strips</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Painter's tape strips for Labels</span></label></td></tr>
+      </tbody></table></div>
+      <p class="materials-table-note">Use two same-size pieces of the exact same cracker — it makes the timed comparison fair.</p>
+          <div class="slip-preview">
+      <h4>📋 What you're bringing to Day 2:</h4>
+      <ul id="slip-list-preview"></ul>
+      <div class="slip-empty" id="slip-empty">Nothing selected yet.</div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section class="day-block" id="day2">
+    <span class="day-kicker">Day 2 · Run the Test</span>
+    <h2>Build a Real Breakdown Test — Then Time It</h2>
+    <p class="day-sub">Set up two identical cups — one crushed cracker, one chewed cracker — pour the same amount of water into each, and time exactly how long each one takes to break apart. This isn't one guess. A real comparison needs both cups tested the same fair way.</p>
+
+    <h3>What you're building</h3>
+    <p>Two identical cups, tested side by side — not one cup and a guess about the other. Cup A gets a cracker piece crushed with a spoon only. That's mechanical breakdown by itself. Cup B gets a same-size cracker piece chewed well for about 30 seconds, mixed with real saliva, then spit into the cup. That's mechanical breakdown plus chemical breakdown, since saliva starts breaking down starch right away. A single cup proves nothing about the difference. The whole point is two cups, set up the same way, tested with the exact same amount of water.</p>
+    <p>Finished, it should look like two identical cups side by side. Cup A holds a spoon-crushed piece. Cup B holds a chewed piece. You pour the exact same measured amount of water into each, one at a time, and start your timer the moment the water hits the cracker. One cup should finish breaking apart faster than the other — both times written down, not guessed.</p>
+
+    <div class="callout subtle">
+      <span class="callout-label">📎 Reference: your two-cup test</span>
+      <div style="max-width:220px; margin:0 auto;">
+        <svg viewBox="0 0 220 160" width="220" height="160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Two cups side by side: Cup A with a crushed cracker, Cup B with a chewed cracker, with a stopwatch above timing both">
+          <circle cx="110" cy="20" r="14" fill="#fef2f2" stroke="#7f1d1d" stroke-width="2"/>
+          <text x="110" y="24" text-anchor="middle" fill="#7f1d1d" font-size="9" font-weight="700">3</text>
+          <line x1="110" y1="6" x2="110" y2="0" stroke="#7f1d1d" stroke-width="2"/>
+          <polygon points="20,45 70,45 62,120 28,120" fill="#fca5a5" stroke="#7f1d1d" stroke-width="2"/>
+          <polygon points="150,45 200,45 192,120 158,120" fill="#dc2626" stroke="#7f1d1d" stroke-width="2"/>
+          <circle cx="45" cy="34" r="9" fill="#7f1d1d"/><text x="45" y="37" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">1</text>
+          <circle cx="175" cy="34" r="9" fill="#7f1d1d"/><text x="175" y="37" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">2</text>
+        </svg>
+      </div>
+      <div class="diagram-legend">
+        <div class="diagram-legend-item"><span class="dl-num">1</span><span class="dl-text"><strong>Cup A</strong> — crushed cracker, mechanical only</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">2</span><span class="dl-text"><strong>Cup B</strong> — chewed cracker, mechanical + chemical</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">3</span><span class="dl-text"><strong>Timer</strong> — same start point, both cups</span></div>
+      </div>
+      <p style="margin:10px 0 0;">This is what you're building, drawn out: two cups, same water, same timer. The exact cracker and cup size are yours to choose — this diagram is here for the setup and labeling, not for matching sizes exactly.</p>
+    </div>
+
+    <div class="model3d-wrap">
+      <div class="model3d">
+        <div class="model3d-stage" id="model-stage">
+          <div class="model3d-face f1" style="background:linear-gradient(135deg,#fca5a5,#dc2626);"><span><span class="f-icon">🍪</span>Cup A<br>Crushed cracker</span></div>
+          <div class="model3d-face f2" style="background:linear-gradient(135deg,#f87171,#991b1b);"><span><span class="f-icon">🦷</span>Cup B<br>Chewed cracker</span></div>
+          <div class="model3d-face f3" style="background:linear-gradient(135deg,#fca5a5,#7f1d1d);"><span><span class="f-icon">💧</span>Same water<br>Same amount, both</span></div>
+          <div class="model3d-face f4" style="background:linear-gradient(135deg,#f87171,#450a0a);"><span><span class="f-icon">⏱️</span>Time it<br>Real seconds, both</span></div>
+          <div class="model3d-face f5" style="background:linear-gradient(135deg,#fca5a5,#991b1b);"><span><span class="f-icon">🛠️</span>Build BOTH<br>cups the same way</span></div>
+          <div class="model3d-face f6" style="background:linear-gradient(135deg,#f87171,#7f1d1d);"><span><span class="f-icon">🏷️</span>Record both<br>times to compare</span></div>
+        </div>
+      </div>
+      <div class="model3d-hint">🖱️ Hover to pause and read each face.</div>
+      <button class="btn btn-ghost model3d-pause" type="button" id="pause-btn">⏸ Pause rotation</button>
+    </div>
+
+    <h3>Build it, then time it</h3>
+    <div class="build-checklist">
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">1.</span><span class="step-text">Set up two identical cups side by side and label them Cup A (crushed) and Cup B (chewed).</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">2.</span><span class="step-text">Get two same-size pieces of the same type of cracker.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">3.</span><span class="step-text">Crush one piece with a spoon only (no chewing) and drop it into Cup A. Chew the other piece well for about 30 seconds, mixing it with your saliva, then spit it into Cup B.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">4.</span><span class="step-text">Measure the exact same amount of water for both cups, pour it into Cup A first, and start your timer.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">5.</span><span class="step-text">Repeat with Cup B using the same amount of water, record both times, and compare which one broke apart faster.</span></span></label>
+    </div>
+
+    <h3 id="sec-plan">Log your build</h3>
+    <p>Now that it's built and timed, fill this in — the record of exactly what you used for each cup, and why it fits. This becomes your notes for tomorrow's presentation.</p>
+    <table class="justify-table">
+      <thead><tr><th>Test element</th><th>Represents</th><th>Material I'm using</th><th>Why this material fits</th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="e.g. Cup A"></td><td><input placeholder="e.g. Mechanical digestion only"></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+      </tbody>
+    </table>
+
+  </section>
+
+  <!-- DAY 3 -->
+  <section class="day-block" id="day3">
+    <span class="day-kicker">Day 3 · Present the Test</span>
+    <h2>Present Your Breakdown Comparison</h2>
+    <p class="day-sub">A real engineer defends every measurement they took. Here's how to open strong and cover everything that matters.</p>
+
+    <div class="hook-box">
+      <div class="hook-label">Your opening move</div>
+      <p style="margin:0;">Don't say "I'm going to talk about digestion." Instead, hold up your two cups and ask the room: <em>"Same cracker, same water — which one do you think falls apart first, the crushed one or the chewed one? And by how much?"</em> Let a few guesses land before you reveal your real times.</p>
+    </div>
+
+    <div class="prep-form">
+      <h3>Prepare your presentation</h3>
+      <p>None of this gets typed into a box. Grab a stack of index cards and write short answers to each prompt below in your own hand — one card per prompt is plenty. Bring the cards to Day 3 and glance at them while you talk; they're yours to prepare with, not a script to read word for word.</p>
+
+      <div class="prep-field">
+        <label>i. Your role and responsibility</label>
+        <p style="margin:0;">In your own words — who are you in this story, and what were you responsible for figuring out?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>ii. Three new words or ideas you learned, and what they mean</label>
+        <p style="margin:0;">Pick three, and write a short, correct definition for each in your own words.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>iii. One historical fact you found interesting</label>
+        <p style="margin:0;">Which one, and why it stuck with you</p>
+      </div>
+
+      <div class="prep-field">
+        <label>iv. A real-world application</label>
+        <p style="margin:0;">Where does this actually show up outside a classroom?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>v. Explain your build</label>
+        <p style="margin:0;">What you built, why each part represents what it does, and what it explains — look back at your Day 2 build reflection if you need a reminder.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>vi. What you're still not sure about</label>
+        <p style="margin:0;">What would you want more explanation or practice on?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>vii. Cover the whole quest</label>
+        <p style="margin:0;">Walk through everything from the quest, one topic at a time, as if you're teaching it to someone hearing it for the first time: the path food takes through the tract and its helper organs, mechanical vs. chemical digestion, how absorption works, how it all comes together as a 9-meter system, and the history behind it — Spallanzani, Prout, Beaumont, and Pavlov.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  Digestive System · Gut Systems Engineer — Pranavi's instance. <a href="../index.html">Both instances →</a>
+</footer>
+
+<!-- Isolated printable materials slip -->
+<div id="print-slip-page">
+  <div class="print-slip-sheet">
+    <h3>📋 Materials I'm Bringing — Day 2</h3>
+    <div class="slip-kid">Gut Systems Engineer · Pranavi</div>
+    <ul id="slip-list-print"></ul>
+  </div>
+</div>
+
+<!-- Side glossary drawer -->
+<div class="notes-backdrop" id="glossary-backdrop"></div>
+<div class="notes-drawer" id="glossary-drawer">
+  <div class="notes-drawer-head">
+    <h4>📖 Glossary</h4>
+    <button id="glossary-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="glossary">
+      <div class="glossary-item"><div class="word">Peristalsis</div><div class="def">Wave-like muscle squeezing that pushes food through the digestive tract.</div></div>
+      <div class="glossary-item"><div class="word">Villi</div><div class="def">Tiny, finger-shaped folds lining the small intestine that increase surface area for absorbing nutrients into the blood.</div></div>
+      <div class="glossary-item"><div class="word">Chyme</div><div class="def">The thick, acidic mixture of partly digested food and stomach juices that leaves the stomach.</div></div>
+      <div class="glossary-item"><div class="word">Bile</div><div class="def">A fluid made by the liver, stored in the gallbladder, that breaks large fat globules into smaller droplets.</div></div>
+      <div class="glossary-item"><div class="word">Enzyme</div><div class="def">A protein that speeds up a chemical reaction, like breaking down starch, protein, or fat, without being used up itself.</div></div>
+      <div class="glossary-item"><div class="word">Gastric acid</div><div class="def">The strong hydrochloric acid made by the stomach lining that kills germs and activates enzymes that digest protein.</div></div>
+      <div class="glossary-item"><div class="word">Accessory organ</div><div class="def">An organ (liver, pancreas, gallbladder) that helps digestion by adding substances into the tract, without food ever passing through it.</div></div>
+      <div class="glossary-item"><div class="word">Mechanical digestion</div><div class="def">The physical breakdown of food into smaller pieces by chewing, churning, or squeezing — no chemical change. Used as Cup A in the breakdown test.</div></div>
+      <div class="glossary-item"><div class="word">Chemical digestion</div><div class="def">Breaking food's molecules apart using acids and enzymes so the body can absorb them. Added into Cup B by chewing.</div></div>
+      <div class="glossary-item"><div class="word">Absorption</div><div class="def">The process of nutrients passing from inside the digestive tract into the bloodstream.</div></div>
+      <div class="glossary-item"><div class="word">Esophagus</div><div class="def">The muscular tube that pushes food from the mouth to the stomach using peristalsis.</div></div>
+      <div class="glossary-item"><div class="word">Pancreas</div><div class="def">An organ that makes digestive enzymes and bicarbonate, and also makes insulin to control blood sugar.</div></div>
+      <div class="glossary-item"><div class="word">Gallbladder</div><div class="def">A small pouch that stores and releases the bile made by the liver.</div></div>
+      <div class="glossary-item"><div class="word">Large intestine</div><div class="def">The final section of the tract; absorbs water from leftover material and forms solid waste.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Side notes drawer -->
+<div class="notes-backdrop" id="notes-backdrop"></div>
+<div class="notes-drawer" id="notes-drawer">
+  <div class="notes-drawer-head">
+    <h4>📝 My Notes</h4>
+    <button id="notes-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="notes-section-label">Highlighted words</div>
+    <ul id="hl-collected-list" class="hl-collected-list"></ul>
+    <div id="hl-collected-empty" style="display:none;">Highlight anything in the reading and it'll show up here.</div>
+    <div class="notes-section-label">Free notes</div>
+    <textarea id="notes-textarea" placeholder="Jot anything down…"></textarea>
+    <div id="notes-saved-msg" class="notes-saved-msg"></div>
+  </div>
+</div>
+
+<script>
+  // Progress-sync Worker — cross-device save. SITE_KEY is a soft deterrent
+  // only (any client-side value is visible in devtools), not real auth.
+  window.QUEST_SYNC_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  window.QUEST_SYNC_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+</script>
+<script src="../js/quest.js"></script>
+<script>
+  QuestUI.initKidGate('Pranavi');
+  QuestUI.initFacilitatorCheck();
+
+  QuestUI.initProgressSync('pranavi', 'group-02', 'week-03').then(function () {
+    QuestUI.initHighlighter('pranavi');
+    QuestUI.initNotesDrawer('pranavi');
+    QuestUI.initGlossaryDrawer();
+    QuestUI.initMaterialsPool('pranavi');
+    QuestUI.initBuildChecklist('pranavi');
+    QuestUI.initFieldAutosave('pranavi');
+    QuestUI.initPresentationAutofill('pranavi');
+    QuestUI.initDayTimer('pranavi');
+    QuestUI.initProgressBar('pranavi');
+    QuestUI.initSectionLock('pranavi');
+    QuestUI.initDayLock('pranavi');
+    QuestUI.initCompleteQuest('pranavi');
+    QuestUI.initMatchGame('game-day1', [
+      ["Peristalsis", "Wave-like muscle squeezing that pushes food through the digestive tract."],
+      ["Villi", "Tiny, finger-shaped folds lining the small intestine that increase surface area for absorbing nutrients into the blood."],
+      ["Bile", "A fluid made by the liver, stored in the gallbladder, that breaks large fat globules into smaller droplets."],
+      ["Enzyme", "A protein that speeds up a chemical reaction, like breaking down starch, protein, or fat, without being used up itself."],
+      ["Gastric acid", "The strong hydrochloric acid made by the stomach lining that kills germs and activates enzymes that digest protein."],
+      ["Chyme", "The thick, acidic mixture of partly digested food and stomach juices that leaves the stomach."],
+      ["Accessory organ", "An organ (liver, pancreas, gallbladder) that helps digestion by adding substances into the tract, without food ever passing through it."],
+      ["Absorption", "The process of nutrients passing from inside the digestive tract into the bloodstream."]
+    ], { pageKey: 'pranavi' });
+    QuestUI.initReflectionChecks('pranavi', [
+      { id: 'refl-1', groups: [['mouth', 'saliva', 'amylase', 'chew', 'chewing'], ['small intestine', 'absorption', 'absorb']],
+        reread: { anchor: 'sec-path', label: '1. The path' } },
+      { id: 'refl-2', groups: [['esophagus'], ['peristalsis', 'wave', 'waves', 'squeeze', 'squeezing']],
+        reread: { anchor: 'sec-path', label: '1. The path' } },
+      { id: 'refl-3', groups: [['liver', 'pancreas', 'gallbladder'], ['bile', 'enzyme', 'enzymes']],
+        reread: { anchor: 'sec-path', label: '1. The path' } },
+      { id: 'refl-4', groups: [['mechanical', 'chew', 'chewing', 'grind', 'churn', 'churning'], ['chemical', 'enzyme', 'enzymes', 'acid', 'bile']],
+        reread: { anchor: 'sec-breakdown', label: '2. Mechanical vs. chemical digestion' } },
+      { id: 'refl-5', groups: [['acid', 'hydrochloric'], ['kill', 'germs', 'bacteria', 'pepsin', 'protein']],
+        reread: { anchor: 'sec-breakdown', label: '2. Mechanical vs. chemical digestion' } },
+      { id: 'refl-6', groups: [['bile'], ['fat', 'emulsify', 'emulsifies', 'break up', 'droplets', 'drops']],
+        reread: { anchor: 'sec-breakdown', label: '2. Mechanical vs. chemical digestion' } },
+      { id: 'refl-7', groups: [['churn', 'churning', 'muscle', 'muscles', 'squeeze'], ['acid', 'enzyme', 'chemical']],
+        reread: { anchor: 'sec-breakdown', label: '2. Mechanical vs. chemical digestion' } },
+      { id: 'refl-17', groups: [['chew', 'chewed', 'chewing', 'saliva'], ['fast', 'faster', 'quicker', 'quickly']],
+        reread: { anchor: 'sec-breakdown', label: '2. Mechanical vs. chemical digestion' } },
+      { id: 'refl-8', groups: [['villi', 'villus'], ['surface area', 'more surface', 'increase']],
+        reread: { anchor: 'sec-absorption', label: '3. Absorption' } },
+      { id: 'refl-9', groups: [['blood', 'bloodstream', 'blood vessels'], ['nutrient', 'nutrients', 'absorb', 'absorbed']],
+        reread: { anchor: 'sec-absorption', label: '3. Absorption' } },
+      { id: 'refl-10', groups: [['water'], ['waste', 'stool', 'feces', 'solid']],
+        reread: { anchor: 'sec-absorption', label: '3. Absorption' } },
+      { id: 'refl-11', groups: [['small intestine', 'nutrient', 'nutrients'], ['large intestine', 'water']],
+        reread: { anchor: 'sec-absorption', label: '3. Absorption' } },
+      { id: 'refl-12', groups: [['coil', 'coiled', 'fold', 'folded', 'pack', 'packed', 'loop', 'loops'], ['space', 'fit', 'abdomen', 'small space']],
+        reread: { anchor: 'sec-system', label: '4. Put together' } },
+      { id: 'refl-13', groups: [['stomach'], ['small intestine']],
+        reread: { anchor: 'sec-system', label: '4. Put together' } },
+      { id: 'refl-14', groups: [['mechanical', 'chew', 'churn'], ['chemical', 'enzyme', 'acid', 'bile'], ['absorb', 'absorption', 'villi', 'nutrient']],
+        reread: { anchor: 'sec-system', label: '4. Put together' } },
+      { id: 'refl-15', groups: [['pancreas'], ['insulin', 'blood sugar', 'hormone', 'hormones']],
+        reread: { anchor: 'sec-system', label: '4. Put together' } },
+      { id: 'refl-16', groups: [['fistula', 'wound', 'opening', 'hole'], ['observe', 'watch', 'see', 'study', 'chemical', 'acid']],
+        reread: { anchor: 'sec-breakdown', label: '2. Mechanical vs. chemical digestion' } }
+    ]);
+
+    var modelPaused = false;
+    document.getElementById('pause-btn').addEventListener('click', function () {
+      modelPaused = !modelPaused;
+      document.getElementById('model-stage').classList.toggle('paused', modelPaused);
+      this.textContent = modelPaused ? '▶ Resume rotation' : '⏸ Pause rotation';
+    });
+  });
+
+  window.addEventListener('beforeprint', function () { document.body.classList.add('printing-slip'); });
+  window.addEventListener('afterprint', function () { document.body.classList.remove('printing-slip'); });
+</script>
+</body>
+</html>

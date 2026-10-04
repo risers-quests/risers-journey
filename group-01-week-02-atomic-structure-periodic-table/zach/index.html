@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atomic Structure & Periodic Table · Atom Body Connector</title>
+<script>
+  (function () {
+    // Facilitator View: ?fac=1 must be read and set BEFORE quest.js or any
+    // of its init calls run, so tracking never has a chance to start before
+    // this takes effect, see initFacilitatorCheck's comment in quest.js.
+    try {
+      window.QUEST_FACILITATOR_MODE = new URLSearchParams(window.location.search).get('fac') === '1';
+    } catch (e) { window.QUEST_FACILITATOR_MODE = false; }
+    try {
+      var kid = localStorage.getItem('imm-l3-kid');
+      if (!kid || kid.toLowerCase() !== 'zach') document.documentElement.classList.add('gate-locked');
+    } catch (e) { document.documentElement.classList.add('gate-locked'); }
+  })();
+</script>
+<style>
+  html.gate-locked main, html.gate-locked .progress-summary { display: none !important; }
+  html.facilitator-mode #facilitator-banner { display: block; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="lens-zach">
+
+<div id="facilitator-banner" style="display:none;">🧑‍🏫 Facilitator View, nothing on this page is being timed, saved, or synced. <a href="?" id="facilitator-banner-exit">Exit Facilitator View →</a></div>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand-group">
+      <a href="../index.html" class="brand">⚛️ Atomic Structure & Periodic Table<small>Atom Body Connector</small></a>
+      <span class="day-badge" id="quest-day-badge"></span>
+      <span class="session-timer" id="session-timer"></span>
+    </div>
+    <nav class="day-nav">
+      <a href="#day1">Day 1</a>
+      <a href="#day2">Day 2</a>
+      <a href="#day3">Day 3</a>
+      <button class="notes-toggle-btn" id="glossary-toggle-btn" type="button">📖 Glossary</button>
+      <button class="notes-toggle-btn" id="notes-toggle-btn" type="button">📝 My Notes</button>
+      <button class="print-btn" id="print-slip-btn" type="button">🖨️ Print my bringing slip</button>
+    </nav>
+  </div>
+</header>
+
+<div class="progress-summary">
+  <div class="container">
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 1</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day1-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day1-label">0/4</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 2</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day2-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day2-label">0/5</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 3</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day3-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="quest-gate-block">
+  <div class="gate-block-wrap">
+    <div class="gate-icon">🔒</div>
+    <h2>This is Zach's investigation</h2>
+    <p>Confirm it's you to continue.</p>
+    <div class="name-gate-card">
+      <button class="btn btn-primary gate-confirm-btn" id="gate-confirm-btn" type="button">✅ Yes, I'm Zach, Continue</button>
+      <div class="name-gate-msg" id="gate-name-msg"></div>
+    </div>
+    <a class="gate-not-you" href="../index.html">Not you? Find your own quest link →</a>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- COVER -->
+  <section class="cover">
+    <div class="cover-watermark" aria-hidden="true">🫀</div>
+    <div class="format-pill">Discovery Quest</div><br>
+    <span class="lens-pill">🫀 Atom Body Connector</span>
+    <h1>Every Atom Is a Tiny Body of Its Own</h1>
+    <p class="subtitle">Every body has a core, an identity, and support. And something moves around inside it. Every atom is the same way, just too small to see, even under most microscopes.</p>
+    <div class="kid-name">Prepared for: Zach</div>
+    <div class="framing">
+      <p style="margin:0;">You are an <strong>Atom Body Connector</strong>. Names like "proton" and "electron" stop sounding strange once you match each one to a body part that does the same job. Day 1 gives you the full picture: the three particles every atom has, the one number that tells you which element it is, and why particles sit exactly where they do. Day 2, you build one real atom-body, Phosphorus, atomic number 15. You'll have to explain out loud why each match makes sense. This week, your map only works if every match makes sense.</p>
+    </div>
+  </section>
+
+  <!-- DAY 1 -->
+  <section class="day-block" id="day1">
+    <span class="day-kicker">Day 1 · Full Body Scan</span>
+    <h2>What Every Atom Is Actually Built From</h2>
+    <p class="day-sub">You can't map a body without knowing what every organ does. This briefing covers the basics: the particles every atom has, the one number that tells you which element it is, and why the particles sit where they do.</p>
+
+    <h3>Why matter is never really solid</h3>
+    <p>Everything around you is made of <strong>atoms</strong>, this desk, the air, even your own hand. Atoms are the basic building blocks of all matter. An atom is not a solid little ball. It's a tiny structure with different parts in different places, doing different jobs, just like your own body has different organs doing different jobs. Before you map your own atom-body, you need to know what's inside every single atom.</p>
+
+    <h3 id="sec-particles"><span class="sec-num">1</span>The three particles every atom is built from</h3>
+    <p>Every atom is built from the same three tiny particles. The <strong>proton</strong> carries a positive charge. It sits packed inside the <strong>nucleus</strong>, the atom's center, think of it as your <strong>heartbeat</strong>, the part that drives everything else. The <strong>neutron</strong> carries no charge at all. It sits right next to the protons, also in the nucleus, like your <strong>skeleton</strong>, holding everything together without adding a charge of its own. The <strong>electron</strong> carries a negative charge. It moves around outside the nucleus, in a space called the <strong>electron cloud</strong>, like your <strong>circulation</strong>, always moving through the outer layers of the body. The nucleus is tiny. If an atom were the size of your whole body, the nucleus would be about the size of one grain of rice at your core. But that one small grain holds almost all of the atom's weight, a proton or neutron weighs about 1,800 times as much as one electron. Almost all of an atom's space is the empty area in the electron cloud around that one packed core.</p>
+
+    <div class="diagram-card">
+      <div class="diagram-title">🔬 Every atom's basic layout</div>
+      <div class="diagram-sub">Two zones every atom has: the packed core, and the circulation layer around it.</div>
+      <div class="diagram-svg-wrap">
+        <svg viewBox="0 0 240 200" width="230" height="190" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="120" cy="100" r="88" fill="none" stroke="#fb7185" stroke-width="2" stroke-dasharray="5 5"/>
+          <circle cx="120" cy="100" r="52" fill="none" stroke="#fb7185" stroke-width="2" stroke-dasharray="5 5"/>
+          <circle cx="120" cy="100" r="27" fill="#fecdd3" stroke="#881337" stroke-width="2.5"/>
+          <text x="120" y="104" text-anchor="middle" fill="#881337" font-size="9" font-weight="700">1</text>
+          <circle cx="149" cy="100" r="7" fill="#f43f5e" stroke="#881337" stroke-width="1.5"/>
+          <text x="149" y="103" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">2</text>
+          <circle cx="120" cy="12" r="7" fill="#e11d48" stroke="#881337" stroke-width="1.5"/>
+          <text x="120" y="15" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">3</text>
+        </svg>
+      </div>
+      <div class="diagram-legend">
+        <div class="diagram-legend-item"><span class="dl-num">1</span><span class="dl-text"><strong>Nucleus</strong>, the core. Protons and neutrons are packed here, at the center.</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">2</span><span class="dl-text"><strong>Inner circulation electron</strong>, the inner loop. It holds up to 2 electrons.</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">3</span><span class="dl-text"><strong>Outer circulation electron</strong>, the next loop out. It holds up to 8 electrons.</span></div>
+      </div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🩺 System Check</span>
+      <p style="margin:0;">Protons and electrons carry opposite charges. What charge does a proton carry? What charge does an electron carry?</p>
+      <textarea id="refl-6" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-identity"><span class="sec-num">2</span>What makes one element different from every other element</h3>
+    <p>Every element has one number that is only its own, no other element shares it. That number is the <strong>atomic number</strong>: the exact number of protons in an atom's nucleus. Change the proton count, and you've changed the element completely. No two elements ever share the same atomic number, it's like an ID that's never given to anyone else. An <strong>element</strong> is a pure substance made of only one type of atom. Every single atom of that element has that one exact atomic number, every time.</p>
+    <p>Here are three real examples. <strong>Hydrogen</strong> has exactly 1 proton, atomic number 1, the simplest atom there is. <strong>Carbon</strong> has exactly 6 protons, atomic number 6. <strong>Oxygen</strong> has exactly 8 protons, atomic number 8. Count the protons, and you know exactly which element you're looking at. One more fact: a neutral atom (no leftover charge) always has the same number of electrons as protons. That's why the positive and negative charges cancel out to zero.</p>
+
+    <div class="card-grid">
+      <div class="info-card"><h4>🔢 Atomic number</h4><p>The exact number of protons in the nucleus. No two elements ever share one, it's the element's ID.</p></div>
+      <div class="info-card"><h4>🧪 Element</h4><p>A pure substance made of only one type of atom. Every atom of it has the same exact atomic number.</p></div>
+      <div class="info-card"><h4>⚖️ Neutral atom</h4><p>Electron count equals proton count. The positive and negative charges cancel out to zero.</p></div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🧾 Case Notes</span>
+      <p style="margin:0;">A sample has exactly 6 protons in its nucleus. Which element is it? What proves it?</p>
+      <textarea id="refl-2" placeholder="Name the element and the evidence…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔢 ID Check</span>
+      <p style="margin:0;">What does an atom's atomic number count? Why does that one number tell you which element it is?</p>
+      <textarea id="refl-7" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">🩺 Body Scan · something doesn't add up</span>
+      <p style="margin:0;">A scan note claims: <em>"It's the number of neutrons in an atom that decides which element it is."</em> Something in that note is wrong. What is it? What should the note have said instead?</p>
+      <textarea id="refl-1" placeholder="Type your correction here…"></textarea>
+    </div>
+
+<h3 id="sec-structure"><span class="sec-num">3</span>Why particles don't just sit anywhere they want</h3>
+    <p>Nothing in an atom sits by accident, every particle has a real reason for where it is. Electrons don't just drift around in the electron cloud. They sit in <strong>shells</strong> (also called energy levels), set at fixed distances from the nucleus, like blood circulating through set loops instead of just anywhere. The shell closest to the nucleus fills first, and it can only hold 2 electrons. Once that shell is full, the next electrons go into the second shell, which can hold up to 8. Electrons closer to the nucleus are held more tightly. That's why an atom always fills its inner shell completely before any electron moves to the next one out. Take Carbon: 6 electrons total. The first 2 fill the first shell, and the other 4 sit in the second shell. Oxygen has 8 electrons: 2 fill the first shell, and 6 sit in the second shell.</p>
+    <p>The nucleus needs neutrons for its own reason. Every proton carries the same positive charge, and same charges push each other away. So a nucleus packed with several protons would fly apart from that push alone. Neutrons sit between the protons and hold the nucleus together, like a skeleton holding a crowded core together instead of letting it push itself apart. That's why every element past hydrogen needs neutrons in its nucleus, not just protons.</p>
+
+    <div class="callout">
+      <span class="callout-label">🎓 Explain It Simply</span>
+      <p style="margin:0;">A trainee on your team asks why electrons don't just float randomly around the nucleus instead of sitting in shells. Explain it in two or three simple sentences they could repeat back correctly.</p>
+      <textarea id="refl-3" placeholder="Explain it simply…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🚧 Too Few Neutrons</span>
+      <p style="margin:0;">Why would a nucleus with too few neutrons run into a real problem? Think about what protons do to each other.</p>
+      <textarea id="refl-8" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-periodic">Reading the periodic table, the full chart on every element</h3>
+    <p>The <strong>periodic table</strong> is a chart of every known element, all in one place. Every element gets its own spot, in order of atomic number, left to right, top to bottom, starting with hydrogen at atomic number 1. Each <strong>row</strong> is called a <strong>period</strong>. A new period starts every time a new outer electron shell begins. Each <strong>column</strong> is called a <strong>group</strong> (or family). Elements in the same column tend to act alike, because they have a similar number of electrons in their outer shell.</p>
+
+    <div class="diagram-card">
+      <div class="diagram-title">🗺️ The periodic table · groups 1–18, periods 1–3</div>
+      <div class="diagram-sub">Every column is a group, every row is a period. Follow any row left to right and the atomic number only climbs.</div>
+      <div class="periodic-grid">
+        <div class="pg-head">1</div><div class="pg-head">2</div><div class="pg-head">13</div><div class="pg-head">14</div><div class="pg-head">15</div><div class="pg-head">16</div><div class="pg-head">17</div><div class="pg-head">18</div>
+
+        <div class="pg-cell"><span class="pg-num">1</span><span class="pg-sym">H</span><span class="pg-name">Hydrogen</span></div>
+        <div class="pg-cell" style="visibility:hidden;"></div>
+        <div class="pg-cell" style="visibility:hidden;"></div>
+        <div class="pg-cell" style="visibility:hidden;"></div>
+        <div class="pg-cell" style="visibility:hidden;"></div>
+        <div class="pg-cell" style="visibility:hidden;"></div>
+        <div class="pg-cell" style="visibility:hidden;"></div>
+        <div class="pg-cell"><span class="pg-num">2</span><span class="pg-sym">He</span><span class="pg-name">Helium</span></div>
+
+        <div class="pg-cell"><span class="pg-num">3</span><span class="pg-sym">Li</span><span class="pg-name">Lithium</span></div>
+        <div class="pg-cell"><span class="pg-num">4</span><span class="pg-sym">Be</span><span class="pg-name">Beryllium</span></div>
+        <div class="pg-cell"><span class="pg-num">5</span><span class="pg-sym">B</span><span class="pg-name">Boron</span></div>
+        <div class="pg-cell"><span class="pg-num">6</span><span class="pg-sym">C</span><span class="pg-name">Carbon</span></div>
+        <div class="pg-cell"><span class="pg-num">7</span><span class="pg-sym">N</span><span class="pg-name">Nitrogen</span></div>
+        <div class="pg-cell"><span class="pg-num">8</span><span class="pg-sym">O</span><span class="pg-name">Oxygen</span></div>
+        <div class="pg-cell"><span class="pg-num">9</span><span class="pg-sym">F</span><span class="pg-name">Fluorine</span></div>
+        <div class="pg-cell"><span class="pg-num">10</span><span class="pg-sym">Ne</span><span class="pg-name">Neon</span></div>
+
+        <div class="pg-cell"><span class="pg-num">11</span><span class="pg-sym">Na</span><span class="pg-name">Sodium</span></div>
+        <div class="pg-cell"><span class="pg-num">12</span><span class="pg-sym">Mg</span><span class="pg-name">Magnesium</span></div>
+        <div class="pg-cell"><span class="pg-num">13</span><span class="pg-sym">Al</span><span class="pg-name">Aluminum</span></div>
+        <div class="pg-cell"><span class="pg-num">14</span><span class="pg-sym">Si</span><span class="pg-name">Silicon</span></div>
+        <div class="pg-cell"><span class="pg-num">15</span><span class="pg-sym">P</span><span class="pg-name">Phosphorus</span></div>
+        <div class="pg-cell"><span class="pg-num">16</span><span class="pg-sym">S</span><span class="pg-name">Sulfur</span></div>
+        <div class="pg-cell"><span class="pg-num">17</span><span class="pg-sym">Cl</span><span class="pg-name">Chlorine</span></div>
+        <div class="pg-cell"><span class="pg-num">18</span><span class="pg-sym">Ar</span><span class="pg-name">Argon</span></div>
+      </div>
+      <p style="margin:12px 0 0; text-align:center; color:var(--ink-soft); font-size:.85rem;">This shows rows 1–3 only. The real table keeps going, but every element from today's reading (H, He, C, N, O, Ne, P) already fits on this map.</p>
+    </div>
+
+    <table class="data-table">
+      <thead><tr><th>Element</th><th>Atomic number (protons)</th><th>Electrons</th><th>Shell arrangement</th></tr></thead>
+      <tbody>
+        <tr><td>Hydrogen</td><td class="num">1</td><td class="num">1</td><td class="num">1</td></tr>
+        <tr><td>Helium</td><td class="num">2</td><td class="num">2</td><td class="num">2</td></tr>
+        <tr><td>Carbon</td><td class="num">6</td><td class="num">6</td><td class="num">2, 4</td></tr>
+        <tr><td>Nitrogen</td><td class="num">7</td><td class="num">7</td><td class="num">2, 5</td></tr>
+        <tr><td>Oxygen</td><td class="num">8</td><td class="num">8</td><td class="num">2, 6</td></tr>
+        <tr><td>Neon</td><td class="num">10</td><td class="num">10</td><td class="num">2, 8</td></tr>
+        <tr><td>Phosphorus</td><td class="num">15</td><td class="num">15</td><td class="num">2, 8, 5</td></tr>
+      </tbody>
+    </table>
+    <p>Follow any row across: the atomic number and the electron count always match, since these are neutral atoms. The shell pattern always fills the first shell's 2 spots and the second shell's 8 spots before any electron goes into the third. That's not luck, it's the same shell rule every time, all the way up to Phosphorus. Keep this chart close by. You'll use it to build your own atom-body tomorrow, and to build your own Phosphorus model.</p>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔍 Compare Two Cases</span>
+      <p style="margin:0 0 8px;"><strong>Case A:</strong> 7 protons in its nucleus.<br><strong>Case B:</strong> 2 protons in its nucleus.</p>
+      <p style="margin:0;">Which element is each one? What tells you that?</p>
+      <textarea id="refl-4" placeholder="Explain both cases…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🧩 Rule It Out</span>
+      <p style="margin:0;">One sample has 6 protons and 6 neutrons. A second sample has 6 protons and 8 neutrons. Are they the same element or different elements? Why doesn't the neutron count decide that?</p>
+      <textarea id="refl-9" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3>History: how we found out bodies this small even existed</h3>
+    <div class="timeline">
+      <div class="timeline-item"><div class="t-year">1803</div><div class="t-body"><strong>John Dalton</strong> says every element is made of matching atoms, and different elements are made of different atoms. It was the first real, testable idea about atoms.</div></div>
+      <div class="timeline-item"><div class="t-year">1897</div><div class="t-body"><strong>J.J. Thomson</strong> discovers the electron, the first tiny particle ever found inside an atom. This proved atoms could be split into smaller parts. He pictured the atom like a "plum pudding": a positive blob with negative electrons stuck inside it.</div></div>
+      <div class="timeline-item"><div class="t-year">1911</div><div class="t-body"><strong>Ernest Rutherford</strong> runs an experiment and finds that an atom's positive charge and almost all its mass are packed into one tiny, dense spot, the nucleus. This proved the plum-pudding idea wrong.</div></div>
+      <div class="timeline-item"><div class="t-year">1913</div><div class="t-body"><strong>Niels Bohr</strong> says electrons orbit the nucleus in fixed shells at set distances, like planets orbiting the Sun. This is the model our whole reading is built on.</div></div>
+    </div>
+
+    <h3>Real-world application: doctors read your own hydrogen atoms</h3>
+    <p>An MRI scanner doesn't cut you open to see inside your body. It detects the protons inside the hydrogen atoms that make up most of the water in your body. A human body is roughly 60% water. So doctors can build a full picture of what's happening inside you just by reading the signal those hydrogen protons give off inside a powerful magnet. The exact same particle this whole reading is built on is what makes that scan possible.</p>
+
+    <div class="game-card">
+      <div class="game-title">🔬 Particle Match</div>
+      <div class="game-sub">Key terms from today's whole examination. Click a term, then its matching definition, no penalty for a wrong guess, just try again.</div>
+      <div id="game-day1"></div>
+    </div>
+
+  </section>
+
+  <!-- MATERIALS -->
+  <section class="day-block">
+    <span class="day-kicker">Before Day 2 · Build Kit</span>
+    <h2>Choose What You're Bringing</h2>
+    <p class="day-sub">This is a pool of choices, not a checklist. Pick what your Phosphorus model actually needs. Phosphorus is atomic number 15: 15 protons, 16 neutrons, and 15 electrons, arranged in three shells (2, 8, 5). Pick enough beads for all three counts, plus loops for three shells.</p>
+
+    <div class="materials-table-wrap">
+      <table class="materials-table">
+      <thead><tr><th>Material</th><th>Body core</th><th>Heartbeat beads (protons)</th><th>Skeleton beads (neutrons)</th><th>Circulation markers (electrons)</th><th>Orbit loops (shells)</th><th>ID tags &amp; assembly</th></tr></thead>
+      <tbody>
+      <tr><td class="mat-name">Styrofoam ball</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Styrofoam ball for Body core</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Clay or play-dough ball</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Clay or play-dough ball for Body core</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A small balloon</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A small balloon for Body core</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Red pony beads</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Red pony beads for Heartbeat beads (protons)</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Red pom-poms</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Red pom-poms for Heartbeat beads (protons)</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Red felt cutouts</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Red felt cutouts for Heartbeat beads (protons)</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">White pony beads</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">White pony beads for Skeleton beads (neutrons)</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">White pom-poms</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">White pom-poms for Skeleton beads (neutrons)</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">White felt cutouts</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">White felt cutouts for Skeleton beads (neutrons)</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Small blue beads</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Small blue beads for Circulation markers (electrons)</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Small silver beads</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Small silver beads for Circulation markers (electrons)</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Pipe cleaners bent into circles</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Pipe cleaners bent into circles for Orbit loops (shells)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">String or yarn loops</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">String or yarn loops for Orbit loops (shells)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Thin wire hoops</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Thin wire hoops for Orbit loops (shells)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Index cards or tags</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Index cards or tags for ID tags &amp; assembly</span></label></td></tr>
+      <tr><td class="mat-name">Markers or pens</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Markers or pens for ID tags &amp; assembly</span></label></td></tr>
+      <tr><td class="mat-name">Glue or tape</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Glue or tape for ID tags &amp; assembly</span></label></td></tr>
+      <tr><td class="mat-name">Toothpicks or thin skewers</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Toothpicks or thin skewers for ID tags &amp; assembly</span></label></td></tr>
+      </tbody></table></div>
+      <p class="materials-table-note">One body core, then exactly 15 heartbeat beads, 16 skeleton beads, and 15 circulation markers for Phosphorus, check the reference chart before you count out beads.</p>
+          <div class="slip-preview">
+      <h4>📋 What you're bringing to Day 2:</h4>
+      <ul id="slip-list-preview"></ul>
+      <div class="slip-empty" id="slip-empty">Nothing selected yet.</div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section class="day-block" id="day2">
+    <span class="day-kicker">Day 2 · Build the Body-Map</span>
+    <h2>Plan and Build One Real Atom-Body</h2>
+    <p class="day-sub">Your build this week: Phosphorus, atomic number 15. It's found in your own bones, teeth, and DNA. Build it as a labeled body outline, with every particle standing in for the real body part that does its job.</p>
+
+    <h3>What you're building</h3>
+    <p>You'll build a real, physical model of Phosphorus, made to look like a labeled body outline, not just a drawing, and not a shape glued together for looks. Every particle needs a real, matching body part: a foam-ball core covered with 15 heartbeat beads (protons) and 16 skeleton beads (neutrons), wrapped by three circulation loops holding Phosphorus's 15 electrons in the exact pattern it needs, 2 on the inner loop, 8 on the middle loop, and 5 on the outer loop. If you can't explain why the heartbeat equals the proton, you haven't quite made the connection yet.</p>
+    <p>When it's finished, it should look like this: a foam-ball core with 15 red beads (protons) and 16 white beads (neutrons) fixed on, wrapped by three string "circulation" loops, 2 markers on the inner loop, 8 on the middle, 5 on the outer, labeled "Phosphorus, atomic number 15."</p>
+
+    <div class="callout subtle">
+      <span class="callout-label">📎 Reference: Phosphorus's Bohr model</span>
+      <div style="max-width:300px; margin:0 auto;"><svg viewBox="0 0 340 340" width="280" height="280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bohr model of Phosphorus: nucleus of 15 protons and 16 neutrons, with 2, 8, and 5 electrons in three shells"><circle cx="170" cy="165" r="55" fill="none" stroke="#c026d3" stroke-width="1.2" opacity="0.55"/><circle cx="170" cy="165" r="88" fill="none" stroke="#c026d3" stroke-width="1.2" opacity="0.55"/><circle cx="170" cy="165" r="122" fill="none" stroke="#c026d3" stroke-width="1.2" opacity="0.55"/><circle cx="174.1" cy="165.0" r="5.4" fill="#dc2626" stroke="#ffffff" stroke-width="0.6"/><circle cx="164.8" cy="169.8" r="5.4" fill="#dc2626" stroke="#ffffff" stroke-width="0.6"/><circle cx="170.8" cy="155.9" r="5.4" fill="#dc2626" stroke="#ffffff" stroke-width="0.6"/><circle cx="176.6" cy="173.6" r="5.4" fill="#dc2626" stroke="#ffffff" stroke-width="0.6"/><circle cx="157.9" cy="162.9" r="5.4" fill="#dc2626" stroke="#ffffff" stroke-width="0.6"/><circle cx="181.4" cy="157.7" r="5.4" fill="#dc2626" stroke="#ffffff" stroke-width="0.6"/><circle cx="166.2" cy="179.2" r="5.4" fill="#dc2626" stroke="#ffffff" stroke-width="0.6"/><circle cx="162.7" cy="150.9" r="5.4" fill="#dc2626" stroke="#ffffff" stroke-width="0.6"/><circle cx="185.8" cy="170.8" r="5.4" fill="#dc2626" stroke="#ffffff" stroke-width="0.6"/><circle cx="153.5" cy="171.8" r="5.4" fill="#dc2626" stroke="#ffffff" stroke-width="0.6"/><circle cx="177.9" cy="148.0" r="5.4" fill="#dc2626" stroke="#ffffff" stroke-width="0.6"/><circle cx="175.9" cy="183.7" r="5.4" fill="#dc2626" stroke="#ffffff" stroke-width="0.6"/><circle cx="152.3" cy="154.7" r="5.4" fill="#dc2626" stroke="#ffffff" stroke-width="0.6"/><circle cx="190.8" cy="160.4" r="5.4" fill="#dc2626" stroke="#ffffff" stroke-width="0.6"/><circle cx="157.3" cy="183.0" r="5.4" fill="#dc2626" stroke="#ffffff" stroke-width="0.6"/><circle cx="167.1" cy="142.4" r="5.4" fill="#f59e0b" stroke="#ffffff" stroke-width="0.6"/><circle cx="188.0" cy="180.1" r="5.4" fill="#f59e0b" stroke="#ffffff" stroke-width="0.6"/><circle cx="145.8" cy="166.0" r="5.4" fill="#f59e0b" stroke="#ffffff" stroke-width="0.6"/><circle cx="187.6" cy="147.5" r="5.4" fill="#f59e0b" stroke="#ffffff" stroke-width="0.6"/><circle cx="168.8" cy="190.5" r="5.4" fill="#f59e0b" stroke="#ffffff" stroke-width="0.6"/><circle cx="153.2" cy="144.9" r="5.4" fill="#f59e0b" stroke="#ffffff" stroke-width="0.6"/><circle cx="196.6" cy="168.6" r="5.4" fill="#f59e0b" stroke="#ffffff" stroke-width="0.6"/><circle cx="147.5" cy="180.7" r="5.4" fill="#f59e0b" stroke="#ffffff" stroke-width="0.6"/><circle cx="176.2" cy="137.6" r="5.4" fill="#f59e0b" stroke="#ffffff" stroke-width="0.6"/><circle cx="184.2" cy="189.8" r="5.4" fill="#f59e0b" stroke="#ffffff" stroke-width="0.6"/><circle cx="142.2" cy="156.1" r="5.4" fill="#f59e0b" stroke="#ffffff" stroke-width="0.6"/><circle cx="197.0" cy="152.5" r="5.4" fill="#f59e0b" stroke="#ffffff" stroke-width="0.6"/><circle cx="158.3" cy="193.0" r="5.4" fill="#f59e0b" stroke="#ffffff" stroke-width="0.6"/><circle cx="159.6" cy="135.9" r="5.4" fill="#f59e0b" stroke="#ffffff" stroke-width="0.6"/><circle cx="197.8" cy="179.6" r="5.4" fill="#f59e0b" stroke="#ffffff" stroke-width="0.6"/><circle cx="139.1" cy="173.1" r="5.4" fill="#f59e0b" stroke="#ffffff" stroke-width="0.6"/><circle cx="170.0" cy="110.0" r="6.2" fill="#2563eb" stroke="#ffffff" stroke-width="0.8"/><circle cx="170.0" cy="220.0" r="6.2" fill="#2563eb" stroke="#ffffff" stroke-width="0.8"/><circle cx="170.0" cy="77.0" r="6.2" fill="#2563eb" stroke="#ffffff" stroke-width="0.8"/><circle cx="232.2" cy="102.8" r="6.2" fill="#2563eb" stroke="#ffffff" stroke-width="0.8"/><circle cx="258.0" cy="165.0" r="6.2" fill="#2563eb" stroke="#ffffff" stroke-width="0.8"/><circle cx="232.2" cy="227.2" r="6.2" fill="#2563eb" stroke="#ffffff" stroke-width="0.8"/><circle cx="170.0" cy="253.0" r="6.2" fill="#2563eb" stroke="#ffffff" stroke-width="0.8"/><circle cx="107.8" cy="227.2" r="6.2" fill="#2563eb" stroke="#ffffff" stroke-width="0.8"/><circle cx="82.0" cy="165.0" r="6.2" fill="#2563eb" stroke="#ffffff" stroke-width="0.8"/><circle cx="107.8" cy="102.8" r="6.2" fill="#2563eb" stroke="#ffffff" stroke-width="0.8"/><circle cx="256.3" cy="78.7" r="6.2" fill="#2563eb" stroke="#ffffff" stroke-width="0.8"/><circle cx="278.7" cy="220.4" r="6.2" fill="#2563eb" stroke="#ffffff" stroke-width="0.8"/><circle cx="150.9" cy="285.5" r="6.2" fill="#2563eb" stroke="#ffffff" stroke-width="0.8"/><circle cx="49.5" cy="184.1" r="6.2" fill="#2563eb" stroke="#ffffff" stroke-width="0.8"/><circle cx="114.6" cy="56.3" r="6.2" fill="#2563eb" stroke="#ffffff" stroke-width="0.8"/></svg></div>
+      <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; font-size:.85rem; margin-top:6px;">
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#dc2626;margin-right:5px;"></span>15 Protons</span>
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f59e0b;margin-right:5px;"></span>16 Neutrons</span>
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#2563eb;margin-right:5px;"></span>15 Electrons</span>
+      </div>
+      <p style="margin:10px 0 0;">This is what you're building, drawn out: one core, with three loops holding 2, then 8, then 5 electrons. Your bead colors don't have to match this picture. It's here to show you the counts and the shell pattern, not the colors.</p>
+    </div>
+
+    <div class="model3d-wrap">
+      <div class="model3d">
+        <div class="model3d-stage" id="model-stage">
+          <div class="model3d-face f1" style="background:linear-gradient(135deg,#fb7185,#e11d48);"><span><span class="f-icon">💗</span>Nucleus<br>Core</span></div>
+          <div class="model3d-face f2" style="background:linear-gradient(135deg,#f43f5e,#be123c);"><span><span class="f-icon">➕</span>Protons<br>Heartbeat</span></div>
+          <div class="model3d-face f3" style="background:linear-gradient(135deg,#fb7185,#881337);"><span><span class="f-icon">🦴</span>Neutrons<br>Skeleton</span></div>
+          <div class="model3d-face f4" style="background:linear-gradient(135deg,#f43f5e,#4c0519);"><span><span class="f-icon">➖</span>Electrons<br>Circulation</span></div>
+          <div class="model3d-face f5" style="background:linear-gradient(135deg,#fb7185,#be123c);"><span><span class="f-icon">🗺️</span>Build the<br>body-map</span></div>
+          <div class="model3d-face f6" style="background:linear-gradient(135deg,#f43f5e,#881337);"><span><span class="f-icon">🏷️</span>Label every<br>body match</span></div>
+        </div>
+      </div>
+      <div class="model3d-hint">🖱️ Hover to pause and read each face.</div>
+      <button class="btn btn-ghost model3d-pause" type="button" id="pause-btn">⏸ Pause rotation</button>
+    </div>
+
+    <h3>Build it</h3>
+    <div class="build-checklist">
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">1.</span><span class="step-text">Check Phosphorus's atomic number (15) and its proton, neutron, and electron counts on the reference chart before you start building.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">2.</span><span class="step-text">Build the core first. Place each particle as its matching body part, one at a time. Check it off your plan table as you go.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">3.</span><span class="step-text">Label every particle with its real name AND its body job. Anything unlabeled doesn't count as finished.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">4.</span><span class="step-text">Attach your circulation loops and place the exact right number of electrons on each. Fill the first loop's 2 spots before adding any to the second.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">5.</span><span class="step-text">Write one sentence per particle explaining why that job fits it.</span></span></label>
+    </div>
+
+    <h3 id="sec-plan">Log your build</h3>
+    <p>Now that it's built, fill this in. Write down exactly what you used for each part, and why the match fits. This becomes your notes for tomorrow's presentation.</p>
+    <table class="justify-table">
+      <thead><tr><th>Particle</th><th>Body part</th><th>Material I'm using</th><th>Why this match fits</th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="e.g. Proton"></td><td><input placeholder="e.g. Heartbeat"></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+      </tbody>
+    </table>
+
+  </section>
+
+  <!-- DAY 3 -->
+  <section class="day-block" id="day3">
+    <span class="day-kicker">Day 3 · Present the Body-Map</span>
+    <h2>Present Your Atom-Body</h2>
+    <p class="day-sub">A real body-connector can explain every match they made. Here's how to open strong and cover everything that matters.</p>
+
+    <div class="hook-box">
+      <div class="hook-label">Your opening move</div>
+      <p style="margin:0;">Don't say "I'm going to talk about atoms." Instead, hold up your body-map and ask the room: <em>"If this were a body, what do you think each part does?"</em> Let a few people guess before you tell them the real particle names.</p>
+    </div>
+
+    <div class="prep-form">
+      <h3>Prepare your presentation</h3>
+      <p>None of this gets typed into a box. Grab a stack of index cards and write short answers to each prompt below, in your own handwriting, one card per prompt is plenty. Bring the cards to Day 3 and glance at them while you talk. They're there to help you, not to be read word for word.</p>
+
+      <div class="prep-field">
+        <label>i. Your role and responsibility</label>
+        <p style="margin:0;">In your own words, who are you in this story, and what were you responsible for figuring out?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>ii. Three new words or ideas you learned, and what they mean</label>
+        <p style="margin:0;">Pick three, and write a short, correct definition for each in your own words.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>iii. One historical fact you found interesting</label>
+        <p style="margin:0;">Which one, and why it stuck with you</p>
+      </div>
+
+      <div class="prep-field">
+        <label>iv. A real-world application</label>
+        <p style="margin:0;">Where does this actually show up outside a classroom?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>v. Explain your build</label>
+        <p style="margin:0;">What you built, why each part represents what it does, and what it explains, look back at your Day 2 build reflection if you need a reminder.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>vi. What you're still not sure about</label>
+        <p style="margin:0;">What would you want more explanation or practice on?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>vii. Cover the whole quest</label>
+        <p style="margin:0;">Walk through everything from the quest, one topic at a time, like you're teaching it to someone hearing it for the first time: the three particles every atom is built from, what makes one element different from another, why particles sit where they do, reading the periodic table, and the history behind it, Dalton, Thomson, Rutherford, and Bohr.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  Atomic Structure & Periodic Table · Atom Body Connector, Zach's instance. <a href="../index.html">All three instances →</a>
+</footer>
+
+<!-- Isolated printable materials slip -->
+<div id="print-slip-page">
+  <div class="print-slip-sheet">
+    <h3>📋 Materials I'm Bringing, Day 2</h3>
+    <div class="slip-kid">Atom Body Connector · Zach</div>
+    <ul id="slip-list-print"></ul>
+  </div>
+</div>
+
+<!-- Side glossary drawer -->
+<div class="notes-backdrop" id="glossary-backdrop"></div>
+<div class="notes-drawer" id="glossary-drawer">
+  <div class="notes-drawer-head">
+    <h4>📖 Glossary</h4>
+    <button id="glossary-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="glossary">
+      <div class="glossary-item"><div class="word">Atom</div><div class="def">The basic building block of all matter.</div></div>
+      <div class="glossary-item"><div class="word">Proton</div><div class="def">A tiny particle with a positive charge. Found in the nucleus.</div></div>
+      <div class="glossary-item"><div class="word">Neutron</div><div class="def">A tiny particle with no charge. Found in the nucleus with the protons.</div></div>
+      <div class="glossary-item"><div class="word">Electron</div><div class="def">A tiny particle with a negative charge. Found outside the nucleus, in the electron cloud.</div></div>
+      <div class="glossary-item"><div class="word">Nucleus</div><div class="def">The tiny, packed center of an atom. Holds the protons and neutrons.</div></div>
+      <div class="glossary-item"><div class="word">Element</div><div class="def">A pure substance made of only one kind of atom.</div></div>
+      <div class="glossary-item"><div class="word">Atomic number</div><div class="def">The number of protons in an atom's nucleus. It tells you which element it is.</div></div>
+      <div class="glossary-item"><div class="word">Periodic table</div><div class="def">A chart that organizes every known element by atomic number.</div></div>
+      <div class="glossary-item"><div class="word">Shell (energy level)</div><div class="def">A ring around the nucleus where electrons are found.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Side notes drawer -->
+<div class="notes-backdrop" id="notes-backdrop"></div>
+<div class="notes-drawer" id="notes-drawer">
+  <div class="notes-drawer-head">
+    <h4>📝 My Notes</h4>
+    <button id="notes-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="notes-section-label">Highlighted words</div>
+    <ul id="hl-collected-list" class="hl-collected-list"></ul>
+    <div id="hl-collected-empty" style="display:none;">Highlight anything in the reading and it'll show up here.</div>
+    <div class="notes-section-label">Free notes</div>
+    <textarea id="notes-textarea" placeholder="Jot anything down…"></textarea>
+    <div id="notes-saved-msg" class="notes-saved-msg"></div>
+  </div>
+</div>
+
+<script>
+  // Progress-sync Worker, cross-device save. SITE_KEY is a soft deterrent
+  // only (any client-side value is visible in devtools), not real auth.
+  window.QUEST_SYNC_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  window.QUEST_SYNC_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+</script>
+<script src="../js/quest.js"></script>
+<script>
+  QuestUI.initKidGate('Zach');
+  QuestUI.initFacilitatorCheck();
+
+  QuestUI.initProgressSync('zach', 'group-01', 'week-02').then(function () {
+    QuestUI.initHighlighter('zach');
+    QuestUI.initNotesDrawer('zach');
+    QuestUI.initGlossaryDrawer();
+    QuestUI.initMaterialsPool('zach');
+    QuestUI.initBuildChecklist('zach');
+    QuestUI.initFieldAutosave('zach');
+    QuestUI.initPresentationAutofill('zach');
+    QuestUI.initDayTimer('zach');
+    QuestUI.initProgressBar('zach');
+    // Section/day locking deliberately not wired up — every section and
+    // day is open from the start, not gated behind finishing the one
+    // before it.
+    QuestUI.initCompleteQuest('zach');
+    QuestUI.initMatchGame('game-day1', [
+      ["Atom", "The basic building block of all matter."],
+      ["Proton", "A tiny particle with a positive charge. Found in the nucleus."],
+      ["Neutron", "A tiny particle with no charge. Found in the nucleus with the protons."],
+      ["Electron", "A tiny particle with a negative charge. Found outside the nucleus, in the electron cloud."],
+      ["Nucleus", "The tiny, packed center of an atom. Holds the protons and neutrons."],
+      ["Element", "A pure substance made of only one kind of atom."],
+      ["Atomic number", "The number of protons in an atom's nucleus. It tells you which element it is."],
+      ["Periodic table", "A chart that organizes every known element by atomic number."],
+      ["Shell (energy level)", "A ring around the nucleus where electrons are found."]
+    ], { pageKey: 'zach' });
+    QuestUI.initReflectionChecks('zach', [
+      { id: 'refl-6', groups: [['positive'], ['negative']],
+        reread: { anchor: 'sec-particles', label: '1. The three particles every atom is built from' } },
+      { id: 'refl-2', groups: [['carbon'], ['atomic number', 'proton', 'protons']],
+        reread: { anchor: 'sec-identity', label: '2. What makes one element different' } },
+      { id: 'refl-7', groups: [['atomic number'], ['proton', 'protons']],
+        reread: { anchor: 'sec-identity', label: '2. What makes one element different' } },
+      { id: 'refl-1', groups: [['proton', 'protons', 'atomic number'], ['neutron', 'neutrons'], ['wrong', 'incorrect', 'not right', 'false', "isn't", "doesn't decide", "doesn't determine"]],
+        reread: { anchor: 'sec-identity', label: '2. What makes one element different' } },
+      { id: 'refl-3', groups: [['shell', 'shells', 'energy level', 'levels'], ['fill', 'fills', 'first', 'closer', 'close', 'tightly', 'hold', 'two', '2']],
+        reread: { anchor: 'sec-structure', label: '3. Why particles sit where they do' } },
+      { id: 'refl-8', groups: [['proton', 'protons'], ['repel', 'repels', 'push', 'apart', 'fly apart', 'same charge', 'positive']],
+        reread: { anchor: 'sec-structure', label: '3. Why particles sit where they do' } },
+      { id: 'refl-4', groups: [['nitrogen'], ['helium']],
+        reread: { anchor: 'sec-periodic', label: 'Reading the periodic table' } },
+      { id: 'refl-9', groups: [['same'], ['proton', 'protons', 'atomic number']],
+        reread: { anchor: 'sec-periodic', label: 'Reading the periodic table' } }
+    ]);
+
+    var modelPaused = false;
+    document.getElementById('pause-btn').addEventListener('click', function () {
+      modelPaused = !modelPaused;
+      document.getElementById('model-stage').classList.toggle('paused', modelPaused);
+      this.textContent = modelPaused ? '▶ Resume rotation' : '⏸ Pause rotation';
+    });
+  });
+
+  window.addEventListener('beforeprint', function () { document.body.classList.add('printing-slip'); });
+  window.addEventListener('afterprint', function () { document.body.classList.remove('printing-slip'); });
+</script>
+</body>
+</html>

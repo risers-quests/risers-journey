@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pollination & Seed Dispersal — Pollinator Detective</title>
+<script>
+  (function () {
+    // Facilitator View: ?fac=1 must be read and set BEFORE quest.js or any
+    // of its init calls run, so tracking never has a chance to start before
+    // this takes effect — see initFacilitatorCheck's comment in quest.js.
+    try {
+      window.QUEST_FACILITATOR_MODE = new URLSearchParams(window.location.search).get('fac') === '1';
+    } catch (e) { window.QUEST_FACILITATOR_MODE = false; }
+    try {
+      var kid = localStorage.getItem('imm-l3-kid');
+      if (!kid || kid.toLowerCase() !== 'eva') document.documentElement.classList.add('gate-locked');
+    } catch (e) { document.documentElement.classList.add('gate-locked'); }
+  })();
+</script>
+<style>
+  html.gate-locked main, html.gate-locked .progress-summary { display: none !important; }
+  html.facilitator-mode #facilitator-banner { display: block; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="lens-eva">
+
+<div id="facilitator-banner" style="display:none;">🧑‍🏫 Facilitator View — nothing on this page is being timed, saved, or synced. <a href="?" id="facilitator-banner-exit">Exit Facilitator View →</a></div>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand-group">
+      <a href="../index.html" class="brand">🌼 Pollination & Seed Dispersal<small>Pollinator Detective</small></a>
+      <span class="day-badge" id="quest-day-badge"></span>
+      <span class="session-timer" id="session-timer"></span>
+    </div>
+    <nav class="day-nav">
+      <a href="#day1">Part 1</a>
+      <a href="#day2">Part 2</a>
+      <a href="#day3">Part 3</a>
+      <button class="notes-toggle-btn" id="glossary-toggle-btn" type="button">📖 Glossary</button>
+      <button class="notes-toggle-btn" id="notes-toggle-btn" type="button">📝 My Notes</button>
+      <button class="print-btn" id="print-slip-btn" type="button">🖨️ Print my bringing slip</button>
+    </nav>
+  </div>
+</header>
+
+<div class="progress-summary">
+  <div class="container">
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 1</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day1-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day1-label">0/4</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 2</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day2-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day2-label">0/5</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 3</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day3-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="quest-gate-block">
+  <div class="gate-block-wrap">
+    <div class="gate-icon">🔒</div>
+    <h2>This is Eva's investigation</h2>
+    <p>Confirm it's you to continue.</p>
+    <div class="name-gate-card">
+      <button class="btn btn-primary gate-confirm-btn" id="gate-confirm-btn" type="button">✅ Yes, I'm Eva — Continue</button>
+      <div class="name-gate-msg" id="gate-name-msg"></div>
+    </div>
+    <a class="gate-not-you" href="../index.html">Not you? Find your own quest link →</a>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- COVER -->
+  <section class="cover">
+    <div class="cover-watermark" aria-hidden="true">🔍</div>
+    <div class="format-pill">Discovery Quest</div><br>
+    <span class="lens-pill">🔍 Pollinator Detective</span>
+    <h1>The Case of the Missing Pollinator</h1>
+    <p class="subtitle">Every flower is a crime scene with no witnesses — just clues. Your job is to read the evidence a flower leaves behind and name exactly who's been visiting it.</p>
+    <div class="kid-name">Prepared for: Eva</div>
+    <div class="framing">
+      <p style="margin:0;">You are a <strong>Pollinator Detective</strong>. No one saw which animal visited which flower — but every flower's color, shape, and smell is evidence it left on purpose, to attract exactly the right visitor. Part 1 briefs you on the full case: how pollination actually works, and which clues point to which pollinator. Part 2, you build a real evidence board for one flower–pollinator case, and you have to justify every piece of evidence, not just guess. A detective who can't explain their evidence doesn't close the case. This week, you can.</p>
+    </div>
+  </section>
+
+  <!-- DAY 1 -->
+  <section class="day-block" id="day1">
+    <span class="day-kicker">Part 1 · Case Briefing</span>
+    <h2>Read the Evidence Every Flower Leaves</h2>
+    <p class="day-sub">You can't solve a case without knowing what counts as evidence. This briefing covers the full picture: what pollination actually is, which features point to which pollinator, why a flower becomes a seed at all, and how that seed ends up somewhere completely new.</p>
+
+    <h3>Why a flower isn't just decoration</h3>
+    <p>A flower's job was never to look pretty for us. Every color, shape, and smell it has is aimed at one thing: getting pollen from one flower to another, usually with help from a visitor it's trying to attract. Before you can read any flower's evidence correctly, you need to know exactly what pollination is and why a flower would go to all that trouble in the first place.</p>
+
+    <h3 id="sec-pollination"><span class="sec-num">1</span>What pollination actually is</h3>
+    <p>A flower's male part is the <strong>stamen</strong> — a stalk called a <strong>filament</strong> topped with an <strong>anther</strong>, which makes <strong>pollen</strong>. A flower's female part is the <strong>pistil</strong> — a sticky <strong>stigma</strong> on top of a tube called the <strong>style</strong>, leading down to the <strong>ovary</strong>, where the <strong>ovules</strong> wait. <strong>Pollination</strong> is simply pollen moving from an anther to a stigma — nothing more, nothing less.</p>
+
+    <div class="diagram-card">
+      <div class="diagram-title">🌸 Anatomy of a flower</div>
+      <div class="diagram-sub">Every case file starts with knowing exactly what you're looking at.</div>
+      <div class="diagram-svg-wrap">
+        <svg viewBox="0 0 240 220" width="230" height="210" xmlns="http://www.w3.org/2000/svg">
+          <path d="M120 100 C90 60 60 60 60 100 C60 130 90 140 120 100 Z" fill="#fde68a" stroke="#b45309" stroke-width="2.5"/>
+          <path d="M120 100 C150 60 180 60 180 100 C180 130 150 140 120 100 Z" fill="#fde68a" stroke="#b45309" stroke-width="2.5"/>
+          <path d="M120 100 C80 100 70 130 100 160 C112 172 128 172 140 160 C170 130 160 100 120 100 Z" fill="#fed7aa" stroke="#b45309" stroke-width="2.5"/>
+          <line x1="95" y1="95" x2="82" y2="60" stroke="#78350f" stroke-width="3"/>
+          <circle cx="82" cy="56" r="7" fill="#b45309"/>
+          <text x="82" y="60" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">1</text>
+          <line x1="120" y1="100" x2="120" y2="55" stroke="#78350f" stroke-width="3.5"/>
+          <circle cx="120" cy="50" r="8" fill="#78350f"/>
+          <text x="120" y="54" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">2</text>
+          <ellipse cx="120" cy="150" rx="20" ry="26" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+          <text x="120" y="154" text-anchor="middle" fill="#78350f" font-size="9" font-weight="700">3</text>
+        </svg>
+      </div>
+      <div class="diagram-legend">
+        <div class="diagram-legend-item"><span class="dl-num">1</span><span class="dl-text"><strong>Anther</strong> — makes the pollen (part of the stamen)</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">2</span><span class="dl-text"><strong>Stigma</strong> — sticky tip that catches pollen (top of the pistil)</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">3</span><span class="dl-text"><strong>Ovary</strong> — holds the ovules that become seeds</span></div>
+      </div>
+    </div>
+
+    <p><strong>Self-pollination</strong> is pollen moving within the same flower or plant. <strong>Cross-pollination</strong> is pollen moving between two different plants of the same species — and it's the one most flowers are actually built for, since it produces stronger, more varied offspring. That's the whole motive behind every flashy petal and every strong smell: getting a visitor to carry pollen somewhere else.</p>
+
+    <div class="video-card">
+      <div class="video-title">📹 Self- and Cross-Pollination</div>
+      <div class="video-sub">Watch before the questions below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/hCloCHwrJdQ" title="Self- and Cross-Pollination" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔬 Pollen Pathway</span>
+      <p style="margin:0;">What's the real difference between self-pollination and cross-pollination, and which one are most flowers actually built for?</p>
+      <textarea id="refl-6" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-pollinators"><span class="sec-num">2</span>Meet the suspects: who pollinates what, and why</h3>
+    <p>Every regular visitor to a flower is drawn in by specific evidence that flower is deliberately leaving behind:</p>
+
+    <div class="card-grid">
+      <div class="info-card"><h4>🐝 Bees</h4><p>Drawn to blue, purple, and yellow. Can see UV patterns invisible to us that act like a landing-strip arrow straight to the nectar. Flowers offer a flat "landing pad" petal shape.</p></div>
+      <div class="info-card"><h4>🦋 Butterflies</h4><p>Drawn to red, orange, and pink. Need a landing platform, and reach nectar deep in narrow tube-shaped flowers with their long proboscis.</p></div>
+      <div class="info-card"><h4>🐦 Hummingbirds & sunbirds</h4><p>Drawn to red, tube-shaped flowers with lots of nectar deep inside. No landing pad needed — they hover. Poor sense of smell, so scent doesn't matter to them.</p></div>
+      <div class="info-card"><h4>🦇 Moths & bats</h4><p>Night visitors. Flowers stay pale or white (visible in low light) and give off a strong sweet scent after dark, since color alone won't get noticed in the dark.</p></div>
+    </div>
+
+    <p>A smaller set of flowers go for a stranger strategy: some flies and beetles are drawn to flowers that mimic rotting meat — dull brown or purple, with a genuinely foul smell — because that's exactly what those insects are already looking for.</p>
+
+    <p><strong>Wind pollination</strong> plays an entirely different game — grasses, wheat, corn, and most trees don't bother attracting anyone. Their flowers are small, dull, scentless, and produce no nectar at all, since there's no visitor to reward. Instead they release huge amounts of very light pollen into the air and grow large, feathery stigmas built to catch whatever drifts past. <strong>Water pollination</strong> is rare, found mostly in aquatic plants whose pollen simply floats or drifts through the water itself.</p>
+
+    <div class="callout subtle">
+      <span class="callout-label">🧾 Evidence Log</span>
+      <p style="margin:0;">A flower in your case file opens only at night, stays pale white, and gives off a strong sweet smell after dark. Which pollinator is most likely visiting it, and what specific evidence from the case file proves it?</p>
+      <textarea id="refl-2" placeholder="Name the pollinator and the evidence…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🌾 Missing Features</span>
+      <p style="margin:0;">Wind-pollinated flowers like grass or corn look nothing like a bee-pollinated flower. Name two features they're missing, and explain why they don't need them.</p>
+      <textarea id="refl-7" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">🔍 Witness Statement — something doesn't add up</span>
+      <p style="margin:0;">A witness statement in your case file reads: <em>"This flower is bright red, shaped like a long tube, and packed with sweet nectar deep inside — it must be pollinated by wind."</em> Something in that statement is wrong. What is it, and what should the witness have said instead?</p>
+      <textarea id="refl-1" placeholder="Type your correction here…"></textarea>
+    </div>
+
+<h3 id="sec-fromflowertoseed"><span class="sec-num">3</span>From flower to seed</h3>
+    <p>Once pollen lands on a stigma, it grows a microscopic tube down through the style to reach an ovule waiting in the ovary — this is <strong>fertilization</strong>. Every fertilized ovule becomes a <strong>seed</strong>, holding a tiny baby plant plus a food store to get it started. The ovary around it swells into a <strong>fruit</strong> — which, botanically, includes things you'd never call "fruit" in a kitchen: a pea pod, a maple's spinning "key," and a dandelion's fluffy puff are all technically fruits.</p>
+
+        <div class="callout subtle">
+      <span class="callout-label">🧬 Case Progression</span>
+      <p style="margin:0;">Once pollen lands on the stigma, what actually has to happen before an ovule becomes a seed? Name the process.</p>
+      <textarea id="refl-8" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🍒 Real Definition</span>
+      <p style="margin:0;">A maple “key” and a dandelion's fluffy puff are both botanically real fruits, even though nobody would call them that in a kitchen. What actually makes something a fruit, biologically?</p>
+      <textarea id="refl-9" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-whytravel"><span class="sec-num">4</span>Why a seed can't just stay put</h3>
+    <p>If a seed dropped straight down and grew right under its own parent, it would be fighting that same parent — and every sibling seed beside it — for the exact same limited sunlight, water, and soil nutrients. It would also land in ground already carrying whatever pests or diseases the parent plant attracts. Traveling gives a seed a genuine shot at growing without that competition, and lets the whole species spread into new territory it couldn't otherwise reach.</p>
+
+    <div class="callout">
+      <span class="callout-label">🎓 Rookie Briefing</span>
+      <p style="margin:0;">A new detective on your team asks why a plant doesn't just drop its seeds right underneath itself, since that seems so much easier. Explain it in two or three sentences, simple enough for them to repeat back correctly.</p>
+      <textarea id="refl-3" placeholder="Explain it simply…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🌍 Second Motive</span>
+      <p style="margin:0;">Besides avoiding competition with its own parent, traveling gives a seed's species a second real benefit. What is it?</p>
+      <textarea id="refl-10" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-dispersal"><span class="sec-num">5</span>Five ways a seed leaves the scene</h3>
+    <div class="card-grid">
+      <div class="info-card"><h4>💨 Wind</h4><p>A dandelion's fluffy white pappus catches the breeze. A maple seed's "wing" spins like a helicopter blade, slowing its fall so wind carries it further. Orchid seeds are almost dust-light.</p></div>
+      <div class="info-card"><h4>🌊 Water</h4><p>A coconut's thick, waterproof, fibrous husk lets it float across an ocean for months and still sprout on a new shore. Mangrove seeds float upright and root the instant they touch mud.</p></div>
+      <div class="info-card"><h4>🐾 Hitchhiking</h4><p>Burdock and cocklebur seeds are covered in tiny hooks that catch on fur or clothing and drop off far from the parent — the exact trick that inspired Velcro.</p></div>
+      <div class="info-card"><h4>🍒 Eaten & carried</h4><p>Berries and cherries are bright and sweet specifically to get eaten. The seed survives the gut undigested and is deposited elsewhere, with a bit of natural fertilizer.</p></div>
+    </div>
+    <p>A fifth method needs no outside help at all: <strong>explosive dispersal</strong>. A ripe pea pod, or a touch-me-not seed pod, dries out and builds up tension until it suddenly splits and flings its seeds outward — a squirting cucumber can launch its seeds several metres this way.</p>
+
+    <div class="process-scene" style="background:linear-gradient(135deg, #f59e0b, #b45309);">
+      <div class="ps-stage">
+        <svg viewBox="0 0 150 130" style="position:absolute; inset:0;">
+          <circle class="ps-blob" cx="75" cy="90" r="10" fill="#fff7ed"/>
+          <g class="ps-cilium" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round">
+            <path d="M75 90 q-14 -8 -18 -22"/>
+            <path d="M75 90 q0 -18 6 -30"/>
+            <path d="M75 90 q14 -6 20 -20"/>
+          </g>
+        </svg>
+      </div>
+      <div class="ps-caption">💨 One gust, and it's gone</div>
+      <div class="ps-sub">A dandelion seed's whole design is built around catching exactly this moment.</div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔍 Compare Two Cases</span>
+      <p style="margin:0 0 8px;"><strong>Seed A:</strong> light, fluffy, covered in fine white hairs that catch even a light breeze.<br><strong>Seed B:</strong> a thick, waterproof, fibrous shell, found washed up on a beach far from any parent plant.</p>
+      <p style="margin:0;">Which dispersal method does each seed use, and what evidence tells you?</p>
+      <textarea id="refl-4" placeholder="Explain both cases…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">💥 No Outside Help</span>
+      <p style="margin:0;">Explosive dispersal doesn't need wind, water, or an animal at all. How does a pea pod or touch-me-not actually launch its own seeds?</p>
+      <textarea id="refl-11" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3>History: how we learned to read the evidence</h3>
+    <div class="timeline">
+      <div class="timeline-item"><div class="t-year">1793</div><div class="t-body"><strong>Christian Konrad Sprengel</strong> publishes the first real case that flowers are shaped specifically to attract particular pollinators — a genuinely new idea at the time.</div></div>
+      <div class="timeline-item"><div class="t-year">1862</div><div class="t-body"><strong>Charles Darwin</strong> studies a Madagascar orchid with an extraordinarily long nectar spur and predicts a moth with an equally long tongue must exist to pollinate it — years before anyone ever saw one.</div></div>
+      <div class="timeline-item"><div class="t-year">1903</div><div class="t-body">Darwin's predicted moth, <strong>Xanthopan morganii praedicta</strong>, is finally described — but not actually photographed pollinating that exact orchid until 1992, confirming his case file 130 years later.</div></div>
+      <div class="timeline-item"><div class="t-year">1941</div><div class="t-body">Swiss engineer <strong>George de Mestral</strong> examines burdock burrs stuck to his dog's fur under a microscope, studies the tiny hooks, and invents Velcro — copying a seed's own evidence directly.</div></div>
+    </div>
+
+    <h3>Real-world application: matching a flower to its visitor is a real trade</h3>
+    <p>Fig trees and fig wasps are matched so tightly that most fig species can only be pollinated by one single wasp species — if that one wasp disappears, so does the fig, a real extinction risk plant conservationists actually track. Cacao flowers (the plant chocolate comes from) can only be pollinated by a specific tiny midge fly, which is a real reason chocolate is harder and more expensive to farm at scale than most crops. And "colony collapse," where honeybee populations crash, is treated as a genuine food-security case by governments, not a minor concern — bees pollinate roughly a third of everything humans eat.</p>
+
+    <div class="game-card">
+      <div class="game-title">🔍 Evidence Match</div>
+      <div class="game-sub">Six-plus key terms from today's whole briefing. Click a term, then its matching definition — no penalty for a wrong guess, just try again.</div>
+      <div id="game-day1"></div>
+    </div>
+
+  </section>
+
+  <!-- MATERIALS -->
+  <section class="day-block">
+    <span class="day-kicker">Before Part 2 · Build Kit</span>
+    <h2>Choose What You're Bringing</h2>
+    <p class="day-sub">This is a pool, not a checklist — pick what your specific flower–pollinator case actually needs.</p>
+
+    <div class="materials-table-wrap">
+      <table class="materials-table">
+      <thead><tr><th>Material</th><th>Petals</th><th>Stamen / filament</th><th>Pollen</th><th>Nectar tube</th><th>Pollinator image</th><th>Mounting & labels</th></tr></thead>
+      <tbody>
+      <tr><td class="mat-name">Colored paper or felt scraps</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Colored paper or felt scraps for Petals</span></label></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Colored paper or felt scraps for Pollinator image</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Cardstock</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Cardstock for Petals</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Markers or crayons</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Markers or crayons for Petals</span></label></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Markers or crayons for Pollinator image</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Cotton wool or tissue paper</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Cotton wool or tissue paper for Petals</span></label></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Cotton wool or tissue paper for Pollen</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Crepe paper</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Crepe paper for Petals</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Fabric scraps (silk or satin)</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Fabric scraps (silk or satin) for Petals</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Pipe cleaners</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Pipe cleaners for Stamen / filament</span></label></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Pipe cleaners for Pollinator image</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Toothpicks with a bead on top</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Toothpicks with a bead on top for Stamen / filament</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Twist ties</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Twist ties for Stamen / filament</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Cotton swabs with painted tips</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Cotton swabs with painted tips for Stamen / filament</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Thin wire with a bead threaded on</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Thin wire with a bead threaded on for Stamen / filament</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Bamboo skewers with a pom-pom tip</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Bamboo skewers with a pom-pom tip for Stamen / filament</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Yellow pom-poms or dried lentils</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Yellow pom-poms or dried lentils for Pollen</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Sand</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Sand for Pollen</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Turmeric powder or yellow chalk dust</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Turmeric powder or yellow chalk dust for Pollen</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Yellow craft glitter</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Yellow craft glitter for Pollen</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Yellow-dyed rice</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Yellow-dyed rice for Pollen</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A straw or rolled paper tube</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A straw or rolled paper tube for Nectar tube</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A pen cap or hollow bead</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A pen cap or hollow bead for Nectar tube</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A rolled piece of foil</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A rolled piece of foil for Nectar tube</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A clear plastic tube (pen barrel)</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A clear plastic tube (pen barrel) for Nectar tube</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A coffee stirrer</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A coffee stirrer for Nectar tube</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Rolled acetate or cellophane</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Rolled acetate or cellophane for Nectar tube</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A small printed or drawn picture</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A small printed or drawn picture for Pollinator image</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Googly eyes</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Googly eyes for Pollinator image</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Cotton balls (for a fuzzy body)</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Cotton balls (for a fuzzy body) for Pollinator image</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A paper plate base with small flags on toothpicks</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A paper plate base with small flags on toothpicks for Mounting & labels</span></label></td></tr>
+      <tr><td class="mat-name">A shoebox lid base with sticky-note labels</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A shoebox lid base with sticky-note labels for Mounting & labels</span></label></td></tr>
+      <tr><td class="mat-name">Poster board</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Poster board for Mounting & labels</span></label></td></tr>
+      <tr><td class="mat-name">A cardboard box lid</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A cardboard box lid for Mounting & labels</span></label></td></tr>
+      <tr><td class="mat-name">Small labels or flags on toothpicks</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Small labels or flags on toothpicks for Mounting & labels</span></label></td></tr>
+      <tr><td class="mat-name">Sticky notes cut into strips</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Sticky notes cut into strips for Mounting & labels</span></label></td></tr>
+      </tbody></table></div>
+      <p class="materials-table-note">Cardstock works instead of felt; sand works instead of pom-poms — use what you actually have. Pick ONE option per part.</p>
+          <div class="slip-preview">
+      <h4>📋 What you're bringing to Part 2:</h4>
+      <ul id="slip-list-preview"></ul>
+      <div class="slip-empty" id="slip-empty">Nothing selected yet.</div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section class="day-block" id="day2">
+    <span class="day-kicker">Part 2 · Build the Evidence Board</span>
+    <h2>Close One Real Case</h2>
+    <p class="day-sub">Pick ONE real flower–pollinator pair from the reading and build the physical evidence board that proves the match — every feature labeled, every label justified.</p>
+
+    <div class="model3d-wrap">
+      <div class="model3d">
+        <div class="model3d-stage" id="model-stage">
+          <div class="model3d-face f1" style="background:linear-gradient(135deg,#fbbf24,#b45309);"><span><span class="f-icon">🌸</span>Petal color<br>the first clue</span></div>
+          <div class="model3d-face f2" style="background:linear-gradient(135deg,#fcd34d,#92400e);"><span><span class="f-icon">👃</span>Scent<br>day or night?</span></div>
+          <div class="model3d-face f3" style="background:linear-gradient(135deg,#fbbf24,#78350f);"><span><span class="f-icon">📐</span>Shape<br>tube, flat, or open</span></div>
+          <div class="model3d-face f4" style="background:linear-gradient(135deg,#fcd34d,#a16207);"><span><span class="f-icon">🍯</span>Nectar depth<br>shallow or deep</span></div>
+          <div class="model3d-face f5" style="background:linear-gradient(135deg,#fbbf24,#713f12);"><span><span class="f-icon">🐝</span>Pick ONE<br>matched visitor</span></div>
+          <div class="model3d-face f6" style="background:linear-gradient(135deg,#fcd34d,#854d0e);"><span><span class="f-icon">🏷️</span>Label every<br>piece of evidence</span></div>
+        </div>
+      </div>
+      <div class="model3d-hint">🖱️ Hover to pause and read each face.</div>
+      <button class="btn btn-ghost model3d-pause" type="button" id="pause-btn">⏸ Pause rotation</button>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">What your evidence board has to prove</span>
+      <p style="margin:0;">It's not enough to build a nice-looking flower. Your board has to show the SPECIFIC pollinator you think visits it, and a labeled feature for every piece of evidence pointing to that pollinator — color, shape, scent, nectar depth. A detective who can't point to the evidence hasn't closed the case.</p>
+    </div>
+
+    <h3 id="sec-plan">Plan before you build</h3>
+    <p>Fill this in before you glue anything down. This evidence table <em>is</em> the real case work — the model itself just presents it.</p>
+    <table class="justify-table">
+      <thead><tr><th>Feature</th><th>What it represents</th><th>Material I'm using</th><th>Why this material fits</th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="e.g. Petal color"></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout subtle">
+      <span class="callout-label">📸 Picture the finished result</span>
+      <p style="margin:0;">Picture Eva's finished evidence board: a paper flower glued to cardboard, with each real feature — petal color, shape, nectar tube — pointed to by a small labeled flag, and a picture of the matched pollinator mounted right next to the flower with a line connecting them, like a detective's case wall.</p>
+    </div>
+
+    <h3>Build it</h3>
+    <div class="build-checklist">
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">1.</span><span class="step-text">Pick a real flower–pollinator pair from the reading — write down which one and why you think they match.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">2.</span><span class="step-text">Build the flower model showing its actual attracting features, one at a time, checking each off your plan table.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">3.</span><span class="step-text">Label every feature with a small flag or sticky note — nothing unlabeled counts as evidence.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">4.</span><span class="step-text">Mount your matched pollinator alongside the flower, clearly connected to it.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">5.</span><span class="step-text">Write one sentence per labeled feature explaining exactly why it points to your matched pollinator.</span></span></label>
+    </div>
+
+    <h3>Results</h3>
+    <p>Write up your case closure — this doubles as notes for tomorrow's presentation.</p>
+    <table class="plan-table">
+      <tr><td style="width:180px;"><strong>Flower investigated</strong></td><td><input placeholder="e.g. Red trumpet flower"></td></tr>
+      <tr><td><strong>Pollinator identified</strong></td><td><input placeholder="e.g. Hummingbird"></td></tr>
+      <tr><td><strong>Case summary</strong></td><td><textarea placeholder="Describe your evidence board and what it proves in 2–3 sentences…"></textarea></td></tr>
+    </table>
+  </section>
+
+  <!-- DAY 3 -->
+  <section class="day-block" id="day3">
+    <span class="day-kicker">Part 3 · Close the Case</span>
+    <h2>Present Your Findings</h2>
+    <p class="day-sub">Real detectives present evidence, not vibes. Here's how to open strong and cover everything that matters.</p>
+
+    <div class="hook-box">
+      <div class="hook-label">Your opening move</div>
+      <p style="margin:0;">Don't say "I'm going to talk about pollination." Instead, hold up your flower model and ask the room: <em>"Who do you think visits this flower — and what's your evidence?"</em> Let a few guesses land before you reveal your actual case.</p>
+    </div>
+
+    <div class="prep-form">
+      <h3>Prepare your presentation</h3>
+      <p>Fill this in before Part 3 — it's your own script, not busywork.</p>
+
+      <div class="prep-field">
+        <label>i. Your role and responsibility</label>
+        <textarea placeholder="In your own words — who are you in this story, and what were you responsible for figuring out?"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>ii. Three new words or ideas you learned, and what they mean</label>
+        <textarea placeholder="1) &#10;2) &#10;3) "></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>iii. One historical fact you found interesting</label>
+        <textarea placeholder="Which one, and why it stuck with you"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>iv. A real-world application</label>
+        <textarea placeholder="Where does this actually show up outside a classroom?"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>v. Explain your build</label>
+        <div class="prep-autofill-row">
+          <span class="prep-autofill-hint">Materials &amp; reasoning below are pulled from your Part 2 plan table — edit freely.</span>
+          <button type="button" class="prep-autofill-btn">&#8635; Pull from Part 2 again</button>
+        </div>
+        <textarea class="prep-build-materials" placeholder="Materials used and why you chose them…"></textarea>
+        <textarea placeholder="Every label on your build, and what it explains…"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>vi. What you're still not sure about</label>
+        <textarea placeholder="What would you want more explanation or practice on?"></textarea>
+      </div>
+    </div>
+
+    <div class="facilitator-tip">
+      <span class="fac-label">Facilitator only</span>
+      <p>If Eva's evidence board has a shaky or uncertain piece, that's the best moment of the presentation, not a flaw to smooth over — ask her directly "what would make you more sure about that one?" A detective who can name what she doesn't know yet is showing real understanding, not a gap in it.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  Pollination & Seed Dispersal · Pollinator Detective — Eva's instance. <a href="../index.html">All three instances →</a>
+</footer>
+
+<!-- Isolated printable materials slip -->
+<div id="print-slip-page">
+  <div class="print-slip-sheet">
+    <h3>📋 Materials I'm Bringing — Part 2</h3>
+    <div class="slip-kid">Pollinator Detective · Eva</div>
+    <ul id="slip-list-print"></ul>
+  </div>
+</div>
+
+<!-- Side glossary drawer -->
+<div class="notes-backdrop" id="glossary-backdrop"></div>
+<div class="notes-drawer" id="glossary-drawer">
+  <div class="notes-drawer-head">
+    <h4>📖 Glossary</h4>
+    <button id="glossary-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="glossary">
+      <div class="glossary-item"><div class="word">Pollination</div><div class="def">Pollen moving from an anther to a stigma.</div></div>
+      <div class="glossary-item"><div class="word">Cross-pollination</div><div class="def">Pollen moving between two different plants of the same species.</div></div>
+      <div class="glossary-item"><div class="word">Fertilization</div><div class="def">Pollen reaching and joining with an ovule inside the ovary.</div></div>
+      <div class="glossary-item"><div class="word">Seed dispersal</div><div class="def">A seed traveling away from its parent plant to reduce competition.</div></div>
+      <div class="glossary-item"><div class="word">Pappus</div><div class="def">The fluffy, parachute-like structure on a wind-dispersed seed like a dandelion's.</div></div>
+      <div class="glossary-item"><div class="word">Hitchhiking seed</div><div class="def">A seed covered in hooks or barbs that catch on animal fur.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Side notes drawer -->
+<div class="notes-backdrop" id="notes-backdrop"></div>
+<div class="notes-drawer" id="notes-drawer">
+  <div class="notes-drawer-head">
+    <h4>📝 My Notes</h4>
+    <button id="notes-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="notes-section-label">Highlighted words</div>
+    <ul id="hl-collected-list" class="hl-collected-list"></ul>
+    <div id="hl-collected-empty" style="display:none;">Highlight anything in the reading and it'll show up here.</div>
+    <div class="notes-section-label">Free notes</div>
+    <textarea id="notes-textarea" placeholder="Jot anything down…"></textarea>
+    <div id="notes-saved-msg" class="notes-saved-msg"></div>
+  </div>
+</div>
+
+<script>
+  // Progress-sync Worker — cross-device save. SITE_KEY is a soft deterrent
+  // only (any client-side value is visible in devtools), not real auth.
+  window.QUEST_SYNC_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  window.QUEST_SYNC_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+</script>
+<script src="../js/quest.js"></script>
+<script>
+  QuestUI.initKidGate('Eva');
+  QuestUI.initFacilitatorCheck();
+
+  QuestUI.initProgressSync('eva', 'group-00', 'week-01').then(function () {
+    QuestUI.initHighlighter('eva');
+    QuestUI.initNotesDrawer('eva');
+    QuestUI.initGlossaryDrawer();
+    QuestUI.initMaterialsPool('eva');
+    QuestUI.initBuildChecklist('eva');
+    QuestUI.initFieldAutosave('eva');
+    QuestUI.initPresentationAutofill('eva');
+    QuestUI.initDayTimer('eva');
+    QuestUI.initProgressBar('eva');
+    QuestUI.initSectionLock('eva');
+    QuestUI.initDayLock('eva');
+    QuestUI.initCompleteQuest('eva');
+    QuestUI.initMatchGame('game-day1', [
+      ["Pollination", "Pollen moving from an anther to a stigma."],
+      ["Cross-pollination", "Pollen moving between two different plants of the same species."],
+      ["Fertilization", "Pollen reaching and joining with an ovule inside the ovary."],
+      ["Seed dispersal", "A seed traveling away from its parent plant to reduce competition."],
+      ["Pappus", "The fluffy, parachute-like structure on a wind-dispersed seed like a dandelion's."],
+      ["Hitchhiking seed", "A seed covered in hooks or barbs that catch on animal fur."]
+    ], { pageKey: 'eva' });
+    QuestUI.initReflectionChecks('eva', [
+      { id: 'refl-1', groups: [['bird', 'hummingbird', 'insect', 'animal', 'bee', 'moth', 'bat'], ["wind is wrong", "not wind", "isn't pollinated by wind", "wouldn't be pollinated by wind", "shouldn't be wind", "wrong"]],
+        reread: { anchor: 'sec-pollinators', label: '2. Meet the suspects: who pollinates what, and why' } },
+      { id: 'refl-6', groups: [['self-pollination', 'same flower', 'same plant'], ['cross-pollination', 'different plant', 'different plants']],
+        reread: { anchor: 'sec-pollination', label: '1. What pollination actually is' } },
+      { id: 'refl-2', groups: [['moth', 'bat'], ['night', 'dark', 'scent', 'smell', 'white', 'pale']],
+        reread: { anchor: 'sec-pollinators', label: '2. Meet the suspects: who pollinates what, and why' } },
+      { id: 'refl-7', groups: [['nectar', 'scent', 'smell', 'color', 'petals', 'dull'], ["don't need", "doesn't need", 'no visitor', 'nobody to attract', 'not attracting']],
+        reread: { anchor: 'sec-pollinators', label: '2. Meet the suspects: who pollinates what, and why' } },
+      { id: 'refl-8', groups: [['pollen tube', 'tube', 'grows', 'style'], ['fertiliz', 'ovule', 'fuse', 'join']],
+        reread: { anchor: 'sec-fromflowertoseed', label: '3. From flower to seed' } },
+      { id: 'refl-9', groups: [['ovary', 'swell', 'swollen', 'swells'], ['fruit']],
+        reread: { anchor: 'sec-fromflowertoseed', label: '3. From flower to seed' } },
+      { id: 'refl-3', groups: [['compete', 'competition', 'crowd', 'share'], ['light', 'water', 'space', 'nutrients', 'sun', 'room', 'new ground', 'new place', 'spread']],
+        reread: { anchor: 'sec-whytravel', label: '4. Why a seed can\'t just stay put' } },
+      { id: 'refl-10', groups: [['spread', 'territory', 'new area', 'new ground', 'new place'], ['species', 'population']],
+        reread: { anchor: 'sec-whytravel', label: '4. Why a seed can\'t just stay put' } },
+      { id: 'refl-4', groups: [['wind', 'breeze', 'blow'], ['water', 'float', 'waterproof', 'ocean', 'sea', 'beach']],
+        reread: { anchor: 'sec-dispersal', label: '5. Five ways a seed leaves the scene' } },
+      { id: 'refl-11', groups: [['dries', 'dry', 'tension', 'builds up', 'pressure'], ['splits', 'burst', 'explode', 'pop', 'flings', 'launch']],
+        reread: { anchor: 'sec-dispersal', label: '5. Five ways a seed leaves the scene' } }
+    ]);
+
+    var modelPaused = false;
+    document.getElementById('pause-btn').addEventListener('click', function () {
+      modelPaused = !modelPaused;
+      document.getElementById('model-stage').classList.toggle('paused', modelPaused);
+      this.textContent = modelPaused ? '▶ Resume rotation' : '⏸ Pause rotation';
+    });
+  });
+
+  window.addEventListener('beforeprint', function () { document.body.classList.add('printing-slip'); });
+  window.addEventListener('afterprint', function () { document.body.classList.remove('printing-slip'); });
+</script>
+</body>
+</html>

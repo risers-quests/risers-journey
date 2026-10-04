@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solar System — Discovery Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="brand">🪐 Solar System<small>Three Investigations, One Sky</small></a>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hub-hero">
+    <div class="format-pill">Discovery Quest</div>
+    <h1>One Solar System, Three Investigations</h1>
+    <p>Three Risers, three completely different investigations into the same story — the Sun, the eight planets, gravity, orbits, and what a day and a year really mean. Type your name below and you'll go straight to your own investigation — not anyone else's.</p>
+  </section>
+
+  <section class="name-gate">
+    <div class="name-gate-card">
+      <div id="ask-block">
+        <h3>👋 Who's continuing their investigation?</h3>
+        <p>Type your name exactly as your facilitator gave it to you.</p>
+        <form id="hub-name-form">
+          <div class="name-gate-row">
+            <input type="text" id="hub-name-input" placeholder="Type your name…" maxlength="40" autocomplete="off">
+            <button class="btn btn-primary" type="submit">Continue</button>
+          </div>
+        </form>
+        <div class="name-gate-msg" id="hub-name-msg"></div>
+      </div>
+      <div class="name-gate-welcome" id="welcome-block">
+        <div class="who" id="welcome-who"></div>
+        <div class="btn-row" style="justify-content:center;">
+          <a class="btn btn-primary" id="welcome-continue-btn" href="#">Continue to my investigation →</a>
+        </div>
+        <button class="name-gate-switch" id="welcome-switch-btn" type="button">Not you? Enter a different name</button>
+      </div>
+    </div>
+  </section>
+
+  <section style="max-width:680px; margin: 0 auto 70px;">
+    <div class="callout subtle">
+      <span class="callout-label">Why this works this way</span>
+      <p style="margin:0;">Each Riser covers the full solar-system story in equal depth, just through a different investigation, with its own real, physically-tested build and its own final report — no two share both an angle and an output. Each investigation is meant to be worked through on its own, so this page only takes you to yours.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  Solar System — three instances under one domain.
+</footer>
+
+<script src="js/quest.js"></script>
+<script>
+  var KID_KEY = QuestUI.KID_KEY;
+  var ROSTER = {
+    'eva': { name: 'Eva', path: 'eva/index.html' },
+    'gabby': { name: 'Gabby', path: 'gabby/index.html' },
+    'elyon': { name: 'Elyon', path: 'elyon/index.html' }
+  };
+
+  var askBlock = document.getElementById('ask-block');
+  var welcomeBlock = document.getElementById('welcome-block');
+  var welcomeWho = document.getElementById('welcome-who');
+  var continueBtn = document.getElementById('welcome-continue-btn');
+
+  function showWelcome(entry) {
+    askBlock.style.display = 'none';
+    welcomeBlock.classList.add('show');
+    welcomeWho.textContent = '✅ Welcome back, ' + entry.name + '!';
+    continueBtn.href = entry.path;
+  }
+
+  function showAsk() {
+    welcomeBlock.classList.remove('show');
+    askBlock.style.display = 'block';
+  }
+
+  var current = null;
+  try { current = localStorage.getItem(KID_KEY); } catch (e) {}
+  if (current && ROSTER[current.toLowerCase()]) {
+    showWelcome(ROSTER[current.toLowerCase()]);
+  }
+
+  document.getElementById('hub-name-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var val = (document.getElementById('hub-name-input').value || '').trim().toLowerCase();
+    var msg = document.getElementById('hub-name-msg');
+    var entry = ROSTER[val];
+    if (entry) {
+      try { localStorage.setItem(KID_KEY, entry.name); } catch (err) {}
+      window.location.href = entry.path;
+    } else {
+      msg.textContent = "That name isn't part of this quest group — check the spelling, or ask your facilitator.";
+    }
+  });
+
+  document.getElementById('welcome-switch-btn').addEventListener('click', function () {
+    try { localStorage.removeItem(KID_KEY); } catch (e) {}
+    showAsk();
+  });
+</script>
+</body>
+</html>

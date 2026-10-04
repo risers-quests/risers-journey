@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Immune System — Vaccine Program Direction</title>
+<script>
+  (function () {
+    // Facilitator View: ?fac=1 must be read and set BEFORE quest.js or any
+    // of its init calls run, so tracking never has a chance to start before
+    // this takes effect — see initFacilitatorCheck's comment in quest.js.
+    try {
+      window.QUEST_FACILITATOR_MODE = new URLSearchParams(window.location.search).get('fac') === '1';
+    } catch (e) { window.QUEST_FACILITATOR_MODE = false; }
+    try {
+      var kid = localStorage.getItem('imm-l3-kid');
+      if (!kid || kid.toLowerCase() !== 'michael') document.documentElement.classList.add('gate-locked');
+    } catch (e) { document.documentElement.classList.add('gate-locked'); }
+  })();
+</script>
+<style>
+  html.gate-locked main, html.gate-locked .progress-summary { display: none !important; }
+  html.facilitator-mode #facilitator-banner { display: block; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="lens-michael">
+
+<div id="facilitator-banner" style="display:none;">🧑‍🏫 Facilitator View — nothing on this page is being timed, saved, or synced. <a href="?" id="facilitator-banner-exit">Exit Facilitator View →</a></div>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand-group">
+      <a href="../index.html" class="brand">🧬 Immune System Quest<small>Vaccine Program Direction</small></a>
+      <span class="day-badge" id="quest-day-badge"></span>
+      <span class="session-timer" id="session-timer"></span>
+    </div>
+    <nav class="day-nav">
+      <a href="#day1">Part 1</a>
+      <a href="#day2">Part 2</a>
+      <a href="#day3">Part 3</a>
+      <button class="notes-toggle-btn" id="glossary-toggle-btn" type="button">📖 Glossary</button>
+      <button class="notes-toggle-btn" id="notes-toggle-btn" type="button">📝 My Notes</button>
+      <button class="print-btn" id="print-slip-btn" type="button">🖨️ Print my bringing slip</button>
+    </nav>
+  </div>
+</header>
+
+<div class="progress-summary">
+  <div class="container">
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 1</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day1-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day1-label">0/4</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 2</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day2-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day2-label">0/6</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 3</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day3-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="quest-gate-block">
+  <div class="gate-block-wrap">
+    <div class="gate-icon">🔒</div>
+    <h2>This is Michael's quest</h2>
+    <p>Confirm it's you to continue.</p>
+    <div class="name-gate-card">
+      <button class="btn btn-primary gate-confirm-btn" id="gate-confirm-btn" type="button">✅ Yes, I'm Michael — Continue</button>
+      <div class="name-gate-msg" id="gate-name-msg"></div>
+    </div>
+    <a class="gate-not-you" href="../index.html">Not you? Find your own quest link →</a>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- COVER -->
+  <section class="cover">
+    <div class="cover-watermark" aria-hidden="true">💉</div>
+    <div class="format-pill">Quest</div><br>
+    <span class="lens-pill">💰 Vaccine Program Director</span>
+    <h1>Immune System: What You're Actually Funding</h1>
+    <p class="subtitle">Every dollar in your budget buys a specific biological event inside a real body. Can you build the thing you're paying for?</p>
+    <div class="kid-name">Prepared for: Michael</div>
+    <div class="framing">
+      <p style="margin:0;">You are the <strong>Vaccine Program Director</strong> for a national health budget. It's easy to move numbers on a ledger without ever picturing what those numbers actually train the body to do. Part 1 briefs you on the real biology behind every line item. Part 2, you build a real, labeled model of an antibody locking onto its one matching antigen — choosing your own materials and justifying every part — proof you understand exactly what a vaccine program buys, not just what it costs. Real directors who can't explain the biology don't keep their budgets long. This week, neither do you, unless you can.</p>
+    </div>
+  </section>
+
+  <!-- DAY 1 -->
+  <section class="day-block" id="day1">
+    <span class="day-kicker">Part 1 · Program Briefing</span>
+    <h2>The Science Behind Every Budget Line</h2>
+    <p class="day-sub">You can't defend a funding decision you don't understand. This briefing covers the full picture: what a vaccine is actually protecting against, how the body's own defenses work, and the real math that turns a biology fact into a budget line.</p>
+
+    <h3>Why funding decisions start in the body</h3>
+    <p>Every vaccine program you'll ever fund is really just giving the immune system a head start. Long before any program exists, the human body is already fighting pathogens using layers of defense that build on each other. Understanding exactly what each layer does — and exactly what a vaccine adds to it — is the entire foundation of a defensible funding decision. A director who doesn't understand the biology is just guessing with other people's money.</p>
+
+        <div class="video-card">
+      <div class="video-title">📹 The Immune System, Start to Finish</div>
+      <div class="video-sub">An overview of everything this briefing covers. Watch before continuing.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/GIJK3dwCWCw" title="The Immune System, Start to Finish" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+<h3 id="sec-pathogens"><span class="sec-num">1</span>The threat: what a vaccine program is actually funded to stop</h3>
+    <p>A <strong>pathogen</strong> is a microorganism that causes disease. Pathogens fall into four groups, and the group matters for funding — a vaccine works differently against each.</p>
+
+    <div class="card-grid">
+      <div class="info-card"><h4>🦠 Bacteria</h4><p>Single-celled living organisms. Some cause illness by releasing toxins. Example: <em>Salmonella</em> (food poisoning), <em>Mycobacterium tuberculosis</em> (TB).</p></div>
+      <div class="info-card"><h4>🧬 Viruses</h4><p>Not even cells — tiny particles that hijack a host cell to reproduce. Example: influenza, measles.</p></div>
+      <div class="info-card"><h4>🍄 Fungi</h4><p>Simple organisms that grow on or in the body. Example: <em>Tinea</em> (ringworm, athlete's foot).</p></div>
+      <div class="info-card"><h4>🦟 Protoctists</h4><p>Single-celled organisms, often vector-spread. Example: <em>Plasmodium</em> (malaria), carried by mosquitoes.</p></div>
+    </div>
+
+    <div class="diagram-card">
+      <div class="diagram-title">🧬 Anatomy of a virus</div>
+      <div class="diagram-sub">Every vaccine on your ledger is ultimately built around structures like this.</div>
+      <div class="diagram-svg-wrap">
+        <svg viewBox="0 0 240 200" width="230" height="190" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="120" cy="105" r="52" fill="#fee2e2" stroke="#b91c1c" stroke-width="3"/>
+          <path d="M92 105 q8 -18 28 0 q8 18 28 0" stroke="#7f1d1d" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <g stroke="#b91c1c" stroke-width="4" stroke-linecap="round">
+            <line x1="120" y1="53" x2="120" y2="35"/>
+            <line x1="160" y1="70" x2="173" y2="57"/>
+            <line x1="172" y1="105" x2="190" y2="105"/>
+            <line x1="160" y1="140" x2="173" y2="153"/>
+            <line x1="80" y1="140" x2="67" y2="153"/>
+            <line x1="68" y1="105" x2="50" y2="105"/>
+            <line x1="80" y1="70" x2="67" y2="57"/>
+          </g>
+          <g fill="#b91c1c">
+            <circle cx="120" cy="35" r="5"/><circle cx="173" cy="57" r="5"/><circle cx="190" cy="105" r="5"/>
+            <circle cx="173" cy="153" r="5"/><circle cx="67" cy="153" r="5"/><circle cx="50" cy="105" r="5"/><circle cx="67" cy="57" r="5"/>
+          </g>
+          <circle cx="120" cy="60" r="11" fill="#7f1d1d"/><text x="120" y="65" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">1</text>
+          <circle cx="120" cy="105" r="11" fill="#991b1b"/><text x="120" y="110" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">2</text>
+          <circle cx="190" cy="105" r="11" fill="#7f1d1d"/><text x="190" y="110" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">3</text>
+        </svg>
+      </div>
+      <div class="diagram-legend">
+        <div class="diagram-legend-item"><span class="dl-num">1</span><span class="dl-text"><strong>Capsid</strong> — the protein coat wrapping the whole virus</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">2</span><span class="dl-text"><strong>Genetic material</strong> — DNA or RNA, the instructions</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">3</span><span class="dl-text"><strong>Spike protein</strong> — latches onto a host cell</span></div>
+      </div>
+    </div>
+
+    <p>Pathogens spread by <strong>direct contact</strong>, <strong>droplet infection</strong>, <strong>contaminated food or water</strong>, or a <strong>vector</strong> — an organism, often an insect, that carries a pathogen between hosts without getting sick itself. A vaccine program's real-world impact depends partly on how its target disease spreads in the first place.</p>
+
+        <div class="video-card">
+      <div class="video-title">📹 Pathogens</div>
+      <div class="video-sub">The four pathogen types and how they spread. Watch before the questions below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/WsZS4RCWpcE" title="Pathogens" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+    <div class="callout subtle">
+      <span class="callout-label">🦠 Bacteria vs Virus</span>
+      <p style="margin:0;">Bacteria and viruses are both pathogens, but a virus isn't even a full cell. What's the real structural difference between them?</p>
+      <textarea id="refl-6" placeholder="Type your answer here…"></textarea>
+    </div>
+    <div class="callout subtle">
+      <span class="callout-label">🦟 Vector Species</span>
+      <p style="margin:0;">Malaria is spread by mosquitoes, which never get sick themselves. What's the name for an organism that carries a pathogen between hosts like this, and what pathogen type is Plasmodium (the malaria pathogen)?</p>
+      <textarea id="refl-7" placeholder="Type your answer here…"></textarea>
+    </div>
+    <div class="callout subtle">
+      <span class="callout-label">🌍 Four Routes</span>
+      <p style="margin:0;">Name all four ways a pathogen can actually spread from person to person, covered in this section.</p>
+      <textarea id="refl-8" placeholder="Type your answer here…"></textarea>
+    </div>
+    <div class="callout subtle">
+      <span class="callout-label">🎯 Different Budget Lines</span>
+      <p style="margin:0;">Why would your containment plan for a droplet-spread disease look completely different from your plan for a vector-spread one? Give one real difference in what you'd actually do.</p>
+      <textarea id="refl-9" placeholder="Type your answer here…"></textarea>
+    </div>
+
+<h3 id="sec-barriers"><span class="sec-num">2</span>Line one: barriers (the defense you're not funding, because it's already free)</h3>
+    <p>Before a vaccine or a white blood cell ever gets involved, the body already has physical and chemical barriers doing constant work: <strong>skin</strong> as a physical wall, <strong>mucus and cilia</strong> trapping and sweeping pathogens out of the airways, <strong>stomach acid</strong> destroying most swallowed pathogens, <strong>lysozyme</strong> in tears and saliva breaking down bacterial cell walls, and <strong>blood clotting</strong> sealing a wound before pathogens can enter through it.</p>
+
+    <div class="process-scene" style="background:linear-gradient(135deg, #0ea5e9, #0369a1);">
+      <div class="ps-stage">
+        <svg viewBox="0 0 150 130" style="position:absolute; inset:0;">
+          <rect x="0" y="95" width="150" height="35" fill="rgba(255,255,255,.18)"/>
+          <path class="ps-cilium" d="M25 95 q4 -22 -2 -42" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path class="ps-cilium" d="M55 95 q4 -22 -2 -42" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path class="ps-cilium" d="M85 95 q4 -22 -2 -42" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path class="ps-cilium" d="M115 95 q4 -22 -2 -42" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <circle cx="30" cy="45" r="6" fill="#fca5a5"/>
+        </svg>
+      </div>
+      <div class="ps-caption">🌬️ Cilia sweep it out</div>
+      <div class="ps-sub">A trapped pathogen rides the mucus escalator up and out — no budget line required.</div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔍 Compare Two Cases</span>
+      <p style="margin:0 0 8px;"><strong>Program A:</strong> targets a disease that mainly spreads through contaminated drinking water.<br><strong>Program B:</strong> targets a disease that mainly spreads through coughs and sneezes indoors.</p>
+      <p style="margin:0;">Which body barrier is most directly relevant to each — and would a non-vaccine investment (like clean water infrastructure, or better ventilation) meaningfully compete with either program for the same budget?</p>
+      <textarea id="refl-2" placeholder="Explain the difference…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🛡️ Two More Barriers</span>
+      <p style="margin:0;">Two of the body's barrier defenses get their own question next (lysozyme, clotting) — name two OTHER ones covered in this section, and what each one physically does.</p>
+      <textarea id="refl-10" placeholder="Type your answer here…"></textarea>
+    </div>
+    <div class="callout subtle">
+      <span class="callout-label">💧 Lysozyme's Job</span>
+      <p style="margin:0;">Lysozyme is in tears and saliva. What does it actually do to a pathogen, chemically?</p>
+      <textarea id="refl-11" placeholder="Type your answer here…"></textarea>
+    </div>
+    <div class="callout subtle">
+      <span class="callout-label">🩹 Clotting Counts</span>
+      <p style="margin:0;">Why does blood clotting count as a real immune defense, not just a wound-healing mechanism?</p>
+      <textarea id="refl-12" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-phagocytes"><span class="sec-num">3</span>Line two: phagocytes (what your budget is backing up)</h3>
+    <p><strong>White blood cells</strong> are the body's dedicated infection-fighters, and <strong>phagocytes</strong> respond first. Phagocytosis happens in three stages: <strong>detect</strong>, <strong>engulf</strong>, <strong>digest</strong>. Phagocytes are <strong>non-specific</strong> — fast, but generic, treating every pathogen the same way. That thick, yellowish pus you'll see noted in a field report is mostly dead phagocytes and destroyed pathogens — visible proof this system is already working, budget or no budget. A vaccine doesn't replace this system; it works alongside it.</p>
+
+    <div class="process-scene" style="background:linear-gradient(135deg, var(--accent), var(--accent-dark));">
+      <div class="ps-stage">
+        <svg viewBox="0 0 150 130" style="position:absolute; inset:0;">
+          <path class="ps-blob" d="M75 15 C100 10 130 30 130 65 C130 100 100 120 75 118 C45 120 15 100 18 65 C15 30 45 12 75 15 Z" fill="rgba(255,255,255,.22)" stroke="#fff" stroke-width="3"/>
+          <circle class="ps-target" cx="95" cy="55" r="10" fill="#fde047" stroke="#ca8a04" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="ps-caption">🧫 Phagocytosis, on loop</div>
+      <div class="ps-sub">This runs whether or not a vaccine program exists — it's the baseline you're building on top of.</div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">🧾 Evidence Log</span>
+      <p style="margin:0;">A field clinic reports that a funded program's target population is "recovering from minor infections without needing antibiotics." What visible sign at an infected site would tell you phagocytes — not the vaccine itself — are doing that work? Name it and explain what it proves.</p>
+      <textarea id="refl-3" placeholder="Name the evidence and what it proves…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔄 Three Stages</span>
+      <p style="margin:0;">Put phagocytosis's three real stages in the correct order, and name what happens at each one.</p>
+      <textarea id="refl-13" placeholder="Type your answer here…"></textarea>
+    </div>
+    <div class="callout subtle">
+      <span class="callout-label">⚡ Fast But Generic</span>
+      <p style="margin:0;">What does it mean that phagocytes are "non-specific," and what's the trade-off of that design?</p>
+      <textarea id="refl-14" placeholder="Type your answer here…"></textarea>
+    </div>
+    <div class="callout subtle">
+      <span class="callout-label">🎯 Why Fund a Second Line</span>
+      <p style="margin:0;">If phagocytes already respond to any pathogen, why does the body need a second, more precise defense on top of them?</p>
+      <textarea id="refl-15" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-antibodies"><span class="sec-num">4</span>Line three: lymphocytes and antibodies (what a vaccine actually trains)</h3>
+    <p>Every pathogen carries <strong>antigens</strong> — surface markers that identify it as foreign. <strong>Lymphocytes</strong> recognize one specific antigen and produce <strong>antibodies</strong>: Y-shaped proteins shaped to match that antigen exactly. Once bound, an antibody clumps matching pathogens together and marks them for phagocytes to finish off — that clump-and-mark step is the actual mechanical payoff a vaccine dollar buys. This is exactly what a vaccine is designed to trigger — real antibody production, plus <strong>memory cells</strong> that make the next response much faster. This response is <strong>specific</strong>, unlike a phagocyte's general attack. Memory cells are the entire point of funding a vaccine program at all — without them, you'd only be buying temporary protection.</p>
+
+    <div class="process-scene" style="background:linear-gradient(135deg, #a855f7, #6d28d9);">
+      <div class="ps-stage">
+        <svg viewBox="0 0 150 130" class="ps-key" style="position:absolute; inset:0;">
+          <path d="M75 18 V55 M75 55 L52 28 M75 55 L98 28" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg viewBox="0 0 150 130" style="position:absolute; inset:0;">
+          <circle cx="75" cy="90" r="17" fill="#fde047" stroke="#ca8a04" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="ps-caption">🔑 A perfect match, every time</div>
+      <div class="ps-sub">This is exactly what you're funding — and exactly the model you'll build tomorrow.</div>
+    </div>
+
+    <div class="diagram-card">
+      <div class="diagram-title">🔑 Antibody meets antigen</div>
+      <div class="diagram-sub">The model you're building in Part 2 — every part labeled.</div>
+      <div class="diagram-svg-wrap">
+        <svg viewBox="0 0 240 200" width="230" height="190" xmlns="http://www.w3.org/2000/svg">
+          <path d="M120 20 V90 M120 90 L75 40 M120 90 L165 40" stroke="#7e22ce" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="120" cy="150" r="24" fill="#fde047" stroke="#ca8a04" stroke-width="3"/>
+          <circle cx="75" cy="40" r="11" fill="#a855f7"/><text x="75" y="45" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">1</text>
+          <circle cx="120" cy="90" r="11" fill="#7e22ce"/><text x="120" y="95" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">2</text>
+          <circle cx="120" cy="150" r="11" fill="#ca8a04"/><text x="120" y="155" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">3</text>
+        </svg>
+      </div>
+      <div class="diagram-legend">
+        <div class="diagram-legend-item"><span class="dl-num">1</span><span class="dl-text"><strong>Antigen-binding site</strong> — the exact-fit tip</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">2</span><span class="dl-text"><strong>Antibody</strong> — the whole Y-shaped protein</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">3</span><span class="dl-text"><strong>Antigen</strong> — the pathogen's one matching ID tag</span></div>
+      </div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🎓 Board Explainer</span>
+      <p style="margin:0;">A funding board member keeps asking why you can't just fund "one universal vaccine" for every disease. Write the two or three sentences you'd use to explain antibody specificity to them — simply enough that a non-scientist on the board would actually understand your answer.</p>
+      <textarea id="refl-4" placeholder="Explain it simply…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🏷️ What's an Antigen</span>
+      <p style="margin:0;">What is an antigen, and where is it found?</p>
+      <textarea id="refl-16" placeholder="Type your answer here…"></textarea>
+    </div>
+    <div class="callout subtle">
+      <span class="callout-label">🔑 What a Vaccine Trains</span>
+      <p style="margin:0;">An antibody is often described as "a key cut for one lock." What does that comparison actually mean biologically?</p>
+      <textarea id="refl-17" placeholder="Type your answer here…"></textarea>
+    </div>
+    <div class="callout subtle">
+      <span class="callout-label">🧲 What Antibodies Do</span>
+      <p style="margin:0;">What do antibodies actually do once they've bound to a pathogen's antigens?</p>
+      <textarea id="refl-18" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-vaccines"><span class="sec-num">5</span>The real number every budget line depends on</h3>
+    <p>There are two routes to immunity. <strong>Active immunity</strong> is the body producing its own antibodies and memory cells, either naturally or from a vaccine. <strong>Passive immunity</strong> is receiving ready-made antibodies from elsewhere — fast, but temporary, since no memory cells form. A vaccine works by triggering real active immunity safely — but only ahead of exposure: it primes the body to prevent a future infection, it doesn't cure one a patient already has. That's a budget distinction too — a vaccine program is money spent on prevention, not treatment.</p>
+    <p>Every disease has a <strong>basic reproduction number (R0)</strong> — roughly how many new people one infected person infects in a population with no immunity. R0 sets the <strong>herd immunity threshold</strong>: the percentage of a population that must be immune before an outbreak can't sustain itself. This threshold is the number that turns your budget into doses, and doses into cost.</p>
+
+    <table class="data-table">
+      <thead><tr><th>Disease type</th><th>R0 (typical range)</th><th>Herd immunity threshold</th></tr></thead>
+      <tbody>
+        <tr><td>Seasonal flu-like</td><td class="num">0.9 – 2.1</td><td class="num">~45 – 52%</td></tr>
+        <tr><td>COVID-19-like (original strain)</td><td class="num">2 – 3</td><td class="num">~50 – 67%</td></tr>
+        <tr><td>Polio-like</td><td class="num">3 – 4</td><td class="num">~75 – 80%</td></tr>
+        <tr><td>Measles-like</td><td class="num">12 – 18</td><td class="num">~93 – 95%</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:.85rem; color:var(--ink-soft);">Real-world figures, cited from published epidemiological reviews. The formula behind the threshold is simple: <strong>threshold ≈ 1 − (1 ÷ R0)</strong> — you'll use this exact formula in Part 2.</p>
+
+    <p><strong>Antibiotics</strong> kill or stop bacteria — never viruses, since antibiotics target structures bacterial cells have that viruses don't. This is why an antibiotic program is never a substitute for a vaccine program against a viral disease. Overusing antibiotics — or a patient stopping a course early — lets the toughest bacteria survive and multiply, which is exactly how <strong>antibiotic resistance</strong> develops, a cost real health budgets have to plan around.</p>
+
+    <div class="callout">
+      <span class="callout-label">📎 Memo Flag — check this claim</span>
+      <p style="margin:0;">A budget memo on your desk claims: <em>"Program X targets a fungal skin infection, so a vaccine should clear it up completely within days, just like an antibiotic would."</em> Something in that memo is scientifically wrong. Correct it as if you're sending the memo back to whoever wrote it.</p>
+      <textarea id="refl-1" placeholder="Type your correction here…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🛡️ Active vs Passive</span>
+      <p style="margin:0;">What's the real difference between active and passive immunity — and why is passive immunity faster but temporary?</p>
+      <textarea id="refl-19" placeholder="Type your answer here…"></textarea>
+    </div>
+    <div class="callout subtle">
+      <span class="callout-label">📊 R0 and Threshold</span>
+      <p style="margin:0;">Measles has a much higher R0 than seasonal flu. What does that actually mean, and why does it require a higher herd immunity threshold?</p>
+      <textarea id="refl-20" placeholder="Type your answer here…"></textarea>
+    </div>
+    <div class="callout subtle">
+      <span class="callout-label">💊 Half a Course</span>
+      <p style="margin:0;">Why does stopping an antibiotic course early actually make antibiotic resistance worse, instead of just wasting the rest of the medicine?</p>
+      <textarea id="refl-21" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3>History: how vaccine funding became a real institution</h3>
+    <div class="timeline">
+      <div class="timeline-item"><div class="t-year">1796</div><div class="t-body"><strong>Edward Jenner</strong> creates the world's first vaccine after noticing milkmaids with cowpox rarely caught smallpox.</div></div>
+      <div class="timeline-item"><div class="t-year">1879–1885</div><div class="t-body"><strong>Louis Pasteur</strong> establishes germ theory and develops the first lab-made weakened-pathogen vaccines.</div></div>
+      <div class="timeline-item"><div class="t-year">1882</div><div class="t-body"><strong>Élie Metchnikoff</strong> discovers phagocytosis, later sharing the 1908 Nobel Prize in Physiology or Medicine.</div></div>
+      <div class="timeline-item"><div class="t-year">1890–1901</div><div class="t-body"><strong>Emil von Behring</strong> develops diphtheria antitoxin and receives the first-ever Nobel Prize in Physiology or Medicine in 1901.</div></div>
+      <div class="timeline-item"><div class="t-year">1928</div><div class="t-body"><strong>Alexander Fleming</strong> discovers penicillin, the first antibiotic.</div></div>
+      <div class="timeline-item"><div class="t-year">1974</div><div class="t-body">The <strong>WHO Expanded Programme on Immunization</strong> launches, formally establishing national vaccine budgeting as a global public health institution.</div></div>
+      <div class="timeline-item"><div class="t-year">1980</div><div class="t-body">The <strong>WHO</strong> declares smallpox eradicated — proof a fully-funded, fully-executed program can eliminate a disease entirely.</div></div>
+      <div class="timeline-item"><div class="t-year">2020</div><div class="t-body"><strong>mRNA vaccine technology</strong> is funded and deployed at record speed during COVID-19, reshaping how fast a program can go from approval to rollout.</div></div>
+    </div>
+
+    <h3>Real-world application: this is a real job</h3>
+    <p>National <strong>immunization programs</strong> — like India's Universal Immunization Programme or the WHO's Expanded Programme on Immunization — run on fixed annual budgets and real coverage targets, exactly like your Part 2 cycle. Vaccine cold-chain logistics (keeping doses refrigerated from factory to clinic) is a real, expensive constraint that can wipe out purchased doses if it fails — you'll see this in Part 2 too. Vaccine manufacturers and health ministries negotiate <strong>per-dose pricing</strong> every year — the exact kind of number you'll be working with.</p>
+
+    <div class="game-card">
+      <div class="game-title">🎮 Program Intake Match</div>
+      <div class="game-sub">Six key terms from today's whole briefing. Click a term, then its matching definition — no penalty for a wrong guess, just try again.</div>
+      <div id="game-day1"></div>
+    </div>
+  </section>
+
+  <!-- MATERIALS -->
+  <section class="day-block">
+    <span class="day-kicker">Before Part 2 · Build Kit</span>
+    <h2>Choose What You're Bringing</h2>
+    <p class="day-sub">This is a pool to pick from, not a checklist — decide what you'll actually use to build a working antibody-antigen model.</p>
+
+    <div class="materials-table-wrap">
+      <table class="materials-table">
+      <thead><tr><th>Material</th><th>Antibody (Y-shape)</th><th>Matching antigen</th><th>Non-matching antigen</th><th>Mounting</th><th>Memory cell (optional)</th><th>Labels</th></tr></thead>
+      <tbody>
+      <tr><td class="mat-name">Pipe cleaners</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Pipe cleaners for Antibody (Y-shape)</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Twist ties</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Twist ties for Antibody (Y-shape)</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Thin wire bent into a Y</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Thin wire bent into a Y for Antibody (Y-shape)</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Wooden craft sticks glued into a Y</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Wooden craft sticks glued into a Y for Antibody (Y-shape)</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Drinking straws bent into a Y</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Drinking straws bent into a Y for Antibody (Y-shape)</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A button</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A button for Matching antigen</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A bead</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A bead for Matching antigen</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A small distinctly-shaped block</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A small distinctly-shaped block for Matching antigen</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A puzzle piece</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A puzzle piece for Matching antigen</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A small toy figure</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A small toy figure for Matching antigen</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A differently-shaped button</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A differently-shaped button for Non-matching antigen</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A differently-shaped bead</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A differently-shaped bead for Non-matching antigen</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A differently-colored block</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A differently-colored block for Non-matching antigen</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A different puzzle piece</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A different puzzle piece for Non-matching antigen</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A different small toy figure</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A different small toy figure for Non-matching antigen</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Cardboard or stiff paper</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Cardboard or stiff paper for Mounting</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Glue, tape, scissors, marker pen</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Glue, tape, scissors, marker pen for Mounting</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A shoebox lid base</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A shoebox lid base for Mounting</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A foam board base</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A foam board base for Mounting</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A paper plate stand</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A paper plate stand for Mounting</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A small pouch</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A small pouch for Memory cell (optional)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">An envelope</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">An envelope for Memory cell (optional)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">An extra bead set aside</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">An extra bead set aside for Memory cell (optional)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A small labeled box</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A small labeled box for Memory cell (optional)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A zip-top bag</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A zip-top bag for Memory cell (optional)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Small labels or flags on toothpicks</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Small labels or flags on toothpicks for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Sticky notes cut into strips</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Sticky notes cut into strips for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Index cards</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Index cards for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Painter's tape strips</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Painter's tape strips for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Markers</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Markers for Labels</span></label></td></tr>
+      </tbody></table></div>
+      <p class="materials-table-note">The matching and non-matching antigens have to look genuinely different from each other — that difference is the whole point of the model.</p>
+          <div class="slip-preview">
+      <h4>📋 What you're bringing to Part 2:</h4>
+      <ul id="slip-list-preview"></ul>
+      <div class="slip-empty" id="slip-empty">Nothing selected yet.</div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section class="day-block" id="day2">
+    <span class="day-kicker">Part 2 · Build Day</span>
+    <h2>Build What You're Actually Funding</h2>
+    <p class="day-sub">A budget line is abstract. What it trains inside the body isn't. Today you build a real, labeled antibody-antigen "lock and key" model — proof of exactly what a vaccine dollar buys.</p>
+
+    <div class="model3d-wrap">
+      <div class="model3d">
+        <div class="model3d-stage" id="model-stage">
+          <div class="model3d-face f1" style="background:linear-gradient(135deg,#c084fc,#7e22ce);"><span><span class="f-icon">🔑</span>Antibody<br>Y-shaped protein</span></div>
+          <div class="model3d-face f2" style="background:linear-gradient(135deg,#e9d5ff,#6d28d9);"><span><span class="f-icon">🎯</span>Binding site<br>matches ONE antigen</span></div>
+          <div class="model3d-face f3" style="background:linear-gradient(135deg,#c084fc,#581c87);"><span><span class="f-icon">🏭</span>Made by<br>a lymphocyte</span></div>
+          <div class="model3d-face f4" style="background:linear-gradient(135deg,#e9d5ff,#4c1d95);"><span><span class="f-icon">🏷️</span>Antigen<br>the pathogen's ID tag</span></div>
+          <div class="model3d-face f5" style="background:linear-gradient(135deg,#c084fc,#3b0764);"><span><span class="f-icon">💉</span>Vaccine<br>trains this safely</span></div>
+          <div class="model3d-face f6" style="background:linear-gradient(135deg,#e9d5ff,#701a75);"><span><span class="f-icon">🧠</span>Memory cell<br>remembers this shape</span></div>
+        </div>
+      </div>
+      <div class="model3d-hint">🖱️ Hover to pause and read each face.</div>
+      <button class="btn btn-ghost model3d-pause" type="button" id="pause-btn">⏸ Pause rotation</button>
+    </div>
+
+    <h3>What your model has to prove</h3>
+    <p>Any model can show a Y-shape next to a circle. Yours needs to prove <strong>specificity</strong> — that this exact antibody fits ONE antigen and nothing else. That's the whole reason vaccines can't be "one size fits all," and it's the single most important thing your build has to demonstrate.</p>
+
+    <h3 id="sec-plan">Plan before you build</h3>
+    <p>Fill this in before you glue anything down. This material-justification table <em>is</em> the real decision — the build itself is just carrying it out.</p>
+    <table class="justify-table">
+      <thead><tr><th>Part</th><th>What it represents</th><th>Material I'm using</th><th>Why this material fits</th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="e.g. Antibody"></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input placeholder="e.g. Matching antigen"></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input placeholder="e.g. Non-matching antigen"></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input placeholder="e.g. Memory cell"></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout subtle">
+      <span class="callout-label">📸 Picture the finished result</span>
+      <p style="margin:0;">Picture a finished model: two pipe cleaners twisted into a Y shape (the antibody), with a uniquely-shaped button glued into the fork of the Y as its matching antigen, and a differently-shaped button sitting nearby, clearly NOT fitting the antibody's fork — showing exactly why specificity matters.</p>
+    </div>
+
+    <h3>Build it</h3>
+    <div class="build-checklist">
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">1.</span><span class="step-text">Bend your pipe cleaners into a Y-shape and twist them together at the base — this whole shape is your antibody.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">2.</span><span class="step-text">Shape the two tips so they curl around and grip your first button/bead exactly — this is the antigen-binding site.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">3.</span><span class="step-text">Mount that matching antigen beside the antibody, and try to fit the same tips around your second, differently-shaped antigen — it should clearly NOT fit.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">4.</span><span class="step-text">Add a "stored" memory cell element off to the side, ready for a repeat exposure.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">5.</span><span class="step-text">Label every part, then write one sentence on why one vaccine can't protect against every disease.</span></span></label>
+    </div>
+
+    <h3>Results</h3>
+    <p>Describe your finished model — this doubles as notes for tomorrow's pitch.</p>
+    <table class="plan-table">
+      <tbody>
+        <tr><td style="width:140px;"><strong>Parts labeled</strong></td><td><input placeholder="e.g. 4 of 4"></td></tr>
+        <tr><td><strong>Does the "wrong" antigen visibly fail to fit?</strong></td><td><input placeholder="Yes / No, and why"></td></tr>
+        <tr><td><strong>Short description</strong></td><td><textarea placeholder="Describe your model in 2–3 sentences…"></textarea></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <span class="callout-label">🪞 Budget Debrief — self-check</span>
+      <p style="margin:0;">What might someone misunderstand about your model just by looking at it? If a review board member picked up your non-matching antigen and asked "why doesn't this fit," what would you actually say?</p>
+      <textarea id="refl-5" placeholder="Write your honest debrief…"></textarea>
+    </div>
+  </section>
+
+  <!-- DAY 3 -->
+  <section class="day-block" id="day3">
+    <span class="day-kicker">Part 3 · Defending the Budget</span>
+    <h2>Present What You're Funding</h2>
+
+    <div class="hook-box">
+      <div class="hook-label">Your opening move</div>
+      <p style="margin:0;">Hold up your non-matching antigen first, without explaining it, and ask the room: <em>"Why do you think this one doesn't fit?"</em> Let a few guesses land before you reveal the matching one.</p>
+    </div>
+
+    <div class="prep-form">
+      <h3>Prepare your presentation</h3>
+      <p>Fill this in before Part 3 — it's your own script, not busywork.</p>
+
+      <div class="prep-field">
+        <label>i. Your role and responsibility</label>
+        <textarea placeholder="In your own words — who are you in this story, and what were you responsible for figuring out?"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>ii. Three new words or ideas you learned, and what they mean</label>
+        <textarea placeholder="1) &#10;2) &#10;3) "></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>iii. One historical fact you found interesting</label>
+        <textarea placeholder="Which one, and why it stuck with you"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>iv. A real-world application</label>
+        <textarea placeholder="Where does this actually show up outside a classroom?"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>v. Explain your build</label>
+        <div class="prep-autofill-row">
+          <span class="prep-autofill-hint">Materials &amp; reasoning below are pulled from your Part 2 plan table — edit freely.</span>
+          <button type="button" class="prep-autofill-btn">&#8635; Pull from Part 2 again</button>
+        </div>
+        <textarea class="prep-build-materials" placeholder="Materials used and why you chose them…"></textarea>
+        <textarea placeholder="Every label on your build, and what it explains…"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>vi. What you're still not sure about</label>
+        <textarea placeholder="What would you want more explanation or practice on?"></textarea>
+      </div>
+    </div>
+
+    <div class="facilitator-tip">
+      <span class="fac-label">Facilitator only</span>
+      <p>If a part of the model looks rough or a material choice feels like a stretch, steer the room's attention there first, not away from it. Real budget directors defend hard trade-offs every single cycle. A kid who can explain WHY a material was the best available option, and own an imperfect build out loud, is demonstrating the target skill far better than one who avoids the topic.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  Immune System Quest · Vaccine Program Direction — Michael's instance. <a href="../index.html">All three instances →</a>
+</footer>
+
+<!-- Isolated printable materials slip -->
+<div id="print-slip-page">
+  <div class="print-slip-sheet">
+    <h3>📋 Materials I'm Bringing — Part 2</h3>
+    <div class="slip-kid">Vaccine Program Direction · Michael</div>
+    <ul id="slip-list-print"></ul>
+  </div>
+</div>
+
+<!-- Side glossary drawer -->
+<div class="notes-backdrop" id="glossary-backdrop"></div>
+<div class="notes-drawer" id="glossary-drawer">
+  <div class="notes-drawer-head">
+    <h4>📖 Glossary</h4>
+    <button id="glossary-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="glossary">
+      <div class="glossary-item"><div class="word">Herd immunity threshold</div><div class="def">The % of a population that must be immune to stall an outbreak.</div></div>
+      <div class="glossary-item"><div class="word">R0 (basic reproduction number)</div><div class="def">Average new infections one case causes with no immunity present.</div></div>
+      <div class="glossary-item"><div class="word">Active immunity</div><div class="def">Immunity from your own body making antibodies — natural or vaccine-triggered.</div></div>
+      <div class="glossary-item"><div class="word">Cold chain</div><div class="def">The refrigerated supply chain keeping vaccines viable from factory to clinic.</div></div>
+      <div class="glossary-item"><div class="word">Antibody</div><div class="def">A protein shaped to match one specific antigen.</div></div>
+      <div class="glossary-item"><div class="word">Antibiotic resistance</div><div class="def">Bacteria evolving to survive antibiotics that used to work.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Side notes drawer -->
+<div class="notes-backdrop" id="notes-backdrop"></div>
+<div class="notes-drawer" id="notes-drawer">
+  <div class="notes-drawer-head">
+    <h4>📝 My Notes</h4>
+    <button class="notes-drawer-close" id="notes-drawer-close" type="button" aria-label="Close notes">&times;</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="notes-section-label">Words &amp; phrases I highlighted</div>
+    <ul class="hl-collected-list" id="hl-collected-list"></ul>
+    <div class="hl-collected-empty" id="hl-collected-empty">Select any text on the page and click "🖍 Highlight" — it'll show up here.</div>
+    <div class="notes-section-label">My notes</div>
+    <textarea class="notes-textarea" id="notes-textarea" placeholder="Jot down anything — new words, questions, ideas for your pitch…"></textarea>
+    <div class="notes-saved-msg" id="notes-saved-msg"></div>
+  </div>
+</div>
+
+<script>
+  // Progress-sync Worker — cross-device save. SITE_KEY is a soft deterrent
+  // only (any client-side value is visible in devtools), not real auth.
+  window.QUEST_SYNC_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  window.QUEST_SYNC_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+</script>
+<script src="../js/quest.js"></script>
+<script>
+  QuestUI.initKidGate('Michael');
+  QuestUI.initFacilitatorCheck();
+
+  QuestUI.initProgressSync('michael', 'group-03', 'week-01').then(function () {
+    QuestUI.initHighlighter('michael');
+    QuestUI.initNotesDrawer('michael');
+    QuestUI.initGlossaryDrawer();
+    QuestUI.initMaterialsPool('michael');
+    QuestUI.initBuildChecklist('michael');
+    QuestUI.initFieldAutosave('michael');
+    QuestUI.initPresentationAutofill('michael');
+    QuestUI.initDayTimer('michael');
+    QuestUI.initProgressBar('michael');
+    QuestUI.initSectionLock('michael');
+    QuestUI.initDayLock('michael');
+    QuestUI.initCompleteQuest('michael');
+    QuestUI.initMatchGame('game-day1', [
+      ['Pathogen', 'A microorganism that causes disease'],
+      ['Vector', 'Carries a pathogen between hosts without getting sick itself'],
+      ['Cilia', 'Sweep trapped pathogens out of the airways'],
+      ['Phagocytosis', 'A phagocyte engulfing and destroying a pathogen'],
+      ['Antibody', 'A protein shaped to match one specific antigen'],
+      ['Herd immunity', 'Population-wide protection when enough people are immune']
+    ], { pageKey: 'michael' });
+    QuestUI.initReflectionChecks('michael', [
+      { id: 'refl-6', groups: [['bacteria', 'cell', 'cellular', 'single-celled'], ['virus', 'viruses', 'not a cell', "not even a cell", 'hijack', 'particle']],
+        reread: { anchor: 'sec-pathogens', label: '1. The threat' } },
+      { id: 'refl-7', groups: [['vector'], ['protoctist', 'protoctists']],
+        reread: { anchor: 'sec-pathogens', label: '1. The threat' } },
+      { id: 'refl-8', groups: [['direct contact', 'touching', 'skin', 'body fluids'], ['droplet', 'cough', 'sneeze'], ['food', 'water', 'contaminated'], ['vector', 'insect', 'mosquito']],
+        reread: { anchor: 'sec-pathogens', label: '1. The threat' } },
+      { id: 'refl-9', groups: [['droplet', 'cough', 'sneeze', 'mask', 'air'], ['vector', 'mosquito', 'insect', 'spray', 'bite']],
+        reread: { anchor: 'sec-pathogens', label: '1. The threat' } },
+      { id: 'refl-2', groups: [['stomach acid', 'gut', 'digestive', 'water'], ['cilia', 'mucus', 'airway', 'respiratory', 'ventilation', 'air']],
+        reread: { anchor: 'sec-barriers', label: '2. Line one: barriers' } },
+      { id: 'refl-10', groups: [['skin', 'physical wall', 'barrier'], ['stomach acid', 'acid', 'digest', 'destroy']],
+        reread: { anchor: 'sec-barriers', label: '2. Line one: barriers' } },
+      { id: 'refl-11', groups: [['lysozyme'], ['break down', 'breaks down', 'destroy', 'cell wall', 'bacterial']],
+        reread: { anchor: 'sec-barriers', label: '2. Line one: barriers' } },
+      { id: 'refl-12', groups: [['clot', 'clotting', 'seal'], ['entry point', 'entry', 'pathogen', 'prevent', 'stop', 'block']],
+        reread: { anchor: 'sec-barriers', label: '2. Line one: barriers' } },
+      { id: 'refl-3', groups: [['pus', 'inflammation', 'red', 'swoll'], ['phagocyte', 'white blood cell']],
+        reread: { anchor: 'sec-phagocytes', label: '3. Line two: phagocytes' } },
+      { id: 'refl-13', groups: [['detect', 'signal'], ['engulf', 'surround', 'swallow'], ['digest', 'enzyme', 'break down']],
+        reread: { anchor: 'sec-phagocytes', label: '3. Line two: phagocytes' } },
+      { id: 'refl-14', groups: [['non-specific', 'any pathogen', 'all the same', 'same way'], ['fast', 'quick', 'speed', 'generic', 'not precise']],
+        reread: { anchor: 'sec-phagocytes', label: '3. Line two: phagocytes' } },
+      { id: 'refl-15', groups: [['non-specific', 'generic', 'any pathogen', 'not precise'], ['specific', 'precision', 'antibod', 'lymphocyte', 'exact match']],
+        reread: { anchor: 'sec-phagocytes', label: '3. Line two: phagocytes' } },
+      { id: 'refl-4', groups: [['antigen'], ['specific', 'exact', 'match', 'lock and key', 'shape']],
+        reread: { anchor: 'sec-antibodies', label: '4. Line three: lymphocytes and antibodies' } },
+      { id: 'refl-16', groups: [['antigen'], ['surface', 'marker', 'identify', 'foreign']],
+        reread: { anchor: 'sec-antibodies', label: '4. Line three: lymphocytes and antibodies' } },
+      { id: 'refl-17', groups: [['shape', 'shaped', 'fit', 'match'], ['one antigen', 'specific', 'exact', 'only']],
+        reread: { anchor: 'sec-antibodies', label: '4. Line three: lymphocytes and antibodies' } },
+      { id: 'refl-18', groups: [['clump', 'stick together', 'mark'], ['phagocyte', 'finish off', 'destroy']],
+        reread: { anchor: 'sec-antibodies', label: '4. Line three: lymphocytes and antibodies' } },
+      { id: 'refl-1', groups: [['fungal', 'fungus'], ['antifungal', 'prevent', 'before you get sick', 'future infection', "doesn't cure", 'not a cure']],
+        reread: { anchor: 'sec-vaccines', label: '5. The real number every budget line depends on' } },
+      { id: 'refl-19', groups: [['active', 'own body', 'produce', 'antibod'], ['passive', 'ready-made', 'temporary', 'no memory']],
+        reread: { anchor: 'sec-vaccines', label: '5. The real number every budget line depends on' } },
+      { id: 'refl-20', groups: [['r0', 'reproduction number', 'contagious', 'infect more'], ['higher threshold', 'more people', 'higher percentage', 'harder to stop']],
+        reread: { anchor: 'sec-vaccines', label: '5. The real number every budget line depends on' } },
+      { id: 'refl-21', groups: [['toughest', 'strongest', 'survive', 'resistant'], ['multiply', 'spread', 'worse', 'more resistant']],
+        reread: { anchor: 'sec-vaccines', label: '5. The real number every budget line depends on' } },
+      { id: 'refl-5', groups: [],
+        reread: { anchor: 'sec-plan', label: 'Plan before you build' } }
+    ]);
+
+    var modelPaused = false;
+    document.getElementById('pause-btn').addEventListener('click', function () {
+      modelPaused = !modelPaused;
+      document.getElementById('model-stage').classList.toggle('paused', modelPaused);
+      this.textContent = modelPaused ? '▶ Resume rotation' : '⏸ Pause rotation';
+    });
+  });
+
+  window.addEventListener('beforeprint', function () { document.body.classList.add('printing-slip'); });
+  window.addEventListener('afterprint', function () { document.body.classList.remove('printing-slip'); });
+</script>
+</body>
+</html>

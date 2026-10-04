@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Space &amp; Gravity · Mission Control</title>
+<script>
+  (function () {
+    try {
+      window.QUEST_FACILITATOR_MODE = new URLSearchParams(window.location.search).get('fac') === '1';
+    } catch (e) { window.QUEST_FACILITATOR_MODE = false; }
+    try {
+      var kid = localStorage.getItem('imm-l3-kid');
+      if (!kid || kid.toLowerCase() !== 'shalom') document.documentElement.classList.add('gate-locked');
+    } catch (e) { document.documentElement.classList.add('gate-locked'); }
+  })();
+</script>
+<style>
+  html.gate-locked main, html.gate-locked .progress-summary { display: none !important; }
+  html.facilitator-mode #facilitator-banner { display: block; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="lens-shalom">
+
+<div id="facilitator-banner" style="display:none;">🧑‍🏫 Facilitator View, nothing on this page is being timed, saved, or synced. <a href="?" id="facilitator-banner-exit">Exit Facilitator View →</a></div>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand-group">
+      <a href="../index.html" class="brand">🚀 Space &amp; Gravity Quest<small>Mission Control</small></a>
+      <span class="day-badge" id="quest-day-badge"></span>
+      <span class="session-timer" id="session-timer"></span>
+    </div>
+    <nav class="day-nav">
+      <a href="#day1">Part 1</a>
+      <a href="#day2">Part 2</a>
+      <a href="#day3">Part 3</a>
+      <a href="#day4">Part 4</a>
+      <a href="#day5">Part 5</a>
+      <button class="notes-toggle-btn" id="glossary-toggle-btn" type="button">📖 Glossary</button>
+      <button class="notes-toggle-btn" id="notes-toggle-btn" type="button">📝 My Notes</button>
+      <button class="print-btn" id="print-slip-btn" type="button">🖨️ Print my bringing slip</button>
+    </nav>
+  </div>
+</header>
+
+<div class="progress-summary">
+  <div class="container">
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 1</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day1-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day1-label">0/4</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 2</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day2-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day2-label">0/4</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 3</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day3-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day3-label">0/1</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 4</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day4-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day4-label">0/6</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 5</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day5-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="quest-gate-block">
+  <div class="gate-block-wrap">
+    <div class="gate-icon">🔒</div>
+    <h2>This is Shalom's quest</h2>
+    <p>Confirm it's you to continue.</p>
+    <div class="name-gate-card">
+      <button class="btn btn-primary gate-confirm-btn" id="gate-confirm-btn" type="button">✅ Yes, I'm Shalom, Continue</button>
+      <div class="name-gate-msg" id="gate-name-msg"></div>
+    </div>
+    <a class="gate-not-you" href="../index.html">Not you? Find your own quest link →</a>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- COVER -->
+  <section class="cover">
+    <div class="cover-watermark" aria-hidden="true">🌕</div>
+    <div class="format-pill">Quest</div><br>
+    <span class="lens-pill">🛰️ Flight Director</span>
+    <h1>Mission Lumen-1: Earth to the Moon</h1>
+    <p class="subtitle">Lumen-1 is sitting in Earth orbit, fueled and ready to go. Getting it safely to the Moon isn't a straight line. It takes six real calculations, back to back. Get one wrong, and the ship won't crash and burn, but it will drift, stall, or burn fuel it can't get back. Get all six right, and you land.</p>
+    <div class="kid-name">Flight Director: Shalom</div>
+    <div class="framing">
+      <p style="margin:0;">You're running Mission Control for Lumen-1's trip to the Moon. Parts 1 and 2 brief you on the real physics first, mass versus weight, why a satellite doesn't just fall out of orbit, escape velocity, and free fall, with real videos and real questions, not just a wall of numbers. Part 3 is where you fly the actual mission: six legs, each one a real calculation using exactly what you just learned. Part 4 you build your own tabletop model showing why gravity bends a ship's path in the first place. Part 5, you brief the room on how the whole mission went.</p>
+    </div>
+  </section>
+
+  <!-- PART 1: WEIGHT & ORBIT -->
+  <section class="day-block" id="day1">
+    <span class="day-kicker">Part 1 · Mass, Weight &amp; Orbit</span>
+    <h2>Before You Fly, Know the Physics</h2>
+    <p class="day-sub">Two ideas Mission Control can't get wrong: what actually changes when a ship leaves Earth, and why an orbiting object never just falls out of the sky.</p>
+
+    <h3 id="sec-1"><span class="sec-num">1</span>Mass and weight aren't the same thing</h3>
+    <p><strong>Mass</strong> is how much matter something is made of. It stays the same everywhere in the universe, on Earth, on the Moon, floating in empty space. A 120 kg equipment crate has a mass of 120 kg no matter where Mission Control sends it.</p>
+    <p><strong>Weight</strong> is different. Weight is how hard gravity pulls on that mass. Gravity is not the same strength everywhere. On Earth, gravity is strong enough that the crate weighs 1,200 newtons. The Moon's gravity is only about <strong>1/6th</strong> as strong as Earth's. So the exact same crate, with the exact same mass, weighs far less there. Nothing about the crate itself changed. Only how hard gravity was pulling on it changed.</p>
+    <p>This is why astronauts can carry equipment on the Moon that would be too heavy to lift on Earth. Their actual mass, and the effort it takes to speed them up or stop them, stays exactly the same.</p>
+
+    <div class="video-card" data-gate-video="rFdbY_V7vIo">
+      <div class="video-title">📹 Mass and Weight</div>
+      <div class="video-sub">Watch the whole thing to unlock the next section.</div>
+      <div class="video-embed-wrap">
+        <iframe id="yt-rFdbY_V7vIo" src="https://www.youtube.com/embed/rFdbY_V7vIo?enablejsapi=1&amp;rel=0" title="Mass and Weight" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-watch-note" id="watch-note-rFdbY_V7vIo">▶️ Watch the full video to unlock the next section</div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">🛰️ Flight Log · something doesn't add up</span>
+      <p style="margin:0;">A flight log entry reads: <em>"Equipment crate shows a mass of 90 kg on the Earth list. Since the crate weighs less on the Moon, update its mass on the Moon list to a lower number."</em> What's wrong with that log entry, and what actually stays the same when the crate leaves Earth?</p>
+      <textarea id="refl-1" placeholder="Say what's wrong, and what stays the same…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔢 Go/No-Go Check</span>
+      <p style="margin:0;">A crate has a mass of 120 kg and weighs 1,200 newtons on Earth. The Moon's gravity is about 1/6th as strong as Earth's. How many newtons will the same crate weigh on the Moon?</p>
+      <textarea id="refl-1b" placeholder="Give the answer in newtons…"></textarea>
+    </div>
+
+    <h3 id="sec-2"><span class="sec-num">2</span>Why a satellite doesn't just fall</h3>
+    <p>Gravity never stops pulling a satellite toward the planet it orbits. Not for one second. So why doesn't it just fall straight down?</p>
+    <p>The answer is that an orbiting object actually <strong>is</strong> constantly falling. It's moving forward so fast, sideways, that by the time gravity has pulled it down a little, the curve of the planet has dropped away beneath it by about the same amount. It keeps falling, and it keeps missing. That endless falling-and-missing is exactly what an <strong>orbit</strong> is.</p>
+    <p>Slow the satellite down too much, and it falls in for real. Speed it up too much, and it flies off into space instead. Get the sideways speed exactly right, and it just keeps missing the planet, forever. A satellite orbiting close to Earth, for example, completes one full orbit in about <strong>2 hours</strong>, low, fast, and constantly missing.</p>
+
+    <div class="video-card" data-gate-video="xvPNYfq_Dcc">
+      <div class="video-title">📹 Orbital Velocity</div>
+      <div class="video-sub">Watch the whole thing to unlock the next section.</div>
+      <div class="video-embed-wrap">
+        <iframe id="yt-xvPNYfq_Dcc" src="https://www.youtube.com/embed/xvPNYfq_Dcc?enablejsapi=1&amp;rel=0" title="Orbital Velocity" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-watch-note" id="watch-note-xvPNYfq_Dcc">▶️ Watch the full video to unlock the next section</div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">📡 Console Alert · full paragraph required</span>
+      <p style="margin:0;">A console alert reads: <em>"Warning: satellite still under constant gravitational pull despite stable orbit."</em> Write the explanation you'd give the room for why this is normal, not something broken. Say why a satellite in a stable orbit doesn't just fall straight down, even though gravity never stops pulling on it.</p>
+      <textarea class="paragraph" id="refl-2" placeholder="Write your full paragraph here…"></textarea>
+      <span class="paragraph-note">Say what gravity is doing, AND what the satellite's own motion is doing to make it keep missing.</span>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔢 Go/No-Go Check</span>
+      <p style="margin:0;">A satellite orbiting close to Earth completes one full orbit every 2 hours. How many complete orbits does it make in 24 hours (one full day)?</p>
+      <textarea id="refl-2b" placeholder="Give the answer in orbits…"></textarea>
+    </div>
+  </section>
+
+  <!-- PART 2: ESCAPE VELOCITY & FREE FALL -->
+  <section class="day-block" id="day2">
+    <span class="day-kicker">Part 2 · Breaking Free, Falling Back</span>
+    <h2>Leaving Orbit, and Coming Back Down</h2>
+    <p class="day-sub">Two more real numbers Mission Control lives and dies by: how fast you need to go to actually leave a planet, and how fast something speeds up once gravity is the only thing acting on it.</p>
+
+    <h3 id="sec-3"><span class="sec-num">3</span>Escape velocity</h3>
+    <p><strong>Escape velocity</strong> is the minimum speed something needs to break completely free of a planet's gravity, so it never falls back. It isn't the same number everywhere. It depends on how strong that planet's gravity actually is, which depends on the planet's mass.</p>
+    <p>Bigger, heavier planets have stronger gravity, so it takes more speed to break free of them. Earth's escape velocity is about <strong>11 km/s</strong>. The Moon's is only about <strong>2.4 km/s</strong>, because the Moon has far less mass and a much weaker pull. This is exactly why it was so much easier for the Apollo missions to launch back off the Moon than it was to launch off Earth in the first place.</p>
+
+    <div class="video-card" data-gate-video="tgHsjvSWQe8">
+      <div class="video-title">📹 Escape Velocity</div>
+      <div class="video-sub">Watch the whole thing to unlock the next section.</div>
+      <div class="video-embed-wrap">
+        <iframe id="yt-tgHsjvSWQe8" src="https://www.youtube.com/embed/tgHsjvSWQe8?enablejsapi=1&amp;rel=0" title="Escape Velocity" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-watch-note" id="watch-note-tgHsjvSWQe8">▶️ Watch the full video to unlock the next section</div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">📋 Status Board Error · full paragraph required</span>
+      <p style="margin:0;">The status board reads: <em>"Escape velocity: 11 km/s, fixed value, applies to every planet in the mission plan."</em> Flag the error on the status board, and explain what actually determines a planet's escape velocity.</p>
+      <textarea class="paragraph" id="refl-3" placeholder="Write your full paragraph here…"></textarea>
+      <span class="paragraph-note">Say what's wrong, AND name what a planet's escape velocity actually depends on.</span>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔢 Go/No-Go Check</span>
+      <p style="margin:0;">Earth's escape velocity is about 11 km/s. The Moon's is only about 2.4 km/s. Why is the Moon's escape velocity so much lower?</p>
+      <textarea id="refl-3b" placeholder="Explain what's different about the Moon…"></textarea>
+    </div>
+
+    <h3 id="sec-4"><span class="sec-num">4</span>Free fall under real gravity</h3>
+    <p>An object in <strong>free fall</strong> is falling with nothing but gravity acting on it. No engine, no air resistance counted. It does <strong>not</strong> fall at a constant speed. It speeds up the whole way down, at a fixed rate.</p>
+    <p>On the Moon, that rate is about <strong>1.6 m/s²</strong>. Its speed goes up by 1.6 meters per second for every second it falls. That's much gentler than Earth's own 9.8 m/s². This is exactly why an astronaut in a heavy suit can still fall and land safely on the Moon in situations that would be dangerous on Earth. Real mission planners use this exact number to predict how hard a lander will touch down.</p>
+
+    <div class="video-card" data-gate-video="0ewWkfBA3vw">
+      <div class="video-title">📹 Gravity and Free Fall</div>
+      <div class="video-sub">Watch the whole thing to unlock the next section.</div>
+      <div class="video-embed-wrap">
+        <iframe id="yt-0ewWkfBA3vw" src="https://www.youtube.com/embed/0ewWkfBA3vw?enablejsapi=1&amp;rel=0" title="Gravity and Free Fall" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-watch-note" id="watch-note-0ewWkfBA3vw">▶️ Watch the full video to unlock the next section</div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">🛰️ Flight Log · full paragraph required</span>
+      <p style="margin:0;">A flight log entry claims: <em>"A dropped tool falls at a constant speed the whole way down on the Moon, so impact speed is easy to predict, it never changes during the fall."</em> Correct this log entry. What's actually wrong with it, and what really happens to the tool's speed as it falls?</p>
+      <textarea class="paragraph" id="refl-4" placeholder="Write your full paragraph here…"></textarea>
+      <span class="paragraph-note">Say what's wrong, AND describe how the speed actually changes.</span>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔢 Go/No-Go Check</span>
+      <p style="margin:0;">The Moon's gravity speeds up a falling object by 1.6 m/s every second. How fast (in m/s) is an object moving after it has been falling for 5 seconds?</p>
+      <textarea id="refl-4b" placeholder="Give the speed in m/s…"></textarea>
+    </div>
+
+    <h3>History: how we learned to navigate space</h3>
+    <div class="timeline">
+      <div class="timeline-item"><div class="t-year">1638</div><div class="t-body"><strong>Galileo Galilei</strong> shows that all falling objects speed up at the same rate, no matter their mass. A heavy object and a light one, dropped together, hit the ground at the same instant. This is exactly why "mass" and "weight" had to become two separate ideas.</div></div>
+      <div class="timeline-item"><div class="t-year">1957</div><div class="t-body">The Soviet Union launches <strong>Sputnik 1</strong>, the first artificial satellite. It proved, for the first time, that an object really could be given enough sideways speed to stay in a stable orbit instead of falling back to Earth.</div></div>
+      <div class="timeline-item"><div class="t-year">1969</div><div class="t-body">NASA's <strong>Apollo 11</strong> lands the first humans on the Moon. The lunar module's descent, and its later liftoff back off the Moon, ran on the exact same free-fall and escape-velocity numbers you just read about. Just for real, with astronauts' lives riding on getting them right.</div></div>
+    </div>
+
+    <div class="game-card">
+      <div class="game-title">🔍 Word Match</div>
+      <div class="game-sub">Match each word from Parts 1 and 2 to its meaning. No penalty for a wrong guess, just try again.</div>
+      <div id="game-day1"></div>
+    </div>
+  </section>
+
+  <!-- PART 3: THE MISSION -->
+  <section class="day-block" id="day3">
+    <span class="day-kicker">Part 3 · Run the Mission</span>
+    <h2>Fly Lumen-1 to the Moon</h2>
+    <p class="day-sub">Six legs, and you already know every relationship behind them from Parts 1 and 2. Nothing here is new physics. This is where you prove you can actually use it under real mission pressure.</p>
+
+    <div id="calc-quest-lumen"></div>
+
+    <textarea id="refl-mission" style="display:none" aria-hidden="true" tabindex="-1"></textarea>
+  </section>
+
+  <!-- MATERIALS -->
+  <section class="day-block">
+    <span class="day-kicker">Before Part 4 · Build Kit</span>
+    <h2>Choose What You're Bringing</h2>
+    <p class="day-sub">This is a pool to pick from, not a checklist. Grab what you'll actually use to build your gravity well: one round bowl with smooth, curved sides, and one round marble to roll inside it.</p>
+
+    <div class="materials-table-wrap">
+      <table class="materials-table">
+      <thead><tr><th>Material</th><th>The bowl (your gravity well)</th><th>The marble (your planet)</th></tr></thead>
+      <tbody>
+      <tr><td class="mat-name">A large round mixing bowl with smooth, curved sides</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A large round mixing bowl with smooth, curved sides for The bowl (your gravity well)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A big plastic funnel</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A big plastic funnel for The bowl (your gravity well)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A salad bowl or wide serving bowl</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A salad bowl or wide serving bowl for The bowl (your gravity well)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Marbles (a few, in case one rolls away)</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Marbles (a few, in case one rolls away) for The marble (your planet)</span></label></td></tr>
+      <tr><td class="mat-name">Small bouncy balls</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Small bouncy balls for The marble (your planet)</span></label></td></tr>
+      <tr><td class="mat-name">Ball bearings or steel balls</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Ball bearings or steel balls for The marble (your planet)</span></label></td></tr>
+      </tbody></table></div>
+      <p class="materials-table-note">One item from the "bowl" column, and one from the "marble" column. That's it, nothing to build or stretch first.</p>
+          <div class="slip-preview">
+      <h4>📋 What you're bringing to Part 4:</h4>
+      <ul id="slip-list-preview"></ul>
+      <div class="slip-empty" id="slip-empty">Nothing selected yet.</div>
+    </div>
+  </section>
+
+  <!-- PART 4: BUILD -->
+  <section class="day-block" id="day4">
+    <span class="day-kicker">Part 4 · Build Day</span>
+    <h2>Roll a Marble Into Orbit</h2>
+    <p class="day-sub">Every calculation you fired in Part 3 depended on one idea: mass bends the space around it, and that bend is what we call gravity. Today you use a bowl to see that bend and roll something around inside it.</p>
+
+    <h3>What you're building</h3>
+    <p>A gravity well you don't have to build from scratch. A large bowl or funnel already has the exact shape a gravity well needs, steep near the middle, sloped near the top rim, so you can start rolling right away. Roll a marble around the inside wall, close to the rim, and its path curves the same way a spacecraft's path curves near a real planet, just from the shape of the curve, nothing is pulling it in. If you roll it at the right speed, it circles a few times before spiraling down to the middle. That circling is your homemade orbit, and it's what you're trying to produce today.</p>
+
+    <h3>Build steps</h3>
+    <div class="build-checklist">
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">1.</span><span class="step-text">Set your bowl or funnel on a flat, steady surface.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">2.</span><span class="step-text">Roll your marble around the inside wall, close to the top rim, like spinning it in a circle.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">3.</span><span class="step-text">Watch how many times it circles before it spirals down to the bottom. Try rolling it a little faster, then a little slower, and see if the number of circles changes.</span></span></label>
+    </div>
+
+    <h3>Explain what you built</h3>
+    <div class="callout">
+      <label>Why doesn't the Moon just fall into Earth, or fly off in a straight line forever? Use what you watched the marble do.</label>
+      <textarea id="refl-b1" placeholder="Use what you just watched happen in the bowl…"></textarea>
+    </div>
+  </section>
+
+  <!-- PART 5: MISSION REPORT -->
+  <section class="day-block" id="day5">
+    <span class="day-kicker">Part 5 · Mission Report</span>
+    <h2>Brief Mission Control on How It Went</h2>
+
+    <div class="hook-box">
+      <div class="hook-label">Your opening move</div>
+      <p style="margin:0;">Show the room your gravity well build before you say anything. Then ask: <em>"What do you think happens to something that rolls past the middle of this, and why?"</em> Let a few guesses land before you explain it.</p>
+    </div>
+
+    <h3>Mission debrief questions</h3>
+    <div class="callout">
+      <span class="callout-label">1. Mass vs. weight</span>
+      <p style="margin:0;">On Leg 1, why did the same crate weigh so much less on the Moon than on Earth, if its mass never changed?</p>
+      <textarea id="refl-d1" placeholder="Explain the difference between mass and weight…"></textarea>
+    </div>
+    <div class="callout">
+      <span class="callout-label">2. Escape velocity</span>
+      <p style="margin:0;">On Leg 4, why does it take so much less speed to escape the Moon's gravity than Earth's?</p>
+      <textarea id="refl-d2" placeholder="What's different about the two planets that changes the number?…"></textarea>
+    </div>
+    <div class="callout">
+      <span class="callout-label">3. Your worst leg</span>
+      <p style="margin:0;">Pick your worst leg of the mission. What went wrong the first time, and what actually fixed it?</p>
+      <textarea id="refl-d3" placeholder="Be honest, this is a debrief, not a highlight reel…"></textarea>
+    </div>
+
+    <div class="prep-form">
+      <h3>Prepare your presentation</h3>
+      <p>None of this gets typed into a box. Grab a stack of index cards and write short answers to each prompt below in your own handwriting, one card per prompt is plenty. Bring the cards to Part 5 and glance at them while you talk. They're there to help you, not to be read word for word.</p>
+
+      <div class="prep-field">
+        <label>i. Your role and responsibility</label>
+        <p style="margin:0;">In your own words, who are you in this story, and what were you responsible for figuring out?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>ii. Three new words or ideas you learned, and what they mean</label>
+        <p style="margin:0;">Pick three, and write a short, correct definition for each in your own words.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>iii. Your closest call in the mission</label>
+        <p style="margin:0;">Which leg took you the most tries, and what finally clicked?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>iv. A real-world application</label>
+        <p style="margin:0;">Where do real space agencies use calculations like the ones you just did?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>v. Explain your build</label>
+        <p style="margin:0;">What you built, why each part represents what it does, and what the gravity well demonstrates, look back at your Part 4 build reflection if you need a reminder.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>vi. What you're still not sure about</label>
+        <p style="margin:0;">What would you want more explanation or practice on?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>vii. Cover the whole quest</label>
+        <p style="margin:0;">Walk through every idea from the mission, one by one, like you're teaching it to someone hearing it for the very first time: mass versus weight, why a satellite doesn't fall out of orbit, escape velocity, free fall, and the history behind how we figured all of this out, Galileo, Sputnik, and Apollo 11's own trip to the Moon.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  Space &amp; Gravity Quest · Mission Control, Shalom's instance. <a href="../index.html">All three instances →</a>
+</footer>
+
+<!-- Isolated printable materials slip -->
+<div id="print-slip-page">
+  <div class="print-slip-sheet">
+    <h3>📋 Materials I'm Bringing, Part 4</h3>
+    <div class="slip-kid">Space &amp; Gravity Mission Control · Shalom</div>
+    <ul id="slip-list-print"></ul>
+  </div>
+</div>
+
+<!-- Side glossary drawer -->
+<div class="notes-backdrop" id="glossary-backdrop"></div>
+<div class="notes-drawer" id="glossary-drawer">
+  <div class="notes-drawer-head">
+    <h4>📖 Glossary</h4>
+    <button id="glossary-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="glossary">
+      <div class="glossary-item"><div class="word">Mass</div><div class="def">How much matter something is made of. Stays the same everywhere in the universe.</div></div>
+      <div class="glossary-item"><div class="word">Weight</div><div class="def">How hard gravity pulls on an object's mass. Changes depending on where you are.</div></div>
+      <div class="glossary-item"><div class="word">Orbit</div><div class="def">A path where an object keeps "falling" toward a planet, but moves forward fast enough to keep missing it.</div></div>
+      <div class="glossary-item"><div class="word">Escape velocity</div><div class="def">The minimum speed something needs to break completely free of a planet's gravity.</div></div>
+      <div class="glossary-item"><div class="word">Free fall</div><div class="def">Falling with nothing but gravity acting on you. No air resistance, no engine.</div></div>
+      <div class="glossary-item"><div class="word">Gravity well</div><div class="def">The dip a massive object creates in the space around it. The deeper the dip, the stronger the pull.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Side notes drawer -->
+<div class="notes-backdrop" id="notes-backdrop"></div>
+<div class="notes-drawer" id="notes-drawer">
+  <div class="notes-drawer-head">
+    <h4>📝 My Notes</h4>
+    <button class="notes-drawer-close" id="notes-drawer-close" type="button" aria-label="Close notes">&times;</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="notes-section-label">Words &amp; phrases I highlighted</div>
+    <ul class="hl-collected-list" id="hl-collected-list"></ul>
+    <div class="hl-collected-empty" id="hl-collected-empty">Select any text on the page and click "🖍 Highlight", it'll show up here.</div>
+    <div class="notes-section-label">My notes</div>
+    <textarea class="notes-textarea" id="notes-textarea" placeholder="Jot down anything, new words, questions, ideas for your briefing…"></textarea>
+    <div class="notes-saved-msg" id="notes-saved-msg"></div>
+  </div>
+</div>
+
+<script>
+  window.QUEST_SYNC_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  window.QUEST_SYNC_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+</script>
+<script src="../js/quest.js"></script>
+<script>
+  QuestUI.initKidGate('Shalom');
+  QuestUI.initFacilitatorCheck();
+
+  QuestUI.initProgressSync('shalom', 'group-03', 'week-02').then(function () {
+    QuestUI.initHighlighter('shalom');
+    QuestUI.initNotesDrawer('shalom');
+    QuestUI.initGlossaryDrawer();
+    QuestUI.initMaterialsPool('shalom');
+    QuestUI.initBuildChecklist('shalom');
+    QuestUI.initFieldAutosave('shalom');
+    QuestUI.initDayTimer('shalom');
+    QuestUI.initProgressBar('shalom', [
+      { seg: 'day1', reflIds: ['refl-1', 'refl-1b', 'refl-2', 'refl-2b'] },
+      { seg: 'day2', reflIds: ['refl-3', 'refl-3b', 'refl-4', 'refl-4b'] },
+      { seg: 'day3', reflIds: ['refl-mission'] },
+      { seg: 'day4', reflIds: ['refl-b1'], includeBuild: true, buildTotal: 3 },
+      { seg: 'day5', reflIds: [] }
+    ]);
+    QuestUI.initSectionLock('shalom');
+    QuestUI.initDayLock('shalom');
+    QuestUI.initCompleteQuest('shalom');
+    QuestUI.initVideoGate('shalom');
+
+    QuestUI.initCalcQuest('calc-quest-lumen', {
+      pageKey: 'shalom',
+      markerIcon: '🚀',
+      startLabel: 'Earth orbit',
+      goalLabel: 'Moon landing',
+      completeTitle: 'Touchdown confirmed!',
+      completionReflId: 'refl-mission',
+      recap: [
+        'Mass stays the same everywhere. Weight changes with how strong gravity is where you are, 1,200 N on Earth is 200 N on the Moon.',
+        'Distance = speed × time. Covering 3,000 km at 500 km/h takes 6 hours.',
+        'An orbit is a steady "fall" that keeps missing the planet. A 2-hour orbit repeats 12 times in one day.',
+        'Escape velocity is the least speed needed to break free of a planet\'s gravity. Earth needs 11 km/s, the Moon only needs 2.4 km/s, a gap of 8.6 km/s.',
+        'Objects in free fall speed up at a steady rate. Falling for 5 seconds at 1.6 m/s² means moving at 8 m/s by the end.',
+        'Every real mission runs on a fuel budget. Starting with 1,000 kg and using 700 kg across three steps leaves 300 kg.'
+      ],
+      stages: [
+        {
+          title: 'Weight vs. Mass',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'A small tool has a mass of 60 kg. On Earth, weight = mass × 10, so it weighs 60 × 10 = <strong>600 newtons</strong>.<br>'
+            + 'Pictorial, see the pattern:<br><span class="calc-cpa-pattern">[weight on Earth] ÷ 6 = [weight on the Moon]</span><br>'
+            + 'The Moon\'s gravity is about 6 times weaker than Earth\'s, so anything weighed there is 6 times lighter.<br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>weight on the Moon = weight on Earth ÷ 6</strong><br><br>'
+            + '<strong>Your equipment crate has a mass of 120 kg. On Earth, that crate weighs 1,200 newtons (120 × 10).</strong>',
+          prompt: 'How many newtons will the same crate weigh once it lands on the Moon?',
+          hint: 'Divide 1,200 by 6.',
+          hint2: '1,200 ÷ 6 = ?',
+          answer: 200, tolerance: 10, unit: 'newtons (N)',
+          explain: 'Mass is fixed, it is the same 120 kg crate everywhere in the universe. Weight is what changes, because it depends on how strong gravity is at that spot. Weaker gravity, like the Moon\'s, always means less weight for the exact same mass.'
+        },
+        {
+          title: 'The Burn',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'A rover covers 100 km at a steady 50 km/h. Using time = distance ÷ speed, that takes 100 ÷ 50 = <strong>2 hours</strong>.<br>'
+            + 'Pictorial, see it as a split:<br><span class="calc-cpa-pattern">[distance to cover] ÷ [speed] = [time it takes]</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>time = distance ÷ speed</strong><br><br>'
+            + '<strong>Lumen-1 needs to cover 3,000 km to reach the next checkpoint, traveling at a steady 500 km/h.</strong>',
+          prompt: 'How many hours will this burn take?',
+          hint: 'Divide 3,000 by 500.',
+          hint2: '3,000 ÷ 500 = ?',
+          answer: 6, tolerance: 0.2, unit: 'hours',
+          explain: 'Speed, distance, and time are always linked the same way, distance = speed × time. Flip it around and time = distance ÷ speed. Real mission planners use this exact formula to schedule every burn.'
+        },
+        {
+          title: 'Why You Don\'t Just Fall',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'A toy satellite finishes one full orbit every 3 hours. In 12 hours, it completes 12 ÷ 3 = <strong>4 orbits</strong>.<br>'
+            + 'Pictorial, see it as equal groups:<br><span class="calc-cpa-pattern">[total time] ÷ [time for 1 orbit] = [number of orbits]</span><br>'
+            + 'An object in orbit is really always "falling" toward the planet, it just moves forward fast enough that it keeps missing.<br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>number of orbits = total time ÷ time per orbit</strong><br><br>'
+            + '<strong>A test satellite completes one full orbit of Earth every 2 hours.</strong>',
+          prompt: 'How many complete orbits does it make in 24 hours (one full day)?',
+          hint: 'Divide 24 by 2.',
+          hint2: '24 ÷ 2 = ?',
+          answer: 12, tolerance: 0, unit: 'orbits',
+          explain: 'That steady "falling forward" is the whole trick behind an orbit. Gravity keeps pulling the satellite down, but its sideways speed keeps carrying it past the planet\'s curve, so it falls forever without ever landing.'
+        },
+        {
+          title: 'Escape Velocity',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'Planet A needs 9 km/s of speed to escape. Planet B only needs 5 km/s. The gap between them is 9 − 5 = <strong>4 km/s</strong>.<br>'
+            + 'Pictorial, see it as a gap between two numbers:<br><span class="calc-cpa-pattern">[bigger escape speed] − [smaller escape speed] = [the gap]</span><br>'
+            + 'Bigger, heavier planets have stronger gravity, so it takes more speed to break free of them.<br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>gap = larger escape velocity − smaller escape velocity</strong><br><br>'
+            + '<strong>Earth\'s escape velocity is about 11 km/s. The Moon\'s is only about 2.4 km/s, because its gravity is so much weaker.</strong>',
+          prompt: 'How many fewer km/s of speed does Lumen-1 need to escape the Moon, compared to escaping Earth?',
+          hint: 'Subtract 2.4 from 11.',
+          hint2: '11 − 2.4 = ?',
+          answer: 8.6, tolerance: 0.3, unit: 'km/s',
+          explain: 'This is exactly why it was so much easier for the Apollo missions to launch back off the Moon than it was to launch off Earth in the first place. A smaller planet with weaker gravity just doesn\'t hold on as tightly.'
+        },
+        {
+          title: 'Free-Fall Descent',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'Gravity speeds something up by 2 m/s every second. After falling for 3 seconds, it is moving at 2 × 3 = <strong>6 m/s</strong>.<br>'
+            + 'Pictorial, see it as repeated groups:<br><span class="calc-cpa-pattern">[speed added every second] × [number of seconds] = [total speed]</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>speed = acceleration × time</strong><br><br>'
+            + '<strong>During final descent, Lumen-1 free-falls for 5 seconds before its thrusters fire. The Moon\'s gravity speeds up a falling object by about 1.6 m/s every single second (1.6 m/s²).</strong>',
+          prompt: 'How fast (in m/s) is Lumen-1 falling after those 5 seconds?',
+          hint: 'Multiply 1.6 by 5.',
+          hint2: '1.6 × 5 = ?',
+          answer: 8, tolerance: 0.5, unit: 'm/s',
+          explain: 'Free fall means gravity is the only thing acting on you, and it speeds you up at a steady rate the entire time. There is no leveling off, that is why every second of an uncontrolled fall is more dangerous than the last.'
+        },
+        {
+          title: 'Fuel Check',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'A tank starts with 500 liters. Two jobs use 100 liters and 150 liters. What is left is 500 − 100 − 150 = <strong>250 liters</strong>.<br>'
+            + 'Pictorial, see it as amounts taken away:<br><span class="calc-cpa-pattern">[starting fuel] − [used 1] − [used 2] − [used 3] = [fuel left]</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>fuel left = starting fuel − all amounts used</strong><br><br>'
+            + '<strong>Lumen-1 launched with 1,000 kg of fuel. The burn used 240 kg, the orbit correction used 150 kg, and the descent used 310 kg.</strong>',
+          prompt: 'How much fuel is left for the actual landing?',
+          hint: 'Subtract all three used amounts from 1,000.',
+          hint2: '1,000 − 240 − 150 − 310 = ?',
+          answer: 300, tolerance: 5, unit: 'kg',
+          explain: 'Every real mission runs on a fixed fuel budget from the moment it launches. There is no refueling stop on the way to the Moon, every bit of fuel used earlier is fuel that is not available later.'
+        }
+      ]
+    });
+
+    QuestUI.initMatchGame('game-day1', [
+      ["Mass", "How much matter something is made of, the same everywhere in the universe."],
+      ["Weight", "How hard gravity pulls on an object's mass, changes depending on where you are."],
+      ["Orbit", "A path where an object keeps \"falling\" toward a planet but moving forward fast enough to keep missing it."],
+      ["Escape velocity", "The minimum speed something needs to break completely free of a planet's gravity."],
+      ["Free fall", "Falling with nothing but gravity acting on you, no air resistance, no engine."],
+      ["Gravity well", "The dip a massive object creates in the space around it, the deeper the dip, the stronger the pull."]
+    ], { pageKey: 'shalom' });
+
+    QuestUI.initReflectionChecks('shalom', [
+      { id: 'refl-1', groups: [['mass', "stays the same", 'stayed the same', 'same', 'constant', "doesn't change", "does not change", "didn't change"], ['weight', 'gravity', 'weaker', 'less gravity', 'moon', 'changes', 'different']],
+        reread: { anchor: 'sec-1', label: 'Part 1 · Mass and weight' } },
+      { id: 'refl-1b', groups: [['200']],
+        reread: { anchor: 'sec-1', label: 'Part 1 · Mass and weight' } },
+      { id: 'refl-2', groups: [['fall', 'falling', 'straight line', 'pulls', 'pulling'], ['forward speed', 'sideways', 'curve', 'curves', 'misses', 'miss', 'orbit']],
+        reread: { anchor: 'sec-2', label: 'Part 1 · Why a satellite doesn’t just fall' } },
+      { id: 'refl-2b', groups: [['12']],
+        reread: { anchor: 'sec-2', label: 'Part 1 · Why a satellite doesn’t just fall' } },
+      { id: 'refl-3', groups: [['wrong', 'incorrect', 'not true', "isn't true", "not right"], ['mass', 'bigger', 'heavier', 'stronger gravity', 'more massive', 'planet']],
+        reread: { anchor: 'sec-3', label: 'Part 2 · Escape velocity' } },
+      { id: 'refl-3b', groups: [['moon'], ['smaller', 'less massive', 'less mass', 'weaker gravity', 'less gravity']],
+        reread: { anchor: 'sec-3', label: 'Part 2 · Escape velocity' } },
+      { id: 'refl-4', groups: [['not constant', "isn't constant", 'speeds up', 'speed up', 'increases', 'accelerates', 'faster', 'not the same speed'], ['gravity', '1.6', 'moon']],
+        reread: { anchor: 'sec-4', label: 'Part 2 · Free fall under real gravity' } },
+      { id: 'refl-4b', groups: [['8']],
+        reread: { anchor: 'sec-4', label: 'Part 2 · Free fall under real gravity' } },
+      { id: 'refl-b1', groups: [['fall', 'falling', 'straight line', 'forward speed', 'sideways', 'curve', 'curves', 'orbit']],
+        reread: { anchor: 'day4', label: 'Part 4 build' } },
+      { id: 'refl-d1', groups: [['mass', "didn't change", 'did not change', 'same'], ['weight', 'gravity', 'weaker', 'less gravity', 'moon']],
+        reread: { anchor: 'day3', label: 'Part 3 · Leg 1' } },
+      { id: 'refl-d2', groups: [['gravity', 'weaker', 'less gravity', 'smaller', 'lighter'], ['escape', 'speed', 'less speed', 'lower']],
+        reread: { anchor: 'day3', label: 'Part 3 · Leg 4' } },
+      { id: 'refl-d3', groups: [['leg', 'calculation', 'miss', 'wrong', 'mistake'], ['fix', 'fixed', 'redo', 'recheck', 'hint']],
+        reread: { anchor: 'day3', label: 'Part 3' } }
+    ]);
+  });
+
+  window.addEventListener('beforeprint', function () { document.body.classList.add('printing-slip'); });
+  window.addEventListener('afterprint', function () { document.body.classList.remove('printing-slip'); });
+</script>
+</body>
+</html>

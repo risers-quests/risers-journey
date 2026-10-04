@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balancing Chemical Equations · Reaction Balance Officer</title>
+<script>
+  (function () {
+    try {
+      window.QUEST_FACILITATOR_MODE = new URLSearchParams(window.location.search).get('fac') === '1';
+    } catch (e) { window.QUEST_FACILITATOR_MODE = false; }
+    try {
+      var kid = localStorage.getItem('imm-l3-kid');
+      if (!kid || kid.toLowerCase() !== 'benjamin') document.documentElement.classList.add('gate-locked');
+    } catch (e) { document.documentElement.classList.add('gate-locked'); }
+  })();
+</script>
+<style>
+  html.gate-locked main, html.gate-locked .progress-summary { display: none !important; }
+  html.facilitator-mode #facilitator-banner { display: block; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="lens-benjamin">
+
+<div id="facilitator-banner" style="display:none;">🧑‍🏫 Facilitator View, nothing on this page is being timed, saved, or synced. <a href="?" id="facilitator-banner-exit">Exit Facilitator View →</a></div>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand-group">
+      <a href="../index.html" class="brand">⚗️ Balancing Chemical Equations<small>Reaction Balance Officer</small></a>
+      <span class="day-badge" id="quest-day-badge"></span>
+      <span class="session-timer" id="session-timer"></span>
+    </div>
+    <nav class="day-nav">
+      <a href="#day1">Day 1</a>
+      <a href="#day2">Day 2</a>
+      <a href="#day3">Day 3</a>
+      <a href="#day4">Day 4</a>
+      <button class="notes-toggle-btn" id="glossary-toggle-btn" type="button">📖 Glossary</button>
+      <button class="notes-toggle-btn" id="notes-toggle-btn" type="button">📝 My Notes</button>
+      <button class="print-btn" id="print-slip-btn" type="button">🖨️ Print my bringing slip</button>
+    </nav>
+  </div>
+</header>
+
+<div class="progress-summary">
+  <div class="container">
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 1</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day1-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day1-label">0/9</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 2</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day2-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day2-label">0/1</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 3</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day3-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day3-label">0/6</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 4</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day4-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="quest-gate-block">
+  <div class="gate-block-wrap">
+    <div class="gate-icon">🔒</div>
+    <h2>This is Benjamin's quest</h2>
+    <p>Confirm it's you to continue.</p>
+    <div class="name-gate-card">
+      <button class="btn btn-primary gate-confirm-btn" id="gate-confirm-btn" type="button">✅ Yes, I'm Benjamin! Continue</button>
+      <div class="name-gate-msg" id="gate-name-msg"></div>
+    </div>
+    <a class="gate-not-you" href="../index.html">Not you? Find your own quest link →</a>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- COVER -->
+  <section class="cover">
+    <div class="cover-watermark" aria-hidden="true">⚗️</div>
+    <div class="format-pill">Discovery Quest</div><br>
+    <span class="lens-pill">⚗️ Reaction Balance Officer</span>
+    <h1>Nothing Created, Nothing Destroyed</h1>
+    <p class="subtitle">Every chemical reaction rearranges atoms into new molecules, it never creates a single new atom and never destroys one. A balanced equation is just that rule, written down and checked. Get the count wrong on either side, and the equation is lying about what actually happened.</p>
+    <div class="kid-name">Reaction Balance Officer: Benjamin</div>
+    <div class="framing">
+      <p style="margin:0;">You're the Reaction Balance Officer on this investigation. Day 1 briefs you on what a chemical equation actually represents, the law of conservation of mass, and real strategies for balancing one yourself, each with a worked example before you're ever asked to balance anything on your own. Day 2, you run Mission Balance Check, eight real balancing problems built on exactly what Day 1 taught. Day 3, you build a real atom-model kit and physically rearrange the same atoms from one side of an equation into the other. Day 4, you report what you found.</p>
+    </div>
+  </section>
+
+  <!-- DAY 1 -->
+  <section class="day-block" id="day1">
+    <span class="day-kicker">Day 1 · Systems Briefing</span>
+    <h2>What a Chemical Equation Actually Promises</h2>
+    <p class="day-sub">A chemical equation is a promise about atoms: every single one on the left has to show up again on the right. This briefing covers what that promise means and how to check it, before you calculate anything with it yourself.</p>
+
+    <h3 id="sec-1"><span class="sec-num">1</span>A chemical equation is a before-and-after count</h3>
+    <p>A chemical equation shows a reaction happening: the <strong>reactants</strong> (what you start with) on the left, an arrow, then the <strong>products</strong> (what you end up with) on the right. Hydrogen and oxygen reacting to form water is written H₂ + O₂ → H₂O. Read left to right, hydrogen gas plus oxygen gas produces water.</p>
+    <p>Here's the part that's easy to miss: a reaction doesn't create brand-new atoms, and it doesn't destroy any either. It only rearranges the atoms that were already there into new molecules. This is called the <strong>law of conservation of mass</strong>, every atom present in the reactants has to still be present, somewhere, in the products. If an equation shows 4 hydrogen atoms on the left and only 2 on the right, that equation is claiming 2 hydrogen atoms simply vanished, and that never actually happens.</p>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔧 Quick Check</span>
+      <p style="margin:0;">In the equation H₂ + O₂ → H₂O, which side are the reactants on, and which side are the products on?</p>
+      <textarea id="refl-1" placeholder="Name which side is which…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔧 Quick Check</span>
+      <p style="margin:0;">An equation shows 6 carbon atoms in the reactants, but only 4 carbon atoms in the products. According to the law of conservation of mass, what does that actually mean about this equation?</p>
+      <textarea id="refl-2" placeholder="Say what's wrong with it…"></textarea>
+    </div>
+
+    <h3 id="sec-2"><span class="sec-num">2</span>Coefficients, subscripts, and why equations need balancing</h3>
+    <p>A chemical formula uses two different numbers, and mixing them up is the single most common mistake. A <strong>subscript</strong> is the small number written after an element inside a formula, in H₂O, the subscript 2 means each water molecule has 2 hydrogen atoms. A <strong>coefficient</strong> is a number written in front of an entire formula, in 2H₂O, that coefficient 2 means there are 2 whole water molecules, each one still built the same way, still 2 hydrogen atoms and 1 oxygen atom each.</p>
+    <p>That difference matters enormously when you're counting atoms. 2H₂O means 2 separate water molecules, so the coefficient multiplies everything inside that formula: 2 × 2 = 4 hydrogen atoms total, and 2 × 1 = 2 oxygen atoms total. Only coefficients can be changed to balance an equation, subscripts are fixed, since changing a subscript would turn the molecule into a completely different substance.</p>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔧 Quick Check</span>
+      <p style="margin:0;">In the formula 3H₂O, how many total hydrogen atoms are there, and how many total oxygen atoms?</p>
+      <textarea id="refl-3" placeholder="Multiply the coefficient by each subscript…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔧 Quick Check</span>
+      <p style="margin:0;">To balance an equation, only one of the two numbers in a formula is ever allowed to change. Which one, the coefficient or the subscript, and why is changing the other one not allowed?</p>
+      <textarea id="refl-4" placeholder="Name the one that's allowed, and explain why the other isn't…"></textarea>
+    </div>
+
+    <h3 id="sec-3"><span class="sec-num">3</span>Real strategies for balancing an equation</h3>
+    <p>Balancing an equation means adding coefficients until every element has the exact same total count on both sides. A reliable way to do it: count every atom of every element on both sides first, find the element that's most unequal, add a coefficient to fix it, then recount everything, since fixing one element can throw another one off. Keep repeating until every single element matches.</p>
+    <p>Take H₂ + O₂ → H₂O. Counting atoms: the left has 2 hydrogen and 2 oxygen, the right has 2 hydrogen and only 1 oxygen. Oxygen is unequal, so put a coefficient of 2 in front of the water: H₂ + O₂ → 2H₂O. Recount: now the right side has 2 × 2 = 4 hydrogen and 2 × 1 = 2 oxygen, oxygen matches now, but hydrogen doesn't, the left still only has 2. Fix that by putting a coefficient of 2 in front of the hydrogen gas too: 2H₂ + O₂ → 2H₂O. Recount one more time: left has 2 × 2 = 4 hydrogen and 2 oxygen, right has 4 hydrogen and 2 oxygen. Every element matches. The equation is balanced.</p>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔧 Quick Check</span>
+      <p style="margin:0;">In the balancing strategy above, why wasn't the equation finished as soon as oxygen matched on both sides?</p>
+      <textarea id="refl-6" placeholder="Explain why one fix wasn't enough…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔧 Quick Check</span>
+      <p style="margin:0;">The fully balanced equation is 2H₂ + O₂ → 2H₂O. Count the total hydrogen atoms on the left side, and the total hydrogen atoms on the right side, and confirm they match.</p>
+      <textarea id="refl-7" placeholder="Show both counts…"></textarea>
+    </div>
+
+    <h3 id="sec-4"><span class="sec-num">4</span>Put together, why this matters beyond the page</h3>
+    <p>A real chemist checking an equation isn't just following a classroom rule, they're confirming the equation actually describes something physically possible. An unbalanced equation is claiming atoms appeared from nowhere or disappeared into nothing, and matter simply doesn't behave that way. Chemical engineers use balanced equations to calculate exactly how much raw material a factory needs to produce a set amount of product, without balancing correctly first, those numbers would be wrong before any real chemistry even started.</p>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔢 Quick Check</span>
+      <p style="margin:0;">Why would a chemical engineer trying to calculate how much raw material a factory needs run into real trouble if they started from an unbalanced equation?</p>
+      <textarea id="refl-8" placeholder="Explain the real consequence…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔢 Quick Check</span>
+      <p style="margin:0;">Trace the real idea behind all of Day 1 in one sentence: what has to stay true about the atoms on both sides of any real chemical equation?</p>
+      <textarea id="refl-9" placeholder="State the rule in your own words…"></textarea>
+    </div>
+
+    <div class="game-card">
+      <div class="game-title">🧪 Balanced or Not?</div>
+      <div class="game-sub">Four quick calls. Read the equation, decide.</div>
+      <div id="quiz-day1"></div>
+    </div>
+
+    <div class="game-card">
+      <div class="game-title">🔍 Word Match</div>
+      <div class="game-sub">Key terms from the whole reading. Click a term, then its matching definition, no penalty for a wrong guess, just try again.</div>
+      <div id="game-day1"></div>
+    </div>
+
+    <div class="game-card">
+      <div class="game-title">🧯 Trace the Steps: Balancing a Real Combustion Equation</div>
+      <div class="game-sub">CH₄ + O₂ → CO₂ + H₂O, methane burning. Click the steps in the order you'd actually work through them.</div>
+      <div id="seq-day1"></div>
+    </div>
+
+  </section>
+
+  <!-- DAY 2: MISSION -->
+  <section class="day-block" id="day2">
+    <span class="day-kicker">Day 2 · Run the Mission</span>
+    <h2>Mission Balance Check: Eight Real Equations</h2>
+    <p class="day-sub">Eight real balancing problems, back to back, from a single count to a full equation. Nothing here is new information, it's the numbers hiding inside everything Day 1 just covered.</p>
+
+    <div id="calc-quest-balancecheck"></div>
+
+    <textarea id="refl-mission" style="display:none" aria-hidden="true" tabindex="-1"></textarea>
+  </section>
+
+  <!-- MATERIALS -->
+  <section class="day-block">
+    <span class="day-kicker">Before Day 3 · Build Kit</span>
+    <h2>Choose What You're Bringing</h2>
+    <p class="day-sub">This is a pool to pick from, not a checklist. Grab what you'll actually use to build an atom-model kit: two colors of small balls (one for each element), and connectors between them.</p>
+
+    <div class="materials-table-wrap">
+      <table class="materials-table">
+      <thead><tr><th>Material</th><th>Hydrogen balls</th><th>Oxygen balls</th><th>Bond connectors</th><th>Reference card</th></tr></thead>
+      <tbody>
+      <tr><td class="mat-name">White playdough or modeling clay balls</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">White playdough or modeling clay balls for Hydrogen balls</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">White pom-poms</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">White pom-poms for Hydrogen balls</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Mini marshmallows</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Mini marshmallows for Hydrogen balls</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Red playdough or modeling clay balls</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Red playdough or modeling clay balls for Oxygen balls</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Red pom-poms</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Red pom-poms for Oxygen balls</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Red beads or marbles</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Red beads or marbles for Oxygen balls</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Toothpicks</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Toothpicks for Bond connectors</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Uncooked spaghetti, broken into short pieces</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Uncooked spaghetti, broken into short pieces for Bond connectors</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Index cards to label each side</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Index cards to label each side for Reference card</span></label></td></tr>
+      <tr><td class="mat-name">A printed copy of the equation</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A printed copy of the equation for Reference card</span></label></td></tr>
+      </tbody></table></div>
+      <p class="materials-table-note">One color of ball for hydrogen, a different color for oxygen, and one connector type. The exact substitute doesn't matter, the real atom count per side does.</p>
+          <div class="slip-preview">
+      <h4>📋 What you're bringing to Day 3:</h4>
+      <ul id="slip-list-preview"></ul>
+      <div class="slip-empty" id="slip-empty">Nothing selected yet.</div>
+    </div>
+  </section>
+
+  <!-- DAY 3 -->
+  <section class="day-block" id="day3">
+    <span class="day-kicker">Day 3 · Build Day</span>
+    <h2>Build a Real Atom-Model Kit</h2>
+    <p class="day-sub">The same atoms, physically rearranged from one side of the equation into the other, not a diagram of conservation of mass, an actual demonstration of it.</p>
+
+    <h3>What you're building</h3>
+    <p>A physical model of the balanced equation 2H₂ + O₂ → 2H₂O, built twice, once as the reactants and once as the products, using the exact same atoms both times. Use one color for every hydrogen atom and a different color for every oxygen atom, connected with a bond connector for every single bond. An officer who can't count the real atoms in their own model hasn't actually balanced anything, just decorated a table.</p>
+
+    <h3>Build steps</h3>
+    <div class="build-checklist">
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">1.</span><span class="step-text">Gather your hydrogen balls (one color), oxygen balls (a different color), and bond connectors.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">2.</span><span class="step-text">Build the reactants side: two separate H₂ molecules (2 hydrogen balls each, connected by one bond) plus one O₂ molecule (2 oxygen balls, connected by one bond).</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">3.</span><span class="step-text">Count and record the reactants side's real totals: how many hydrogen atoms in total, and how many oxygen atoms in total.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">4.</span><span class="step-text">Without adding or removing a single ball, take apart the reactants and rebuild the exact same atoms into the products side: two separate H₂O molecules, each with 2 hydrogen balls and 1 oxygen ball.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">5.</span><span class="step-text">Count and record the products side's real totals, and confirm they match the reactants side exactly.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">6.</span><span class="step-text">Line up both builds side by side and check: did every single ball from the reactants side end up somewhere in the products side, with none left over and none missing?</span></span></label>
+    </div>
+
+    <h3>Explain what you built</h3>
+    <div class="callout">
+      <label>What did physically moving the same atoms from the reactants side to the products side teach you about what the law of conservation of mass actually means?</label>
+      <textarea id="refl-b1" placeholder="Use what you just counted and rebuilt…"></textarea>
+    </div>
+
+    <h3 id="sec-plan">Log your build</h3>
+    <p>Now that it's built, fill this in, the record of exactly what you counted. This becomes your notes for tomorrow's presentation.</p>
+    <table class="justify-table">
+      <thead><tr><th>Side</th><th>Molecules built</th><th>Total hydrogen atoms</th><th>Total oxygen atoms</th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="e.g. Reactants"></td><td><input placeholder="e.g. 2 H2, 1 O2"></td><td><input></td><td><input></td></tr>
+        <tr><td><input placeholder="e.g. Products"></td><td><input placeholder="e.g. 2 H2O"></td><td><input></td><td><input></td></tr>
+      </tbody>
+    </table>
+
+  </section>
+
+  <!-- DAY 4 -->
+  <section class="day-block" id="day4">
+    <span class="day-kicker">Day 4 · Present the Findings</span>
+    <h2>Present What You Found</h2>
+    <p class="day-sub">A real officer defends every claim they make. Here's how to open strong and cover everything that matters.</p>
+
+    <div class="hook-box">
+      <div class="hook-label">Your opening move</div>
+      <p style="margin:0;">Don't open with "I'm going to talk about balancing equations." Instead, set both of your finished builds on the table in front of the room and ask: <em>"How many atoms do you think are in each of these two builds, and are they the same?"</em> Let a few guesses land before you tell them.</p>
+    </div>
+
+    <div class="prep-form">
+      <h3>Prepare your presentation</h3>
+      <p>None of this gets typed into a box. Grab a stack of index cards and write short answers to each prompt below in your own hand, one card per prompt is plenty. Bring the cards to Day 4 and glance at them while you talk; they're yours to prepare with, not a script to read word for word.</p>
+
+      <div class="prep-field">
+        <label>i. Your role and responsibility</label>
+        <p style="margin:0;">In your own words, who are you in this story, and what were you responsible for figuring out?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>ii. Three new words or ideas you learned, and what they mean</label>
+        <p style="margin:0;">Pick three, and write a short, correct definition for each in your own words.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>iii. Your closest call in the mission</label>
+        <p style="margin:0;">Which leg of Mission Balance Check took you the most tries, and what finally clicked?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>iv. A real-world application</label>
+        <p style="margin:0;">Where do real chemists and engineers actually use balanced equations outside a classroom?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>v. Explain your build</label>
+        <p style="margin:0;">What you built, why each part represents what it does, and what happened when you rearranged the atoms into the products side.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>vi. What you're still not sure about</label>
+        <p style="margin:0;">What would you want more explanation or practice on?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>vii. Cover the whole quest</label>
+        <p style="margin:0;">Walk through the whole quest, one idea at a time, as if you're teaching it to someone hearing it for the very first time: what a chemical equation represents, the law of conservation of mass, coefficients versus subscripts, and how to actually balance one.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  Balancing Chemical Equations · Reaction Balance Officer, Benjamin's instance. <a href="../index.html">Back to the quest hub →</a>
+</footer>
+
+<!-- Isolated printable materials slip -->
+<div id="print-slip-page">
+  <div class="print-slip-sheet">
+    <h3>📋 Materials I'm Bringing, Day 3</h3>
+    <div class="slip-kid">Reaction Balance Officer · Benjamin</div>
+    <ul id="slip-list-print"></ul>
+  </div>
+</div>
+
+<!-- Side glossary drawer -->
+<div class="notes-backdrop" id="glossary-backdrop"></div>
+<div class="notes-drawer" id="glossary-drawer">
+  <div class="notes-drawer-head">
+    <h4>📖 Glossary</h4>
+    <button id="glossary-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="glossary">
+      <div class="glossary-item"><div class="word">Reactant</div><div class="def">A starting substance in a chemical reaction, written on the left side of the equation's arrow.</div></div>
+      <div class="glossary-item"><div class="word">Product</div><div class="def">A substance produced by a chemical reaction, written on the right side of the equation's arrow.</div></div>
+      <div class="glossary-item"><div class="word">Law of conservation of mass</div><div class="def">Atoms are never created or destroyed in a chemical reaction, only rearranged into new molecules.</div></div>
+      <div class="glossary-item"><div class="word">Coefficient</div><div class="def">A number written in front of an entire chemical formula, showing how many whole molecules there are.</div></div>
+      <div class="glossary-item"><div class="word">Subscript</div><div class="def">A small number written after an element inside a formula, fixed, showing how many atoms of that element are in one molecule.</div></div>
+      <div class="glossary-item"><div class="word">Balanced equation</div><div class="def">A chemical equation where every element has the exact same total atom count on both sides.</div></div>
+      <div class="glossary-item"><div class="word">Molecule</div><div class="def">A group of atoms bonded together, the smallest unit of a chemical compound.</div></div>
+      <div class="glossary-item"><div class="word">Chemical formula</div><div class="def">A written shorthand for a molecule, showing which elements it's made of and how many atoms of each.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Side notes drawer -->
+<div class="notes-backdrop" id="notes-backdrop"></div>
+<div class="notes-drawer" id="notes-drawer">
+  <div class="notes-drawer-head">
+    <h4>📝 My Notes</h4>
+    <button id="notes-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="notes-section-label">Highlighted words</div>
+    <ul id="hl-collected-list" class="hl-collected-list"></ul>
+    <div id="hl-collected-empty" style="display:none;">Highlight anything in the reading and it'll show up here.</div>
+    <div class="notes-section-label">Free notes</div>
+    <textarea id="notes-textarea" placeholder="Jot anything down…"></textarea>
+    <div id="notes-saved-msg" class="notes-saved-msg"></div>
+  </div>
+</div>
+
+<script>
+  // Progress-sync Worker, cross-device save. SITE_KEY is a soft deterrent
+  // only (any client-side value is visible in devtools), not real auth.
+  window.QUEST_SYNC_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  window.QUEST_SYNC_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+</script>
+<script src="../js/quest.js"></script>
+<script>
+  QuestUI.initKidGate('Benjamin');
+  QuestUI.initFacilitatorCheck();
+
+  QuestUI.initProgressSync('benjamin', 'group-04', 'week-04').then(function () {
+    QuestUI.initHighlighter('benjamin');
+    QuestUI.initNotesDrawer('benjamin');
+    QuestUI.initGlossaryDrawer();
+    QuestUI.initMaterialsPool('benjamin');
+    QuestUI.initBuildChecklist('benjamin');
+    QuestUI.initFieldAutosave('benjamin');
+    QuestUI.initPresentationAutofill('benjamin');
+    QuestUI.initDayTimer('benjamin');
+    QuestUI.initProgressBar('benjamin');
+    // Section/day locking deliberately not wired up — every section and
+    // day is open from the start, not gated behind finishing the one
+    // before it.
+    QuestUI.initCompleteQuest('benjamin');
+
+    QuestUI.initCalcQuest('calc-quest-balancecheck', {
+      pageKey: 'benjamin',
+      markerIcon: '⚗️',
+      startLabel: 'First Count',
+      goalLabel: 'Full Balance',
+      completeTitle: 'Mission Balance Check complete!',
+      completionReflId: 'refl-mission',
+      recap: [
+        'H2 + O2 -> H2O has 2 oxygen atoms on the left, but only 1 on the right, unbalanced.',
+        'H2 + O2 -> 2H2O needs a coefficient of 2 in front of the hydrogen gas too, to reach 2H2 + O2 -> 2H2O.',
+        '3H2O has 6 total hydrogen atoms, the coefficient multiplies every atom inside the formula.',
+        'N2 + 3H2 -> 2NH3 needs a coefficient of 3 on the reactants side to balance nitrogen and hydrogen together.',
+        'A reaction producing 36 grams of total product from reactants must have started with exactly 36 grams of reactants.',
+        '2Mg + O2 -> 2MgO needs a coefficient of 2 on both magnesium and its oxide to balance.',
+        'CH4 + 2O2 -> CO2 + 2H2O is the balanced equation for methane burning in oxygen.',
+        'A fully balanced equation with coefficients 4, 3, and 2 has a coefficient sum of 9.'
+      ],
+      stages: [
+        {
+          title: 'Count the Atoms',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'In the equation N₂ + H₂ → NH₃, the left side has exactly 2 nitrogen atoms (from N₂) and 2 hydrogen atoms (from H₂).<br>'
+            + 'Pictorial, see the pattern:<br><span class="calc-cpa-pattern">[coefficient, here 1] × [subscript] = [atoms of that element]</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>total atoms of an element = coefficient × its subscript, added up across every formula it appears in</strong><br><br>'
+            + '<strong>In the unbalanced equation H₂ + O₂ → H₂O, look only at the left side (the reactants).</strong>',
+          prompt: 'How many total oxygen atoms are on the left side?',
+          hint: 'O2 has a subscript of 2, and there’s no coefficient in front of it yet (so it counts as 1).',
+          hint2: '1 × 2 = ?',
+          answer: 2, tolerance: 0, unit: 'oxygen atoms',
+          explain: 'Counting each side separately, element by element, is always the first real step, you can’t fix a mismatch you haven’t found yet.'
+        },
+        {
+          title: 'Find the Missing Coefficient',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'The equation Na + Cl₂ → NaCl has 2 chlorine atoms on the left but only 1 on the right. Adding a coefficient of 2 in front of NaCl fixes it: Na + Cl₂ → 2NaCl.<br>'
+            + 'Pictorial, see the pattern:<br><span class="calc-cpa-pattern">[atoms needed] ÷ [atoms per molecule] = [coefficient]</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>coefficient = atoms needed on that side ÷ atoms of that element per molecule</strong><br><br>'
+            + '<strong>You already found that the left side of H₂ + O₂ → H₂O has 2 oxygen atoms. Right now, the water side is written as just H₂O, one molecule, with only 1 oxygen atom.</strong>',
+          prompt: 'What coefficient needs to go in front of H₂O so the oxygen atoms match, 2 on each side?',
+          hint: 'You need 2 total oxygen atoms, and each H2O molecule has 1.',
+          hint2: '2 ÷ 1 = ?',
+          answer: 2, tolerance: 0, unit: '(coefficient, no unit)',
+          explain: 'That gives 2H₂O on the right side, 2 oxygen atoms now, matching the left, though this will change how many hydrogen atoms are needed too, that’s the next check.'
+        },
+        {
+          title: 'Recheck Hydrogen',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'After fixing oxygen in a different equation, the right side ended up with 6 hydrogen atoms, but the left side (as originally written) only had 2. Fixing that took a coefficient of 3 on the left: 3H₂ instead of H₂, since 3 × 2 = 6.<br>'
+            + 'Pictorial, see the pattern:<br><span class="calc-cpa-pattern">[hydrogen atoms now needed] ÷ [atoms per molecule] = [new coefficient]</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>new coefficient = atoms needed ÷ atoms of that element per molecule</strong><br><br>'
+            + '<strong>With 2H₂O now on the right side, the right has 2 × 2 = 4 total hydrogen atoms. The left side is still just written as H₂, one molecule, 2 hydrogen atoms.</strong>',
+          prompt: 'What coefficient needs to go in front of H₂ on the left so hydrogen matches too, 4 on each side?',
+          hint: 'You need 4 total hydrogen atoms, and each H2 molecule has 2.',
+          hint2: '4 ÷ 2 = ?',
+          answer: 2, tolerance: 0, unit: '(coefficient, no unit)',
+          explain: 'That gives the fully balanced equation 2H₂ + O₂ → 2H₂O, 4 hydrogen and 2 oxygen on both sides now, exactly why balancing almost always takes more than one fix.'
+        },
+        {
+          title: 'Coefficient Times Subscript',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'In 3NH₃, the subscript on hydrogen is 3, and the coefficient out front is also 3, so the total hydrogen atoms are 3 × 3 = 9.<br>'
+            + 'Pictorial, see the pattern:<br><span class="calc-cpa-pattern">[coefficient] × [subscript] = [total atoms of that element]</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>total atoms = coefficient × subscript</strong><br><br>'
+            + '<strong>A balanced equation has the term 4H₂O in it, a coefficient of 4 in front of water, which has a subscript of 2 on hydrogen.</strong>',
+          prompt: 'How many total hydrogen atoms does 4H₂O represent?',
+          hint: 'Multiply the coefficient by the hydrogen subscript.',
+          hint2: '4 × 2 = ?',
+          answer: 8, tolerance: 0, unit: 'hydrogen atoms',
+          explain: 'This is the exact trap the reading warned about, the coefficient multiplies every atom inside the formula, not just one of them.'
+        },
+        {
+          title: 'Conservation of Mass Check',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'A reaction starts with 10 grams of reactants. By the law of conservation of mass, nothing is created or destroyed, so the total mass of the products has to equal 10 grams too.<br>'
+            + 'Pictorial, see the pattern:<br><span class="calc-cpa-pattern">[total mass of reactants] = [total mass of products]</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>mass of reactants = mass of products</strong><br><br>'
+            + '<strong>A chemist combines 12 grams of hydrogen gas with 96 grams of oxygen gas in a reaction that produces only water, with nothing left over.</strong>',
+          prompt: 'How many total grams of water does the reaction produce?',
+          hint: 'Add the two reactant masses together.',
+          hint2: '12 + 96 = ?',
+          answer: 108, tolerance: 0, unit: 'grams',
+          explain: 'This is conservation of mass with real numbers attached, whatever mass goes in as reactants has to come back out as products, not a single gram more or less.'
+        },
+        {
+          title: 'Balancing Metal Oxidation',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'The equation Ca + O₂ → CaO has 2 oxygen atoms on the left but only 1 on the right. Balancing both sides takes coefficients of 2 on calcium and 2 on calcium oxide: 2Ca + O₂ → 2CaO.<br>'
+            + 'Pictorial, see the pattern:<br><span class="calc-cpa-pattern">[oxygen atoms on the left] = [oxygen atoms needed on the right]</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>balance one element at a time, then recheck every other element it affected</strong><br><br>'
+            + '<strong>The equation Mg + O₂ → MgO is not yet balanced. The left side has 2 oxygen atoms (from O₂). Once you give MgO a coefficient of 2 to fix oxygen, magnesium ends up needing that exact same coefficient too, to stay balanced.</strong>',
+          prompt: 'What coefficient does magnesium (Mg) need on the left side, once oxygen is balanced?',
+          hint: 'Whatever coefficient balances oxygen on the right (2MgO) has to match on magnesium too.',
+          hint2: '2MgO needs 2 magnesium atoms on the right, so the left needs the same coefficient in front of Mg.',
+          answer: 2, tolerance: 0, unit: '(coefficient, no unit)',
+          explain: 'The fully balanced equation is 2Mg + O₂ → 2MgO, fixing oxygen changed what magnesium needed too, exactly the recheck-everything habit from Day 1.'
+        },
+        {
+          title: 'A Real Combustion Equation',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'Propane burning is C₃H₈ + 5O₂ → 3CO₂ + 4H₂O, already balanced: 3 carbon, 8 hydrogen, and 10 oxygen atoms on both sides.<br>'
+            + 'Pictorial, see the pattern:<br><span class="calc-cpa-pattern">[carbon] + [hydrogen] + [oxygen] all balanced at once</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>every element, not just one, has to match on both sides before an equation counts as balanced</strong><br><br>'
+            + '<strong>Methane burning in oxygen is CH₄ + 2O₂ → CO₂ + 2H₂O. Count the total oxygen atoms on the right side: CO₂ has 2 oxygen atoms, and 2H₂O has 2 × 1 = 2 more oxygen atoms.</strong>',
+          prompt: 'How many total oxygen atoms are on the right side of this equation?',
+          hint: 'Add the oxygen atoms from CO2 and from 2H2O together.',
+          hint2: '2 + 2 = ?',
+          answer: 4, tolerance: 0, unit: 'oxygen atoms',
+          explain: 'That matches the 2 × 2 = 4 oxygen atoms on the left side too (from 2O₂), confirming methane combustion really is balanced exactly as written.'
+        },
+        {
+          title: 'Sum the Coefficients',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'The balanced equation 2H₂ + O₂ → 2H₂O has coefficients 2, 1 (understood, not written), and 2. Their sum is 2 + 1 + 2 = 5.<br>'
+            + 'Pictorial, see the pattern:<br><span class="calc-cpa-pattern">[coefficient 1] + [coefficient 2] + [coefficient 3] + ... = [coefficient sum]</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>coefficient sum = every coefficient in the balanced equation, added together</strong><br><br>'
+            + '<strong>The balanced methane combustion equation from the last leg is CH₄ + 2O₂ → CO₂ + 2H₂O. Its coefficients, in order, are 1 (understood), 2, 1 (understood), and 2.</strong>',
+          prompt: 'What is the sum of all four coefficients in this balanced equation?',
+          hint: 'Add 1 + 2 + 1 + 2.',
+          hint2: '1 + 2 + 1 + 2 = ?',
+          answer: 6, tolerance: 0, unit: '(coefficient sum, no unit)',
+          explain: 'Coefficient sums like this are exactly how real chemists double-check a balancing job at a glance, and exactly how a lot of balancing quizzes ask for a single final answer.'
+        }
+      ]
+    });
+
+    QuestUI.initQuizGame('quiz-day1', [
+      {
+        prompt: 'An equation shows 4 nitrogen atoms in the reactants and 4 nitrogen atoms in the products, but 6 hydrogen atoms in the reactants and only 4 in the products. Is this equation balanced?',
+        choices: ['Yes, since nitrogen matches', 'No, since hydrogen doesn’t match', 'Yes, since the equation looks complete', 'There’s no way to tell without more information'],
+        correctIndex: 1,
+        explain: 'Every single element has to match, not just one. Nitrogen matching doesn’t make up for hydrogen being unequal, the equation is not balanced.'
+      },
+      {
+        prompt: 'In the formula 5CO₂, what does the 5 represent?',
+        choices: ['5 oxygen atoms in every molecule', 'A coefficient, meaning 5 separate CO2 molecules', 'The molecule’s total mass', 'A subscript that can be changed to balance the equation'],
+        correctIndex: 1,
+        explain: 'A number written in front of a whole formula is a coefficient, it means there are that many separate, identical molecules, each one still built exactly the same way.'
+      },
+      {
+        prompt: 'Someone balances an equation by changing H₂O to H₃O to fix a hydrogen mismatch. What’s wrong with that move?',
+        choices: ['Nothing, subscripts can be changed to balance an equation', 'It changes the subscript, which turns water into a completely different, made-up substance', 'It’s allowed, but only for hydrogen', 'It’s correct as long as the final answer matches'],
+        correctIndex: 1,
+        explain: 'Subscripts define what the molecule actually is. Changing one doesn’t balance the equation, it invents a substance that doesn’t exist. Only coefficients are allowed to change.'
+      },
+      {
+        prompt: 'A reaction starts with 40 grams of total reactants. According to the law of conservation of mass, what should the total mass of the products be?',
+        choices: ['Less than 40 grams, some mass is always lost as heat', 'Exactly 40 grams', 'More than 40 grams, new atoms form during the reaction', 'It depends on which elements are involved'],
+        correctIndex: 1,
+        explain: 'Mass is never created or destroyed in a chemical reaction, only rearranged. The products must total exactly the same mass as the reactants, every time.'
+      }
+    ], { pageKey: 'benjamin' });
+
+    QuestUI.initMatchGame('game-day1', [
+      ["Reactant", "A starting substance in a chemical reaction, written on the left side of the equation's arrow."],
+      ["Product", "A substance produced by a chemical reaction, written on the right side of the equation's arrow."],
+      ["Law of conservation of mass", "Atoms are never created or destroyed in a chemical reaction, only rearranged into new molecules."],
+      ["Coefficient", "A number written in front of an entire chemical formula, showing how many whole molecules there are."],
+      ["Subscript", "A small, fixed number written after an element inside a formula, showing how many atoms of that element are in one molecule."],
+      ["Balanced equation", "A chemical equation where every element has the exact same total atom count on both sides."],
+      ["Molecule", "A group of atoms bonded together, the smallest unit of a chemical compound."],
+      ["Chemical formula", "A written shorthand for a molecule, showing which elements it's made of and how many atoms of each."]
+    ], { pageKey: 'benjamin' });
+
+    QuestUI.initSequenceGame('seq-day1', [
+      "Count every atom of every element on both sides before touching anything: left has 1 carbon, 4 hydrogen, 2 oxygen. Right has 1 carbon, 2 hydrogen, 3 oxygen.",
+      "Carbon already matches, 1 and 1, so leave it alone. Look for the next element that's unequal.",
+      "Hydrogen is unequal, 4 on the left, only 2 on the right. Fix it with a coefficient of 2 in front of H₂O: CH₄ + O₂ → CO₂ + 2H₂O.",
+      "Recount after that change: hydrogen now matches, 4 and 4. But oxygen is off again, 2 on the left, 4 on the right.",
+      "Fix oxygen with a coefficient of 2 in front of O₂: CH₄ + 2O₂ → CO₂ + 2H₂O.",
+      "Recount every element one last time: carbon 1 and 1, hydrogen 4 and 4, oxygen 4 and 4. Every element matches, the equation is balanced."
+    ], { pageKey: 'benjamin' });
+
+    QuestUI.initReflectionChecks('benjamin', [
+      { id: 'refl-1', groups: [['reactant', 'reactants', 'left'], ['product', 'products', 'right']],
+        reread: { anchor: 'sec-1', label: '1. A chemical equation is a before-and-after count' } },
+      { id: 'refl-2', groups: [['unbalanced', 'not balanced', "isn't balanced", 'wrong', 'incorrect'], ['vanish', 'disappear', 'lost', 'missing', "can't happen", 'cannot happen']],
+        reread: { anchor: 'sec-1', label: '1. A chemical equation is a before-and-after count' } },
+      { id: 'refl-3', groups: [['6']],
+        reread: { anchor: 'sec-2', label: '2. Coefficients, subscripts, and why equations need balancing' } },
+      { id: 'refl-4', groups: [['coefficient', 'coefficients'], ['subscript', 'different substance', 'different molecule', 'changes what it is']],
+        reread: { anchor: 'sec-2', label: '2. Coefficients, subscripts, and why equations need balancing' } },
+      { id: 'refl-6', groups: [['hydrogen', "didn't match", 'did not match', 'still unequal', 'still wrong', 'threw off']],
+        reread: { anchor: 'sec-3', label: '3. Real strategies for balancing an equation' } },
+      { id: 'refl-7', groups: [['4']],
+        reread: { anchor: 'sec-3', label: '3. Real strategies for balancing an equation' } },
+      { id: 'refl-8', groups: [['wrong amount', 'wrong', 'incorrect', 'too much', 'too little', 'waste', 'shortage']],
+        reread: { anchor: 'sec-4', label: '4. Put together' } },
+      { id: 'refl-9', groups: [['same', 'match', 'equal', 'conserved'], ['atoms', 'both sides', 'reactants', 'products']],
+        reread: { anchor: 'sec-4', label: '4. Put together' } },
+      { id: 'refl-b1', groups: [['same', 'no atoms added', 'no atoms removed', 'nothing added', 'nothing removed', 'moved'], ['conservation', 'conserved', 'mass', 'rearrange', 'rearranged']],
+        reread: { anchor: 'day3', label: 'Day 3 build' } }
+    ]);
+  });
+
+  window.addEventListener('beforeprint', function () { document.body.classList.add('printing-slip'); });
+  window.addEventListener('afterprint', function () { document.body.classList.remove('printing-slip'); });
+</script>
+</body>
+</html>

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plant & Animal Cell — Twin Spotter</title>
+<script>
+  (function () {
+    // Facilitator View: ?fac=1 must be read and set BEFORE quest.js or any
+    // of its init calls run, so tracking never has a chance to start before
+    // this takes effect — see initFacilitatorCheck's comment in quest.js.
+    try {
+      window.QUEST_FACILITATOR_MODE = new URLSearchParams(window.location.search).get('fac') === '1';
+    } catch (e) { window.QUEST_FACILITATOR_MODE = false; }
+    try {
+      var kid = localStorage.getItem('imm-l3-kid');
+      if (!kid || kid.toLowerCase() !== 'chris') document.documentElement.classList.add('gate-locked');
+    } catch (e) { document.documentElement.classList.add('gate-locked'); }
+  })();
+</script>
+<style>
+  html.gate-locked main, html.gate-locked .progress-summary { display: none !important; }
+  html.facilitator-mode #facilitator-banner { display: block; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="lens-chris">
+
+<div id="facilitator-banner" style="display:none;">🧑‍🏫 Facilitator View — nothing on this page is being timed, saved, or synced. <a href="?" id="facilitator-banner-exit">Exit Facilitator View →</a></div>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand-group">
+      <a href="../index.html" class="brand">🔬 Plant & Animal Cell<small>Twin Spotter</small></a>
+      <span class="day-badge" id="quest-day-badge"></span>
+      <span class="session-timer" id="session-timer"></span>
+    </div>
+    <nav class="day-nav">
+      <a href="#day1">Part 1</a>
+      <a href="#day2">Part 2</a>
+      <a href="#day3">Part 3</a>
+      <button class="notes-toggle-btn" id="glossary-toggle-btn" type="button">📖 Glossary</button>
+      <button class="notes-toggle-btn" id="notes-toggle-btn" type="button">📝 My Notes</button>
+      <button class="print-btn" id="print-slip-btn" type="button">🖨️ Print my bringing slip</button>
+    </nav>
+  </div>
+</header>
+
+<div class="progress-summary">
+  <div class="container">
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 1</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day1-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day1-label">0/4</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 2</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day2-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day2-label">0/6</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 3</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day3-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="quest-gate-block">
+  <div class="gate-block-wrap">
+    <div class="gate-icon">🔒</div>
+    <h2>This is Chris's investigation</h2>
+    <p>Confirm it's you to continue.</p>
+    <div class="name-gate-card">
+      <button class="btn btn-primary gate-confirm-btn" id="gate-confirm-btn" type="button">✅ Yes, I'm Chris — Continue</button>
+      <div class="name-gate-msg" id="gate-name-msg"></div>
+    </div>
+    <a class="gate-not-you" href="../index.html">Not you? Find your own quest link →</a>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- COVER -->
+  <section class="cover">
+    <div class="cover-watermark" aria-hidden="true">🔎</div>
+    <div class="format-pill">Discovery Quest</div><br>
+    <span class="lens-pill">🔎 Twin Spotter</span>
+    <h1>Two Cells That Look Almost Identical</h1>
+    <p class="subtitle">Under a microscope, a plant cell and an animal cell can look like twins at a glance — same basic layout, same core parts. Your job is spotting the identifying marks that give each one away.</p>
+    <div class="kid-name">Prepared for: Chris</div>
+    <div class="framing">
+      <p style="margin:0;">You are a <strong>Twin Spotter</strong> — a cell examiner trained to tell two near-identical cells apart. Part 1 briefs you on the full picture: which marks EVERY cell shares (useless for telling them apart) and which marks only ONE of the twins has (the real identifying evidence). Part 2, you build a real identification kit and use it to classify a set of unknown cell samples — and you have to defend every call with evidence. This week, a guess without evidence doesn't count as a match.</p>
+    </div>
+  </section>
+
+  <!-- DAY 1 -->
+  <section class="day-block" id="day1">
+    <span class="day-kicker">Part 1 · Case Briefing</span>
+    <h2>Everything a Cell Actually Needs</h2>
+    <p class="day-sub">You can't identify a suspect without knowing every feature on file. This briefing covers the full picture: what every cell has in common, what only a plant cell has, and exactly why those differences exist.</p>
+
+    <h3>Why one tiny structure runs everything alive</h3>
+    <p>Every living thing, from a single bacterium to you, is built out of <strong>cells</strong> — the basic working unit of life. A cell isn't empty space with some parts floating in it; it's a fully organized, self-running structure, with different parts doing different jobs. Before you can spot what makes two cells different, you need to know exactly what's already inside every single cell, plant or animal — the shared family resemblance that never helps you make an ID.</p>
+
+    <h3 id="sec-shared"><span class="sec-num">1</span>The family resemblance — shared by both twins</h3>
+    <p>Every plant and animal cell shares five core parts, so none of these ever prove which twin you're looking at. The <strong>cell membrane</strong> is the outer boundary, controlling exactly what enters and leaves. The <strong>cytoplasm</strong> is the jelly-like fluid filling the cell, where everything else sits and reactions happen. The <strong>nucleus</strong> holds the cell's DNA and controls all its activity. <strong>Mitochondria</strong> release energy from food through respiration. <strong>Ribosomes</strong> build proteins the cell needs. Every one of these shows up on both twins' file — so none of them is ever your evidence.</p>
+
+    <div class="diagram-card">
+      <div class="diagram-title">🔬 The shared family resemblance</div>
+      <div class="diagram-sub">Five marks on file for both twins — never usable as an ID.</div>
+      <div class="diagram-svg-wrap">
+        <svg viewBox="0 0 240 200" width="230" height="190" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="120" cy="100" rx="105" ry="80" fill="#fdf4ff" stroke="#c026d3" stroke-width="3"/>
+          <circle cx="120" cy="95" r="34" fill="#f5d0fe" stroke="#86198f" stroke-width="2.5"/>
+          <text x="120" y="99" text-anchor="middle" fill="#86198f" font-size="9" font-weight="700">1</text>
+          <ellipse cx="65" cy="140" rx="16" ry="9" fill="#e879f9" stroke="#86198f" stroke-width="2"/>
+          <text x="65" y="143" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">2</text>
+          <circle cx="175" cy="60" r="7" fill="#d946ef"/>
+          <text x="175" y="63" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">3</text>
+        </svg>
+      </div>
+      <div class="diagram-legend">
+        <div class="diagram-legend-item"><span class="dl-num">1</span><span class="dl-text"><strong>Nucleus</strong> — on file for both, controls activity</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">2</span><span class="dl-text"><strong>Mitochondria</strong> — on file for both, releases energy</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">3</span><span class="dl-text"><strong>Ribosome</strong> — on file for both, builds protein</span></div>
+      </div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔬 Lab Note</span>
+      <p style="margin:0;">Every cell's cytoplasm and ribosomes have real, separate jobs. What does the cytoplasm do, and what do the ribosomes do?</p>
+      <textarea id="refl-6" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-plantonly"><span class="sec-num">2</span>The identifying marks — only one twin has these</h3>
+    <p>A plant cell carries three marks its animal twin never has — the real evidence. The <strong>cell wall</strong> is a rigid outer layer made of cellulose, sitting outside the membrane, giving the cell a fixed shape it never changes. The <strong>chloroplast</strong> contains chlorophyll and makes food from sunlight through photosynthesis — no animal cell carries this mark, ever. A large, permanent <strong>vacuole</strong> stores water and keeps the cell firm. Spot any one of these three and the case is closed — you're looking at the plant twin.</p>
+
+    <div class="card-grid">
+      <div class="info-card"><h4>🧱 Cell wall</h4><p>Rigid, made of cellulose, sits outside the membrane. Gives the cell a fixed shape and real structural support.</p></div>
+      <div class="info-card"><h4>☀️ Chloroplast</h4><p>Contains chlorophyll (what makes plants green). Captures sunlight to make the plant's own food — photosynthesis.</p></div>
+      <div class="info-card"><h4>💧 Permanent vacuole</h4><p>Large, filled with cell sap. Keeps the cell firm and upright by pushing outward against the cell wall.</p></div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🧾 Evidence Log</span>
+      <p style="margin:0;">A cell under the microscope in your case file has a fixed rectangular shape, is colored green, and has a thick outer boundary just outside its membrane. Is it a plant or animal cell, and what specific evidence proves it?</p>
+      <textarea id="refl-2" placeholder="Name the cell type and the evidence…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">💧 Storage Tank</span>
+      <p style="margin:0;">A large, permanent vacuole is one of the plant-only marks. What does it store, and what job does that storage do for the cell?</p>
+      <textarea id="refl-7" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">📋 Rookie's Field Note — something doesn't add up</span>
+      <p style="margin:0;">A rookie examiner's note claims: <em>"I found a rigid cell wall on the sample — that's on file for every cell, so it doesn't tell us anything."</em> Something in that note is wrong. What is it, and what should the rookie have written instead?</p>
+      <textarea id="refl-1" placeholder="Type your correction here…"></textarea>
+    </div>
+
+<h3 id="sec-whydiffer"><span class="sec-num">3</span>Why the identifying marks even exist</h3>
+    <p>None of this is random. A plant can't get up and move to find food or escape danger — so it needs a fixed, upright structure it can rely on permanently, and it needs to make its own food since it can't go looking for any. That's exactly what the cell wall and chloroplast solve. An animal, on the other hand, needs to move, change shape, and squeeze through gaps — a rigid wall would make that impossible, so animal cells stay flexible, with only a membrane at the edge. Once you know why a mark exists, you stop needing to memorize it — you can reason your way to it.</p>
+
+    <div class="callout">
+      <span class="callout-label">🎓 New Recruit Briefing</span>
+      <p style="margin:0;">A trainee examiner on your team asks why a plant cell bothers with a rigid wall when an animal cell manages fine without one. Explain it in two or three sentences, simple enough for them to repeat back correctly.</p>
+      <textarea id="refl-3" placeholder="Explain it simply…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🚧 Structural Problem</span>
+      <p style="margin:0;">Why would a rigid cell wall actually be a problem for an animal cell, even though it's such an advantage for a plant cell?</p>
+      <textarea id="refl-8" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-comparison">Twin A vs. Twin B, side by side</h3>
+    <table class="data-table">
+      <thead><tr><th>Feature</th><th>Plant cell</th><th>Animal cell</th></tr></thead>
+      <tbody>
+        <tr><td>Cell wall</td><td class="num">Yes</td><td class="num">No</td></tr>
+        <tr><td>Chloroplast</td><td class="num">Yes</td><td class="num">No</td></tr>
+        <tr><td>Vacuole</td><td class="num">Large, permanent</td><td class="num">Small or none</td></tr>
+        <tr><td>Shape</td><td class="num">Fixed, regular</td><td class="num">Flexible, irregular</td></tr>
+        <tr><td>Nucleus, mitochondria, ribosomes, membrane</td><td class="num">Yes</td><td class="num">Yes</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔍 Case File: Sample X vs. Sample Y</span>
+      <p style="margin:0 0 8px;"><strong>Sample X:</strong> irregular round shape, no visible outer wall, no large central storage space.<br><strong>Sample Y:</strong> fixed rectangular shape, a thick outer boundary beyond the membrane, one large central storage space.</p>
+      <p style="margin:0;">Which is the plant cell and which is the animal cell, and what evidence tells you?</p>
+      <textarea id="refl-4" placeholder="Explain both cases…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🧩 Rule It Out</span>
+      <p style="margin:0;">A cell sample shows no cell wall and no chloroplast, but does have mitochondria and a nucleus. What type of cell is it, and why don't the mitochondria and nucleus help you decide?</p>
+      <textarea id="refl-9" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3>History: how examiners first told the twins apart</h3>
+    <div class="timeline">
+      <div class="timeline-item"><div class="t-year">1665</div><div class="t-body"><strong>Robert Hooke</strong> examines a thin slice of cork under a microscope, sees tiny box-like compartments, and names them "cells" — the first time the word is ever used this way.</div></div>
+      <div class="timeline-item"><div class="t-year">1670s</div><div class="t-body"><strong>Antonie van Leeuwenhoek</strong> builds far more powerful microscopes and becomes the first person to observe living cells and microorganisms moving under one.</div></div>
+      <div class="timeline-item"><div class="t-year">1838–1839</div><div class="t-body"><strong>Matthias Schleiden</strong> (studying plants) and <strong>Theodor Schwann</strong> (studying animals) jointly propose <strong>Cell Theory</strong>: all living things are made of cells.</div></div>
+      <div class="timeline-item"><div class="t-year">1855</div><div class="t-body"><strong>Rudolf Virchow</strong> adds the missing piece: every new cell comes from an existing cell dividing, not from anywhere else.</div></div>
+    </div>
+
+    <h3>Real-world application: an examiner's exact skill is a real job</h3>
+    <p>Forensic scientists can tell whether a stain or fiber is plant or animal in origin by examining its cells under a microscope — cell wall presence alone is real, used courtroom evidence. Every diagnosis of an infection, a cancer, or a genetic condition starts the same way: an examiner looking at cells under a microscope and identifying exactly which marks are present, the precise skill your flip-card kit is built to practice.</p>
+
+    <div class="game-card">
+      <div class="game-title">🔬 Specimen Match</div>
+      <div class="game-sub">Key terms from today's whole examination. Click a term, then its matching definition — no penalty for a wrong guess, just try again.</div>
+      <div id="game-day1"></div>
+    </div>
+
+  </section>
+
+  <!-- MATERIALS -->
+  <section class="day-block">
+    <span class="day-kicker">Before Part 2 · Build Kit</span>
+    <h2>Choose What You're Bringing</h2>
+    <p class="day-sub">This is a pool, not a checklist — pick what your specific ID kit actually needs.</p>
+
+    <div class="materials-table-wrap">
+      <table class="materials-table">
+      <thead><tr><th>Material</th><th>Nucleus card (shared)</th><th>Cell wall card</th><th>Chloroplast card</th><th>Vacuole card</th><th>Kit binding</th></tr></thead>
+      <tbody>
+      <tr><td class="mat-name">Index cards</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Index cards for Nucleus card (shared)</span></label></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Index cards for Cell wall card</span></label></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Index cards for Chloroplast card</span></label></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Index cards for Vacuole card</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Markers or colored pens</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Markers or colored pens for Nucleus card (shared)</span></label></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Markers or colored pens for Cell wall card</span></label></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Markers or colored pens for Chloroplast card</span></label></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Markers or colored pens for Vacuole card</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Colored paper or felt</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Colored paper or felt for Nucleus card (shared)</span></label></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Colored paper or felt for Cell wall card</span></label></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Colored paper or felt for Chloroplast card</span></label></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Colored paper or felt for Vacuole card</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Ruler</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Ruler for Nucleus card (shared)</span></label></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Ruler for Cell wall card</span></label></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Ruler for Chloroplast card</span></label></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Ruler for Vacuole card</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Colored pencils</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Colored pencils for Nucleus card (shared)</span></label></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Colored pencils for Cell wall card</span></label></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Colored pencils for Chloroplast card</span></label></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Colored pencils for Vacuole card</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A glue stick</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A glue stick for Nucleus card (shared)</span></label></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A glue stick for Cell wall card</span></label></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A glue stick for Chloroplast card</span></label></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A glue stick for Vacuole card</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Hole punch and string</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Hole punch and string for Kit binding</span></label></td></tr>
+      <tr><td class="mat-name">A binder ring</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A binder ring for Kit binding</span></label></td></tr>
+      <tr><td class="mat-name">Scissors and tape</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Scissors and tape for Kit binding</span></label></td></tr>
+      <tr><td class="mat-name">A large paperclip</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A large paperclip for Kit binding</span></label></td></tr>
+      <tr><td class="mat-name">A rubber band bundle</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A rubber band bundle for Kit binding</span></label></td></tr>
+      </tbody></table></div>
+      <p class="materials-table-note">One card per mark — 3 plant-only marks (cell wall, chloroplast, vacuole) plus the nucleus, which is shared with animal cells. A magnifying glass is a nice-to-have examiner's tool, not required.</p>
+          <div class="slip-preview">
+      <h4>📋 What you're bringing to Part 2:</h4>
+      <ul id="slip-list-preview"></ul>
+      <div class="slip-empty" id="slip-empty">Nothing selected yet.</div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section class="day-block" id="day2">
+    <span class="day-kicker">Part 2 · Build the ID Kit</span>
+    <h2>Build a Real Identification Kit — Then Use It</h2>
+    <p class="day-sub">Build a flip-card ID kit covering every mark, then use it to classify real unknown samples. This isn't a symbolic model — your kit has to actually work when you test it.</p>
+
+    <div class="model3d-wrap">
+      <div class="model3d">
+        <div class="model3d-stage" id="model-stage">
+          <div class="model3d-face f1" style="background:linear-gradient(135deg,#e879f9,#c026d3);"><span><span class="f-icon">🧬</span>Nucleus<br>Shared mark</span></div>
+          <div class="model3d-face f2" style="background:linear-gradient(135deg,#d946ef,#a21caf);"><span><span class="f-icon">🧱</span>Cell wall<br>Plant-only mark</span></div>
+          <div class="model3d-face f3" style="background:linear-gradient(135deg,#e879f9,#86198f);"><span><span class="f-icon">☀️</span>Chloroplast<br>Plant-only mark</span></div>
+          <div class="model3d-face f4" style="background:linear-gradient(135deg,#d946ef,#4a044e);"><span><span class="f-icon">💧</span>Vacuole<br>Plant-only mark</span></div>
+          <div class="model3d-face f5" style="background:linear-gradient(135deg,#e879f9,#a21caf);"><span><span class="f-icon">🗂️</span>Build the<br>ID kit</span></div>
+          <div class="model3d-face f6" style="background:linear-gradient(135deg,#d946ef,#86198f);"><span><span class="f-icon">🔎</span>Test it on<br>real samples</span></div>
+        </div>
+      </div>
+      <div class="model3d-hint">🖱️ Hover to pause and read each face.</div>
+      <button class="btn btn-ghost model3d-pause" type="button" id="pause-btn">⏸ Pause rotation</button>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">What your ID kit has to prove</span>
+      <p style="margin:0;">Every card in your kit needs a real, cited piece of evidence — not just a name copied from the reading. A spotter who can't say why a mark counts as evidence hasn't actually made the case yet.</p>
+    </div>
+
+    <h3 id="sec-plan">Plan before you build</h3>
+    <p>Fill this in before you make a single card. This evidence table <em>is</em> the real planning decision — the build itself is just carrying it out.</p>
+    <table class="justify-table">
+      <thead><tr><th>Mark</th><th>Shared or plant-only?</th><th>What you'd look for</th><th>Why it counts as evidence</th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="e.g. Cell wall"></td><td><input placeholder="e.g. Plant-only"></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout subtle">
+      <span class="callout-label">📸 Picture the finished result</span>
+      <p style="margin:0;">Picture one finished card: an index card with "Chloroplast" written across the top, a quick sketch of it in green, and a one-line note underneath — "Plant-only — makes food from sunlight." Four cards like this (Nucleus, Cell wall, Chloroplast, Vacuole), punched and strung together on a ring, is the finished kit.</p>
+    </div>
+
+    <h3>Build it, then test it</h3>
+    <div class="build-checklist">
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">1.</span><span class="step-text">Make one card per mark from your plan table — shared marks and plant-only marks in different colors.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">2.</span><span class="step-text">On each card, write the mark's real name AND whether it's shared or an identifying mark.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">3.</span><span class="step-text">Bind your cards into one kit you could actually hand to another examiner.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">4.</span><span class="step-text">Read 4 mystery sample descriptions from your facilitator and classify each one, plant or animal, using only your kit.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">5.</span><span class="step-text">Check your 4 calls against the real answers and record how many you got right.</span></span></label>
+    </div>
+
+    <h3>Results</h3>
+    <p>Write up your case results — this doubles as notes for tomorrow's presentation.</p>
+    <table class="plan-table">
+      <tr><td style="width:180px;"><strong>Marks in kit</strong></td><td><input placeholder="e.g. 8 of 8"></td></tr>
+      <tr><td><strong>Samples classified correctly</strong></td><td><input placeholder="e.g. 3 of 4"></td></tr>
+      <tr><td><strong>Short description</strong></td><td><textarea placeholder="Describe your ID kit and how the test went in 2–3 sentences…"></textarea></td></tr>
+    </table>
+
+    <div class="callout">
+      <span class="callout-label">🪞 Case Review — self-check</span>
+      <p style="margin:0;">Which sample was hardest to classify, and why? If you got one wrong, what evidence did you miss or misread?</p>
+      <textarea id="refl-5" placeholder="Write your honest review…"></textarea>
+    </div>
+  </section>
+
+  <!-- DAY 3 -->
+  <section class="day-block" id="day3">
+    <span class="day-kicker">Part 3 · Present the Case</span>
+    <h2>Present Your Case File</h2>
+    <p class="day-sub">A real examiner defends every call they made. Here's how to open strong and cover everything that matters.</p>
+
+    <div class="hook-box">
+      <div class="hook-label">Your opening move</div>
+      <p style="margin:0;">Don't say "I'm going to talk about cells." Instead, hold up two cell drawings side by side and ask the room: <em>"These look almost identical — can you spot what's different?"</em> Let a few guesses land before you reveal your kit.</p>
+    </div>
+
+    <div class="prep-form">
+      <h3>Prepare your presentation</h3>
+      <p>Fill this in before Part 3 — it's your own script, not busywork.</p>
+
+      <div class="prep-field">
+        <label>i. Your role and responsibility</label>
+        <textarea placeholder="In your own words — who are you in this story, and what were you responsible for figuring out?"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>ii. Three new words or ideas you learned, and what they mean</label>
+        <textarea placeholder="1) &#10;2) &#10;3) "></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>iii. One historical fact you found interesting</label>
+        <textarea placeholder="Which one, and why it stuck with you"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>iv. A real-world application</label>
+        <textarea placeholder="Where does this actually show up outside a classroom?"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>v. Explain your build</label>
+        <div class="prep-autofill-row">
+          <span class="prep-autofill-hint">Materials &amp; reasoning below are pulled from your Part 2 plan table — edit freely.</span>
+          <button type="button" class="prep-autofill-btn">&#8635; Pull from Part 2 again</button>
+        </div>
+        <textarea class="prep-build-materials" placeholder="Materials used and why you chose them…"></textarea>
+        <textarea placeholder="Every label on your build, and what it explains…"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>vi. What you're still not sure about</label>
+        <textarea placeholder="What would you want more explanation or practice on?"></textarea>
+      </div>
+    </div>
+
+    <div class="facilitator-tip">
+      <span class="fac-label">Facilitator only</span>
+      <p>If Chris misclassifies one of the mystery samples, that's the best moment of the presentation, not a flaw to smooth over — ask him directly "what evidence made you call it that way, and what did you miss?" A spotter who can trace their own reasoning back to the evidence is showing real understanding, not just a lucky guess.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  Plant & Animal Cell · Twin Spotter — Chris's instance. <a href="../index.html">All three instances →</a>
+</footer>
+
+<!-- Isolated printable materials slip -->
+<div id="print-slip-page">
+  <div class="print-slip-sheet">
+    <h3>📋 Materials I'm Bringing — Part 2</h3>
+    <div class="slip-kid">Twin Spotter · Chris</div>
+    <ul id="slip-list-print"></ul>
+  </div>
+</div>
+
+<!-- Side glossary drawer -->
+<div class="notes-backdrop" id="glossary-backdrop"></div>
+<div class="notes-drawer" id="glossary-drawer">
+  <div class="notes-drawer-head">
+    <h4>📖 Glossary</h4>
+    <button id="glossary-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="glossary">
+      <div class="glossary-item"><div class="word">Cell membrane</div><div class="def">The outer boundary controlling what enters and leaves a cell.</div></div>
+      <div class="glossary-item"><div class="word">Nucleus</div><div class="def">Holds the cell's DNA and controls its activity.</div></div>
+      <div class="glossary-item"><div class="word">Mitochondria</div><div class="def">Releases energy from food through respiration.</div></div>
+      <div class="glossary-item"><div class="word">Cell wall</div><div class="def">A rigid, cellulose outer layer found only in plant cells.</div></div>
+      <div class="glossary-item"><div class="word">Chloroplast</div><div class="def">Captures sunlight to make food — photosynthesis. Plant cells only.</div></div>
+      <div class="glossary-item"><div class="word">Cell Theory</div><div class="def">All living things are made of cells, and every cell comes from an existing cell.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Side notes drawer -->
+<div class="notes-backdrop" id="notes-backdrop"></div>
+<div class="notes-drawer" id="notes-drawer">
+  <div class="notes-drawer-head">
+    <h4>📝 My Notes</h4>
+    <button id="notes-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="notes-section-label">Highlighted words</div>
+    <ul id="hl-collected-list" class="hl-collected-list"></ul>
+    <div id="hl-collected-empty" style="display:none;">Highlight anything in the reading and it'll show up here.</div>
+    <div class="notes-section-label">Free notes</div>
+    <textarea id="notes-textarea" placeholder="Jot anything down…"></textarea>
+    <div id="notes-saved-msg" class="notes-saved-msg"></div>
+  </div>
+</div>
+
+<script>
+  // Progress-sync Worker — cross-device save. SITE_KEY is a soft deterrent
+  // only (any client-side value is visible in devtools), not real auth.
+  window.QUEST_SYNC_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  window.QUEST_SYNC_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+</script>
+<script src="../js/quest.js"></script>
+<script>
+  QuestUI.initKidGate('Chris');
+  QuestUI.initFacilitatorCheck();
+
+  QuestUI.initProgressSync('chris', 'group-01', 'week-01').then(function () {
+    QuestUI.initHighlighter('chris');
+    QuestUI.initNotesDrawer('chris');
+    QuestUI.initGlossaryDrawer();
+    QuestUI.initMaterialsPool('chris');
+    QuestUI.initBuildChecklist('chris');
+    QuestUI.initFieldAutosave('chris');
+    QuestUI.initPresentationAutofill('chris');
+    QuestUI.initDayTimer('chris');
+    QuestUI.initProgressBar('chris');
+    QuestUI.initSectionLock('chris');
+    QuestUI.initDayLock('chris');
+    QuestUI.initCompleteQuest('chris');
+    QuestUI.initMatchGame('game-day1', [
+      ["Cell membrane", "The outer boundary controlling what enters and leaves a cell."],
+      ["Nucleus", "Holds the cell's DNA and controls its activity."],
+      ["Mitochondria", "Releases energy from food through respiration."],
+      ["Cell wall", "A rigid, cellulose outer layer found only in plant cells."],
+      ["Chloroplast", "Captures sunlight to make food — photosynthesis. Plant cells only."],
+      ["Cell Theory", "All living things are made of cells, and every cell comes from an existing cell."]
+    ], { pageKey: 'chris' });
+    QuestUI.initReflectionChecks('chris', [
+      { id: 'refl-1', groups: [['plant', 'plants'], ['animal', 'animals'], ["don't have", "doesn't have", "not both", "only one", "wrong", "incorrect", "lack"]],
+        reread: { anchor: 'sec-plantonly', label: '2. The identifying marks' } },
+      { id: 'refl-6', groups: [['cytoplasm', 'jelly', 'fluid'], ['ribosome', 'ribosomes', 'protein', 'proteins']],
+        reread: { anchor: 'sec-shared', label: '1. The family resemblance' } },
+      { id: 'refl-2', groups: [['plant'], ['wall', 'rigid', 'rectangular', 'green', 'chloroplast', 'chlorophyll']],
+        reread: { anchor: 'sec-plantonly', label: '2. The identifying marks' } },
+      { id: 'refl-7', groups: [['vacuole'], ['water', 'sap', 'firm', 'upright', 'support', 'structure', 'pressure']],
+        reread: { anchor: 'sec-plantonly', label: '2. The identifying marks' } },
+      { id: 'refl-3', groups: [['stand', 'support', 'structure', 'shape', 'upright', 'rigid'], ['move', 'moving', 'flexible', 'flexibility', 'change shape']],
+        reread: { anchor: 'sec-whydiffer', label: '3. Why the identifying marks even exist' } },
+      { id: 'refl-8', groups: [['move', 'moving', 'movement', 'squeeze', 'change shape', 'flexible'], ['rigid', 'wall', "can't move", "wouldn't be able to", 'impossible']],
+        reread: { anchor: 'sec-whydiffer', label: '3. Why the identifying marks even exist' } },
+      { id: 'refl-4', groups: [['animal'], ['plant']],
+        reread: { anchor: 'sec-plantonly', label: '2. The identifying marks' } },
+      { id: 'refl-9', groups: [['animal'], ['shared', 'both', 'on file for both', 'common', 'every cell']],
+        reread: { anchor: 'sec-comparison', label: 'Twin A vs. Twin B, side by side' } },
+      { id: 'refl-5', groups: [],
+        reread: { anchor: 'sec-plan', label: 'Plan before you build' } }
+    ]);
+
+    var modelPaused = false;
+    document.getElementById('pause-btn').addEventListener('click', function () {
+      modelPaused = !modelPaused;
+      document.getElementById('model-stage').classList.toggle('paused', modelPaused);
+      this.textContent = modelPaused ? '▶ Resume rotation' : '⏸ Pause rotation';
+    });
+  });
+
+  window.addEventListener('beforeprint', function () { document.body.classList.add('printing-slip'); });
+  window.addEventListener('afterprint', function () { document.body.classList.remove('printing-slip'); });
+</script>
+</body>
+</html>

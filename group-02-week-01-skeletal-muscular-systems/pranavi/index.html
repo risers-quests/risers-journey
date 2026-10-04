@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skeletal & Muscular Systems — Muscle Systems Engineer</title>
+<script>
+  (function () {
+    // Facilitator View: ?fac=1 must be read and set BEFORE quest.js or any
+    // of its init calls run, so tracking never has a chance to start before
+    // this takes effect — see initFacilitatorCheck's comment in quest.js.
+    try {
+      window.QUEST_FACILITATOR_MODE = new URLSearchParams(window.location.search).get('fac') === '1';
+    } catch (e) { window.QUEST_FACILITATOR_MODE = false; }
+    try {
+      var kid = localStorage.getItem('imm-l3-kid');
+      if (!kid || kid.toLowerCase() !== 'pranavi') document.documentElement.classList.add('gate-locked');
+    } catch (e) { document.documentElement.classList.add('gate-locked'); }
+  })();
+</script>
+<style>
+  html.gate-locked main, html.gate-locked .progress-summary { display: none !important; }
+  html.facilitator-mode #facilitator-banner { display: block; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="lens-pranavi">
+
+<div id="facilitator-banner" style="display:none;">🧑‍🏫 Facilitator View — nothing on this page is being timed, saved, or synced. <a href="?" id="facilitator-banner-exit">Exit Facilitator View →</a></div>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand-group">
+      <a href="../index.html" class="brand">🦴 Skeletal & Muscular Systems<small>Muscle Systems Engineer</small></a>
+      <span class="day-badge" id="quest-day-badge"></span>
+      <span class="session-timer" id="session-timer"></span>
+    </div>
+    <nav class="day-nav">
+      <a href="#day1">Part 1</a>
+      <a href="#day2">Part 2</a>
+      <a href="#day3">Part 3</a>
+      <button class="notes-toggle-btn" id="glossary-toggle-btn" type="button">📖 Glossary</button>
+      <button class="notes-toggle-btn" id="notes-toggle-btn" type="button">📝 My Notes</button>
+      <button class="print-btn" id="print-slip-btn" type="button">🖨️ Print my bringing slip</button>
+    </nav>
+  </div>
+</header>
+
+<div class="progress-summary">
+  <div class="container">
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 1</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day1-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day1-label">0/6</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 2</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day2-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day2-label">0/6</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 3</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day3-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="quest-gate-block">
+  <div class="gate-block-wrap">
+    <div class="gate-icon">🔒</div>
+    <h2>This is Pranavi's investigation</h2>
+    <p>Confirm it's you to continue.</p>
+    <div class="name-gate-card">
+      <button class="btn btn-primary gate-confirm-btn" id="gate-confirm-btn" type="button">✅ Yes, I'm Pranavi — Continue</button>
+      <div class="name-gate-msg" id="gate-name-msg"></div>
+    </div>
+    <a class="gate-not-you" href="../index.html">Not you? Find your own quest link →</a>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- COVER -->
+  <section class="cover">
+    <div class="cover-watermark" aria-hidden="true">💪</div>
+    <div class="format-pill">Discovery Quest</div><br>
+    <span class="lens-pill">💪 Muscle Systems Engineer</span>
+    <h1>Your Muscles Work in Teams</h1>
+    <p class="subtitle">A single muscle can only pull, never push — which means every joint needs at least two muscles working as a team, pulling in opposite directions. This week, you build one of those teams and watch it work.</p>
+    <div class="kid-name">Prepared for: Pranavi</div>
+    <div class="framing">
+      <p style="margin:0;">You are a <strong>Muscle Systems Engineer</strong>. Part 1 briefs you on the full picture: how bones, joints, and muscles are actually built and how they work together to move you. Part 2, you build a real working antagonistic-pair model — two "muscles" pulling opposite ways across one joint — and prove which one bends it and which one straightens it back out. This week, a claim about how muscles cooperate only counts once you've built the pair and watched it work.</p>
+    </div>
+  </section>
+
+  <!-- DAY 1 -->
+  <section class="day-block" id="day1">
+    <span class="day-kicker">Part 1 · Systems Briefing</span>
+    <h2>How a Frame That Holds You Up Also Moves You</h2>
+    <p class="day-sub">A skeleton alone would be a rigid statue. Muscles alone would be a floppy heap. Together, they're a working system — and this briefing covers exactly how that system is built, before you build a working pair of your own.</p>
+
+    <h3>Why you need both systems at once</h3>
+    <p>Your body needs something rigid enough to hold its shape and something else that can actually move that rigid frame around — that's the job split between your <strong>skeletal system</strong> (bones, joints, ligaments) and your <strong>muscular system</strong> (muscles and tendons). Neither one works without the other: a skeleton with no muscles couldn't move an inch, and muscles with no skeleton would have nothing rigid to pull against. Before you can build a working pair, you need to know exactly how each part actually functions.</p>
+
+        <h3 id="sec-skeleton"><span class="sec-num">1</span>The skeletal system: your rigid frame</h3>
+    <p>Bone does four real jobs: <strong>support</strong> (holding your whole body upright), <strong>protection</strong> (your skull shields your brain, your ribcage shields your heart and lungs, your vertebrae shield your spinal cord), <strong>movement</strong> (bones are the rigid levers your muscles pull on to create motion), and <strong>production</strong> (soft marrow inside certain bones manufactures your red blood cells, white blood cells, and platelets). Bones also store minerals like calcium and release them into your blood when your body needs them. There are four shapes: long bones (femur, humerus — built for movement), short bones (wrist, ankle — built for stability), flat bones (skull, ribs, shoulder blade — built for protection), and irregular bones (vertebrae — built for complex support). An adult skeleton has <strong>206 bones</strong>. A newborn is actually born with around <strong>270</strong> — dozens of separate pieces fuse together into single bones as you grow, which is why that number drops by adulthood.</p>
+
+    <div class="diagram-card">
+      <div class="diagram-title">🔬 Four bone shapes, four different jobs</div>
+      <div class="diagram-sub">Same living tissue, built differently for the job each one does.</div>
+      <div class="diagram-svg-wrap">
+        <svg viewBox="0 0 240 200" width="230" height="190" xmlns="http://www.w3.org/2000/svg">
+          <rect x="45" y="85" width="150" height="20" rx="10" fill="#c4b5fd" stroke="#4c1d95" stroke-width="2.5"/>
+          <text x="120" y="99" text-anchor="middle" fill="#4c1d95" font-size="9" font-weight="700">1</text>
+          <rect x="95" y="40" width="50" height="30" rx="6" fill="#a78bfa" stroke="#4c1d95" stroke-width="2"/>
+          <text x="120" y="59" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">2</text>
+          <circle cx="120" cy="150" r="20" fill="#7c3aed" stroke="#4c1d95" stroke-width="2"/>
+          <text x="120" y="154" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">3</text>
+        </svg>
+      </div>
+      <div class="diagram-legend">
+        <div class="diagram-legend-item"><span class="dl-num">1</span><span class="dl-text"><strong>Long bone</strong> — femur, built for movement</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">2</span><span class="dl-text"><strong>Flat bone</strong> — rib, built for protection</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">3</span><span class="dl-text"><strong>Irregular bone</strong> — vertebra, built for complex support</span></div>
+      </div>
+    </div>
+
+        <div class="video-card">
+      <div class="video-title">📹 Bones</div>
+      <div class="video-sub">The skeletal system, straight from the source — watch before answering below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/ywDOiNEdJVc" title="Bones" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+<div class="callout">
+      <span class="callout-label">⚠️ Data Sheet Error — something doesn't add up</span>
+      <p style="margin:0;">A data sheet in your files claims: <em>"Bone is dead, hard material that never changes once you're born."</em> Something in that entry is wrong. What is it, and what should it have said instead?</p>
+      <textarea id="refl-1" placeholder="Type your correction here…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">📦 Two More Jobs</span>
+      <p style="margin:0;">Support and protection are two of bone's jobs — but bone does two more. Name one of the other two jobs, and say exactly what it produces or stores.</p>
+      <textarea id="refl-8" placeholder="Name the job and what it produces or stores…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔍 Shape Check</span>
+      <p style="margin:0;">Your femur is a long bone and your skull is a flat bone — same living tissue, built completely differently. Which shape is built mainly for movement, and which is built mainly for protection?</p>
+      <textarea id="refl-9" placeholder="Name each shape and its job…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🧮 Count the Bones</span>
+      <p style="margin:0;">A newborn baby actually has more bones than you do right now — about 270 versus your 206. Where did the other ~64 go? Were they lost, or is something else going on?</p>
+      <textarea id="refl-10" placeholder="Explain what actually happened…"></textarea>
+    </div>
+
+    <h3 id="sec-joints"><span class="sec-num">2</span>Joints: where your pair will actually pull</h3>
+    <p>A joint is where two bones meet — and most joints are built to move. A <strong>hinge joint</strong> (elbow, knee) bends in one direction only, exactly like a door. A <strong>ball-and-socket joint</strong> (shoulder, hip) rotates freely in almost every direction, because a rounded bone end sits inside a cup-shaped socket. A <strong>pivot joint</strong> (top of your neck) lets one bone rotate around another, which is how you shake your head "no." A <strong>gliding joint</strong> (wrist, ankle) lets small, flat bones slide past each other slightly. A <strong>saddle joint</strong> (base of your thumb) allows an unusually wide range of movement, including the swivel that lets your thumb touch your other fingers. <strong>Ligaments</strong> — tough, stretchy bands — connect bone to bone at every joint, holding the whole pivot together without stopping it from moving.</p>
+
+    <div class="card-grid">
+      <div class="info-card"><h4>🚪 Hinge joint</h4><p>One-direction bend, like a door. Elbow, knee.</p></div>
+      <div class="info-card"><h4>🔄 Ball-and-socket</h4><p>Rotates in nearly every direction. Shoulder, hip.</p></div>
+      <div class="info-card"><h4>👍 Saddle joint</h4><p>Wide range including opposable swivel. Base of the thumb.</p></div>
+    </div>
+
+        <div class="video-card">
+      <div class="video-title">📹 Joints</div>
+      <div class="video-sub">How your joints actually move — watch before answering below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/NF51ioK6U14" title="Joints" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+<div class="callout subtle">
+      <span class="callout-label">🧾 Field Note</span>
+      <p style="margin:0;">A joint you're recording bends in exactly one plane, like a door swinging open and shut — it can't rotate or swivel at all. Which joint type is this, name a real example in the body, and what's the evidence?</p>
+      <textarea id="refl-2" placeholder="Name the joint type and the evidence…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔗 Hold It Together</span>
+      <p style="margin:0;">Every moving joint needs something holding its two bones together without stopping the motion. What is that structure called, and exactly what does it connect?</p>
+      <textarea id="refl-11" placeholder="Name the structure and what it connects…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔄 Two Kinds of Rotation</span>
+      <p style="margin:0;">Your shoulder (ball-and-socket) and the top of your neck (pivot joint) can both rotate — but not the same way. What's the real difference between how each one moves?</p>
+      <textarea id="refl-12" placeholder="Explain the difference…"></textarea>
+    </div>
+
+    <h3 id="sec-muscles"><span class="sec-num">3</span>The muscular system: the pair you're about to build</h3>
+    <p>There are three types of muscle. <strong>Skeletal muscle</strong> is voluntary — you control it on purpose — and attaches to bone by <strong>tendons</strong> (different from ligaments: tendons connect muscle to bone, ligaments connect bone to bone). <strong>Smooth muscle</strong> is involuntary, found inside organs like your stomach and intestines, moving things like food along without you ever thinking about it. <strong>Cardiac muscle</strong> is also involuntary and exists only in your heart — it never gets tired, because it has to keep beating for your entire life. Muscles can only ever <em>pull</em>, never push — which is why skeletal muscles always work in <strong>antagonistic pairs</strong>: your biceps contracts to bend your elbow, then your triceps contracts to straighten it back out, each one relaxing while the other pulls. Skeletal muscle is also the one type that measurably <strong>fatigues</strong> — hold a position long enough and it will get objectively weaker, which is exactly what a timed test can capture.</p>
+
+        <div class="video-card">
+      <div class="video-title">📹 Muscles</div>
+      <div class="video-sub">The muscular system in action — watch before answering below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/Emox3Uo01C0" title="Muscles" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+<div class="callout">
+      <span class="callout-label">🎓 New Engineer Briefing</span>
+      <p style="margin:0;">A trainee engineer on your team asks why the body bothers using two separate muscles (like biceps and triceps) instead of just one muscle doing the whole job of bending and straightening. Explain it in two or three sentences, simple enough for them to repeat back correctly.</p>
+      <textarea id="refl-3" placeholder="Explain it simply…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">❤️ The One That Never Rests</span>
+      <p style="margin:0;">One muscle type is involuntary and exists only in a single organ. Which organ, and why does it make sense that this type never gets tired?</p>
+      <textarea id="refl-13" placeholder="Name the organ and explain why…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🪢 Two Different Connections</span>
+      <p style="margin:0;">Tendons and ligaments are both tough, stretchy bands — but they connect completely different things. What does a tendon connect, and what does a ligament connect?</p>
+      <textarea id="refl-14" placeholder="Name both connections…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">⏱️ The One That Fatigues</span>
+      <p style="margin:0;">Skeletal muscle is the one type that measurably fatigues. What does "fatigue" actually mean for a muscle, and how could you actually capture that on a timed test?</p>
+      <textarea id="refl-19" placeholder="Explain fatigue and how to measure it…"></textarea>
+    </div>
+
+    <h3 id="sec-lever"><span class="sec-num">4</span>Put together, it's a working pair</h3>
+    <p>A joint, a bone, and a muscle-tendon pair form an actual lever system — the same physics as a seesaw. The joint is the <strong>pivot</strong>, the bone is the <strong>lever arm</strong>, and the muscle supplies the <strong>force</strong>. A single muscle in that system can only ever pull, which is exactly why it takes two — one on each side of the joint — to move it both ways. That's the pair you're about to build. And not every lever in your body is arranged the same way — where the pivot, the force, and the load sit relative to each other changes what the lever is actually good at, and what data you'd expect it to produce. A <strong>Class 1 lever</strong> has the pivot in the middle, between the force and the load — nodding your head "yes" uses one, with the top of your spine as the pivot. A <strong>Class 2 lever</strong> has the load in the middle, between the pivot and the force — rising onto your toes uses one, with the ball of your foot as the pivot and your calf as the force; this arrangement is mechanically efficient, since a relatively small force at the heel can lift your entire body weight. A <strong>Class 3 lever</strong> has the force in the middle, between the pivot and the load — and this is how most of your limb joints work, including your elbow: your bicep attaches close to the elbow's pivot, while the load (whatever's in your hand) sits much farther out. That arrangement is mechanically inefficient — the muscle actually has to pull harder than the load itself weighs — but it buys something valuable in return: a small contraction near the pivot turns into a big, fast movement out at your hand — exactly the trade-off your own antagonistic-pair model is about to show you directly.</p>
+
+    <table class="data-table">
+      <thead><tr><th>Joint type</th><th>Example</th><th>Movement it allows</th></tr></thead>
+      <tbody>
+        <tr><td>Hinge</td><td class="num">Elbow, knee</td><td class="num">One direction only</td></tr>
+        <tr><td>Ball-and-socket</td><td class="num">Shoulder, hip</td><td class="num">Almost every direction</td></tr>
+        <tr><td>Pivot</td><td class="num">Top of neck</td><td class="num">Rotation</td></tr>
+        <tr><td>Gliding</td><td class="num">Wrist, ankle</td><td class="num">Small sliding motion</td></tr>
+        <tr><td>Saddle</td><td class="num">Base of thumb</td><td class="num">Wide range, including swivel</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔍 Compare Two Cases</span>
+      <p style="margin:0 0 8px;"><strong>Joint A:</strong> lets the limb rotate freely in almost every direction, no single fixed plane of motion.<br><strong>Joint B:</strong> bends only forward and back, stopping firmly at full extension, like a door hitting a frame.</p>
+      <p style="margin:0;">Which joint type is A, which is B, and what evidence tells you?</p>
+      <textarea id="refl-4" placeholder="Explain both cases…"></textarea>
+    </div>
+
+    <table class="data-table">
+      <thead><tr><th>Lever class</th><th>Arrangement</th><th>Real body example</th><th>What it's good at</th></tr></thead>
+      <tbody>
+        <tr><td>Class 1</td><td class="num">Pivot in the middle</td><td class="num">Nodding your head</td><td class="num">Balance and control</td></tr>
+        <tr><td>Class 2</td><td class="num">Load in the middle</td><td class="num">Rising onto your toes</td><td class="num">Mechanical efficiency (force)</td></tr>
+        <tr><td>Class 3</td><td class="num">Force in the middle</td><td class="num">Bending your elbow</td><td class="num">Speed and range of motion</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout subtle">
+      <span class="callout-label">⚙️ Name the Parts</span>
+      <p style="margin:0;">In the lever system your joint, bone, and muscle form, which part plays the pivot, which plays the lever arm, and which supplies the force?</p>
+      <textarea id="refl-16" placeholder="Name all three parts…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🦶 Spot the Class 2</span>
+      <p style="margin:0;">Rising onto your toes is a Class 2 lever, with the ball of your foot as the pivot. Where does the load sit in a Class 2 lever, and why is that arrangement mechanically efficient?</p>
+      <textarea id="refl-17" placeholder="Explain where the load sits and why…"></textarea>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">🔧 Engineer's Trade-off</span>
+      <p style="margin:0;">Your elbow is a Class 3 lever, which means lifting a 1kg weight in your hand can actually require several kilograms of force from your bicep — a real mechanical disadvantage. Why would a design that needs MORE force than the load it lifts still be the one evolution kept, instead of a more "efficient" Class 2 arrangement like your calf? What does a Class 3 lever give you in return that a Class 2 lever wouldn't?</p>
+      <textarea id="refl-6" placeholder="Explain the trade-off…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">📐 Classify It</span>
+      <p style="margin:0;">Which lever class is your elbow — Class 1, 2, or 3 — and does that arrangement give it more range of motion / speed, or more raw lifting force?</p>
+      <textarea id="refl-7" placeholder="Name the class and what it trades for…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🤔 Why Not Everything Is Class 2</span>
+      <p style="margin:0;">Class 2 levers are mechanically efficient, but most of your limb joints (like your elbow) are Class 3 instead. Why would your body use a "weaker" arrangement on purpose?</p>
+      <textarea id="refl-18" placeholder="Explain the trade-off in your own words…"></textarea>
+    </div>
+
+<h3>History: how we learned to measure the body</h3>
+    <div class="timeline">
+      <div class="timeline-item"><div class="t-year">1543</div><div class="t-body"><strong>Andreas Vesalius</strong> publishes <em>De Humani Corporis Fabrica</em>, the first genuinely accurate atlas of human anatomy — built from real human dissection, correcting centuries of errors that came from studying animals instead.</div></div>
+      <div class="timeline-item"><div class="t-year">1830s–1860s</div><div class="t-body"><strong>Guillaume Duchenne</strong> uses controlled electrical stimulation to map exactly which muscle produces which specific movement, becoming a founder of modern electrophysiology.</div></div>
+      <div class="timeline-item"><div class="t-year">1895</div><div class="t-body"><strong>Wilhelm Röntgen</strong> discovers X-rays — the first way to see bones inside a living body without ever cutting it open.</div></div>
+    </div>
+
+    <h3>Real-world application: real bodies get measured every day</h3>
+    <p>Prosthetic hands and robotic arms are deliberately engineered with paired "muscles" — one to close the grip, one to open it — copying exactly the antagonistic-pair design you're about to build. Physiotherapists measure a joint's exact range of motion in degrees to track recovery after an injury, not just ask how it feels. A marathon runner and a weightlifter train completely different muscle qualities — endurance versus raw strength — and coaches prove the difference with real timed, measured data, not opinions. Mechanical advantage calculations exactly like the ones above are how engineers design everything from can-openers (Class 1) to wheelbarrows (Class 2) to construction crane arms (Class 3).</p>
+
+    <div class="game-card">
+      <div class="game-title">⚙️ Mechanism Match</div>
+      <div class="game-sub">Key terms from today's whole briefing. Click a term, then its matching definition — no penalty for a wrong guess, just try again.</div>
+      <div id="game-day1"></div>
+    </div>
+
+  </section>
+
+  <!-- MATERIALS -->
+  <section class="day-block">
+    <span class="day-kicker">Before Part 2 · Build Kit</span>
+    <h2>Choose What You're Bringing</h2>
+    <p class="day-sub">This is a pool, not a checklist — pick what your specific pair actually needs.</p>
+
+    <div class="materials-table-wrap">
+      <table class="materials-table">
+      <thead><tr><th>Material</th><th>Bone / lever arm</th><th>Joint / pivot</th><th>Front muscle (bends it)</th><th>Back muscle (straightens it)</th><th>Labels</th></tr></thead>
+      <tbody>
+      <tr><td class="mat-name">Two cardboard strips</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Two cardboard strips for Bone / lever arm</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Two wooden craft sticks or paint stirrers</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Two wooden craft sticks or paint stirrers for Bone / lever arm</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Two wooden rulers</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Two wooden rulers for Bone / lever arm</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Two flat plastic strips (from packaging)</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Two flat plastic strips (from packaging) for Bone / lever arm</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Tape and scissors</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Tape and scissors for Bone / lever arm</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A brass paper fastener</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A brass paper fastener for Joint / pivot</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A button and a bit of wire</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A button and a bit of wire for Joint / pivot</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A small nut-and-bolt</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A small nut-and-bolt for Joint / pivot</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A safety pin as a hinge</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A safety pin as a hinge for Joint / pivot</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A metal eyelet</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A metal eyelet for Joint / pivot</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A rubber band</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A rubber band for Front muscle (bends it)</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">String tied in a loop</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">String tied in a loop for Front muscle (bends it)</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Elastic cord</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Elastic cord for Front muscle (bends it)</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A hair tie</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A hair tie for Front muscle (bends it)</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Twine looped and tied</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Twine looped and tied for Front muscle (bends it)</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A second rubber band (a different color, if you have one)</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A second rubber band (a different color, if you have one) for Back muscle (straightens it)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A second string loop (a different color, if you have one)</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A second string loop (a different color, if you have one) for Back muscle (straightens it)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A second elastic cord (a different color, if you have one)</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A second elastic cord (a different color, if you have one) for Back muscle (straightens it)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A second hair tie</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A second hair tie for Back muscle (straightens it)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A second twine loop</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A second twine loop for Back muscle (straightens it)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Markers</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Markers for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Sticky notes cut into flags</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Sticky notes cut into flags for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Index cards</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Index cards for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Small flags on toothpicks</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Small flags on toothpicks for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Painter's tape strips</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Painter's tape strips for Labels</span></label></td></tr>
+      </tbody></table></div>
+      <p class="materials-table-note">Use two different colors for the front and back muscle if you can — it makes it obvious which is which when you demonstrate.</p>
+          <div class="slip-preview">
+      <h4>📋 What you're bringing to Part 2:</h4>
+      <ul id="slip-list-preview"></ul>
+      <div class="slip-empty" id="slip-empty">Nothing selected yet.</div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section class="day-block" id="day2">
+    <span class="day-kicker">Part 2 · Build the Pair</span>
+    <h2>Build a Working Antagonistic Pair — Then Prove It</h2>
+    <p class="day-sub">Build one joint with TWO "muscles" attached on opposite sides — one that bends it, one that straightens it back out. This isn't a single-string demo: a real muscle can only pull, so it genuinely takes a pair to move a joint both ways.</p>
+
+    <div class="model3d-wrap">
+      <div class="model3d">
+        <div class="model3d-stage" id="model-stage">
+          <div class="model3d-face f1" style="background:linear-gradient(135deg,#c4b5fd,#7c3aed);"><span><span class="f-icon">🦴</span>Bone<br>Cardboard strip</span></div>
+          <div class="model3d-face f2" style="background:linear-gradient(135deg,#a78bfa,#6d28d9);"><span><span class="f-icon">🔩</span>Joint<br>Brass fastener pivot</span></div>
+          <div class="model3d-face f3" style="background:linear-gradient(135deg,#c4b5fd,#4c1d95);"><span><span class="f-icon">💪</span>Front muscle<br>Pulls to bend it</span></div>
+          <div class="model3d-face f4" style="background:linear-gradient(135deg,#a78bfa,#2e1065);"><span><span class="f-icon">💪</span>Back muscle<br>Pulls to straighten it</span></div>
+          <div class="model3d-face f5" style="background:linear-gradient(135deg,#c4b5fd,#6d28d9);"><span><span class="f-icon">🛠️</span>Build BOTH<br>on opposite sides</span></div>
+          <div class="model3d-face f6" style="background:linear-gradient(135deg,#a78bfa,#4c1d95);"><span><span class="f-icon">🏷️</span>Prove which<br>muscle does what</span></div>
+        </div>
+      </div>
+      <div class="model3d-hint">🖱️ Hover to pause and read each face.</div>
+      <button class="btn btn-ghost model3d-pause" type="button" id="pause-btn">⏸ Pause rotation</button>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">What your model has to prove</span>
+      <p style="margin:0;">A single string proves nothing about how real muscles work — the whole point of this model is TWO muscles pulling in opposite directions across the same joint. An engineer who can't show both muscles working, and explain why neither one can push, hasn't actually built an antagonistic pair yet.</p>
+    </div>
+
+    <h3 id="sec-plan">Plan before you build</h3>
+    <p>Fill this in before you attach anything. This planning table <em>is</em> the real engineering decision — the build itself is just carrying it out.</p>
+    <table class="justify-table">
+      <thead><tr><th>Body part</th><th>Model part</th><th>Material I'm using</th><th>Why this material fits</th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="e.g. Front muscle (bicep)"></td><td><input placeholder="e.g. Bends the joint"></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout subtle">
+      <span class="callout-label">📸 Picture the finished result</span>
+      <p style="margin:0;">Picture a finished model: two cardboard strips joined by a brass-fastener joint, with a rubber band taped to the FRONT of both strips near the joint, and a second rubber band or string taped to the BACK. Pull the front one — the joint bends. Release it, pull the back one — the joint straightens back out. Both muscles are visible and clearly labeled, and neither one can push, only pull.</p>
+    </div>
+
+    <h3>Build it, then prove it</h3>
+    <div class="build-checklist">
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">1.</span><span class="step-text">Join your two cardboard "bones" at one end with the brass fastener as the pivot.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">2.</span><span class="step-text">Attach your FRONT muscle near the joint, on the bending side, so pulling it bends the joint — like a bicep.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">3.</span><span class="step-text">Attach your BACK muscle on the opposite side, so pulling it straightens the joint back out — like a tricep.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">4.</span><span class="step-text">Label both muscles clearly — which one bends, which one straightens.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">5.</span><span class="step-text">Demonstrate both directions — pull the front, release, pull the back — and write down what happens if you try pulling both at once.</span></span></label>
+    </div>
+
+    <h3>Results</h3>
+    <p>Write up your findings — this doubles as notes for tomorrow's presentation.</p>
+    <table class="plan-table">
+      <tr><td style="width:180px;"><strong>Joint modeled</strong></td><td><input placeholder="e.g. Elbow"></td></tr>
+      <tr><td><strong>Which muscle bends it?</strong></td><td><input placeholder="e.g. Front — my &quot;bicep&quot;"></td></tr>
+      <tr><td><strong>Which muscle straightens it?</strong></td><td><input placeholder="e.g. Back — my &quot;tricep&quot;"></td></tr>
+      <tr><td><strong>What happens if you pull both at once?</strong></td><td><input placeholder="e.g. They fight each other — barely moves"></td></tr>
+      <tr><td><strong>Lever class of the joint you modeled</strong></td><td><input placeholder="e.g. Class 3 — my muscles attach close to the joint"></td></tr>
+      <tr><td><strong>Short description</strong></td><td><textarea placeholder="Describe your model and how the demonstration went in 2–3 sentences…"></textarea></td></tr>
+    </table>
+
+    <div class="callout">
+      <span class="callout-label">🪞 Design Review — self-check</span>
+      <p style="margin:0;">What might someone misunderstand about your model without your explanation? Which muscle's job is easier to mix up — the one that bends or the one that straightens — and why?</p>
+      <textarea id="refl-5" placeholder="Write your honest review…"></textarea>
+    </div>
+  </section>
+
+  <!-- DAY 3 -->
+  <section class="day-block" id="day3">
+    <span class="day-kicker">Part 3 · Present the Pair</span>
+    <h2>Present Your Antagonistic Pair</h2>
+    <p class="day-sub">A real engineer defends every part of their model. Here's how to open strong and cover everything that matters.</p>
+
+    <div class="hook-box">
+      <div class="hook-label">Your opening move</div>
+      <p style="margin:0;">Don't say "I'm going to talk about muscles." Instead, hold up your model and ask the room: <em>"This joint has TWO muscles attached — can either one push it back by itself?"</em> Let a few guesses land before you pull both strings and show them the real answer.</p>
+    </div>
+
+    <div class="prep-form">
+      <h3>Prepare your presentation</h3>
+      <p>Fill this in before Part 3 — it's your own script, not busywork.</p>
+
+      <div class="prep-field">
+        <label>i. Your role and responsibility</label>
+        <textarea placeholder="In your own words — who are you in this story, and what were you responsible for figuring out?"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>ii. Three new words or ideas you learned, and what they mean</label>
+        <textarea placeholder="1) &#10;2) &#10;3) "></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>iii. One historical fact you found interesting</label>
+        <textarea placeholder="Which one, and why it stuck with you"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>iv. A real-world application</label>
+        <textarea placeholder="Where does this actually show up outside a classroom?"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>v. Explain your build</label>
+        <div class="prep-autofill-row">
+          <span class="prep-autofill-hint">Materials &amp; reasoning below are pulled from your Part 2 plan table — edit freely.</span>
+          <button type="button" class="prep-autofill-btn">&#8635; Pull from Part 2 again</button>
+        </div>
+        <textarea class="prep-build-materials" placeholder="Materials used and why you chose them…"></textarea>
+        <textarea placeholder="Every label on your build, and what it explains…"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>vi. What you're still not sure about</label>
+        <textarea placeholder="What would you want more explanation or practice on?"></textarea>
+      </div>
+    </div>
+
+    <div class="facilitator-tip">
+      <span class="fac-label">Facilitator only</span>
+      <p>If Pranavi's two muscles don't perfectly mirror each other in strength, that's the best moment of the presentation, not a flaw to smooth over — ask her directly "why might one real muscle need to be stronger than the other in an actual body?" An engineer who can reason about real asymmetry is showing real understanding of muscle pairs, not just reciting the biceps/triceps names.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  Skeletal & Muscular Systems · Muscle Systems Engineer — Pranavi's instance. <a href="../index.html">Both instances →</a>
+</footer>
+
+<!-- Isolated printable materials slip -->
+<div id="print-slip-page">
+  <div class="print-slip-sheet">
+    <h3>📋 Materials I'm Bringing — Part 2</h3>
+    <div class="slip-kid">Muscle Systems Engineer · Pranavi</div>
+    <ul id="slip-list-print"></ul>
+  </div>
+</div>
+
+<!-- Side glossary drawer -->
+<div class="notes-backdrop" id="glossary-backdrop"></div>
+<div class="notes-drawer" id="glossary-drawer">
+  <div class="notes-drawer-head">
+    <h4>📖 Glossary</h4>
+    <button id="glossary-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="glossary">
+      <div class="glossary-item"><div class="word">Joint</div><div class="def">Where two bones meet; most allow movement of a specific type.</div></div>
+      <div class="glossary-item"><div class="word">Ligament</div><div class="def">Tough band connecting bone to bone at a joint.</div></div>
+      <div class="glossary-item"><div class="word">Tendon</div><div class="def">Tough band connecting muscle to bone.</div></div>
+      <div class="glossary-item"><div class="word">Skeletal muscle</div><div class="def">Voluntary muscle attached to bone by tendons.</div></div>
+      <div class="glossary-item"><div class="word">Antagonistic pair</div><div class="def">Two muscles working opposite each other, since a muscle can only pull.</div></div>
+      <div class="glossary-item"><div class="word">Muscle fatigue</div><div class="def">The measurable drop in a muscle's strength or endurance after sustained use.</div></div>
+      <div class="glossary-item"><div class="word">Lever class</div><div class="def">Which of the three arrangements of pivot, force, and load a lever uses.</div></div>
+      <div class="glossary-item"><div class="word">Mechanical advantage</div><div class="def">How much a lever multiplies force — below 1 means it trades force for speed/range instead.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Side notes drawer -->
+<div class="notes-backdrop" id="notes-backdrop"></div>
+<div class="notes-drawer" id="notes-drawer">
+  <div class="notes-drawer-head">
+    <h4>📝 My Notes</h4>
+    <button id="notes-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="notes-section-label">Highlighted words</div>
+    <ul id="hl-collected-list" class="hl-collected-list"></ul>
+    <div id="hl-collected-empty" style="display:none;">Highlight anything in the reading and it'll show up here.</div>
+    <div class="notes-section-label">Free notes</div>
+    <textarea id="notes-textarea" placeholder="Jot anything down…"></textarea>
+    <div id="notes-saved-msg" class="notes-saved-msg"></div>
+  </div>
+</div>
+
+<script>
+  // Progress-sync Worker — cross-device save. SITE_KEY is a soft deterrent
+  // only (any client-side value is visible in devtools), not real auth.
+  window.QUEST_SYNC_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  window.QUEST_SYNC_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+</script>
+<script src="../js/quest.js"></script>
+<script>
+  QuestUI.initKidGate('Pranavi');
+  QuestUI.initFacilitatorCheck();
+
+  QuestUI.initProgressSync('pranavi', 'group-02', 'week-01').then(function () {
+    QuestUI.initHighlighter('pranavi');
+    QuestUI.initNotesDrawer('pranavi');
+    QuestUI.initGlossaryDrawer();
+    QuestUI.initMaterialsPool('pranavi');
+    QuestUI.initBuildChecklist('pranavi');
+    QuestUI.initFieldAutosave('pranavi');
+    QuestUI.initPresentationAutofill('pranavi');
+    QuestUI.initDayTimer('pranavi');
+    QuestUI.initProgressBar('pranavi');
+    QuestUI.initSectionLock('pranavi');
+    QuestUI.initDayLock('pranavi');
+    QuestUI.initCompleteQuest('pranavi');
+    QuestUI.initMatchGame('game-day1', [
+      ["Joint", "Where two bones meet; most allow movement of a specific type."],
+      ["Ligament", "Tough band connecting bone to bone at a joint."],
+      ["Tendon", "Tough band connecting muscle to bone."],
+      ["Skeletal muscle", "Voluntary muscle attached to bone by tendons."],
+      ["Antagonistic pair", "Two muscles working opposite each other, since a muscle can only pull."],
+      ["Muscle fatigue", "The measurable drop in a muscle's strength or endurance after sustained use."],
+      ["Lever class", "Which of the three arrangements of pivot, force, and load a lever uses."],
+      ["Mechanical advantage", "How much a lever multiplies force — below 1 means it trades force for speed/range instead."]
+    ], { pageKey: 'pranavi' });
+    QuestUI.initReflectionChecks('pranavi', [
+      { id: 'refl-1', groups: [['living', 'alive', 'grows', 'growing', 'change', 'changes', 'blood', 'marrow'], ["not dead", "isn't dead", "wrong", "incorrect", "living tissue"]],
+        reread: { anchor: 'sec-skeleton', label: '1. The skeletal system' } },
+      { id: 'refl-8', groups: [['production', 'produce', 'marrow', 'store', 'storage'], ['blood cell', 'blood cells', 'platelet', 'platelets', 'calcium', 'mineral', 'minerals']],
+        reread: { anchor: 'sec-skeleton', label: '1. The skeletal system' } },
+      { id: 'refl-9', groups: [['long bone', 'long bones', 'femur', 'humerus', 'movement'], ['flat bone', 'flat bones', 'skull', 'rib', 'ribs', 'protection']],
+        reread: { anchor: 'sec-skeleton', label: '1. The skeletal system' } },
+      { id: 'refl-10', groups: [['270', 'newborn', 'baby'], ['fuse', 'fused', 'fusing', 'join', 'joined', 'grow', 'growing', 'merge', 'merged']],
+        reread: { anchor: 'sec-skeleton', label: '1. The skeletal system' } },
+      { id: 'refl-2', groups: [['hinge'], ['elbow', 'knee', 'door']],
+        reread: { anchor: 'sec-joints', label: '2. Joints' } },
+      { id: 'refl-11', groups: [['ligament', 'ligaments'], ['bone to bone', 'bone-to-bone', 'two bones', 'between bones', 'connects bone']],
+        reread: { anchor: 'sec-joints', label: '2. Joints' } },
+      { id: 'refl-12', groups: [['ball', 'socket', 'shoulder', 'hip', 'every direction'], ['pivot', 'neck', 'rotate around', 'one bone rotates', 'turns around']],
+        reread: { anchor: 'sec-joints', label: '2. Joints' } },
+      { id: 'refl-4', groups: [['ball', 'socket', 'ball-and-socket'], ['hinge']],
+        reread: { anchor: 'sec-joints', label: '2. Joints' } },
+      { id: 'refl-3', groups: [['pull', 'pulling'], ['pair', 'pairs', 'both', 'two muscles', 'relax', 'opposite']],
+        reread: { anchor: 'sec-muscles', label: '3. The muscular system' } },
+      { id: 'refl-13', groups: [['cardiac', 'heart'], ['never tires', 'never gets tired', "doesn't tire", "doesn't get tired", 'beating', 'entire life', 'whole life', 'keep beating']],
+        reread: { anchor: 'sec-muscles', label: '3. The muscular system' } },
+      { id: 'refl-14', groups: [['tendon', 'muscle to bone', 'muscle-to-bone'], ['ligament', 'bone to bone', 'bone-to-bone']],
+        reread: { anchor: 'sec-muscles', label: '3. The muscular system' } },
+      { id: 'refl-19', groups: [['fatigue', 'weaker', 'tired'], ['timed', 'time', 'test', 'hold', 'measure', 'measured', 'record']],
+        reread: { anchor: 'sec-muscles', label: '3. The muscular system' } },
+      { id: 'refl-16', groups: [['joint', 'pivot'], ['bone', 'lever arm'], ['muscle', 'force']],
+        reread: { anchor: 'sec-lever', label: '4. Put together, it\'s a working pair' } },
+      { id: 'refl-17', groups: [['load', 'middle', 'between'], ['efficient', 'small force', 'less force', 'lift more', 'mechanical advantage']],
+        reread: { anchor: 'sec-lever', label: '4. Put together, it\'s a working pair' } },
+      { id: 'refl-6', groups: [['speed', 'fast', 'range', 'reach', 'far', 'distance', 'motion'], ['throw', 'throwing', 'grab', 'reaching', 'catch', 'hand']],
+        reread: { anchor: 'sec-lever', label: '4. Put together, it\'s a working pair' } },
+      { id: 'refl-7', groups: [['class 3', 'class three'], ['range', 'speed', 'motion', 'reach', 'fast']],
+        reread: { anchor: 'sec-lever', label: '4. Put together, it\'s a working pair' } },
+      { id: 'refl-18', groups: [['class 3', 'class three', 'force in the middle'], ['speed', 'fast', 'range', 'reach', 'far', 'distance', 'motion']],
+        reread: { anchor: 'sec-lever', label: '4. Put together, it\'s a working pair' } },
+      { id: 'refl-5', groups: [],
+        reread: { anchor: 'sec-plan', label: 'Plan before you build' } }
+    ]);
+
+    var modelPaused = false;
+    document.getElementById('pause-btn').addEventListener('click', function () {
+      modelPaused = !modelPaused;
+      document.getElementById('model-stage').classList.toggle('paused', modelPaused);
+      this.textContent = modelPaused ? '▶ Resume rotation' : '⏸ Pause rotation';
+    });
+  });
+
+  window.addEventListener('beforeprint', function () { document.body.classList.add('printing-slip'); });
+  window.addEventListener('afterprint', function () { document.body.classList.remove('printing-slip'); });
+</script>
+</body>
+</html>

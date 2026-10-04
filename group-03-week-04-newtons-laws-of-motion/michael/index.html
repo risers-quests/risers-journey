@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Newton's Laws of Motion · Motion Systems Engineer</title>
+<script>
+  (function () {
+    try {
+      window.QUEST_FACILITATOR_MODE = new URLSearchParams(window.location.search).get('fac') === '1';
+    } catch (e) { window.QUEST_FACILITATOR_MODE = false; }
+    try {
+      var kid = localStorage.getItem('imm-l3-kid');
+      if (!kid || kid.toLowerCase() !== 'michael') document.documentElement.classList.add('gate-locked');
+    } catch (e) { document.documentElement.classList.add('gate-locked'); }
+  })();
+</script>
+<style>
+  html.gate-locked main, html.gate-locked .progress-summary { display: none !important; }
+  html.facilitator-mode #facilitator-banner { display: block; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="lens-michael">
+
+<div id="facilitator-banner" style="display:none;">🧑‍🏫 Facilitator View, nothing on this page is being timed, saved, or synced. <a href="?" id="facilitator-banner-exit">Exit Facilitator View →</a></div>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand-group">
+      <a href="../index.html" class="brand">🚀 Newton's Laws of Motion<small>Motion Systems Engineer</small></a>
+      <span class="day-badge" id="quest-day-badge"></span>
+      <span class="session-timer" id="session-timer"></span>
+    </div>
+    <nav class="day-nav">
+      <a href="#day1">Day 1</a>
+      <a href="#day2">Day 2</a>
+      <a href="#day3">Day 3</a>
+      <a href="#day4">Day 4</a>
+      <button class="notes-toggle-btn" id="glossary-toggle-btn" type="button">📖 Glossary</button>
+      <button class="notes-toggle-btn" id="notes-toggle-btn" type="button">📝 My Notes</button>
+      <button class="print-btn" id="print-slip-btn" type="button">🖨️ Print my bringing slip</button>
+    </nav>
+  </div>
+</header>
+
+<div class="progress-summary">
+  <div class="container">
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 1</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day1-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day1-label">0/8</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 2</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day2-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day2-label">0/1</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 3</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day3-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day3-label">0/6</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 4</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day4-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="quest-gate-block">
+  <div class="gate-block-wrap">
+    <div class="gate-icon">🔒</div>
+    <h2>This is Michael's quest</h2>
+    <p>Confirm it's you to continue.</p>
+    <div class="name-gate-card">
+      <button class="btn btn-primary gate-confirm-btn" id="gate-confirm-btn" type="button">✅ Yes, I'm Michael! Continue</button>
+      <div class="name-gate-msg" id="gate-name-msg"></div>
+    </div>
+    <a class="gate-not-you" href="../index.html">Not you? Find your own quest link →</a>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- COVER -->
+  <section class="cover">
+    <div class="cover-watermark" aria-hidden="true">🚀</div>
+    <div class="format-pill">Discovery Quest</div><br>
+    <span class="lens-pill">🚀 Motion Systems Engineer</span>
+    <h1>Three Laws Behind Every Push, Pull, and Launch</h1>
+    <p class="subtitle">A resting object won't move on its own. A moving object won't stop on its own. Force, mass, and acceleration are locked together in one formula. And every push has an equal push back. Those are Newton's three laws, and they explain everything from walking to a rocket launch.</p>
+    <div class="kid-name">Motion Systems Engineer: Michael</div>
+    <div class="framing">
+      <p style="margin:0;">You're the Motion Systems Engineer on this investigation. Day 1 briefs you on all three of Newton's laws, in order, inertia, force and acceleration, and action-reaction, each one with a real worked example before you're ever asked to calculate anything yourself. Day 2, you run Mission Liftoff, eight real calculations tracking one probe's launch from its first engine test to its final boost speed. Day 3, you tape a balloon engine onto a toy car and race it, light versus loaded with paperclips. Day 4, you report what you found.</p>
+    </div>
+  </section>
+
+  <!-- DAY 1 -->
+  <section class="day-block" id="day1">
+    <span class="day-kicker">Day 1 · Systems Briefing</span>
+    <h2>Why Things Move the Way They Do</h2>
+    <p class="day-sub">Three laws, discovered by one person, that still describe every motion you'll ever see, from a dropped pencil to a rocket launch. This briefing covers all three before you calculate anything with them yourself.</p>
+
+    <h3 id="sec-1"><span class="sec-num">1</span>Newton's First Law, an object keeps doing what it's already doing</h3>
+    <p>Newton's first law says something that sounds almost too simple: an object at rest stays at rest, and an object already moving keeps moving at the same speed in the same direction, unless a force pushes or pulls on it and changes that. This tendency to keep doing whatever it's already doing is called <strong>inertia</strong>. A book sitting on a table has inertia. It will sit there forever unless something, a hand, a gust of wind, pushes it. A hockey puck sliding on ice has inertia too, and since ice barely has any friction to slow it down, the puck keeps gliding for a very long time before it finally stops.</p>
+    <p>Friction is exactly why this law is easy to miss in everyday life. Roll a ball across a rug and it slows down fast, not because it "runs out of motion" on its own, but because friction between the ball and the rug is an unbalanced force constantly working against it. Remove the friction, like a puck on ice or a spacecraft coasting through the emptiness of space, and the object just keeps going, exactly as the first law predicts.</p>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔧 Quick Check</span>
+      <p style="margin:0;">A resting toy car will not roll across the floor by itself, no matter how long you wait. What does it actually take to get it moving?</p>
+      <textarea id="refl-1" placeholder="Name what's actually needed…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔧 Quick Check</span>
+      <p style="margin:0;">A spacecraft coasting through empty space, engines off, keeps moving at the same speed forever. Why doesn't it slow down and stop the way a rolling ball does on a rug?</p>
+      <textarea id="refl-2" placeholder="Name what's missing out in space…"></textarea>
+    </div>
+
+    <h3 id="sec-2"><span class="sec-num">2</span>Newton's Second Law, force, mass, and acceleration</h3>
+    <p>Newton's second law connects three things in one formula: <strong>force equals mass times acceleration</strong>, written F = m × a. Force is measured in <strong>newtons (N)</strong>. Mass is how much matter an object is made of, measured in kilograms. Acceleration is how quickly speed changes, measured in meters per second squared (m/s²).</p>
+    <p>Here's what that formula actually predicts. Push a 2 kg cart with 10 newtons of force, and it accelerates at 10 ÷ 2 = 5 m/s². Push a heavier, 5 kg cart with that exact same 10 newtons, and it only accelerates at 10 ÷ 5 = 2 m/s², slower, because more mass resists a change in motion more. That resistance is the same inertia from the first law, just now with a real number attached to it: the more mass something has, the more force it takes to get it accelerating at the same rate.</p>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔧 Quick Check</span>
+      <p style="margin:0;">Two identical engines each push with the same 200 newtons of force. Probe A has a mass of 100 kg. Probe B has a mass of 400 kg. Which probe accelerates faster, and why?</p>
+      <textarea id="refl-3" placeholder="Say which one and why…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔧 Quick Check</span>
+      <p style="margin:0;">Using F = m × a, a 3 kg object accelerating at 4 m/s² needs how many newtons of force?</p>
+      <textarea id="refl-4" placeholder="Multiply mass by acceleration…"></textarea>
+    </div>
+
+    <h3 id="sec-3"><span class="sec-num">3</span>Newton's Third Law, every push has a push back</h3>
+    <p>Newton's third law says that forces always come in pairs: for every action, there's an equal and opposite reaction. When you walk, your foot pushes backward against the ground, and the ground pushes forward against your foot, just as hard, that forward push is what actually moves you. Swimming works the same way: you push water backward with your arms, and the water pushes you forward.</p>
+    <p>A rocket engine is the clearest example of all. It doesn't push against the ground, or the air, or anything outside itself, there's nothing to push against once it's in the vacuum of space. Instead, it burns fuel and throws the exhaust gas backward, out of the engine, at very high speed. By the third law, that backward push on the exhaust creates an equal forward push on the rocket. A released balloon works on the exact same principle: air rushes out the back, and the balloon shoots forward.</p>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔧 Quick Check</span>
+      <p style="margin:0;">A rocket engine has nothing outside itself to push against once it's in space, no ground, no air. So how does it actually move the rocket forward?</p>
+      <textarea id="refl-6" placeholder="Explain what the engine pushes against instead…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔧 Quick Check</span>
+      <p style="margin:0;">When you push off a wall while swimming, the wall pushes back on you just as hard. Which of Newton's three laws is this, and how do you know?</p>
+      <textarea id="refl-8" placeholder="Name the law and explain why it fits…"></textarea>
+    </div>
+
+    <h3 id="sec-4"><span class="sec-num">4</span>Put together, all three laws in one system</h3>
+    <p>A real launch uses all three laws at once, not one at a time. Before ignition, the rocket sits perfectly still on the pad, that's the first law, at rest and staying at rest, because gravity pulling down is exactly balanced by the pad pushing up. The instant the engines fire, they throw exhaust gas backward at enormous speed, and the third law creates an equal forward push on the rocket. That forward push is a force, and the second law, F = m × a, is what actually determines how fast the rocket accelerates upward, given its mass. As fuel burns off, the rocket's mass drops, so that same engine force produces more and more acceleration as the flight goes on.</p>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔢 Quick Check</span>
+      <p style="margin:0;">As a rocket burns fuel during flight, its mass keeps dropping while the engine force stays about the same. Using F = m × a, what happens to its acceleration as it gets lighter?</p>
+      <textarea id="refl-9" placeholder="Explain what happens as mass drops…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔢 Quick Check</span>
+      <p style="margin:0;">Trace the real chain from a rocket sitting still on the pad to it flying upward: name the law that explains why it doesn't move on its own, the law that explains the forward push from the engine, and the law that turns that push into an actual acceleration number.</p>
+      <textarea id="refl-10" placeholder="Name all three, in order…"></textarea>
+    </div>
+
+    <div class="game-card">
+      <div class="game-title">🔍 Word Match</div>
+      <div class="game-sub">Key terms from the whole reading. Click a term, then its matching definition, no penalty for a wrong guess, just try again.</div>
+      <div id="game-day1"></div>
+    </div>
+
+    <div class="game-card">
+      <div class="game-title">🧭 Trace the Sequence: Why Seatbelts Work</div>
+      <div class="game-sub">A car crash, step by step. Click the steps in the order they actually happen, in real life this all takes less than a second.</div>
+      <div id="seq-day1"></div>
+    </div>
+
+  </section>
+
+  <!-- DAY 2: MISSION -->
+  <section class="day-block" id="day2">
+    <span class="day-kicker">Day 2 · Run the Mission</span>
+    <h2>Mission Liftoff: Launch a Real Probe</h2>
+    <p class="day-sub">Eight real calculations, back to back, tracking one probe from its first engine test to its final boost speed. Nothing here is new information, it's the numbers hiding inside everything Day 1 just covered.</p>
+
+    <div id="calc-quest-liftoff"></div>
+
+    <textarea id="refl-mission" style="display:none" aria-hidden="true" tabindex="-1"></textarea>
+  </section>
+
+  <!-- MATERIALS -->
+  <section class="day-block">
+    <span class="day-kicker">Before Day 3 · Build Kit</span>
+    <h2>Choose What You're Bringing</h2>
+    <p class="day-sub">Find something that already rolls, grab two balloons, a straw, tape, and a handful of paperclips. You're building an engine, not the wheels.</p>
+
+    <div class="materials-table-wrap">
+      <table class="materials-table">
+      <thead><tr><th>Material</th><th>Something that rolls</th><th>The engine</th><th>The added weight</th></tr></thead>
+      <tbody>
+      <tr><td class="mat-name">A toy car</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A toy car for Something that rolls</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A small wheeled toy or truck</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A small wheeled toy or truck for Something that rolls</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">2 balloons</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">2 balloons for The engine</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A drinking straw</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A drinking straw for The engine</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Tape</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Tape for The engine</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A few paperclips</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A few paperclips for The added weight</span></label></td></tr>
+      </tbody></table></div>
+      <p class="materials-table-note">One item from each column. The lighter it is, the better, a small toy car or wheeled toy is the sweet spot. Skip anything heavy like a real skateboard or a rolling chair, a balloon isn't strong enough to move that much weight.</p>
+          <div class="slip-preview">
+      <h4>📋 What you're bringing to Day 3:</h4>
+      <ul id="slip-list-preview"></ul>
+      <div class="slip-empty" id="slip-empty">Nothing selected yet.</div>
+    </div>
+  </section>
+
+  <!-- DAY 3 -->
+  <section class="day-block" id="day3">
+    <span class="day-kicker">Day 3 · Build Day</span>
+    <h2>Build a Balloon-Powered Racer</h2>
+    <p class="day-sub">Tape a balloon engine onto something that already rolls. One real build step, then two test launches.</p>
+
+    <h3>What you're building</h3>
+    <p>A straw taped flat along the top of a toy car (or any small light thing with wheels), pointing straight backward, with a balloon taped to the front of the straw. You're not building the wheels, you're borrowing them, and lighter is better, a balloon only has enough push to move something small. Pinch the balloon's neck shut, let go, and the air rushing backward out of the neck pushes the car forward, the third law. Clip paperclips onto the balloon for the second run, and the same push now has more mass to move, so it goes slower and less far, the second law.</p>
+
+    <h3>Build steps</h3>
+    <div class="build-checklist">
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">1.</span><span class="step-text">Tape a straw flat along the top of your toy car, pointing straight backward off the rear end.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">2.</span><span class="step-text">Blow up a balloon, pinch the neck shut with your fingers (don't tie it), and tape it to the front of the straw with the neck facing backward.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">3.</span><span class="step-text">Set the car on a smooth floor, let go of the neck, and watch it roll forward. Notice how far it goes.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">4.</span><span class="step-text">Take the balloon off, blow it up the exact same amount, and clip 3 or 4 paperclips onto it before taping it back on.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">5.</span><span class="step-text">Let go from the same spot again. Compare: it should go slower and not as far.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">6.</span><span class="step-text">Talk through why, using the second and third laws.</span></span></label>
+    </div>
+
+    <h3>Explain what you built</h3>
+    <div class="callout">
+      <label>Why did your car move forward when the balloon's air rushed out the back, and why did it go slower once you added the paperclips? Use both the second and third laws.</label>
+      <textarea id="refl-b1" placeholder="Use what you just watched happen…"></textarea>
+    </div>
+
+    <h3 id="sec-plan">Log your build</h3>
+    <p>Now that you've tried both, fill this in, the record of exactly what happened. This becomes your notes for tomorrow's presentation.</p>
+    <table class="justify-table">
+      <thead><tr><th>Run</th><th>Balloon (plain or paperclips)</th><th>What happened</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="e.g. Run 1"></td><td><input placeholder="e.g. plain"></td><td><input placeholder="e.g. rolled across the room"></td><td><textarea></textarea></td></tr>
+        <tr><td><input placeholder="e.g. Run 2"></td><td><input placeholder="e.g. paperclips"></td><td><input placeholder="e.g. only made it a few feet"></td><td><textarea></textarea></td></tr>
+      </tbody>
+    </table>
+
+  </section>
+
+  <!-- DAY 4 -->
+  <section class="day-block" id="day4">
+    <span class="day-kicker">Day 4 · Present the Findings</span>
+    <h2>Present What You Found</h2>
+    <p class="day-sub">A real engineer defends every claim they make. Here's how to open strong and cover everything that matters.</p>
+
+    <div class="hook-box">
+      <div class="hook-label">Your opening move</div>
+      <p style="margin:0;">Don't open with "I'm going to talk about Newton's laws." Instead, launch your balloon car in front of the room before you say anything, and ask: <em>"What actually pushed this car forward, if nobody touched it?"</em> Let a few guesses land before you explain it.</p>
+    </div>
+
+    <div class="prep-form">
+      <h3>Prepare your presentation</h3>
+      <p>None of this gets typed into a box. Grab a stack of index cards and write short answers to each prompt below in your own hand, one card per prompt is plenty. Bring the cards to Day 4 and glance at them while you talk; they're yours to prepare with, not a script to read word for word.</p>
+
+      <div class="prep-field">
+        <label>i. Your role and responsibility</label>
+        <p style="margin:0;">In your own words, who are you in this story, and what were you responsible for figuring out?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>ii. Three new words or ideas you learned, and what they mean</label>
+        <p style="margin:0;">Pick three, and write a short, correct definition for each in your own words.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>iii. Your closest call in the mission</label>
+        <p style="margin:0;">Which leg of Mission Liftoff took you the most tries, and what finally clicked?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>iv. A real-world application</label>
+        <p style="margin:0;">Where do real engineers actually use Newton's laws outside a classroom?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>v. Explain your build</label>
+        <p style="margin:0;">What you built, why it works, and what happened once you clipped paperclips onto the balloon.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>vi. What you're still not sure about</label>
+        <p style="margin:0;">What would you want more explanation or practice on?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>vii. Cover the whole quest</label>
+        <p style="margin:0;">Walk through all three of Newton's laws, one at a time, as if you're teaching them to someone hearing it for the very first time: inertia, force and acceleration, and action-reaction, then how your build and Mission Liftoff each showed those laws in action.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  Newton's Laws of Motion · Motion Systems Engineer, Michael's instance. <a href="../index.html">Back to the quest hub →</a>
+</footer>
+
+<!-- Isolated printable materials slip -->
+<div id="print-slip-page">
+  <div class="print-slip-sheet">
+    <h3>📋 Materials I'm Bringing, Day 3</h3>
+    <div class="slip-kid">Motion Systems Engineer · Michael</div>
+    <ul id="slip-list-print"></ul>
+  </div>
+</div>
+
+<!-- Side glossary drawer -->
+<div class="notes-backdrop" id="glossary-backdrop"></div>
+<div class="notes-drawer" id="glossary-drawer">
+  <div class="notes-drawer-head">
+    <h4>📖 Glossary</h4>
+    <button id="glossary-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="glossary">
+      <div class="glossary-item"><div class="word">Inertia</div><div class="def">An object's tendency to keep doing whatever it's already doing, staying at rest or staying in motion, unless a force changes that.</div></div>
+      <div class="glossary-item"><div class="word">Force</div><div class="def">A push or a pull on an object, measured in newtons (N).</div></div>
+      <div class="glossary-item"><div class="word">Mass</div><div class="def">How much matter an object is made of, measured in kilograms, the same everywhere regardless of gravity.</div></div>
+      <div class="glossary-item"><div class="word">Acceleration</div><div class="def">How quickly an object's speed changes, measured in meters per second squared (m/s²).</div></div>
+      <div class="glossary-item"><div class="word">Newton's first law</div><div class="def">An object at rest stays at rest, and an object in motion stays in motion, unless an unbalanced force acts on it.</div></div>
+      <div class="glossary-item"><div class="word">Newton's second law</div><div class="def">Force equals mass times acceleration (F = m × a), more mass needs more force to reach the same acceleration.</div></div>
+      <div class="glossary-item"><div class="word">Newton's third law</div><div class="def">For every action, there's an equal and opposite reaction, every push has a push back.</div></div>
+      <div class="glossary-item"><div class="word">Friction</div><div class="def">A force that resists motion between two surfaces touching each other, it's what actually slows a rolling ball down.</div></div>
+      <div class="glossary-item"><div class="word">Net force</div><div class="def">The overall force left over after every push and pull on an object is combined, this is the number that actually decides acceleration.</div></div>
+      <div class="glossary-item"><div class="word">Momentum</div><div class="def">Mass times velocity, conserved when objects push against each other, so a lighter object moves faster to carry the same momentum a heavier one does.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Side notes drawer -->
+<div class="notes-backdrop" id="notes-backdrop"></div>
+<div class="notes-drawer" id="notes-drawer">
+  <div class="notes-drawer-head">
+    <h4>📝 My Notes</h4>
+    <button id="notes-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="notes-section-label">Highlighted words</div>
+    <ul id="hl-collected-list" class="hl-collected-list"></ul>
+    <div id="hl-collected-empty" style="display:none;">Highlight anything in the reading and it'll show up here.</div>
+    <div class="notes-section-label">Free notes</div>
+    <textarea id="notes-textarea" placeholder="Jot anything down…"></textarea>
+    <div id="notes-saved-msg" class="notes-saved-msg"></div>
+  </div>
+</div>
+
+<script>
+  // Progress-sync Worker, cross-device save. SITE_KEY is a soft deterrent
+  // only (any client-side value is visible in devtools), not real auth.
+  window.QUEST_SYNC_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  window.QUEST_SYNC_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+</script>
+<script src="../js/quest.js"></script>
+<script>
+  QuestUI.initKidGate('Michael');
+  QuestUI.initFacilitatorCheck();
+
+  QuestUI.initProgressSync('michael', 'group-03', 'week-04').then(function () {
+    QuestUI.initHighlighter('michael');
+    QuestUI.initNotesDrawer('michael');
+    QuestUI.initGlossaryDrawer();
+    QuestUI.initMaterialsPool('michael');
+    QuestUI.initBuildChecklist('michael');
+    QuestUI.initFieldAutosave('michael');
+    QuestUI.initPresentationAutofill('michael');
+    QuestUI.initDayTimer('michael');
+    QuestUI.initProgressBar('michael');
+    // Section/day locking deliberately not wired up — every section and
+    // day is open from the start, not gated behind finishing the one
+    // before it.
+    QuestUI.initCompleteQuest('michael');
+
+    QuestUI.initCalcQuest('calc-quest-liftoff', {
+      pageKey: 'michael',
+      markerIcon: '🚀',
+      startLabel: 'Engine Test',
+      goalLabel: 'Final Boost',
+      completeTitle: 'Mission Liftoff complete!',
+      completionReflId: 'refl-mission',
+      recap: [
+        'An 800 kg probe accelerating at 5 m/s² needs 4,000 N of force, F = m × a.',
+        'A 6,000 N engine on a 1,000 kg probe produces 6 m/s² of acceleration, a = F ÷ m.',
+        'A probe with 9,000 N of force and 3 m/s² of acceleration has a mass of 3,000 kg, m = F ÷ a.',
+        'A 5,000 N engine fighting 1,200 N of drag leaves a 3,800 N net force, which is 4 m/s² on a 950 kg probe.',
+        'Exhaust of 3 kg leaving at 150 m/s pushes a 500 kg rocket forward at 0.9 m/s, momentum before equals momentum after.',
+        'An 800 kg probe weighs 8,000 N on Earth, weight = mass × 10.',
+        'Accelerating at 6 m/s² from rest for 40 seconds reaches a final speed of 240 m/s.',
+        'That same 4,000 N engine, now pushing a heavier 1,600 kg fully-fueled probe, only manages 2.5 m/s² of acceleration.'
+      ],
+      stages: [
+        {
+          title: 'Finding Force',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'A 4 kg cart needs to accelerate at 3 m/s². Using F = m × a, that takes 4 × 3 = 12 newtons of force.<br>'
+            + 'Pictorial, see the pattern:<br><span class="calc-cpa-pattern">[mass] × [acceleration] = [force]</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>force (N) = mass (kg) × acceleration (m/s²)</strong><br><br>'
+            + '<strong>Your probe has a mass of 800 kg, and it needs to accelerate at 5 m/s² to reach orbit.</strong>',
+          prompt: 'How many newtons of force does the engine need to produce?',
+          hint: 'Multiply the mass by the acceleration.',
+          hint2: '800 × 5 = ?',
+          answer: 4000, tolerance: 0, unit: 'newtons (N)',
+          explain: 'F = m × a works the same way no matter the size of the numbers, mass times acceleration always gives you the force needed.'
+        },
+        {
+          title: 'Finding Acceleration',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'A 10 kg crate is pushed with 50 newtons of force. Rearranged, acceleration = force ÷ mass, so 50 ÷ 10 = 5 m/s².<br>'
+            + 'Pictorial, see the pattern:<br><span class="calc-cpa-pattern">[force] ÷ [mass] = [acceleration]</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>acceleration (m/s²) = force (N) ÷ mass (kg)</strong><br><br>'
+            + '<strong>Your probe\'s engine now produces 6,000 newtons of force, and the probe has a mass of 1,000 kg.</strong>',
+          prompt: 'What is the probe\'s acceleration, in m/s²?',
+          hint: 'Divide the force by the mass.',
+          hint2: '6000 ÷ 1000 = ?',
+          answer: 6, tolerance: 0, unit: 'm/s²',
+          explain: 'Same formula, just rearranged to solve for acceleration instead of force, divide instead of multiply.'
+        },
+        {
+          title: 'Finding Mass',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'A cart accelerates at 4 m/s² when pushed with 20 newtons of force. Rearranged, mass = force ÷ acceleration, so 20 ÷ 4 = 5 kg.<br>'
+            + 'Pictorial, see the pattern:<br><span class="calc-cpa-pattern">[force] ÷ [acceleration] = [mass]</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>mass (kg) = force (N) ÷ acceleration (m/s²)</strong><br><br>'
+            + '<strong>Your probe\'s booster produces 9,000 newtons of force and gives it an acceleration of 3 m/s².</strong>',
+          prompt: 'What is the probe\'s mass, in kg?',
+          hint: 'Divide the force by the acceleration.',
+          hint2: '9000 ÷ 3 = ?',
+          answer: 3000, tolerance: 0, unit: 'kg',
+          explain: 'F = m × a rearranges three different ways depending on which number you already know, and which one you’re solving for.'
+        },
+        {
+          title: 'Net Force With Drag',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'An engine pushes with 100 N, but drag pushes back with 30 N. The net force is 100 − 30 = 70 N. On a 10 kg object, that\'s an acceleration of 70 ÷ 10 = 7 m/s².<br>'
+            + 'Pictorial, see the two steps:<br><span class="calc-cpa-pattern">[engine force] − [drag] = [net force]</span><br><span class="calc-cpa-pattern">[net force] ÷ [mass] = [acceleration]</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>net force = applied force − resisting force, then acceleration = net force ÷ mass</strong><br><br>'
+            + '<strong>Your probe\'s engine pushes with 5,000 N, but atmospheric drag pushes back with 1,200 N. The probe\'s mass is 950 kg. First find the net force (5,000 minus 1,200), then divide that net force by 950 to find the acceleration.</strong>',
+          prompt: 'What is the probe\'s acceleration, in m/s²?',
+          hint: 'First: 5000 − 1200. Then divide that answer by 950.',
+          hint2: '5000 − 1200 = 3800. Then 3800 ÷ 950 = ?',
+          answer: 4, tolerance: 0, unit: 'm/s²',
+          explain: 'Drag never gets ignored in a real launch, it’s a real opposing force, so it always comes out of the engine’s force first, before the second law ever gets applied.'
+        },
+        {
+          title: 'Action-Reaction: Exhaust Push',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'A skater pushes off a 20 kg sled, sending it backward at 2 m/s. The sled\'s momentum is 20 × 2 = 40 kg·m/s, and by the third law, the skater gets that exact same momentum forward. If the skater has a mass of 40 kg, their forward speed is 40 ÷ 40 = 1 m/s.<br>'
+            + 'Pictorial, see the pattern:<br><span class="calc-cpa-pattern">[exhaust mass] × [exhaust speed] = [momentum, shared equally forward]</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>momentum before = momentum after, so rocket speed = (exhaust mass × exhaust speed) ÷ rocket mass</strong><br><br>'
+            + '<strong>Your engine fires 3 kg of exhaust backward at 150 m/s. The rocket\'s own mass (not counting that exhaust) is 500 kg.</strong>',
+          prompt: 'How fast does the rocket move forward, in m/s?',
+          hint: 'First find the exhaust\'s momentum: 3 × 150. Then divide that by the rocket\'s mass, 500.',
+          hint2: '3 × 150 = 450. Then 450 ÷ 500 = ?',
+          answer: 0.9, tolerance: 0.05, unit: 'm/s',
+          explain: 'This is Newton\'s third law with real numbers attached, the backward push on the exhaust and the forward push on the rocket carry the exact same amount of momentum, just shared between very different masses.'
+        },
+        {
+          title: 'Weight, a Force From Gravity',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'A 50 kg crate on Earth weighs 50 × 10 = 500 newtons, since gravity pulls with about 10 newtons for every kilogram of mass.<br>'
+            + 'Pictorial, see the pattern:<br><span class="calc-cpa-pattern">[mass] × [gravity\'s pull per kg] = [weight]</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>weight (N) = mass (kg) × 10</strong><br><br>'
+            + '<strong>Your probe has a mass of 800 kg.</strong>',
+          prompt: 'How many newtons does the probe weigh on Earth?',
+          hint: 'Multiply the mass by 10.',
+          hint2: '800 × 10 = ?',
+          answer: 8000, tolerance: 0, unit: 'newtons (N)',
+          explain: 'Weight is just a specific kind of force, gravity\'s pull, so it uses the exact same F = m × a formula, with gravity\'s pull standing in for acceleration.'
+        },
+        {
+          title: 'Final Boost Speed',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'Starting from rest, an object accelerating at 4 m/s² for 3 seconds reaches a speed of 4 × 3 = 12 m/s.<br>'
+            + 'Pictorial, see the pattern:<br><span class="calc-cpa-pattern">[acceleration] × [time] = [final speed]</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>final speed (m/s) = acceleration (m/s²) × time (s)</strong><br><br>'
+            + '<strong>Your probe starts from rest and accelerates at 6 m/s², the same acceleration you calculated in an earlier leg, for 40 seconds.</strong>',
+          prompt: 'How fast is the probe going at the end of that boost, in m/s?',
+          hint: 'Multiply the acceleration by the time.',
+          hint2: '6 × 40 = ?',
+          answer: 240, tolerance: 0, unit: 'm/s',
+          explain: 'Acceleration is a rate of speeding up, so multiplying it by how long it acted for gives you the total speed gained, starting from rest.'
+        },
+        {
+          title: 'A Heavier Load',
+          briefing: 'Concrete, a simple example first:<br>'
+            + 'The same 100 N engine that once accelerated a 10 kg cart at 10 m/s² only manages 100 ÷ 20 = 5 m/s² once the cart\'s mass doubles to 20 kg.<br>'
+            + 'Pictorial, see the pattern:<br><span class="calc-cpa-pattern">[same force] ÷ [new, heavier mass] = [new, smaller acceleration]</span><br>'
+            + 'Abstract, the rule, written as a formula:<br><strong>acceleration (m/s²) = force (N) ÷ mass (kg)</strong><br><br>'
+            + '<strong>Your engine still produces the same 4,000 newtons of force you calculated in an earlier leg. Extra fuel has now been loaded on board, bringing the probe\'s total mass up to 1,600 kg.</strong>',
+          prompt: 'What is the probe\'s acceleration now, in m/s²?',
+          hint: 'Divide the force by the new, heavier mass.',
+          hint2: '4000 ÷ 1600 = ?',
+          answer: 2.5, tolerance: 0.1, unit: 'm/s²',
+          explain: 'Same engine, same force, but more mass to move, so the second law predicts exactly what happens: acceleration drops. That’s the entire reason real rockets get faster as they burn off fuel and get lighter, not the other way around.'
+        }
+      ]
+    });
+
+    QuestUI.initMatchGame('game-day1', [
+      ["Inertia", "An object’s tendency to keep doing whatever it’s already doing, staying at rest or staying in motion, unless a force changes that."],
+      ["Force", "A push or a pull on an object, measured in newtons."],
+      ["Mass", "How much matter an object is made of, measured in kilograms, the same everywhere."],
+      ["Acceleration", "How quickly an object’s speed changes, measured in meters per second squared."],
+      ["Newton’s first law", "An object at rest stays at rest, and an object in motion stays in motion, unless an unbalanced force acts on it."],
+      ["Newton’s second law", "Force equals mass times acceleration, more mass needs more force for the same acceleration."],
+      ["Newton’s third law", "For every action, there’s an equal and opposite reaction."],
+      ["Friction", "A force that resists motion between two surfaces touching each other."]
+    ], { pageKey: 'michael' });
+    QuestUI.initSequenceGame('seq-day1', [
+      "The car is moving forward at a steady speed. Everything inside it, including you, is moving at that exact same speed (1st law: things in motion stay in motion together).",
+      "The car slams into a wall and its frame stops almost instantly, but your body doesn't know that yet.",
+      "Your body keeps trying to move forward at the speed it had a moment ago (1st law: a moving object keeps moving unless a force stops it).",
+      "The seatbelt stretches tight across your chest and pushes back on you, slowing your body down over a fraction of a second instead of instantly (2nd law: force needed depends on how fast the velocity change happens).",
+      "As the belt pushes back on you, your body pushes forward on the belt just as hard (3rd law: equal and opposite reaction).",
+      "Because the belt spreads that stopping force over a slightly longer time than a sudden hit on the dashboard would, the force on your body each instant is smaller, which is exactly why seatbelts reduce injury."
+    ], { pageKey: 'michael' });
+    QuestUI.initReflectionChecks('michael', [
+      { id: 'refl-1', groups: [['force', 'push', 'pull']],
+        reread: { anchor: 'sec-1', label: '1. Newton\'s First Law' } },
+      { id: 'refl-2', groups: [['friction'], ['no friction', 'nothing', 'no force', 'not there', 'vacuum', 'empty']],
+        reread: { anchor: 'sec-1', label: '1. Newton\'s First Law' } },
+      { id: 'refl-3', groups: [['probe a', 'lighter', 'less mass'], ['more mass', 'heavier', 'resists', 'slower']],
+        reread: { anchor: 'sec-2', label: '2. Newton\'s Second Law' } },
+      { id: 'refl-4', groups: [['12']],
+        reread: { anchor: 'sec-2', label: '2. Newton\'s Second Law' } },
+      { id: 'refl-6', groups: [['exhaust', 'gas', 'fuel'], ['push', 'reaction', 'backward', 'opposite']],
+        reread: { anchor: 'sec-3', label: '3. Newton\'s Third Law' } },
+      { id: 'refl-8', groups: [['third', '3rd']],
+        reread: { anchor: 'sec-3', label: '3. Newton\'s Third Law' } },
+      { id: 'refl-9', groups: [['increase', 'increases', 'more', 'higher', 'faster', 'goes up']],
+        reread: { anchor: 'sec-4', label: '4. Put together' } },
+      { id: 'refl-10', groups: [['first', '1st', 'inertia'], ['third', '3rd', 'action', 'reaction'], ['second', '2nd', 'f = ma', 'f=ma']],
+        reread: { anchor: 'sec-4', label: '4. Put together' } },
+      { id: 'refl-b1', groups: [['third', 'action', 'reaction', 'push', 'exhaust', 'air'], ['second', 'mass', 'heavier', 'less', 'shorter']],
+        reread: { anchor: 'day3', label: 'Day 3 build' } }
+    ]);
+  });
+
+  window.addEventListener('beforeprint', function () { document.body.classList.add('printing-slip'); });
+  window.addEventListener('afterprint', function () { document.body.classList.remove('printing-slip'); });
+</script>
+</body>
+</html>

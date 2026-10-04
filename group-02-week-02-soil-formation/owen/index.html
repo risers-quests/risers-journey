@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soil Formation — Soil Engineer</title>
+<script>
+  (function () {
+    // Facilitator View: ?fac=1 must be read and set BEFORE quest.js or any
+    // of its init calls run, so tracking never has a chance to start before
+    // this takes effect — see initFacilitatorCheck's comment in quest.js.
+    try {
+      window.QUEST_FACILITATOR_MODE = new URLSearchParams(window.location.search).get('fac') === '1';
+    } catch (e) { window.QUEST_FACILITATOR_MODE = false; }
+    try {
+      var kid = localStorage.getItem('imm-l3-kid');
+      if (!kid || kid.toLowerCase() !== 'owen') document.documentElement.classList.add('gate-locked');
+    } catch (e) { document.documentElement.classList.add('gate-locked'); }
+  })();
+</script>
+<style>
+  html.gate-locked main, html.gate-locked .progress-summary { display: none !important; }
+  html.facilitator-mode #facilitator-banner { display: block; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="lens-owen">
+
+<div id="facilitator-banner" style="display:none;">🧑‍🏫 Facilitator View — nothing on this page is being timed, saved, or synced. <a href="?" id="facilitator-banner-exit">Exit Facilitator View →</a></div>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand-group">
+      <a href="../index.html" class="brand">🪨 Soil Formation<small>Soil Engineer</small></a>
+      <span class="day-badge" id="quest-day-badge"></span>
+      <span class="session-timer" id="session-timer"></span>
+    </div>
+    <nav class="day-nav">
+      <a href="#day1">Day 1</a>
+      <a href="#day2">Day 2</a>
+      <a href="#day3">Day 3</a>
+      <button class="notes-toggle-btn" id="glossary-toggle-btn" type="button">📖 Glossary</button>
+      <button class="notes-toggle-btn" id="notes-toggle-btn" type="button">📝 My Notes</button>
+      <button class="print-btn" id="print-slip-btn" type="button">🖨️ Print my bringing slip</button>
+    </nav>
+  </div>
+</header>
+
+<div class="progress-summary">
+  <div class="container">
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 1</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day1-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day1-label">0/6</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 2</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day2-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day2-label">0/5</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 3</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day3-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="quest-gate-block">
+  <div class="gate-block-wrap">
+    <div class="gate-icon">🔒</div>
+    <h2>This is Owen's investigation</h2>
+    <p>Confirm it's you to continue.</p>
+    <div class="name-gate-card">
+      <button class="btn btn-primary gate-confirm-btn" id="gate-confirm-btn" type="button">✅ Yes, I'm Owen — Continue</button>
+      <div class="name-gate-msg" id="gate-name-msg"></div>
+    </div>
+    <a class="gate-not-you" href="../index.html">Not you? Find your own quest link →</a>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- COVER -->
+  <section class="cover">
+    <div class="cover-watermark" aria-hidden="true">🪨</div>
+    <div class="format-pill">Discovery Quest</div><br>
+    <span class="lens-pill">🪨 Soil Engineer</span>
+    <h1>Soil Is Layers You Can Actually Measure</h1>
+    <p class="subtitle">Weathered rock, decayed plant matter, water, and air combine into layers that took centuries to form. Each layer's thickness is something you can actually put a ruler to.</p>
+    <div class="kid-name">Prepared for: Owen</div>
+    <div class="framing">
+      <p style="margin:0;">You are a <strong>Soil Engineer</strong>. Day 1 briefs you on the full picture: what soil is actually made of, how weathering breaks rock down, how soil is layered into real horizons, and how decomposers finish the job. Day 2, you build a real layered soil-profile model and measure each layer with a ruler — centimeters and percentages, not guesses. This week, a claim about a soil layer only counts once you've measured it.</p>
+    </div>
+  </section>
+
+  <!-- DAY 1 -->
+  <section class="day-block" id="day1">
+    <span class="day-kicker">Day 1 · Systems Briefing</span>
+    <h2>How Rock Becomes the Ground You Stand On</h2>
+    <p class="day-sub">Loose dirt looks the same everywhere, but it isn't. It's built from four real ingredients, broken down and layered over centuries. This briefing covers exactly how that structure forms, before you build a real layered profile of your own.</p>
+
+    <h3>Why "soil" isn't just one thing</h3>
+    <p>Say the word "soil" and it's easy to picture one uniform brown substance. It isn't. Soil is a mix of four separate ingredients. They came from two very different processes: weathered rock provides the minerals, and living things provide the organic matter. The two combine together over an amount of time you can't rush. Before you can build a model that's actually accurate, you need to know exactly what's really in soil and how it actually got there.</p>
+
+    <h3 id="sec-composition"><span class="sec-num">1</span>The four ingredients — and how they got there</h3>
+    <p>Soil is a mix of four real ingredients: mineral particles (tiny broken-down pieces of rock), organic matter (decayed plant and animal material, called humus once it's fully broken down), water, and air. The water and air fill the small spaces between the solid particles.</p>
+    <p>None of those minerals started out as soil-sized grains. They all came from <strong>weathering</strong>, the slow breakdown of solid rock into smaller and smaller particles. <strong>Physical weathering</strong> breaks rock apart without changing what it's made of. Water seeps into a crack, freezes, and expands. That widens the crack a little more every freeze-thaw cycle, until the rock finally splits. Wind, water, and moving ice also wear rock surfaces down, the same way sandpaper wears down wood.</p>
+    <p><strong>Chemical weathering</strong> works differently. Rain is slightly acidic. Over long stretches of time, it slowly dissolves and changes the minerals inside a rock, weakening it until it crumbles more easily. Most real rock breaks down from both processes working together. That broken-down mineral material — not a soil bag from a store — forms the raw base every soil profile is built on.</p>
+
+    <div class="video-card">
+      <div class="video-title">📹 Weathering &amp; Erosion</div>
+      <div class="video-sub">How rock actually breaks down — watch before answering below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/R-Iak3Wvh9c" title="Weathering and Erosion" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+<div class="callout">
+      <span class="callout-label">⚠️ Design Note — something doesn't add up</span>
+      <p style="margin:0;">A note in your files claims: <em>"Soil is just broken-up rock — that's all it really is."</em> Something in that claim is wrong. What is it, and what should it have said instead?</p>
+      <textarea id="refl-1" placeholder="Type your correction here…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">📦 Two More Ingredients</span>
+      <p style="margin:0;">Mineral particles and organic matter are two of soil's four ingredients — but there are two more. Name one of the other two, and say exactly where in the soil it's found.</p>
+      <textarea id="refl-8" placeholder="Name the ingredient and where it's found…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔍 Weathering Check</span>
+      <p style="margin:0;">Physical weathering and chemical weathering both break down rock, but they don't work the same way. Which one works by actually cracking or wearing the rock apart, and which one works by changing the rock's own minerals?</p>
+      <textarea id="refl-9" placeholder="Name both and how each works…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🧊 Freeze, Then Split</span>
+      <p style="margin:0;">Water seeping into a crack and freezing seems like a tiny thing — but repeated freeze-thaw cycles can eventually split solid rock apart on their own. Explain exactly what happens to the water each time it freezes that makes the crack bigger.</p>
+      <textarea id="refl-10" placeholder="Explain what actually happens…"></textarea>
+    </div>
+
+    <h3 id="sec-horizons"><span class="sec-num">2</span>Horizons: the layers you're about to measure</h3>
+    <p>A vertical slice straight down through real ground is called a <strong>soil profile</strong>. It's made of distinct horizontal layers called <strong>horizons</strong>.</p>
+    <p>At the very top, the <strong>O horizon</strong> is a thin layer of mostly organic material — fallen leaves and other plant matter in different stages of decay — sitting right on the surface. Below it, the <strong>A horizon</strong> (what most people just call topsoil) is dark, crumbly, mineral soil mixed with organic matter. It's packed with plant roots and living organisms, and it's the layer almost all plant growth actually depends on.</p>
+    <p>Below that, the <strong>B horizon</strong> (subsoil) is lighter in color and has far less organic matter. It's mostly where minerals washed down from the layers above end up collecting. Roots can reach it, but find fewer nutrients there. At the bottom, the <strong>C horizon</strong> is partly weathered <strong>parent material</strong> — rock that's started breaking down but hasn't gone nearly as far as true soil. It sits right on top of solid, unweathered bedrock.</p>
+    <p>Not every location has all of these fully developed. But the O and A horizons together are what most people mean when they say "topsoil," and they're almost always the shallowest, most fragile layer of the whole profile.</p>
+
+    <div class="diagram-card">
+      <div class="diagram-title">🔬 A soil profile, top to bottom</div>
+      <div class="diagram-sub">Four horizons, each built differently, each with a different job.</div>
+      <div class="diagram-svg-wrap">
+        <svg viewBox="0 0 240 200" width="230" height="190" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="15" width="180" height="14" fill="#99f6e4" stroke="#134e4a" stroke-width="2"/>
+          <text x="120" y="25" text-anchor="middle" fill="#134e4a" font-size="9" font-weight="700">1</text>
+          <rect x="30" y="29" width="180" height="38" fill="#5eead4" stroke="#134e4a" stroke-width="2"/>
+          <text x="120" y="52" text-anchor="middle" fill="#134e4a" font-size="9" font-weight="700">2</text>
+          <rect x="30" y="67" width="180" height="45" fill="#2dd4bf" stroke="#134e4a" stroke-width="2"/>
+          <text x="120" y="93" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">3</text>
+          <rect x="30" y="112" width="180" height="45" fill="#0d9488" stroke="#134e4a" stroke-width="2"/>
+          <text x="120" y="138" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">4</text>
+          <rect x="30" y="157" width="180" height="25" fill="#134e4a" stroke="#134e4a" stroke-width="2"/>
+          <text x="120" y="173" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">bedrock</text>
+        </svg>
+      </div>
+      <div class="diagram-legend">
+        <div class="diagram-legend-item"><span class="dl-num">1</span><span class="dl-text"><strong>O horizon</strong> — thin organic layer, fallen leaves, top of the profile</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">2</span><span class="dl-text"><strong>A horizon (topsoil)</strong> — dark, root-packed, where most growth happens</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">3</span><span class="dl-text"><strong>B horizon (subsoil)</strong> — lighter, mineral-heavy, fewer nutrients</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">4</span><span class="dl-text"><strong>C horizon</strong> — barely-weathered parent material, just above bedrock</span></div>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="info-card"><h4>🍂 O horizon</h4><p>Thin organic layer, fallen leaves, top of the profile.</p></div>
+      <div class="info-card"><h4>🌱 A horizon</h4><p>Dark, root-packed topsoil — where most growth happens.</p></div>
+      <div class="info-card"><h4>🪨 C horizon</h4><p>Barely-weathered parent material, just above bedrock.</p></div>
+    </div>
+
+    <div class="video-card">
+      <div class="video-title">📹 Soil Horizons</div>
+      <div class="video-sub">The layers under your feet — watch before answering below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/nEShY_S_KGc" title="Soil Horizons" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+<div class="callout subtle">
+      <span class="callout-label">🧾 Field Measurement</span>
+      <p style="margin:0;">A layer you're examining is dark, crumbly, packed with roots and organic matter, and clearly where most of the plant growth is happening. Which horizon is this, and what's the evidence?</p>
+      <textarea id="refl-2" placeholder="Name the horizon and the evidence…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🪨 What's at the Bottom</span>
+      <p style="margin:0;">Every soil profile eventually bottoms out at solid, unweathered rock the whole profile actually formed from. What is that bottom structure called, and what horizon sits just above it, partly broken down but not yet true soil?</p>
+      <textarea id="refl-11" placeholder="Name the structure and the horizon above it…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔄 Two Different Layers</span>
+      <p style="margin:0;">Topsoil (A horizon) and subsoil (B horizon) are both real mineral soil layers, but they're not the same. What's the real difference between what's found in each one?</p>
+      <textarea id="refl-12" placeholder="Explain the difference…"></textarea>
+    </div>
+
+    <h3 id="sec-texture"><span class="sec-num">3</span>Soil texture: sand, silt, and clay</h3>
+    <p>Beyond its layers, soil also has a <strong>texture</strong> — the mix of different-sized mineral particles it's made of. <strong>Sand</strong> particles are the largest of the three and feel gritty. <strong>Silt</strong> particles are medium-sized and feel smooth, almost like flour. <strong>Clay</strong> particles are the smallest by far, and feel sticky and dense when wet.</p>
+    <p>Particle size controls how soil handles water. Sand's large particles leave large gaps between them, so water drains through quickly but doesn't stick around long enough to be held. Clay's tiny particles pack together tightly with almost no gap at all, so water drains through very slowly, but a lot of it gets held once it's in. Silt sits in between both.</p>
+    <p>A soil that's a balanced mix of all three — not dominated by any one of them — is called <strong>loam</strong>. It's considered the best all-purpose texture for growing most plants, because it drains reasonably well without draining away the water and nutrients a plant actually needs. Too much sand, and nutrients wash straight through before roots can use them. Too much clay, and water can pool at the surface, or roots can't get enough air.</p>
+
+    <div class="card-grid">
+      <div class="info-card"><h4>🏖️ Sand</h4><p>Largest particles, gritty, drains fast, holds little water.</p></div>
+      <div class="info-card"><h4>💨 Silt</h4><p>Medium particles, smooth like flour, in between the other two.</p></div>
+      <div class="info-card"><h4>🧱 Clay</h4><p>Smallest particles, sticky when wet, drains slow, holds a lot.</p></div>
+    </div>
+
+    <div class="video-card">
+      <div class="video-title">📹 Soil Texture</div>
+      <div class="video-sub">Sand, silt, and clay side by side — watch before answering below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/lIvXXAJbPmQ" title="Soil Texture" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+<div class="callout">
+      <span class="callout-label">🎓 New Engineer Briefing</span>
+      <p style="margin:0;">A trainee on your team asks why anyone would bother testing the exact mix of sand, silt, and clay in a patch of soil instead of just calling it "dirt" and moving on. Explain it in two or three sentences, simple enough for them to repeat back correctly.</p>
+      <textarea id="refl-3" placeholder="Explain it simply…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🐢 The Slowest Drainer</span>
+      <p style="margin:0;">One of the three particle sizes drains water slower than the other two, because its particles pack together with almost no gap between them. Which particle size, and why does its size explain that?</p>
+      <textarea id="refl-13" placeholder="Name it and explain why…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">↔️ Two Opposite Textures</span>
+      <p style="margin:0;">Sand and clay sit at opposite ends of soil texture — one drains fast but holds very little water, the other drains slow but holds a lot. Which is which?</p>
+      <textarea id="refl-14" placeholder="Name both and their behavior…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">⚖️ Loam Check</span>
+      <p style="margin:0;">Loam isn't sand, silt, or clay by itself — it's a specific balanced mix of the three. Why is that balance, instead of any one texture alone, considered the best all-purpose soil for growing plants?</p>
+      <textarea id="refl-15" placeholder="Explain what loam balances and why…"></textarea>
+    </div>
+
+    <h3 id="sec-system"><span class="sec-num">4</span>Put together, it's a structure you can measure</h3>
+    <p>A full soil profile only exists because two separate processes run at once. Weathering supplies the raw mineral material — sand, silt, and clay-sized rock particles — from the bottom up. <strong>Decomposers</strong> finish the other half: worms, insects, fungi, and bacteria break down dead leaves, roots, and other organic material into <strong>humus</strong>, the dark, nutrient-rich matter that gives topsoil its color and its fertility.</p>
+    <p>Earthworms do double duty while they're at it. As they tunnel through soil, they physically mix and loosen it, opening up more of the air spaces soil needs as its fourth ingredient. None of this happens quickly. Because weathering and decomposition both run slowly, it can take several hundred to well over a thousand years for natural processes to build just one inch (about 2.5 cm) of real topsoil. That's exactly why a layered profile is worth measuring carefully rather than guessing at — every centimeter you record represents a stretch of time no single build session comes close to.</p>
+
+    <div class="video-card">
+      <div class="video-title">📹 Decomposers</div>
+      <div class="video-sub">The team that finishes the job — watch before answering below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/uB61rfeeAsM" title="Decomposers" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <table class="data-table">
+      <thead><tr><th>What contributes</th><th>What it supplies</th><th>Real timescale</th></tr></thead>
+      <tbody>
+        <tr><td>Weathering</td><td class="num">Sand, silt, clay-sized mineral particles</td><td class="num">Ongoing, over thousands of years</td></tr>
+        <tr><td>Decomposition</td><td class="num">Humus from dead organic material</td><td class="num">Weeks to years per batch of leaf litter</td></tr>
+        <tr><td>Time</td><td class="num">Lets both processes build up a real profile</td><td class="num">Hundreds to 1,000+ years per inch of topsoil</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout subtle">
+      <span class="callout-label">⚙️ Name the Roles</span>
+      <p style="margin:0;">In the process that builds a real soil profile, weathering supplies one thing, decomposers supply another, and time is what the whole process runs on. Name what each of weathering, decomposers, and time actually contributes.</p>
+      <textarea id="refl-16" placeholder="Name all three contributions…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🪱 The Earthworm's Second Job</span>
+      <p style="margin:0;">Earthworms don't just help make humus by eating dead material — they do a second job while they're at it. What's that second job, and which soil ingredient from earlier does it directly improve?</p>
+      <textarea id="refl-17" placeholder="Name the job and the ingredient it improves…"></textarea>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">🔧 Engineering Trade-off</span>
+      <p style="margin:0;">It can take several hundred to well over a thousand years for natural processes to build just one inch of real topsoil. Why would something this important to nearly every land ecosystem form this slowly instead of quickly, and why does that make losing topsoil such a serious long-term problem?</p>
+      <textarea id="refl-6" placeholder="Explain the trade-off…"></textarea>
+    </div>
+
+    <table class="data-table">
+      <thead><tr><th>Horizon</th><th>What it's made of</th><th>What lives/grows there</th></tr></thead>
+      <tbody>
+        <tr><td>O</td><td class="num">Mostly organic material (fallen leaves, decaying plant matter)</td><td class="num">Decomposers just getting started</td></tr>
+        <tr><td>A (topsoil)</td><td class="num">Dark mineral soil + organic matter</td><td class="num">Most roots, most living organisms</td></tr>
+        <tr><td>B (subsoil)</td><td class="num">Lighter mineral soil, washed-down minerals</td><td class="num">Some roots, few nutrients</td></tr>
+        <tr><td>C</td><td class="num">Partly weathered parent material</td><td class="num">Very little</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔍 Compare Two Cases</span>
+      <p style="margin:0 0 8px;"><strong>Layer A:</strong> dark, crumbly, packed with roots and organic matter, sitting right at the surface.<br><strong>Layer B:</strong> barely broken down, closer to solid rock than to soil, sitting right above bedrock.</p>
+      <p style="margin:0;">Which horizon is A, which is B, and what's the evidence?</p>
+      <textarea id="refl-4" placeholder="Explain both cases…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">📐 Which Layer, and Why</span>
+      <p style="margin:0;">A civil engineer checking a building site needs to know whether the ground is mostly dark, organic-rich topsoil or barely-weathered material close to bedrock. Which horizon is closest to bedrock, and would you expect it to make a firmer or a shakier base for a foundation?</p>
+      <textarea id="refl-7" placeholder="Name the horizon and the answer…"></textarea>
+    </div>
+
+<h3>History: how we learned to study the ground</h3>
+    <div class="timeline">
+      <div class="timeline-item"><div class="t-year">1870s</div><div class="t-body"><strong>Vasily Dokuchaev</strong>, a Russian geologist considered the founder of modern soil science, shows that soil is a distinct natural body formed by the interaction of climate, living organisms, parent rock, and time — not just "broken-up rock."</div></div>
+      <div class="timeline-item"><div class="t-year">1930s</div><div class="t-body">The <strong>Dust Bowl</strong>: years of drought plus soil-damaging farming practices strip away protective topsoil across the U.S. Great Plains, and windstorms carry millions of tons of it away.</div></div>
+      <div class="timeline-item"><div class="t-year">1935</div><div class="t-body">In response, the U.S. creates the <strong>Soil Conservation Service</strong>, led by Hugh Hammond Bennett — the first national effort to actively study and fight soil erosion.</div></div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🌪️ Learning From the Dust Bowl</span>
+      <p style="margin:0;">In the 1930s, years of drought plus soil-damaging farming stripped away huge amounts of topsoil across the U.S. Great Plains, and windstorms carried it away. Why did losing that established topsoil hurt so much more than losing the same depth of subsoil or parent material would have?</p>
+      <textarea id="refl-18" placeholder="Explain why topsoil loss matters most…"></textarea>
+    </div>
+
+    <h3>Real-world application: this structure gets engineered every day</h3>
+    <p>Farmers test a field's exact soil texture and its horizon depth before planting. That lets them choose crops that actually match what's really there instead of guessing. Civil engineers test soil composition and drainage before pouring a foundation, since clay-heavy ground can shift or hold water in ways that crack a structure years later, while sandy ground can settle unevenly. Conservationists measure topsoil depth over time to track whether erosion-control methods like terracing and cover crops are actually working — the same way you're about to measure your own model's layers instead of eyeballing them.</p>
+
+    <div class="game-card">
+      <div class="game-title">🪨 Soil Science Match</div>
+      <div class="game-sub">Key terms from today's whole briefing. Click a term, then its matching definition — no penalty for a wrong guess, just try again.</div>
+      <div id="game-day1"></div>
+    </div>
+
+  </section>
+
+  <!-- MATERIALS -->
+  <section class="day-block">
+    <span class="day-kicker">Before Day 2 · Build Kit</span>
+    <h2>Choose What You're Bringing</h2>
+    <p class="day-sub">This is a pool, not a checklist — pick what your 3-layer soil profile model actually needs. You're building a clear container with three visibly different layers stacked inside it: a bottom layer of gravel or rock chips for bedrock/C horizon, a middle layer of plain soil for subsoil/B horizon, and a top layer of soil with visible organic bits for topsoil/O-A horizon — pick one container, one material for each of the three layers, a measuring tool, and something to label each layer with.</p>
+
+    <div class="materials-table-wrap">
+      <table class="materials-table">
+      <thead><tr><th>Material</th><th>Container</th><th>Bedrock / C horizon</th><th>Subsoil / B horizon</th><th>Topsoil / O-A horizon</th><th>Measuring tool</th><th>Labels</th></tr></thead>
+      <tbody>
+      <tr><td class="mat-name">A clear plastic cup</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A clear plastic cup for Container</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A clear glass jar</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A clear glass jar for Container</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A cut-open clear water bottle</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A cut-open clear water bottle for Container</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A clear plastic deli container</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A clear plastic deli container for Container</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A large clear test tube or vial</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A large clear test tube or vial for Container</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Small pebbles or gravel</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Small pebbles or gravel for Bedrock / C horizon</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Aquarium gravel</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Aquarium gravel for Bedrock / C horizon</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Crushed rock chips</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Crushed rock chips for Bedrock / C horizon</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Small stones from outside</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Small stones from outside for Bedrock / C horizon</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Coarse sand</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Coarse sand for Bedrock / C horizon</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Brown garden soil (no compost)</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Brown garden soil (no compost) for Subsoil / B horizon</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Plain potting soil</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Plain potting soil for Subsoil / B horizon</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Sifted yard dirt</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Sifted yard dirt for Subsoil / B horizon</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Packaged "topsoil" bag soil (used as subsoil here)</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Packaged &quot;topsoil&quot; bag soil (used as subsoil here) for Subsoil / B horizon</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Dry clay-heavy soil</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Dry clay-heavy soil for Subsoil / B horizon</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Dark compost</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Dark compost for Topsoil / O-A horizon</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Potting mix with visible organic bits</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Potting mix with visible organic bits for Topsoil / O-A horizon</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Soil mixed with crushed dead leaves</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Soil mixed with crushed dead leaves for Topsoil / O-A horizon</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Soil mixed with grass clippings</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Soil mixed with grass clippings for Topsoil / O-A horizon</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Garden soil with visible humus</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Garden soil with visible humus for Topsoil / O-A horizon</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A ruler</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A ruler for Measuring tool</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A tape measure</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A tape measure for Measuring tool</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A printed centimeter ruler strip</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A printed centimeter ruler strip for Measuring tool</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A measuring tape from a sewing kit</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A measuring tape from a sewing kit for Measuring tool</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A ruler app on a phone</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A ruler app on a phone for Measuring tool</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Markers</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Markers for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Sticky notes cut into flags</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Sticky notes cut into flags for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Index cards</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Index cards for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Small flags on toothpicks</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Small flags on toothpicks for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Painter's tape strips</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Painter's tape strips for Labels</span></label></td></tr>
+      </tbody></table></div>
+      <p class="materials-table-note">The container, layer materials, and measuring tool each have real options — pick whichever you actually have on hand.</p>
+          <div class="slip-preview">
+      <h4>📋 What you're bringing to Day 2:</h4>
+      <ul id="slip-list-preview"></ul>
+      <div class="slip-empty" id="slip-empty">Nothing selected yet.</div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section class="day-block" id="day2">
+    <span class="day-kicker">Day 2 · Build the Profile</span>
+    <h2>Build a Real Soil Profile — Then Measure It</h2>
+    <p class="day-sub">Build one real layered soil-profile model, then measure it with a ruler. This isn't decoration — your model has to have real, distinct layers with real numbers behind them.</p>
+
+    <h3>What you're building</h3>
+    <p>A real, physical 3-layer soil profile model inside a clear container — not a drawing of one. At the bottom goes a layer of gravel or rock chips, standing in for bedrock and the barely-weathered C horizon. On top of that goes a layer of plain soil, standing in for the mineral-heavy subsoil (B horizon). On top of that goes a layer of soil mixed with visible organic material — crushed leaves, grass clippings, or compost — standing in for the topsoil (O and A horizons together). Every layer in your model needs a real, labeled match to a real horizon, not just a name copied from the reading — an engineer who can't say why gravel stands in for bedrock hasn't actually made the connection yet. And a claim about a layer's thickness only counts once you've measured it.</p>
+    <p>Finished, it should look like a clear jar with three visibly different bands stacked inside it: a pale gravel layer at the bottom, a plain soil layer in the middle, and a darker, leaf-flecked soil layer on top — every layer labeled on the outside of the jar, and every layer's thickness marked in centimeters, not guessed by eye.</p>
+
+    <div class="callout subtle">
+      <span class="callout-label">📎 Reference: your soil profile model</span>
+      <div style="max-width:220px; margin:0 auto;">
+        <svg viewBox="0 0 200 230" width="200" height="230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A container with three stacked layers: gravel bedrock layer at the bottom, plain soil subsoil layer in the middle, and dark organic-flecked topsoil layer on top">
+          <rect x="55" y="10" width="90" height="200" rx="6" fill="none" stroke="#134e4a" stroke-width="2.5"/>
+          <rect x="58" y="147" width="84" height="62" fill="#a8a29e"/>
+          <rect x="58" y="90" width="84" height="57" fill="#92714f"/>
+          <rect x="58" y="12" width="84" height="78" fill="#5b3d26"/>
+          <circle cx="70" cy="26" r="2.2" fill="#84cc16"/>
+          <circle cx="92" cy="40" r="2.2" fill="#84cc16"/>
+          <circle cx="112" cy="22" r="2.2" fill="#84cc16"/>
+          <circle cx="80" cy="55" r="2.2" fill="#84cc16"/>
+          <circle cx="120" cy="60" r="2.2" fill="#84cc16"/>
+          <circle cx="100" cy="177" r="10" fill="#134e4a"/><text x="100" y="181" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">1</text>
+          <circle cx="100" cy="118" r="10" fill="#134e4a"/><text x="100" y="122" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">2</text>
+          <circle cx="100" cy="51" r="10" fill="#134e4a"/><text x="100" y="55" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">3</text>
+        </svg>
+      </div>
+      <div class="diagram-legend">
+        <div class="diagram-legend-item"><span class="dl-num">1</span><span class="dl-text"><strong>Bottom layer</strong> — gravel or rock chips, for bedrock / C horizon</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">2</span><span class="dl-text"><strong>Middle layer</strong> — plain soil, for subsoil / B horizon</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">3</span><span class="dl-text"><strong>Top layer</strong> — soil with organic bits, for topsoil / O-A horizon</span></div>
+      </div>
+      <p style="margin:10px 0 0;">This is what you're building, drawn out: three stacked, visibly different layers inside your container, each one labeled and measured. The exact layer heights and container size are yours to choose — this diagram is here for the layer order and labeling, not for matching heights exactly.</p>
+    </div>
+
+    <div class="model3d-wrap">
+      <div class="model3d">
+        <div class="model3d-stage" id="model-stage">
+          <div class="model3d-face f1" style="background:linear-gradient(135deg,#5eead4,#0d9488);"><span><span class="f-icon">🪨</span>Bedrock layer<br>Gravel or rock chips</span></div>
+          <div class="model3d-face f2" style="background:linear-gradient(135deg,#2dd4bf,#0f766e);"><span><span class="f-icon">🟤</span>Subsoil layer<br>Packed soil</span></div>
+          <div class="model3d-face f3" style="background:linear-gradient(135deg,#5eead4,#134e4a);"><span><span class="f-icon">🌱</span>Topsoil layer<br>Soil + organic bits</span></div>
+          <div class="model3d-face f4" style="background:linear-gradient(135deg,#2dd4bf,#042f2e);"><span><span class="f-icon">📏</span>Measure<br>Real cm, real %</span></div>
+          <div class="model3d-face f5" style="background:linear-gradient(135deg,#5eead4,#0f766e);"><span><span class="f-icon">🛠️</span>Pick your<br>container size</span></div>
+          <div class="model3d-face f6" style="background:linear-gradient(135deg,#2dd4bf,#134e4a);"><span><span class="f-icon">🏷️</span>Label every<br>layer clearly</span></div>
+        </div>
+      </div>
+      <div class="model3d-hint">🖱️ Hover to pause and read each face.</div>
+      <button class="btn btn-ghost model3d-pause" type="button" id="pause-btn">⏸ Pause rotation</button>
+    </div>
+
+    <h3>Build it, then measure it</h3>
+    <div class="build-checklist">
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">1.</span><span class="step-text">Choose your container and decide how tall your total profile will be (e.g. 10 cm), and write down why.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">2.</span><span class="step-text">Add your bottom layer — gravel or rock chips standing in for bedrock / parent material (C horizon) — and pack it down.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">3.</span><span class="step-text">Add a middle layer — subsoil (B horizon) — on top, keeping it visually distinct from the layer below.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">4.</span><span class="step-text">Add a top layer — topsoil with visible organic material (O/A horizon) — and label all three layers clearly on the outside.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">5.</span><span class="step-text">Measure the thickness of each layer with your ruler in centimeters, and calculate what percent of the total profile each layer takes up.</span></span></label>
+    </div>
+
+    <h3 id="sec-plan">Log your build</h3>
+    <p>Now that it's built, fill this in — the record of exactly what you used for each layer, and why it fits. This becomes your notes for tomorrow's presentation.</p>
+    <table class="justify-table">
+      <thead><tr><th>Soil layer</th><th>Model layer</th><th>Material I'm using</th><th>Why this material fits</th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="e.g. C horizon / bedrock"></td><td><input placeholder="e.g. Bottom layer"></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+      </tbody>
+    </table>
+
+  </section>
+
+  <!-- DAY 3 -->
+  <section class="day-block" id="day3">
+    <span class="day-kicker">Day 3 · Present the Design</span>
+    <h2>Present Your Soil Profile</h2>
+    <p class="day-sub">A real engineer defends every measurement they took. Here's how to open strong and cover everything that matters.</p>
+
+    <div class="hook-box">
+      <div class="hook-label">Your opening move</div>
+      <p style="margin:0;">Don't say "I'm going to talk about soil layers." Instead, hold up your profile model and ask the room: <em>"If I measured every layer in this jar, do you think they'd add up exactly to how tall the jar is — or would something be a little off?"</em> Let a few guesses land before you show your real measurements.</p>
+    </div>
+
+    <div class="prep-form">
+      <h3>Prepare your presentation</h3>
+      <p>None of this gets typed into a box. Grab a stack of index cards and write short answers to each prompt below in your own hand — one card per prompt is plenty. Bring the cards to Day 3 and glance at them while you talk; they're yours to prepare with, not a script to read word for word.</p>
+
+      <div class="prep-field">
+        <label>i. Your role and responsibility</label>
+        <p style="margin:0;">In your own words — who are you in this story, and what were you responsible for figuring out?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>ii. Three new words or ideas you learned, and what they mean</label>
+        <p style="margin:0;">Pick three, and write a short, correct definition for each in your own words.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>iii. One historical fact you found interesting</label>
+        <p style="margin:0;">Which one, and why it stuck with you</p>
+      </div>
+
+      <div class="prep-field">
+        <label>iv. A real-world application</label>
+        <p style="margin:0;">Where does this actually show up outside a classroom?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>v. Explain your build</label>
+        <p style="margin:0;">What you built, why each part represents what it does, and what it explains — look back at your Day 2 build reflection if you need a reminder.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>vi. What you're still not sure about</label>
+        <p style="margin:0;">What would you want more explanation or practice on?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>vii. Cover the whole quest</label>
+        <p style="margin:0;">Walk through everything from the quest, one topic at a time, as if you're teaching it to someone hearing it for the first time: the four ingredients of soil, the horizons, soil texture, how it all comes together as a system, and the history behind it — Dokuchaev, the Dust Bowl, and the Soil Conservation Service.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  Soil Formation · Soil Engineer — Owen's instance. <a href="../index.html">Both instances →</a>
+</footer>
+
+<!-- Isolated printable materials slip -->
+<div id="print-slip-page">
+  <div class="print-slip-sheet">
+    <h3>📋 Materials I'm Bringing — Day 2</h3>
+    <div class="slip-kid">Soil Engineer · Owen</div>
+    <ul id="slip-list-print"></ul>
+  </div>
+</div>
+
+<!-- Side glossary drawer -->
+<div class="notes-backdrop" id="glossary-backdrop"></div>
+<div class="notes-drawer" id="glossary-drawer">
+  <div class="notes-drawer-head">
+    <h4>📖 Glossary</h4>
+    <button id="glossary-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="glossary">
+      <div class="glossary-item"><div class="word">Weathering</div><div class="def">The breakdown of solid rock into smaller particles over time, by physical or chemical processes.</div></div>
+      <div class="glossary-item"><div class="word">Humus</div><div class="def">Dark, nutrient-rich organic matter left behind after decomposers break down dead plant and animal material.</div></div>
+      <div class="glossary-item"><div class="word">Horizon</div><div class="def">One distinct horizontal layer within a soil profile, such as topsoil or subsoil.</div></div>
+      <div class="glossary-item"><div class="word">Decomposer</div><div class="def">An organism (worm, insect, fungus, or bacterium) that breaks down dead organic material into humus.</div></div>
+      <div class="glossary-item"><div class="word">Erosion</div><div class="def">The movement of already-formed soil or rock by wind, water, or ice, often faster than new soil can form.</div></div>
+      <div class="glossary-item"><div class="word">Parent material</div><div class="def">The weathered rock a soil's mineral particles originally came from; found in the C horizon just above bedrock.</div></div>
+      <div class="glossary-item"><div class="word">Texture</div><div class="def">The mix of particle sizes (sand, silt, clay) in a soil, which controls how it drains and holds water.</div></div>
+      <div class="glossary-item"><div class="word">Soil profile</div><div class="def">A vertical slice through soil showing all its horizons stacked from topsoil down to bedrock.</div></div>
+      <div class="glossary-item"><div class="word">Physical weathering</div><div class="def">Rock breaking apart without its minerals changing — freeze-thaw cracking, or wind/water/ice wearing it down.</div></div>
+      <div class="glossary-item"><div class="word">Chemical weathering</div><div class="def">Slightly acidic rain slowly dissolving and changing a rock's minerals until it crumbles more easily.</div></div>
+      <div class="glossary-item"><div class="word">Loam</div><div class="def">A balanced mix of sand, silt, and clay — considered the best all-purpose soil texture for growing plants.</div></div>
+      <div class="glossary-item"><div class="word">Sand</div><div class="def">The largest of the three particle sizes; gritty, drains fast, and holds very little water.</div></div>
+      <div class="glossary-item"><div class="word">Silt</div><div class="def">A medium-sized particle, smooth like flour, that drains and holds water in between sand and clay.</div></div>
+      <div class="glossary-item"><div class="word">Clay</div><div class="def">The smallest particle size; sticky when wet, drains very slowly, and holds a lot of water.</div></div>
+      <div class="glossary-item"><div class="word">Bedrock</div><div class="def">The solid, unweathered rock beneath the C horizon that a whole soil profile ultimately sits on.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Side notes drawer -->
+<div class="notes-backdrop" id="notes-backdrop"></div>
+<div class="notes-drawer" id="notes-drawer">
+  <div class="notes-drawer-head">
+    <h4>📝 My Notes</h4>
+    <button id="notes-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="notes-section-label">Highlighted words</div>
+    <ul id="hl-collected-list" class="hl-collected-list"></ul>
+    <div id="hl-collected-empty" style="display:none;">Highlight anything in the reading and it'll show up here.</div>
+    <div class="notes-section-label">Free notes</div>
+    <textarea id="notes-textarea" placeholder="Jot anything down…"></textarea>
+    <div id="notes-saved-msg" class="notes-saved-msg"></div>
+  </div>
+</div>
+
+<script>
+  // Progress-sync Worker — cross-device save. SITE_KEY is a soft deterrent
+  // only (any client-side value is visible in devtools), not real auth.
+  window.QUEST_SYNC_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  window.QUEST_SYNC_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+</script>
+<script src="../js/quest.js"></script>
+<script>
+  QuestUI.initKidGate('Owen');
+  QuestUI.initFacilitatorCheck();
+
+  QuestUI.initProgressSync('owen', 'group-02', 'week-02').then(function () {
+    QuestUI.initHighlighter('owen');
+    QuestUI.initNotesDrawer('owen');
+    QuestUI.initGlossaryDrawer();
+    QuestUI.initMaterialsPool('owen');
+    QuestUI.initBuildChecklist('owen');
+    QuestUI.initFieldAutosave('owen');
+    QuestUI.initPresentationAutofill('owen');
+    QuestUI.initDayTimer('owen');
+    QuestUI.initProgressBar('owen');
+    QuestUI.initSectionLock('owen');
+    QuestUI.initDayLock('owen');
+    QuestUI.initCompleteQuest('owen');
+    QuestUI.initMatchGame('game-day1', [
+      ["Weathering", "The breakdown of solid rock into smaller particles over time, by physical or chemical processes."],
+      ["Humus", "Dark, nutrient-rich organic matter left behind after decomposers break down dead plant and animal material."],
+      ["Horizon", "One distinct horizontal layer within a soil profile, such as topsoil or subsoil."],
+      ["Decomposer", "An organism (worm, insect, fungus, or bacterium) that breaks down dead organic material into humus."],
+      ["Erosion", "The movement of already-formed soil or rock by wind, water, or ice, often faster than new soil can form."],
+      ["Parent material", "The weathered rock a soil's mineral particles originally came from; found in the C horizon just above bedrock."],
+      ["Texture", "The mix of particle sizes (sand, silt, clay) in a soil, which controls how it drains and holds water."],
+      ["Soil profile", "A vertical slice through soil showing all its horizons stacked from topsoil down to bedrock."]
+    ], { pageKey: 'owen' });
+    QuestUI.initReflectionChecks('owen', [
+      { id: 'refl-1', groups: [['organic', 'water', 'air', 'ingredient', 'ingredients', 'four', 'humus'], ["not just", "isn't just", 'wrong', 'incorrect', 'more than', 'also']],
+        reread: { anchor: 'sec-composition', label: '1. The four ingredients' } },
+      { id: 'refl-8', groups: [['water', 'air'], ['space', 'spaces', 'between', 'particle', 'particles']],
+        reread: { anchor: 'sec-composition', label: '1. The four ingredients' } },
+      { id: 'refl-9', groups: [['physical', 'crack', 'cracking', 'freeze', 'wear', 'wearing'], ['chemical', 'dissolve', 'dissolving', 'acid', 'mineral', 'minerals']],
+        reread: { anchor: 'sec-composition', label: '1. The four ingredients' } },
+      { id: 'refl-10', groups: [['freeze', 'freezes', 'freezing', 'ice'], ['expand', 'expands', 'expanding', 'widen', 'widens', 'wider']],
+        reread: { anchor: 'sec-composition', label: '1. The four ingredients' } },
+      { id: 'refl-2', groups: [['a horizon', 'topsoil'], ['root', 'roots', 'dark', 'organic', 'crumbly', 'growth']],
+        reread: { anchor: 'sec-horizons', label: '2. Horizons' } },
+      { id: 'refl-11', groups: [['bedrock'], ['c horizon', 'parent material', 'partly weathered', 'partially weathered']],
+        reread: { anchor: 'sec-horizons', label: '2. Horizons' } },
+      { id: 'refl-12', groups: [['topsoil', 'a horizon', 'organic', 'root', 'roots', 'dark'], ['subsoil', 'b horizon', 'mineral', 'washed', 'fewer nutrients', 'less organic']],
+        reread: { anchor: 'sec-horizons', label: '2. Horizons' } },
+      { id: 'refl-3', groups: [['drain', 'drains', 'drainage', 'water', 'hold', 'holds'], ['sand', 'silt', 'clay', 'texture', 'mix']],
+        reread: { anchor: 'sec-texture', label: '3. Soil texture' } },
+      { id: 'refl-13', groups: [['clay'], ['small', 'smallest', 'tight', 'tightly', 'tiny', 'pack', 'gap']],
+        reread: { anchor: 'sec-texture', label: '3. Soil texture' } },
+      { id: 'refl-14', groups: [['sand', 'fast', 'quickly'], ['clay', 'slow', 'slowly', 'holds a lot', 'holds more']],
+        reread: { anchor: 'sec-texture', label: '3. Soil texture' } },
+      { id: 'refl-15', groups: [['sand', 'silt', 'clay', 'mix', 'balance', 'balanced'], ['drain', 'drains', 'hold', 'holds', 'nutrient', 'nutrients']],
+        reread: { anchor: 'sec-texture', label: '3. Soil texture' } },
+      { id: 'refl-16', groups: [['weather', 'weathering', 'rock', 'mineral', 'particle', 'particles'], ['decompos', 'humus', 'organic'], ['time', 'long', 'years', 'centuries', 'hundred', 'thousand']],
+        reread: { anchor: 'sec-system', label: '4. Put together' } },
+      { id: 'refl-17', groups: [['tunnel', 'tunneling', 'mix', 'mixing', 'loosen', 'burrow'], ['air', 'air spaces', 'spaces']],
+        reread: { anchor: 'sec-system', label: '4. Put together' } },
+      { id: 'refl-6', groups: [['slow', 'slowly', 'hundred', 'thousand', 'years', 'centuries'], ['erosion', 'lost', 'loss', 'regrow', 'replace', 'cannot replace', "can't replace"]],
+        reread: { anchor: 'sec-system', label: '4. Put together' } },
+      { id: 'refl-4', groups: [['a horizon', 'topsoil'], ['c horizon', 'parent material', 'bedrock']],
+        reread: { anchor: 'sec-horizons', label: '2. Horizons' } },
+      { id: 'refl-7', groups: [['c horizon', 'parent material', 'bedrock'], ['firm', 'firmer', 'stronger', 'solid', 'stable', 'more stable']],
+        reread: { anchor: 'sec-system', label: '4. Put together' } },
+      { id: 'refl-18', groups: [['topsoil', 'organic', 'nutrient', 'nutrients', 'root', 'roots'], ['years', 'centuries', 'long', 'slow', 'regrow', 'reform', 'replace', 'cannot replace', "can't replace"]],
+        reread: { anchor: 'sec-system', label: '4. Put together' } }
+    ]);
+
+    var modelPaused = false;
+    document.getElementById('pause-btn').addEventListener('click', function () {
+      modelPaused = !modelPaused;
+      document.getElementById('model-stage').classList.toggle('paused', modelPaused);
+      this.textContent = modelPaused ? '▶ Resume rotation' : '⏸ Pause rotation';
+    });
+  });
+
+  window.addEventListener('beforeprint', function () { document.body.classList.add('printing-slip'); });
+  window.addEventListener('afterprint', function () { document.body.classList.remove('printing-slip'); });
+</script>
+</body>
+</html>

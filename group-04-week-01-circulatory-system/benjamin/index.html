@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Circulatory System — Heart Health Educator Rotation</title>
+<script>
+  (function () {
+    // Facilitator View: ?fac=1 must be read and set BEFORE quest.js or any
+    // of its init calls run, so tracking never has a chance to start before
+    // this takes effect — see initFacilitatorCheck's comment in quest.js.
+    try {
+      window.QUEST_FACILITATOR_MODE = new URLSearchParams(window.location.search).get('fac') === '1';
+    } catch (e) { window.QUEST_FACILITATOR_MODE = false; }
+    try {
+      var kid = localStorage.getItem('imm-l3-kid');
+      if (!kid || kid.toLowerCase() !== 'benjamin') document.documentElement.classList.add('gate-locked');
+    } catch (e) { document.documentElement.classList.add('gate-locked'); }
+  })();
+</script>
+<style>
+  html.gate-locked main, html.gate-locked .progress-summary { display: none !important; }
+  html.facilitator-mode #facilitator-banner { display: block; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="lens-benjamin">
+
+<div id="facilitator-banner" style="display:none;">🧑‍🏫 Facilitator View — nothing on this page is being timed, saved, or synced. <a href="?" id="facilitator-banner-exit">Exit Facilitator View →</a></div>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand-group">
+      <a href="../index.html" class="brand">🫀 Circulatory System<small>Heart Health Educator</small></a>
+      <span class="day-badge" id="quest-day-badge"></span>
+      <span class="session-timer" id="session-timer"></span>
+    </div>
+    <nav class="day-nav">
+      <a href="#day1">Part 1</a>
+      <a href="#day2">Part 2</a>
+      <a href="#day3">Part 3</a>
+      <a href="#day4">Part 4</a>
+      <a href="#day5">Part 5</a>
+      <button class="notes-toggle-btn" id="notes-toggle-btn" type="button">📝 My Notes</button>
+      <button class="print-btn" id="print-slip-btn" type="button">🖨️ Print my bringing slip</button>
+    </nav>
+  </div>
+</header>
+
+<div class="progress-summary">
+  <div class="container">
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 1</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day1-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day1-label">0/3</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 2</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day2-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day2-label">0/3</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 3</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day3-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day3-label">0/8</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 4</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day4-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day4-label">0/2</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 5</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day5-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day5-label">0/3</span>
+    </div>
+  </div>
+</div>
+
+<div id="quest-gate-block">
+  <div class="gate-block-wrap">
+    <div class="gate-icon">🔒</div>
+    <h2>This is Benjamin's rotation</h2>
+    <p>Confirm it's you to continue.</p>
+    <div class="name-gate-card">
+      <button class="btn btn-primary gate-confirm-btn" id="gate-confirm-btn" type="button">✅ Yes, I'm Benjamin — Continue</button>
+      <div class="name-gate-msg" id="gate-name-msg"></div>
+    </div>
+    <a class="gate-not-you" href="../index.html">Not you? Find your own quest link →</a>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- COVER -->
+  <section class="cover">
+    <div class="cover-watermark" aria-hidden="true">🫀</div>
+    <div class="format-pill">Quest</div><br>
+    <span class="lens-pill">💓 Heart Health Educator</span>
+    <h1>Five Days at Pulse General</h1>
+    <p class="subtitle">You're a new Heart Health Educator at Pulse General's Community Wellness Program, training under Dr. Priya Vasquez. Before she'll let you near a visitor, you have to know the pump, the highways it pumps through, and the backup network running alongside it — cold. By Friday, everything you've learned goes live at the hospital's Community Heart Health Fair, in your own booth.</p>
+    <div class="kid-name">Prepared for: Benjamin</div>
+    <div class="framing">
+      <p style="margin:0;">Dr. Vasquez's rule: "You can't teach someone to take care of their heart if you don't understand it yourself." Parts 1–2 build the whole system — the heart itself, then the network it pumps through. Part 3 you build a real, physical model that becomes the centerpiece of your fair booth. Part 4, you get the blood-drive info card right — real donor-compatibility reasoning, not just memorized rules. Part 5, you finish your headline talk, "Know Your Heart" — and defend it live.</p>
+    </div>
+  </section>
+
+  <!-- DAY 1 -->
+  <section class="day-block" id="day1">
+    <span class="day-kicker">Part 1 · Orientation — The Pump Station</span>
+    <h2>Before You Teach It, Know It Cold</h2>
+    <p class="day-sub">Dr. Vasquez meets you at the outreach office with a plastic model heart in one hand. "Sit. Before you ever explain this to a single visitor, you're going to know it cold."</p>
+
+    <h3 id="sec-whypump">Why every educator starts with the pump itself</h3>
+    <p>Every cell in the body needs a steady delivery of oxygen and nutrients, and a steady removal of waste like carbon dioxide. That whole job — transport — is run by the <strong>circulatory system</strong>: the heart, the blood, and the blood vessels that carry it everywhere. An educator who doesn't know the pump's actual layout can't explain it well to anyone else. Today, you learn the layout.</p>
+
+    <div class="video-card">
+      <div class="video-title">📹 Circulatory System &amp; the Pathway of Blood</div>
+      <div class="video-sub">Amoeba Sisters — the whole loop, start to finish. Watch before Section 1 below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/_vZ0lefPg_0" title="Circulatory System and Pathway of Blood Through the Heart" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <h3 id="sec-chambers"><span class="sec-num">1</span>The heart's four rooms</h3>
+    <p>The heart is about the size of your own closed fist and weighs roughly <strong>225–340 grams</strong>. It sits in the center of the chest cavity, tipped slightly to the left, enclosed in a double-layered protective sac called the <strong>pericardium</strong> — the fluid between its two layers (<strong>pericardial fluid</strong>) cushions the heart against shocks and jerks, the way packing foam protects something fragile in a box.</p>
+    <p>Internally, a muscular wall called the <strong>septum</strong> splits the heart into a right half and a left half — and blood on one side <strong>never mixes</strong> with blood on the other. Each half is further split into an upper chamber, the <strong>atrium</strong> (plural: atria), and a lower chamber, the <strong>ventricle</strong>. That's four chambers total: two atria, two ventricles. The atria are the "receiving docks" — smaller, thin-walled, they just catch incoming blood. The ventricles are the "distribution engines" — bigger, thick-walled, muscular enough to actually push blood out to the lungs or the entire rest of the body.</p>
+
+    <div class="callout">
+      <span class="callout-label">📋 Learning Log — something doesn't add up</span>
+      <p style="margin:0;">A first-day volunteer writes in his notes: <em>"Blood on the right side of the heart mixes freely with blood on the left side once both chambers are full."</em> Dr. Vasquez circles it in red. What's actually true, and what structure makes it true?</p>
+      <textarea id="refl-1" placeholder="Type your correction here…"></textarea>
+    </div>
+
+    <h3 id="sec-valves"><span class="sec-num">2</span>One-way gates: the valves</h3>
+    <p>Blood only ever flows one direction through the heart, and four valves enforce that. Between the right atrium and right ventricle sits the <strong>tricuspid valve</strong> (three flaps). Between the left atrium and left ventricle sits the <strong>bicuspid valve</strong>, also called the <strong>mitral valve</strong> (two flaps) — together these are the <strong>atrio-ventricular (AV) valves</strong>. At the two exits where blood leaves the ventricles — into the pulmonary trunk and into the aorta — sit the <strong>semilunar valves</strong>, shaped like little half-moons, which stop blood from flowing backward into the ventricles once it's been pushed out.</p>
+
+    <div class="callout">
+      <span class="callout-label">🩺 Trace the One-Way Gate — full paragraph required</span>
+      <p style="margin:0;">In a full paragraph, trace blood's path through <strong>all four valves</strong> of the heart, in the order it actually passes through them, naming each valve and which chambers or vessels it separates.</p>
+      <textarea class="paragraph" id="refl-2" placeholder="Write your full paragraph here…"></textarea>
+      <span class="paragraph-note">Four valves, four names — don't skip one.</span>
+    </div>
+
+    <h3 id="sec-pacemaker"><span class="sec-num">3</span>The pump's own conductor</h3>
+    <p>The heart is built of specialized <strong>cardiac muscle</strong> that contracts and relaxes continuously, without ever resting, for an entire lifetime — about 72 times a minute. That rhythm isn't random: it's triggered by an electrical impulse that originates in a small node in the upper right atrium called the <strong>sinoatrial node</strong>, or <strong>SA node</strong>. Because it sets the timing for every single heartbeat, it's nicknamed the heart's <strong>natural pacemaker</strong>. If a person's SA node is damaged or the heart's electrical conduction has problems, doctors can surgically place an <strong>artificial pacemaker</strong> — a small mechanical device that takes over the job of keeping the rhythm steady.</p>
+
+    <div class="callout subtle">
+      <span class="callout-label">⚡ Quick Check</span>
+      <p style="margin:0;">What is the SA node, and why does it get the nickname "the heart's natural pacemaker"?</p>
+      <textarea id="refl-9" placeholder="Name it, and explain the nickname…"></textarea>
+    </div>
+
+    <h3>History: how we learned to read the pump</h3>
+    <div class="timeline">
+      <div class="timeline-item"><div class="t-year">1628</div><div class="t-body"><strong>William Harvey</strong> publishes <em>De Motu Cordis</em>, the first accurate description of blood circulating in one closed loop, pushed by the heart as a pump — overturning over a thousand years of the wrong theory before it.</div></div>
+      <div class="timeline-item"><div class="t-year">1816</div><div class="t-body"><strong>René Laennec</strong> invents the stethoscope, letting doctors listen to a heart's valves closing for the first time without pressing an ear directly to a patient's chest.</div></div>
+      <div class="timeline-item"><div class="t-year">1900</div><div class="t-body"><strong>Karl Landsteiner</strong> identifies the ABO blood group system — the discovery that makes safe blood transfusion possible for the first time in history (this week's Part 4 case runs entirely on his work).</div></div>
+      <div class="timeline-item"><div class="t-year">1903</div><div class="t-body"><strong>Willem Einthoven</strong> builds the first practical ECG machine, letting doctors literally see the SA node's electrical signal on paper.</div></div>
+      <div class="timeline-item"><div class="t-year">1958</div><div class="t-body">Engineer <strong>Rune Elmqvist</strong> and surgeon <strong>Åke Senning</strong> implant the first artificial pacemaker in a human patient, Arne Larsson — who went on to outlive both of them.</div></div>
+    </div>
+
+    <div class="game-card">
+      <div class="game-title">🫀 Pump Room Match</div>
+      <div class="game-sub">Key terms from today's whole orientation. Click a term, then its matching definition — no penalty for a wrong guess, just try again.</div>
+      <div id="game-day1"></div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section class="day-block" id="day2">
+    <span class="day-kicker">Part 2 · Mapping the Network</span>
+    <h2>The Highway Network the Pump Feeds</h2>
+    <p class="day-sub">"Knowing the pump gets you nowhere if you don't know the roads it pumps through," Dr. Vasquez says, pulling up a full-body diagram on the wall monitor. "Today, you learn the network."</p>
+
+    <h3 id="sec-vessels"><span class="sec-num">4</span>Three kinds of road</h3>
+    <p>Blood vessels form a network of three types. <strong>Arteries</strong> carry blood away from the heart to the rest of the body — blood inside them moves fast, under high pressure, and arteries have no valves (they don't need them; the heart's own pumping force keeps blood moving forward). <strong>Veins</strong> carry blood back toward the heart — blood inside them moves slower, under lower pressure, so veins have valves along their length to stop blood from sliding backward. <strong>Capillaries</strong> are the finest vessels of all, so thin-walled that oxygen, carbon dioxide, water, and nutrients can actually pass straight through their walls — they're the real exchange point between blood and every body tissue.</p>
+
+    <div class="callout">
+      <span class="callout-label">🚦 Quick Check</span>
+      <p style="margin:0;">Name the real difference between an artery and a vein in terms of BOTH the pressure/speed of the blood inside it AND whether it has valves.</p>
+      <textarea id="refl-3" placeholder="Cover both differences…"></textarea>
+    </div>
+
+    <h3 id="sec-namedvessels"><span class="sec-num">5</span>The named routes</h3>
+    <p>A handful of specific vessels matter most. The <strong>superior vena cava</strong> and <strong>inferior vena cava</strong> are the two big veins bringing deoxygenated blood into the right atrium — superior from the upper body, inferior from the lower body and legs. The <strong>pulmonary trunk</strong> carries deoxygenated blood out of the right ventricle toward the lungs, branching into a left and right <strong>pulmonary artery</strong>. Once the lungs have oxygenated it, the <strong>pulmonary veins</strong> carry that blood back into the left atrium. The <strong>aorta</strong> — the single largest artery in the body — leaves the left ventricle, carrying oxygenated blood out to every other part of the body through its branches. And the heart feeds its own muscular walls through the <strong>coronary artery</strong> (a branch straight off the aorta) and drains itself through the <strong>coronary veins</strong>, which empty into the right atrium.</p>
+
+    <div class="callout subtle">
+      <span class="callout-label">🚨 Quick Check</span>
+      <p style="margin:0;">Which single vessel supplies the heart's own muscular walls with oxygenated blood, and which larger vessel does it branch off of?</p>
+      <textarea id="refl-10" placeholder="Name the vessel, and where it branches from…"></textarea>
+    </div>
+
+    <div class="video-card" data-gate-video="v43ej5lCeBo">
+      <div class="video-title">📹 Blood Vessels — Structure &amp; Function</div>
+      <div class="video-sub">Arteries, veins, and capillaries — what each one is built for. Watch the whole thing to unlock the next section.</div>
+      <div class="video-embed-wrap">
+        <iframe id="yt-v43ej5lCeBo" src="https://www.youtube.com/embed/v43ej5lCeBo?enablejsapi=1&amp;rel=0" title="Blood Vessels — Structure and Function" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-watch-note" id="watch-note-v43ej5lCeBo">▶️ Watch the full video to unlock the next section</div>
+    </div>
+
+    <h3 id="sec-circulation"><span class="sec-num">6</span>Double circulation: the two-loop delivery system</h3>
+    <p>Blood actually passes through the heart <strong>twice</strong> to complete one full lap of the body — that's called <strong>double circulation</strong>. The first loop is <strong>pulmonary circulation</strong>: deoxygenated blood leaves the right ventricle, travels to the lungs to pick up oxygen, and returns to the left atrium. The second loop is <strong>systemic circulation</strong>: that now-oxygenated blood leaves the left ventricle through the aorta, travels to every other part of the body, drops off oxygen and nutrients, picks up carbon dioxide and waste, and returns to the right atrium as deoxygenated blood again — ready to start the whole cycle over.</p>
+
+    <div class="video-card" data-gate-video="NDk8fmIl9V8">
+      <div class="video-title">📹 Pulmonary &amp; Systemic Circulation</div>
+      <div class="video-sub">The two-loop delivery system, start to finish. Watch the whole thing to unlock the next section.</div>
+      <div class="video-embed-wrap">
+        <iframe id="yt-NDk8fmIl9V8" src="https://www.youtube.com/embed/NDk8fmIl9V8?enablejsapi=1&amp;rel=0" title="Pulmonary and Systemic Circulation" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-watch-note" id="watch-note-NDk8fmIl9V8">▶️ Watch the full video to unlock the next section</div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">🗺️ Trace the Loop — full paragraph required</span>
+      <p style="margin:0;">In a full paragraph, trace blood's double-circulation path starting at the right atrium. Name both loops (pulmonary and systemic) and where each one actually goes.</p>
+      <textarea class="paragraph" id="refl-4" placeholder="Write your full paragraph here…"></textarea>
+      <span class="paragraph-note">Both loops, both directions — heart to body part, and back.</span>
+    </div>
+
+    <div class="game-card">
+      <div class="game-title">🗺️ Trace the Route</div>
+      <div class="game-sub">Click the stops in the correct order to trace blood's full double-circulation loop, starting from the right atrium. A wrong click just shakes — no penalty, try again.</div>
+      <div id="game-day2"></div>
+    </div>
+
+    <h3>Real-world application: this network runs real medicine</h3>
+    <p>A blood pressure cuff measures the actual force blood exerts on artery walls — the same pressure this section just described. A stethoscope lets a doctor listen for the exact valve-closing sounds Part 1 covered. An ECG machine reads the SA node's electrical signal directly off a patient's skin. Keeping the coronary artery clear and healthy through good habits is exactly why doctors recommend regular exercise and a balanced diet — the same highway this section named is the one everyday choices protect. None of this is abstract; it's the network a health educator explains every single day.</p>
+  </section>
+
+  <!-- MATERIALS -->
+  <section class="day-block">
+    <span class="day-kicker">Before Part 3 · Build Kit</span>
+    <h2>Choose What You're Bringing</h2>
+    <p class="day-sub">This is the same build every educator at Pulse General puts together before their first fair — a physical model of double circulation AND the lymphatic system running alongside it, using red, blue, and yellow to keep every route honest. This is a pool to pick from, not a checklist — decide what your specific model actually needs for its base, its heart, and its three colored routes.</p>
+
+    <div class="materials-table-wrap">
+      <table class="materials-table">
+      <thead><tr><th>Material</th><th>Base / backdrop</th><th>Heart (center)</th><th>Red route (arteries)</th><th>Blue route (veins)</th><th>Yellow route (lymph)</th><th>Labels</th></tr></thead>
+      <tbody>
+      <tr><td class="mat-name">Large poster board or foam board</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Large poster board or foam board for Base / backdrop</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Flattened corrugated cardboard</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Flattened corrugated cardboard for Base / backdrop</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A large tray or old pizza box lid</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A large tray or old pizza box lid for Base / backdrop</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A red foam ball, cut in half</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A red foam ball, cut in half for Heart (center)</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Red air-dry clay or playdough, hand-shaped</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Red air-dry clay or playdough, hand-shaped for Heart (center)</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Red construction paper, folded/rolled into a heart shape</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Red construction paper, folded/rolled into a heart shape for Heart (center)</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A small red balloon, stuffed and tied off</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A small red balloon, stuffed and tied off for Heart (center)</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Red pipe cleaners</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Red pipe cleaners for Red route (arteries)</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Red yarn or string</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Red yarn or string for Red route (arteries)</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Red drinking straws</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Red drinking straws for Red route (arteries)</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Thin red aquarium tubing</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Thin red aquarium tubing for Red route (arteries)</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Blue pipe cleaners</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Blue pipe cleaners for Blue route (veins)</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Blue yarn or string</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Blue yarn or string for Blue route (veins)</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Blue drinking straws</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Blue drinking straws for Blue route (veins)</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Thin blue aquarium tubing</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Thin blue aquarium tubing for Blue route (veins)</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Yellow pipe cleaners</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Yellow pipe cleaners for Yellow route (lymph)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Yellow yarn or string</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Yellow yarn or string for Yellow route (lymph)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Yellow ribbon</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Yellow ribbon for Yellow route (lymph)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Index cards or sticky notes</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Index cards or sticky notes for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Small paper flags on toothpicks</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Small paper flags on toothpicks for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Painter's tape strips + marker</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Painter's tape strips + marker for Labels</span></label></td></tr>
+      </tbody></table></div>
+      <p class="materials-table-note">Whatever you pick for each colored route, keep it consistent for that whole route — a mix of yarn and pipe cleaners on the SAME line makes it harder to follow, not more impressive.</p>
+      <div class="slip-preview">
+      <h4>📋 What you're bringing to Part 3:</h4>
+      <ul id="slip-list-preview"></ul>
+      <div class="slip-empty" id="slip-empty">Nothing selected yet.</div>
+    </div>
+  </section>
+
+  <!-- DAY 3 -->
+  <section class="day-block" id="day3">
+    <span class="day-kicker">Part 3 · Build — The Second Network</span>
+    <h2>The Backup Network, Then a Real Model of Both</h2>
+    <p class="day-sub">"There's a second transport network running alongside the one you just learned," Dr. Vasquez says, "quieter, slower, and just as important. Learn it — then build me a model of all of it, in three colors."</p>
+
+    <h3 id="sec-lymph"><span class="sec-num">7</span>The parallel network: lymph</h3>
+    <p>The body actually has three principal fluids: <strong>blood</strong>, contained in the heart and blood vessels; <strong>tissue fluid</strong>, which leaks out of capillary walls to bathe every cell directly; and <strong>lymph</strong>, formed when some of that tissue fluid drains into a separate set of minute channels called <strong>lymph vessels</strong>, which run alongside the blood vessels. Lymph is pale yellow, contains no red blood cells, and moves only when surrounding muscles contract and squeeze it along — it has no pump of its own like the heart. Along the way, lymph passes through <strong>lymph nodes</strong>, which filter it and help localize infections, and lymphatic organs like the <strong>spleen</strong>, <strong>tonsils</strong>, and <strong>thymus</strong>. Eventually all of it drains back into major veins near the right atrium through the <strong>thoracic duct</strong>, rejoining the blood.</p>
+    <p>Lymph does real work: it's <strong>nutritive</strong> (delivers nutrients and oxygen to spots blood can't directly reach), it handles <strong>drainage</strong> (clears excess tissue fluid and returns proteins to the blood), it handles <strong>absorption</strong> (fats from the intestine are absorbed through lymph vessels, not blood vessels), and it's part of the body's <strong>defence</strong> — lymphocytes and monocytes in the lymph fight infection, which is exactly why a swollen lymph node in your groin or armpit is a real, meaningful sign your body is fighting something off.</p>
+
+    <div class="video-card" data-gate-video="I7orwMgTQ5I">
+      <div class="video-title">📹 The Lymphatic System</div>
+      <div class="video-sub">Lymph, lymph nodes, and the body's parallel transport/defence network. Watch the whole thing to unlock the next section.</div>
+      <div class="video-embed-wrap">
+        <iframe id="yt-I7orwMgTQ5I" src="https://www.youtube.com/embed/I7orwMgTQ5I?enablejsapi=1&amp;rel=0" title="The Lymphatic System" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-watch-note" id="watch-note-I7orwMgTQ5I">▶️ Watch the full video to unlock the next section</div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">🩹 Quick Check</span>
+      <p style="margin:0;">Name two real functions of lymph — not just "it moves fluid," but two of its actual specific jobs in the body.</p>
+      <textarea id="refl-5" placeholder="Name two functions…"></textarea>
+    </div>
+
+    <div class="model3d-wrap">
+      <div class="model3d">
+        <div class="model3d-stage" id="model-stage">
+          <div class="model3d-face f1" style="background:linear-gradient(135deg,#fca5a5,#b91c1c);"><span><span class="f-icon">❤️</span>Heart<br>mounted center</span></div>
+          <div class="model3d-face f2" style="background:linear-gradient(135deg,#f87171,#991b1b);"><span><span class="f-icon">🔴</span>Red route<br>oxygenated, out to body &amp; lungs</span></div>
+          <div class="model3d-face f3" style="background:linear-gradient(135deg,#93c5fd,#1d4ed8);"><span><span class="f-icon">🔵</span>Blue route<br>deoxygenated, back to heart</span></div>
+          <div class="model3d-face f4" style="background:linear-gradient(135deg,#fde68a,#b45309);"><span><span class="f-icon">🟡</span>Yellow route<br>lymph, parallel network</span></div>
+          <div class="model3d-face f5" style="background:linear-gradient(135deg,#f87171,#7f1d1d);"><span><span class="f-icon">🏷️</span>Label every<br>named stop</span></div>
+          <div class="model3d-face f6" style="background:linear-gradient(135deg,#93c5fd,#1e3a8a);"><span><span class="f-icon">🧭</span>Pick your<br>base &amp; materials</span></div>
+        </div>
+      </div>
+      <div class="model3d-hint">🖱️ Hover to pause and read each face.</div>
+      <button class="btn btn-ghost model3d-pause" type="button" id="pause-btn">⏸ Pause rotation</button>
+    </div>
+
+    <h3 id="sec-plan">Plan before you build</h3>
+    <p>Fill this in before you glue or tape anything. This planning table <em>is</em> the real decision — the build itself is just carrying it out.</p>
+    <table class="justify-table">
+      <thead><tr><th>Route / stop</th><th>Real vessel it represents</th><th>Material / color used</th><th>Why this representation fits</th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="e.g. Red route, heart to lungs"></td><td><input placeholder="e.g. Pulmonary artery"></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout subtle">
+      <span class="callout-label">📸 Picture the finished result</span>
+      <p style="margin:0;">Picture the finished model: a heart shape mounted center, a red route running out to labeled "BODY" and "LUNGS" stops, a blue route running back in from both, and a yellow route running alongside as the parallel lymph network — every stop actually named, not just color-coded.</p>
+    </div>
+
+    <h3>Build it</h3>
+    <div class="build-checklist">
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">1.</span><span class="step-text">Mount your heart shape roughly centered on the base.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">2.</span><span class="step-text">Attach the RED route from the heart out to a labeled "BODY" stop and a labeled "LUNGS" stop — the aorta and the pulmonary arteries.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">3.</span><span class="step-text">Attach the BLUE route running back into the heart from both "BODY" and "LUNGS" — the vena cavae and the pulmonary veins.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">4.</span><span class="step-text">Attach the YELLOW route running alongside your red/blue routes, with at least one labeled lymph node stop.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">5.</span><span class="step-text">Label every single stop by its real name — not just by color.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">6.</span><span class="step-text">Add a short legend explaining what red, blue, and yellow each represent.</span></span></label>
+    </div>
+
+    <table class="plan-table">
+      <tr><td style="width:180px;"><strong>Base used</strong></td><td><input placeholder="e.g. foam board"></td></tr>
+      <tr><td><strong>Routes included</strong></td><td><input placeholder="e.g. red, blue, yellow"></td></tr>
+      <tr><td><strong>Short description</strong></td><td><textarea placeholder="Describe your model in 2–3 sentences…"></textarea></td></tr>
+    </table>
+
+    <div class="callout">
+      <span class="callout-label">🪞 Build Review — self-check</span>
+      <p style="margin:0;">What might someone misunderstand about your model without your explanation? Which route are you least confident about, and why did you still include it?</p>
+      <textarea id="refl-11" placeholder="Write your honest review…"></textarea>
+    </div>
+  </section>
+
+  <!-- DAY 4 -->
+  <section class="day-block" id="day4">
+    <span class="day-kicker">Part 4 · The Blood Drive Table</span>
+    <h2>Blood Groups, and Getting the Info Card Right</h2>
+    <p class="day-sub">Mid-morning, Dr. Vasquez drops a stack of blank info cards on your desk — the ones that'll sit on Friday's blood-drive table. "Before we print a single one, work through a real example with me. Get it wrong on Friday and someone walks away with bad information."</p>
+
+    <h3 id="sec-bloodgroups"><span class="sec-num">8</span>Blood groups: the ABO system</h3>
+    <p>In 1900, Karl Landsteiner discovered that human blood comes in different types, based on proteins called <strong>antigens</strong> found on the surface of red blood cells. There are two antigen types — <strong>A</strong> and <strong>B</strong>. A person is blood group <strong>A</strong> if their red blood cells carry the A antigen, group <strong>B</strong> if they carry the B antigen, group <strong>AB</strong> if they carry both, and group <strong>O</strong> if they carry neither.</p>
+    <p>This matters enormously for transfusion. Blood group <strong>O</strong> has no antigens at all, so it can safely be given to a person of any blood group — which is why O is called the <strong>universal donor</strong>. Blood group <strong>AB</strong> has both antigens already, so a person with AB blood can safely receive from any donor group — which is why AB is called the <strong>universal recipient</strong>. Group A can give to A or AB; group B can give to B or AB; but A and B can never safely give to each other.</p>
+
+    <div class="video-card" data-gate-video="xfZhb6lmxjk">
+      <div class="video-title">📹 Blood Types &amp; Transfusion Compatibility</div>
+      <div class="video-sub">The ABO system, antigens, and donor/recipient compatibility. Watch the whole thing to unlock the next section.</div>
+      <div class="video-embed-wrap">
+        <iframe id="yt-xfZhb6lmxjk" src="https://www.youtube.com/embed/xfZhb6lmxjk?enablejsapi=1&amp;rel=0" title="Blood Types and Transfusion Compatibility" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-watch-note" id="watch-note-xfZhb6lmxjk">▶️ Watch the full video to unlock the next section</div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">🩸 Quick Check</span>
+      <p style="margin:0;">Why is blood group O called the "universal donor," and blood group AB called the "universal recipient"? Give the real antigen-based reason for each.</p>
+      <textarea id="refl-6" placeholder="Explain both, using antigens…"></textarea>
+    </div>
+
+    <h3 id="sec-case">The card: a real compatibility example</h3>
+    <div class="callout">
+      <span class="callout-label">🗂️ Info Card Draft</span>
+      <p style="margin:0;">For the fair's info card, Dr. Vasquez wants a real worked example, not a made-up rule. Three neighbors have signed up to donate at Friday's blood drive: <strong>Marcus</strong>, blood group <strong>B</strong>; his brother <strong>Elias</strong>, blood group <strong>O</strong>; and their neighbor <strong>Dana</strong>, blood group <strong>AB</strong>. The card needs to correctly explain who could safely donate to whom.</p>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">⚖️ Your Draft — full paragraph required</span>
+      <p style="margin:0;">Using the ABO compatibility rules, in a full paragraph: could Elias safely donate to Marcus if Marcus ever needed a transfusion? Could Dana? Cite the specific antigens involved — "because the chart says so" isn't an explanation a good info card gives.</p>
+      <textarea class="paragraph" id="refl-7" placeholder="Write your full-paragraph call here…"></textarea>
+      <span class="paragraph-note">Name Marcus's own antigen, and each donor's, before you conclude anything.</span>
+    </div>
+
+    <h3 id="sec-donation">Real-world application: donation, banks, and safety</h3>
+    <p>Blood donation is voluntary — a healthy donor gives about one pint (420 mL) at a time, and a single donation can genuinely help save someone's life down the line. A blood bank stores donated blood, sorted and labeled by group, ready for whenever a patient needs it. Every real transfusion, anywhere in the world, is checked against this same ABO compatibility chart before a single drop is given — it's not a formality, it's what makes donation safe for everyone involved.</p>
+  </section>
+
+  <!-- DAY 5 -->
+  <section class="day-block" id="day5">
+    <span class="day-kicker">Part 5 · Know Your Heart</span>
+    <h2>The Full Talk, Then Defend It Live</h2>
+    <p class="day-sub">Friday morning, before the fair opens. Dr. Vasquez reviews your booth plan and taps the one section still blank. "This is the part visitors will actually remember — finish it."</p>
+
+    <h3 id="sec-conditions"><span class="sec-num">9</span>Know your heart: what's worth watching for</h3>
+    <p>Knowing your own heart isn't just about recognizing when something's wrong — it's about understanding what's normal, so real warning signs stand out early enough to act on them. That's exactly the kind of information a good health fair booth should send people home with.</p>
+    <p><strong>Palpitations</strong> — the heart beating too hard, too fast, or skipping a beat — are usually harmless, often caused by stress, anxiety, or certain foods, and often pass on their own. <strong>Hypertension</strong> (high blood pressure) is blood flowing through the vessels with more force than normal — over time it can strain the heart, damage vessels, and raise the risk of a heart attack or stroke.</p>
+    <p>A <strong>heart attack</strong> is a sudden interruption of blood supply <em>to</em> the heart muscle itself, usually from a blood clot blocking flow through a coronary artery — part of the cardiac muscle starts to die, but the heart itself keeps beating and sending blood around the body. Common symptoms include chest pressure or pain that can spread to the shoulders, neck, jaw, or arms, shortness of breath, dizziness, sweating, and nausea.</p>
+    <p>A <strong>cardiac arrest</strong> is a completely different emergency: the heart <em>itself</em> suddenly <strong>stops pumping</strong> blood around the body at all. The person will suddenly lose consciousness and stop breathing normally, often with no warning symptoms first. Left untreated for even a few minutes, it's usually fatal. The most common underlying cause is coronary artery disease — the same blocked-artery problem behind a heart attack — but the two conditions are not the same thing, and a heart attack puts a person at high risk of a cardiac arrest happening next.</p>
+    <p>If you witness either one, the real first-aid sequence is: call an ambulance or a doctor immediately; help the person into a comfortable sitting or lying position to reduce strain on the heart; if they're unresponsive and not breathing normally, begin <strong>chest compressions</strong> (pushing on the chest to keep blood circulating manually until help arrives) and, if trained, rescue breathing so the lungs keep getting oxygen. Quick first aid measurably raises a person's real chance of survival.</p>
+
+    <div class="callout">
+      <span class="callout-label">📋 Booth Explainer — full paragraph required</span>
+      <p style="margin:0;">Write the booth's "Know the Difference" explainer. In a full paragraph: explain to a fairgoer the real mechanism difference between a heart attack and a cardiac arrest, using this example — a person who was talking normally seconds earlier, with no chest-pain warning, suddenly becomes unconscious and stops breathing normally. Which condition does that describe, and what should a bystander actually do, in order?</p>
+      <textarea class="paragraph" id="refl-8" placeholder="Write your full-paragraph call, then your first-aid steps…"></textarea>
+      <span class="paragraph-note">"The heart stopped" and "blood flow to the heart was interrupted" are two different mechanisms — say which one this is.</span>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🎓 New Volunteer Briefing — full paragraph required</span>
+      <p style="margin:0;">Explain the whole circulatory system simply enough for a brand-new booth volunteer on their first day to follow — the heart as the pump, the double-circulation loop, and the vessels that carry it. No jargon left unexplained.</p>
+      <textarea class="paragraph" id="refl-12" placeholder="Write your new-volunteer explanation here…"></textarea>
+      <span class="paragraph-note">If a sentence only makes sense to someone who already read this week's material, rewrite it.</span>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🪞 Week Review — final self-check</span>
+      <p style="margin:0;">Looking back at your whole week: which single fact surprised you most? And which part of your "Know the Difference" explainer are you least sure would hold up under a tough follow-up question?</p>
+      <textarea id="refl-13" placeholder="Write your honest review…"></textarea>
+    </div>
+
+    <div class="hook-box">
+      <div class="hook-label">Your opening move</div>
+      <p style="margin:0;">Don't open with "I'm going to talk about the circulatory system." Open with a number people can feel: <em>"Your heart just beat about 100,000 times today, and most people have no idea what it's actually doing down there. By the end of this booth, you will."</em> Let the room sit with that before you explain anything else.</p>
+    </div>
+
+    <div class="prep-form">
+      <h3>Prepare your presentation</h3>
+      <p>Fill this in before you present — it's your own script, not busywork.</p>
+
+      <div class="prep-field">
+        <label>i. Your role and responsibility</label>
+        <textarea placeholder="In your own words — who are you in this story, and what were you responsible for figuring out?"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>ii. Three new words or ideas you learned, and what they mean</label>
+        <textarea placeholder="1) &#10;2) &#10;3) "></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>iii. One historical fact you found interesting</label>
+        <textarea placeholder="Which one, and why it stuck with you"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>iv. A real-world application</label>
+        <textarea placeholder="Where does this actually show up outside a classroom?"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>v. Explain your build</label>
+        <div class="prep-autofill-row">
+          <span class="prep-autofill-hint">Materials &amp; reasoning below are pulled from your Part 3 plan table — edit freely.</span>
+          <button type="button" class="prep-autofill-btn">&#8635; Pull from Part 3 again</button>
+        </div>
+        <textarea class="prep-build-materials" placeholder="Materials used and why you chose them…"></textarea>
+        <textarea placeholder="Every label on your build, and what it explains…"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>vi. What you're still not sure about</label>
+        <textarea placeholder="What would you want more explanation or practice on?"></textarea>
+      </div>
+    </div>
+
+    <div class="facilitator-tip">
+      <span class="fac-label">Facilitator only</span>
+      <p>If someone challenges Benjamin's booth explainer during the presentation (e.g. "but couldn't it still be a heart attack?"), that's the best moment of the week, not something to defend past — ask him directly "what's the ONE detail in the example that rules that out?" (the sudden loss of consciousness and breathing, with no chest-pain warning first — the hallmark of arrest, not attack). A health educator who can point to the specific evidence, not just restate his conclusion, is showing the real skill this week was built around.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  Circulatory System · Heart Health Educator — Benjamin's rotation. <a href="../index.html">Back to hub →</a>
+</footer>
+
+<!-- Isolated printable materials slip -->
+<div id="print-slip-page">
+  <div class="print-slip-sheet">
+    <h3>📋 Materials I'm Bringing — Part 3</h3>
+    <div class="slip-kid">Heart Health Educator · Benjamin</div>
+    <ul id="slip-list-print"></ul>
+  </div>
+</div>
+
+<!-- Side notes drawer -->
+<div class="notes-backdrop" id="notes-backdrop"></div>
+<div class="notes-drawer" id="notes-drawer">
+  <div class="notes-drawer-head">
+    <h4>📝 My Notes</h4>
+    <button id="notes-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="notes-section-label">Highlighted words</div>
+    <ul id="hl-collected-list" class="hl-collected-list"></ul>
+    <div id="hl-collected-empty" style="display:none;">Highlight anything in the reading and it'll show up here.</div>
+    <div class="notes-section-label">Free notes</div>
+    <textarea id="notes-textarea" placeholder="Jot anything down…"></textarea>
+    <div id="notes-saved-msg" class="notes-saved-msg"></div>
+  </div>
+</div>
+
+<script>
+  // Progress-sync Worker — cross-device save. SITE_KEY is a soft deterrent
+  // only (any client-side value is visible in devtools), not real auth.
+  window.QUEST_SYNC_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  window.QUEST_SYNC_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+</script>
+<script src="../js/quest.js"></script>
+<script>
+  QuestUI.initKidGate('Benjamin');
+  QuestUI.initFacilitatorCheck();
+
+  QuestUI.initProgressSync('benjamin', 'group-04', 'week-01').then(function () {
+    QuestUI.initHighlighter('benjamin');
+    QuestUI.initNotesDrawer('benjamin');
+    QuestUI.initMaterialsPool('benjamin');
+    QuestUI.initBuildChecklist('benjamin');
+    QuestUI.initFieldAutosave('benjamin');
+    QuestUI.initPresentationAutofill('benjamin');
+    QuestUI.initDayTimer('benjamin');
+    QuestUI.initProgressBar('benjamin', [
+      { seg: 'day1', reflIds: ['refl-1', 'refl-2', 'refl-9'] },
+      { seg: 'day2', reflIds: ['refl-3', 'refl-10', 'refl-4'] },
+      { seg: 'day3', reflIds: ['refl-5', 'refl-11'], includeBuild: true, buildTotal: 6 },
+      { seg: 'day4', reflIds: ['refl-6', 'refl-7'] },
+      { seg: 'day5', reflIds: ['refl-8', 'refl-12', 'refl-13'] }
+    ]);
+    QuestUI.initVideoGate('benjamin');
+    QuestUI.initSectionLock('benjamin');
+    QuestUI.initDayLock('benjamin');
+    QuestUI.initCompleteQuest('benjamin');
+    QuestUI.initMatchGame('game-day1', [
+      ["Atrium", "The heart's upper, receiving chamber — thinner-walled than a ventricle."],
+      ["Ventricle", "The heart's lower, distributing chamber — thicker-walled to pump blood out with force."],
+      ["Septum", "The muscular wall dividing the heart's right and left sides so their blood never mixes."],
+      ["Tricuspid valve", "The three-flap valve between the right atrium and right ventricle."],
+      ["Pericardium", "The double-layered protective membrane enclosing the heart."],
+      ["SA node", "The heart's natural pacemaker, setting the rhythm for every heartbeat."]
+    ], { pageKey: 'benjamin' });
+    QuestUI.initSequenceGame('game-day2', [
+      "Right atrium", "Right ventricle", "Pulmonary artery", "Lungs",
+      "Pulmonary vein", "Left atrium", "Left ventricle", "Aorta"
+    ], { pageKey: 'benjamin' });
+    QuestUI.initReflectionChecks('benjamin', [
+      { id: 'refl-1', groups: [['septum'], ['never mix', "doesn't mix", 'does not mix', 'separate', 'kept apart', 'not mix']],
+        reread: { anchor: 'sec-chambers', label: '1. The heart\'s four rooms' } },
+      { id: 'refl-2', topics: [
+          { label: 'the tricuspid valve, between the right atrium and right ventricle', keywords: ['tricuspid'] },
+          { label: 'the bicuspid (mitral) valve, between the left atrium and left ventricle', keywords: ['bicuspid', 'mitral'] },
+          { label: 'the semilunar valve at the pulmonary trunk', keywords: ['pulmonary'] },
+          { label: 'the semilunar valve at the aorta', keywords: ['aorta'] }
+        ],
+        reread: { anchor: 'sec-valves', label: '2. One-way gates: the valves' } },
+      { id: 'refl-9', groups: [['sa node', 'sinoatrial', 'sinus node'], ['rhythm', 'heartbeat', 'heart beat', 'pace', 'pacemaker', 'contraction']],
+        reread: { anchor: 'sec-pacemaker', label: '3. The pump\'s own conductor' } },
+      { id: 'refl-3', groups: [['artery', 'arteries'], ['vein', 'veins'], ['high pressure', 'high speed', 'more pressure', 'faster'], ['low pressure', 'low speed', 'less pressure', 'slower']],
+        reread: { anchor: 'sec-vessels', label: '4. Three kinds of road' } },
+      { id: 'refl-10', groups: [['coronary'], ['aorta']],
+        reread: { anchor: 'sec-namedvessels', label: '5. The named routes' } },
+      { id: 'refl-4', topics: [
+          { label: 'pulmonary circulation (the lungs loop)', keywords: ['pulmonary', 'lungs'] },
+          { label: 'systemic circulation (the body loop)', keywords: ['systemic', 'body'] },
+          { label: 'the right atrium/side receiving deoxygenated blood', keywords: ['right atrium', 'right side', 'right ventricle'] },
+          { label: 'the left atrium/side receiving oxygenated blood', keywords: ['left atrium', 'left side', 'left ventricle'] }
+        ],
+        reread: { anchor: 'sec-circulation', label: '6. Double circulation' } },
+      { id: 'refl-5', groups: [['drainage', 'drain', 'excess fluid', 'absorption', 'absorb', 'fat', 'nutritive', 'nutrition'], ['defence', 'defense', 'immune', 'infection', 'bacteria', 'lymphocyte']],
+        reread: { anchor: 'sec-lymph', label: '7. The parallel network: lymph' } },
+      { id: 'refl-11', groups: [],
+        reread: { anchor: 'sec-plan', label: 'Plan before you build' } },
+      { id: 'refl-6', groups: [['no antigen', 'no antigens', 'without antigen', 'no proteins'], ['both antigen', 'both a and b', 'a and b antigen', 'both proteins']],
+        reread: { anchor: 'sec-bloodgroups', label: '8. Blood groups: the ABO system' } },
+      { id: 'refl-7', topics: [
+          { label: 'the antigens involved (A and/or B)', keywords: ['antigen'] },
+          { label: 'why O has no antigens and can donate to anyone', keywords: ['no antigen', 'universal donor'] },
+          { label: 'why AB has both antigens and can only receive matters here (Dana cannot give to B)', keywords: ['both antigen', 'universal recipient', 'both a and b'] }
+        ],
+        reread: { anchor: 'sec-bloodgroups', label: '8. Blood groups: the ABO system' } },
+      { id: 'refl-8', topics: [
+          { label: 'correctly naming this a cardiac arrest, not a heart attack', keywords: ['cardiac arrest'] },
+          { label: 'the mechanism (the heart itself stops pumping/beating)', keywords: ['stops pumping', 'stopped pumping', 'stops beating', 'stopped beating'] },
+          { label: 'calling an ambulance/doctor', keywords: ['ambulance', 'call'] },
+          { label: 'chest compressions or CPR', keywords: ['compression', 'cpr'] }
+        ],
+        reread: { anchor: 'sec-conditions', label: '9. Know your heart: what\'s worth watching for' } },
+      { id: 'refl-12', topics: [
+          { label: 'the heart as the pump', keywords: ['heart', 'pump'] },
+          { label: 'double circulation (pulmonary + systemic)', keywords: ['pulmonary', 'systemic', 'lungs'] },
+          { label: 'blood vessels (arteries/veins)', keywords: ['artery', 'arteries', 'vein', 'veins'] }
+        ],
+        reread: { anchor: 'sec-circulation', label: '6. Double circulation' } },
+      { id: 'refl-13', groups: [['surprised', 'surprising', "didn't know", 'did not know'], ['cardiac arrest', 'confident', 'sure', 'unsure']],
+        reread: { anchor: 'sec-conditions', label: '9. Know your heart: what\'s worth watching for' } }
+    ]);
+
+    var modelPaused = false;
+    document.getElementById('pause-btn').addEventListener('click', function () {
+      modelPaused = !modelPaused;
+      document.getElementById('model-stage').classList.toggle('paused', modelPaused);
+      this.textContent = modelPaused ? '▶ Resume rotation' : '⏸ Pause rotation';
+    });
+  });
+
+  window.addEventListener('beforeprint', function () { document.body.classList.add('printing-slip'); });
+  window.addEventListener('afterprint', function () { document.body.classList.remove('printing-slip'); });
+</script>
+</body>
+</html>

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hydrocarbons, Plastics &amp; Fossils — Resource Mission Director</title>
+<script>
+  (function () {
+    try {
+      window.QUEST_FACILITATOR_MODE = new URLSearchParams(window.location.search).get('fac') === '1';
+    } catch (e) { window.QUEST_FACILITATOR_MODE = false; }
+    try {
+      var kid = localStorage.getItem('imm-l3-kid');
+      if (!kid || kid.toLowerCase() !== 'shalom') document.documentElement.classList.add('gate-locked');
+    } catch (e) { document.documentElement.classList.add('gate-locked'); }
+  })();
+</script>
+<style>
+  html.gate-locked main, html.gate-locked .progress-summary { display: none !important; }
+  html.facilitator-mode #facilitator-banner { display: block; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="lens-shalom">
+
+<div id="facilitator-banner" style="display:none;">🧑‍🏫 Facilitator View — nothing on this page is being timed, saved, or synced. <a href="?" id="facilitator-banner-exit">Exit Facilitator View →</a></div>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand-group">
+      <a href="../index.html" class="brand">🛢️ Hydrocarbons, Plastics &amp; Fossils<small>Resource Mission Director</small></a>
+      <span class="day-badge" id="quest-day-badge"></span>
+      <span class="session-timer" id="session-timer"></span>
+    </div>
+    <nav class="day-nav">
+      <a href="#day1">Day 1</a>
+      <a href="#day2">Day 2</a>
+      <a href="#day3">Day 3</a>
+      <button class="notes-toggle-btn" id="glossary-toggle-btn" type="button">📖 Glossary</button>
+      <button class="notes-toggle-btn" id="notes-toggle-btn" type="button">📝 My Notes</button>
+      <button class="print-btn" id="print-slip-btn" type="button">🖨️ Print my bringing slip</button>
+    </nav>
+  </div>
+</header>
+
+<div class="progress-summary">
+  <div class="container">
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 1</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day1-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day1-label">0/10</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 2</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day2-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day2-label">0/5</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 3</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day3-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="quest-gate-block">
+  <div class="gate-block-wrap">
+    <div class="gate-icon">🔒</div>
+    <h2>This is Shalom's investigation</h2>
+    <p>Confirm it's you to continue.</p>
+    <div class="name-gate-card">
+      <button class="btn btn-primary gate-confirm-btn" id="gate-confirm-btn" type="button">✅ Yes, I'm Shalom — Continue</button>
+      <div class="name-gate-msg" id="gate-name-msg"></div>
+    </div>
+    <a class="gate-not-you" href="../index.html">Not you? Find your own quest link →</a>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- COVER -->
+  <section class="cover">
+    <div class="cover-watermark" aria-hidden="true">🛢️</div>
+    <div class="format-pill">Discovery Quest</div><br>
+    <span class="lens-pill">🛰️ Resource Mission Director</span>
+    <h1>Mission Bedrock: Tracing the Fuel Chain</h1>
+    <p class="subtitle">Every fossil fuel a real mission depends on has the same origin story: buried, transformed, and extracted only after millions of years underground. Before you can brief anyone on energy resources, you need the real chain — fossil fuel to hydrocarbon to plastic — not a guess.</p>
+    <div class="kid-name">Resource Mission Director: Shalom</div>
+    <div class="framing">
+      <p style="margin:0;">You're running resource analysis for Mission Control — not a launch this time, but the fuel chain underneath every launch and every budget line. Day 1 briefs you on the full chain: what hydrocarbons actually are, how fossil fuels and fossils really form, what plastic is actually made from, and the real trade-off underneath all of it. Day 2, you build a real layered model showing exactly how burial and pressure turn ancient organic material into fuel over geologic time. Day 3, you brief the room on what you found.</p>
+    </div>
+  </section>
+
+  <!-- DAY 1 -->
+  <section class="day-block" id="day1">
+    <span class="day-kicker">Day 1 · Systems Briefing</span>
+    <h2>Fossil Fuels, Hydrocarbons, and Plastics — the Real Chain</h2>
+    <p class="day-sub">Three real materials, one continuous chain, and a real trade-off underneath all of it. This briefing covers exactly how fossil fuels form and what they actually turn into, before you build something real of your own.</p>
+
+    <h3 id="sec-1"><span class="sec-num">1</span>Hydrocarbons: molecules built from carbon and hydrogen</h3>
+    <p>Say the word "hydrocarbon" and it sounds like it could be almost anything. It isn't. A <strong>hydrocarbon</strong> is a molecule built from exactly two elements: carbon and hydrogen, and nothing else. The simplest one is <strong>methane (CH₄)</strong> — one carbon atom bonded to four hydrogen atoms. Real hydrocarbons range from that single-carbon molecule all the way up to long chains of dozens of carbon atoms strung together, each one still built from only those same two elements.</p>
+    <p>Hydrocarbons don't just float around loose in nature. They're found packed inside three real <strong>fossil fuels</strong>: crude oil, natural gas, and coal. Crude oil is actually a mixture of thousands of different hydrocarbon molecules of different chain lengths, which is exactly why it gets separated — refined — into different products like gasoline, diesel, and jet fuel. Natural gas is mostly methane, the simplest hydrocarbon there is. Coal is a little different: it's still a fossil fuel and still carbon-rich, but it isn't a clean hydrocarbon mixture the way oil and gas are — real coal also carries other elements like sulfur and nitrogen mixed into its structure.</p>
+
+    <div class="diagram-card">
+      <div class="diagram-title">🔬 Hydrocarbons (Alkanes): methane through octane</div>
+      <div class="diagram-sub">Every one of these follows H = 2n + 2. Count the carbons (black), then count the hydrogens (grey) — the pattern holds every single time.</div>
+      <div class="alkane-grid">
+      <div class="alkane-card"><div class="alkane-name">Methane</div><div class="alkane-formula">CH₄</div><div class="alkane-svg-wrap"><svg viewBox="0 0 114 90" width="114" height="90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Structural formula of Methane"><circle cx="40" cy="45" r="9" fill="#1f2937"/><text x="40" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="40" y1="37" x2="40" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="40" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="40" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="40" y1="53" x2="40" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="40" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="40" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="32" y1="45" x2="22" y2="45" stroke="#334155" stroke-width="1.5"/><circle cx="14" cy="45" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="14" y="48.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="48" y1="45" x2="58" y2="45" stroke="#334155" stroke-width="1.5"/><circle cx="66" cy="45" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="66" y="48.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text></svg></div></div>
+      <div class="alkane-card"><div class="alkane-name">Ethane</div><div class="alkane-formula">C₂H₆</div><div class="alkane-svg-wrap"><svg viewBox="0 0 148 90" width="148" height="90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Structural formula of Ethane"><line x1="47" y1="45" x2="67" y2="45" stroke="#334155" stroke-width="2"/><circle cx="40" cy="45" r="9" fill="#1f2937"/><text x="40" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="40" y1="37" x2="40" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="40" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="40" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="40" y1="53" x2="40" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="40" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="40" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="32" y1="45" x2="22" y2="45" stroke="#334155" stroke-width="1.5"/><circle cx="14" cy="45" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="14" y="48.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="74" cy="45" r="9" fill="#1f2937"/><text x="74" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="74" y1="37" x2="74" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="74" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="74" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="74" y1="53" x2="74" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="74" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="74" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="82" y1="45" x2="92" y2="45" stroke="#334155" stroke-width="1.5"/><circle cx="100" cy="45" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="100" y="48.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text></svg></div></div>
+      <div class="alkane-card"><div class="alkane-name">Propane</div><div class="alkane-formula">C₃H₈</div><div class="alkane-svg-wrap"><svg viewBox="0 0 182 90" width="182" height="90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Structural formula of Propane"><line x1="47" y1="45" x2="67" y2="45" stroke="#334155" stroke-width="2"/><line x1="81" y1="45" x2="101" y2="45" stroke="#334155" stroke-width="2"/><circle cx="40" cy="45" r="9" fill="#1f2937"/><text x="40" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="40" y1="37" x2="40" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="40" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="40" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="40" y1="53" x2="40" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="40" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="40" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="32" y1="45" x2="22" y2="45" stroke="#334155" stroke-width="1.5"/><circle cx="14" cy="45" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="14" y="48.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="74" cy="45" r="9" fill="#1f2937"/><text x="74" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="74" y1="37" x2="74" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="74" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="74" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="74" y1="53" x2="74" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="74" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="74" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="108" cy="45" r="9" fill="#1f2937"/><text x="108" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="108" y1="37" x2="108" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="108" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="108" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="108" y1="53" x2="108" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="108" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="108" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="116" y1="45" x2="126" y2="45" stroke="#334155" stroke-width="1.5"/><circle cx="134" cy="45" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="134" y="48.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text></svg></div></div>
+      <div class="alkane-card"><div class="alkane-name">Butane</div><div class="alkane-formula">C₄H₁₀</div><div class="alkane-svg-wrap"><svg viewBox="0 0 216 90" width="216" height="90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Structural formula of Butane"><line x1="47" y1="45" x2="67" y2="45" stroke="#334155" stroke-width="2"/><line x1="81" y1="45" x2="101" y2="45" stroke="#334155" stroke-width="2"/><line x1="115" y1="45" x2="135" y2="45" stroke="#334155" stroke-width="2"/><circle cx="40" cy="45" r="9" fill="#1f2937"/><text x="40" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="40" y1="37" x2="40" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="40" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="40" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="40" y1="53" x2="40" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="40" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="40" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="32" y1="45" x2="22" y2="45" stroke="#334155" stroke-width="1.5"/><circle cx="14" cy="45" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="14" y="48.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="74" cy="45" r="9" fill="#1f2937"/><text x="74" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="74" y1="37" x2="74" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="74" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="74" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="74" y1="53" x2="74" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="74" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="74" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="108" cy="45" r="9" fill="#1f2937"/><text x="108" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="108" y1="37" x2="108" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="108" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="108" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="108" y1="53" x2="108" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="108" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="108" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="142" cy="45" r="9" fill="#1f2937"/><text x="142" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="142" y1="37" x2="142" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="142" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="142" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="142" y1="53" x2="142" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="142" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="142" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="150" y1="45" x2="160" y2="45" stroke="#334155" stroke-width="1.5"/><circle cx="168" cy="45" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="168" y="48.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text></svg></div></div>
+      <div class="alkane-card"><div class="alkane-name">Pentane</div><div class="alkane-formula">C₅H₁₂</div><div class="alkane-svg-wrap"><svg viewBox="0 0 250 90" width="250" height="90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Structural formula of Pentane"><line x1="47" y1="45" x2="67" y2="45" stroke="#334155" stroke-width="2"/><line x1="81" y1="45" x2="101" y2="45" stroke="#334155" stroke-width="2"/><line x1="115" y1="45" x2="135" y2="45" stroke="#334155" stroke-width="2"/><line x1="149" y1="45" x2="169" y2="45" stroke="#334155" stroke-width="2"/><circle cx="40" cy="45" r="9" fill="#1f2937"/><text x="40" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="40" y1="37" x2="40" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="40" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="40" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="40" y1="53" x2="40" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="40" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="40" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="32" y1="45" x2="22" y2="45" stroke="#334155" stroke-width="1.5"/><circle cx="14" cy="45" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="14" y="48.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="74" cy="45" r="9" fill="#1f2937"/><text x="74" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="74" y1="37" x2="74" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="74" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="74" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="74" y1="53" x2="74" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="74" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="74" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="108" cy="45" r="9" fill="#1f2937"/><text x="108" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="108" y1="37" x2="108" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="108" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="108" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="108" y1="53" x2="108" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="108" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="108" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="142" cy="45" r="9" fill="#1f2937"/><text x="142" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="142" y1="37" x2="142" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="142" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="142" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="142" y1="53" x2="142" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="142" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="142" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="176" cy="45" r="9" fill="#1f2937"/><text x="176" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="176" y1="37" x2="176" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="176" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="176" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="176" y1="53" x2="176" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="176" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="176" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="184" y1="45" x2="194" y2="45" stroke="#334155" stroke-width="1.5"/><circle cx="202" cy="45" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="202" y="48.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text></svg></div></div>
+      <div class="alkane-card"><div class="alkane-name">Hexane</div><div class="alkane-formula">C₆H₁₄</div><div class="alkane-svg-wrap"><svg viewBox="0 0 284 90" width="260" height="82" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Structural formula of Hexane"><line x1="47" y1="45" x2="67" y2="45" stroke="#334155" stroke-width="2"/><line x1="81" y1="45" x2="101" y2="45" stroke="#334155" stroke-width="2"/><line x1="115" y1="45" x2="135" y2="45" stroke="#334155" stroke-width="2"/><line x1="149" y1="45" x2="169" y2="45" stroke="#334155" stroke-width="2"/><line x1="183" y1="45" x2="203" y2="45" stroke="#334155" stroke-width="2"/><circle cx="40" cy="45" r="9" fill="#1f2937"/><text x="40" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="40" y1="37" x2="40" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="40" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="40" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="40" y1="53" x2="40" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="40" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="40" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="32" y1="45" x2="22" y2="45" stroke="#334155" stroke-width="1.5"/><circle cx="14" cy="45" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="14" y="48.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="74" cy="45" r="9" fill="#1f2937"/><text x="74" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="74" y1="37" x2="74" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="74" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="74" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="74" y1="53" x2="74" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="74" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="74" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="108" cy="45" r="9" fill="#1f2937"/><text x="108" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="108" y1="37" x2="108" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="108" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="108" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="108" y1="53" x2="108" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="108" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="108" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="142" cy="45" r="9" fill="#1f2937"/><text x="142" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="142" y1="37" x2="142" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="142" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="142" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="142" y1="53" x2="142" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="142" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="142" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="176" cy="45" r="9" fill="#1f2937"/><text x="176" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="176" y1="37" x2="176" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="176" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="176" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="176" y1="53" x2="176" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="176" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="176" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="210" cy="45" r="9" fill="#1f2937"/><text x="210" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="210" y1="37" x2="210" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="210" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="210" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="210" y1="53" x2="210" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="210" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="210" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="218" y1="45" x2="228" y2="45" stroke="#334155" stroke-width="1.5"/><circle cx="236" cy="45" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="236" y="48.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text></svg></div></div>
+      <div class="alkane-card"><div class="alkane-name">Heptane</div><div class="alkane-formula">C₇H₁₆</div><div class="alkane-svg-wrap"><svg viewBox="0 0 318 90" width="260" height="73" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Structural formula of Heptane"><line x1="47" y1="45" x2="67" y2="45" stroke="#334155" stroke-width="2"/><line x1="81" y1="45" x2="101" y2="45" stroke="#334155" stroke-width="2"/><line x1="115" y1="45" x2="135" y2="45" stroke="#334155" stroke-width="2"/><line x1="149" y1="45" x2="169" y2="45" stroke="#334155" stroke-width="2"/><line x1="183" y1="45" x2="203" y2="45" stroke="#334155" stroke-width="2"/><line x1="217" y1="45" x2="237" y2="45" stroke="#334155" stroke-width="2"/><circle cx="40" cy="45" r="9" fill="#1f2937"/><text x="40" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="40" y1="37" x2="40" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="40" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="40" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="40" y1="53" x2="40" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="40" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="40" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="32" y1="45" x2="22" y2="45" stroke="#334155" stroke-width="1.5"/><circle cx="14" cy="45" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="14" y="48.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="74" cy="45" r="9" fill="#1f2937"/><text x="74" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="74" y1="37" x2="74" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="74" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="74" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="74" y1="53" x2="74" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="74" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="74" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="108" cy="45" r="9" fill="#1f2937"/><text x="108" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="108" y1="37" x2="108" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="108" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="108" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="108" y1="53" x2="108" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="108" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="108" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="142" cy="45" r="9" fill="#1f2937"/><text x="142" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="142" y1="37" x2="142" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="142" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="142" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="142" y1="53" x2="142" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="142" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="142" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="176" cy="45" r="9" fill="#1f2937"/><text x="176" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="176" y1="37" x2="176" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="176" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="176" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="176" y1="53" x2="176" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="176" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="176" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="210" cy="45" r="9" fill="#1f2937"/><text x="210" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="210" y1="37" x2="210" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="210" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="210" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="210" y1="53" x2="210" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="210" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="210" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="244" cy="45" r="9" fill="#1f2937"/><text x="244" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="244" y1="37" x2="244" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="244" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="244" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="244" y1="53" x2="244" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="244" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="244" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="252" y1="45" x2="262" y2="45" stroke="#334155" stroke-width="1.5"/><circle cx="270" cy="45" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="270" y="48.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text></svg></div></div>
+      <div class="alkane-card"><div class="alkane-name">Octane</div><div class="alkane-formula">C₈H₁₈</div><div class="alkane-svg-wrap"><svg viewBox="0 0 352 90" width="260" height="66" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Structural formula of Octane"><line x1="47" y1="45" x2="67" y2="45" stroke="#334155" stroke-width="2"/><line x1="81" y1="45" x2="101" y2="45" stroke="#334155" stroke-width="2"/><line x1="115" y1="45" x2="135" y2="45" stroke="#334155" stroke-width="2"/><line x1="149" y1="45" x2="169" y2="45" stroke="#334155" stroke-width="2"/><line x1="183" y1="45" x2="203" y2="45" stroke="#334155" stroke-width="2"/><line x1="217" y1="45" x2="237" y2="45" stroke="#334155" stroke-width="2"/><line x1="251" y1="45" x2="271" y2="45" stroke="#334155" stroke-width="2"/><circle cx="40" cy="45" r="9" fill="#1f2937"/><text x="40" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="40" y1="37" x2="40" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="40" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="40" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="40" y1="53" x2="40" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="40" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="40" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="32" y1="45" x2="22" y2="45" stroke="#334155" stroke-width="1.5"/><circle cx="14" cy="45" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="14" y="48.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="74" cy="45" r="9" fill="#1f2937"/><text x="74" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="74" y1="37" x2="74" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="74" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="74" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="74" y1="53" x2="74" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="74" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="74" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="108" cy="45" r="9" fill="#1f2937"/><text x="108" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="108" y1="37" x2="108" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="108" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="108" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="108" y1="53" x2="108" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="108" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="108" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="142" cy="45" r="9" fill="#1f2937"/><text x="142" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="142" y1="37" x2="142" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="142" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="142" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="142" y1="53" x2="142" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="142" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="142" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="176" cy="45" r="9" fill="#1f2937"/><text x="176" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="176" y1="37" x2="176" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="176" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="176" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="176" y1="53" x2="176" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="176" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="176" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="210" cy="45" r="9" fill="#1f2937"/><text x="210" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="210" y1="37" x2="210" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="210" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="210" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="210" y1="53" x2="210" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="210" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="210" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="244" cy="45" r="9" fill="#1f2937"/><text x="244" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="244" y1="37" x2="244" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="244" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="244" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="244" y1="53" x2="244" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="244" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="244" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><circle cx="278" cy="45" r="9" fill="#1f2937"/><text x="278" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">C</text><line x1="278" y1="37" x2="278" y2="27" stroke="#334155" stroke-width="1.5"/><circle cx="278" cy="19" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="278" y="22.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="278" y1="53" x2="278" y2="63" stroke="#334155" stroke-width="1.5"/><circle cx="278" cy="71" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="278" y="74.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text><line x1="286" y1="45" x2="296" y2="45" stroke="#334155" stroke-width="1.5"/><circle cx="304" cy="45" r="8" fill="#e5e7eb" stroke="#334155" stroke-width="1"/><text x="304" y="48.5" text-anchor="middle" font-size="9" font-weight="700" fill="#111">H</text></svg></div></div>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="info-card"><h4>🛢️ Crude oil</h4><p>A liquid mixture of many different hydrocarbons, pumped from source rock and refined into fuels and petrochemicals.</p></div>
+      <div class="info-card"><h4>🔥 Natural gas</h4><p>Mostly methane (CH₄), the simplest hydrocarbon — one carbon atom, four hydrogen atoms.</p></div>
+      <div class="info-card"><h4>⚫ Coal</h4><p>A carbon-rich solid formed from ancient swamp plants — less purely hydrocarbon than oil or gas, but still a fossil fuel.</p></div>
+    </div>
+
+    <div class="video-card">
+      <div class="video-title">📹 What Are Hydrocarbons?</div>
+      <div class="video-sub">The two elements every hydrocarbon is built from — watch before answering below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/1UE3hZ7cOP0" title="What Are Hydrocarbons" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">🛰️ Resource Briefing — something doesn’t add up</span>
+      <p style="margin:0;">A resource memo in your files claims: <em>“Hydrocarbons are molecules built from carbon, hydrogen, and oxygen.”</em> Something in that memo is wrong. What is it, and what two elements is a real hydrocarbon molecule actually built from?</p>
+      <textarea id="refl-1" placeholder="Name the error, and the two real elements…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">📊 Quick Check</span>
+      <p style="margin:0;">Hydrocarbons don’t sit in the ground on their own — mission briefings track them inside three real resources. Name all three fossil fuels hydrocarbons are found in.</p>
+      <textarea id="refl-2" placeholder="Name all three…"></textarea>
+    </div>
+
+    <h3 id="sec-2"><span class="sec-num">2</span>How fossils and fossil fuels actually form</h3>
+    <p>Fossil fuels don't form the way a lot of people picture it — there's no single "dinosaur soup" underground. Oil and natural gas form mostly from <strong>ancient marine organisms</strong>: tiny plankton and algae that lived, died, and sank to ancient seafloors by the trillions. Buried under layer after layer of sediment, that organic material turned into a waxy substance called <strong>kerogen</strong>. Buried deep enough — thousands of feet down — heat and pressure slowly convert kerogen into the hydrocarbons that make up oil and natural gas, collecting in porous <strong>source rock</strong>.</p>
+    <p><strong>Coal</strong> forms through a related but separate path. Instead of marine plankton, it starts with ancient swamp and forest plant material, piling up faster than it can fully decompose in low-oxygen swamp water. Buried and compressed over millions of years, that plant material moves through real stages — peat, then lignite, then bituminous coal, then anthracite — as depth, heat, and pressure all increase.</p>
+    <p>None of this happens on any timescale a person can watch. Real source rock and real coal seams take <strong>millions of years</strong> to form. That's exactly why fossil fuels are called a <strong>non-renewable resource</strong>: humans are pumping and mining them out far, far faster than the Earth could ever replace them.</p>
+
+    <div class="diagram-card">
+      <div class="diagram-title">🔬 Burial over geologic time, surface to source rock</div>
+      <div class="diagram-sub">Four stages, each one deeper, older, and hotter than the one above it.</div>
+      <div class="diagram-svg-wrap">
+        <svg viewBox="0 0 240 200" width="230" height="190" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="15" width="180" height="30" fill="#7dd3fc" stroke="#0c4a6e" stroke-width="2"/>
+          <text x="120" y="34" text-anchor="middle" fill="#0c4a6e" font-size="9" font-weight="700">1</text>
+          <rect x="30" y="45" width="180" height="42" fill="#d6b98c" stroke="#0c4a6e" stroke-width="2"/>
+          <text x="120" y="70" text-anchor="middle" fill="#0c4a6e" font-size="9" font-weight="700">2</text>
+          <rect x="30" y="87" width="180" height="50" fill="#8a6240" stroke="#0c4a6e" stroke-width="2"/>
+          <text x="120" y="115" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">3</text>
+          <rect x="30" y="137" width="180" height="45" fill="#3f2a1d" stroke="#0c4a6e" stroke-width="2"/>
+          <text x="120" y="163" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">4</text>
+        </svg>
+      </div>
+      <div class="diagram-legend">
+        <div class="diagram-legend-item"><span class="dl-num">1</span><span class="dl-text"><strong>Surface / seafloor</strong> — living things die and settle into mud and sand</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">2</span><span class="dl-text"><strong>Shallow burial</strong> — new sediment piles on top; heat and pressure start building</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">3</span><span class="dl-text"><strong>Deep burial</strong> — thousands of feet down; kerogen slowly converts toward oil and gas</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">4</span><span class="dl-text"><strong>Source rock</strong> — oil and gas sit trapped in porous rock, millions of years later</span></div>
+      </div>
+      <p style="margin:10px 0 0;">Coal forms through a related but separate path: ancient swamp plant material, not marine plankton, buried and compressed with far less oxygen around it — peat, then lignite, then bituminous coal, then anthracite, as depth and pressure increase.</p>
+    </div>
+
+    <div class="video-card">
+      <div class="video-title">📹 How Fossil Fuels Form</div>
+      <div class="video-sub">Buried, then transformed, over millions of years — watch before answering below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/JasIvS7oYw4" title="How Fossil Fuels Form" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">🛰️ Mission Log — full paragraph required</span>
+      <p style="margin:0;">A resource projection in front of you assumes: <em>“If oil supplies run low, new deposits will simply form to replace them within a few decades.”</em> Explain what’s wrong with that assumption — how long does it actually take fossil fuels to form, and why does that make them a non-renewable resource on any human timescale?</p>
+      <textarea class="paragraph" id="refl-3" placeholder="Write your full paragraph here…"></textarea>
+      <span class="paragraph-note">Say what’s wrong, AND roughly how long real fossil fuel formation actually takes.</span>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">📊 Quick Check</span>
+      <p style="margin:0;">Coal forms from one kind of ancient organic material, and oil and natural gas form from a different kind. What was buried to eventually form coal, and what was buried to eventually form oil and natural gas?</p>
+      <textarea id="refl-4" placeholder="Name both, and what was buried for each…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔍 Two Different Things</span>
+      <p style="margin:0;">A fossil and a fossil fuel both form from ancient living things buried a long time ago, but a mission log shouldn’t treat them as the same thing. What’s the real difference between a fossil and a fossil fuel?</p>
+      <textarea id="refl-6" placeholder="Explain the real difference…"></textarea>
+    </div>
+
+    <h3 id="sec-3"><span class="sec-num">3</span>What plastics actually are</h3>
+    <p>Plastic isn't dug up or mined the way coal is — it's manufactured. A <strong>plastic</strong> is a <strong>synthetic polymer</strong>: a long chain molecule built by chemically bonding together thousands of small repeating units called <strong>monomers</strong>. Most conventional plastic starts as crude oil or natural gas, refined and processed into <strong>petrochemicals</strong> like ethylene and propylene — small hydrocarbon molecules that then get linked together into those long polymer chains.</p>
+    <p>Different starting monomers make different plastics with different real properties. <strong>Polyethylene</strong> (from ethylene) is lightweight and flexible — bags and bottles. <strong>Polypropylene</strong> (from propylene) is stiffer and handles heat better — bottle caps and food containers. <strong>PVC</strong> (from vinyl chloride) is rigid and weather-resistant — pipes and siding. What makes plastic so widely used across all of these types is a real, practical combination: it's durable, lightweight, cheap to produce at scale, and it can be molded into almost any shape while it's still soft.</p>
+
+    <div class="card-grid">
+      <div class="info-card"><h4>🧵 Polyethylene (PE)</h4><p>The most common plastic by weight — bags, bottles, and film. Built from ethylene monomers.</p></div>
+      <div class="info-card"><h4>🪣 Polypropylene (PP)</h4><p>Stiffer and more heat-resistant — bottle caps, food containers, rope.</p></div>
+      <div class="info-card"><h4>🚰 PVC</h4><p>Polyvinyl chloride — rigid and weather-resistant — pipes, siding, some packaging.</p></div>
+    </div>
+
+    <div class="video-card">
+      <div class="video-title">📹 From Crude Oil to Plastic</div>
+      <div class="video-sub">Refining hydrocarbons into a polymer — watch before answering below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/sIuUcJ72wWY" title="From Crude Oil to Plastic" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">🛰️ Supply Memo Flag — full paragraph required</span>
+      <p style="margin:0;">A supply memo describes plastic as “a natural raw material, mined from the ground the same way coal is.” Correct this memo: what is plastic actually made from, and how does it actually get made?</p>
+      <textarea class="paragraph" id="refl-7" placeholder="Write your full paragraph here…"></textarea>
+      <span class="paragraph-note">Say what’s wrong, AND explain what plastic is actually made from.</span>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">📊 Quick Check</span>
+      <p style="margin:0;">Plastic replaced glass, metal, and wood in thousands of products within a few decades. Name at least two real properties of plastic that explain why.</p>
+      <textarea id="refl-8" placeholder="Name at least two properties…"></textarea>
+    </div>
+
+    <h3 id="sec-4"><span class="sec-num">4</span>Put together, it's a system — with a real trade-off</h3>
+    <p>Trace the whole chain and it's one continuous system, not three separate topics: a <strong>fossil fuel</strong> (oil, gas, or coal) is buried, ancient organic material; inside it are <strong>hydrocarbon</strong> molecules; refine and chemically bond those hydrocarbons together and you get a <strong>plastic</strong>. Every plastic item within reach right now traces back through that exact same chain.</p>
+    <p>That chain also carries a real trade-off. The properties that make plastic so useful — cheap, lightweight, and built to last — are the exact same properties that make it an environmental problem once it's thrown away. A plastic bottle that resists breaking down for years on a shelf also resists breaking down for centuries in a landfill or the ocean, where it instead breaks into smaller and smaller pieces called <strong>microplastics</strong>. Burning fossil fuels for energy also releases carbon dioxide, adding to climate change. <strong>Recycling</strong> helps, but it doesn't fully solve the problem: different plastic types can't all be recycled together, quality degrades each time plastic is reprocessed, and a large share of plastic waste still isn't recycled at all — which is exactly why reducing how much gets used in the first place, and developing real alternatives like biodegradable plastics, matters as much as recycling does.</p>
+
+    <div class="callout subtle">
+      <span class="callout-label">📊 Quick Check</span>
+      <p style="margin:0;">Trace the real chain from the ground to a plastic bottle: name the three links in order — the raw resource pumped or mined from the ground, the type of molecule packed inside it, and the material manufactured from it.</p>
+      <textarea id="refl-9" placeholder="Name all three links, in order…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">📊 Quick Check</span>
+      <p style="margin:0;">Recycling plastic sounds like it should solve the plastic-pollution problem completely, but a real mission briefing wouldn’t claim that. Explain one real reason recycling alone isn’t enough.</p>
+      <textarea id="refl-10" placeholder="Give one real reason…"></textarea>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">🔧 Engineering Trade-off</span>
+      <p style="margin:0;">Plastic’s biggest strength — cheap, light, and built to last — is also exactly what makes it an environmental problem once it’s thrown away. Explain this trade-off in your own words: why would the same property make a material both useful and a pollution risk, and why does that make “just use less plastic” harder to actually pull off than it sounds?</p>
+      <textarea class="paragraph" id="refl-11" placeholder="Explain the trade-off…"></textarea>
+    </div>
+
+    <table class="data-table">
+      <thead><tr><th>Step in the chain</th><th>What it actually is</th><th>Real timescale</th></tr></thead>
+      <tbody>
+        <tr><td>Fossil fuel</td><td class="num">Crude oil, natural gas, or coal — buried ancient organisms</td><td class="num">Millions of years, underground, heat + pressure</td></tr>
+        <tr><td>Hydrocarbon</td><td class="num">The carbon-hydrogen molecules packed inside the fossil fuel</td><td class="num">Formed slowly, but extracted in seconds by drilling</td></tr>
+        <tr><td>Plastic (polymer)</td><td class="num">Manufactured by refining and chemically bonding hydrocarbons into long chains</td><td class="num">Made in hours to days — can take centuries to break down once thrown away</td></tr>
+      </tbody>
+    </table>
+    <h3>Real-world application: this chain gets worked every day</h3>
+    <p>Petroleum geologists study rock layers to find where source rock actually sits, before anyone drills a single well. Petrochemical engineers run the crackers and reactors that turn crude oil and natural gas into the ethylene and propylene that become real plastic products. Materials scientists test which resin type a product should actually be made from, balancing cost, durability, and how easily it can be recycled afterward. Paleontologists use the same buried-and-preserved idea, on a different material, to read Earth's ancient history from actual fossils. None of this is guesswork — every one of those jobs starts from the same real chain you're about to trace yourself.</p>
+    <h3>History: how we found and used this chain</h3>
+    <div class="timeline">
+      <div class="timeline-item"><div class="t-year">~300 mya</div><div class="t-body">During the <strong>Carboniferous Period</strong>, vast swamp forests cover much of the Earth. Dead plant material piles up faster than it can fully decompose in the swamps' low-oxygen water — the start of most of the coal deposits still being mined today.</div></div>
+      <div class="timeline-item"><div class="t-year">1859</div><div class="t-body"><strong>Edwin Drake</strong> drills the first commercial oil well in Titusville, Pennsylvania, launching the modern petroleum industry and the search for buried source rock worldwide.</div></div>
+      <div class="timeline-item"><div class="t-year">1907</div><div class="t-body"><strong>Leo Baekeland</strong> invents Bakelite, the first fully synthetic plastic — made entirely from fossil-fuel-derived chemicals, not adapted from any natural material like earlier plastics had been.</div></div>
+    </div>
+    <div class="game-card">
+      <div class="game-title">🔍 Word Match</div>
+      <div class="game-sub">Key terms from the whole reading. Click a term, then its matching definition — no penalty for a wrong guess, just try again.</div>
+      <div id="game-day1"></div>
+    </div>
+
+
+  </section>
+
+  <!-- MATERIALS -->
+  <section class="day-block">
+    <span class="day-kicker">Before Day 2 · Build Kit</span>
+    <h2>Choose What You're Bringing</h2>
+    <p class="day-sub">This is a pool to pick from, not a checklist — grab what you'll actually use for your build.</p>
+
+    <div class="materials-table-wrap">
+      <table class="materials-table">
+      <thead><tr><th>Material</th><th>Container</th><th>Bottom layer (organic source)</th><th>Middle layer (sediment)</th><th>Top layer (newest sediment)</th><th>Labels</th></tr></thead>
+      <tbody>
+      <tr><td class="mat-name">A clear plastic cup</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A clear plastic cup for Container</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A clear glass jar</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A clear glass jar for Container</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A cut-open clear plastic water bottle</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A cut-open clear plastic water bottle for Container</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A clear plastic deli container</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A clear plastic deli container for Container</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Used coffee grounds, dried</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Used coffee grounds, dried for Bottom layer (organic source)</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Dark garden soil</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Dark garden soil for Bottom layer (organic source)</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Crushed dead leaves mixed into dark soil</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Crushed dead leaves mixed into dark soil for Bottom layer (organic source)</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Play sand</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Play sand for Middle layer (sediment)</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Aquarium gravel</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Aquarium gravel for Middle layer (sediment)</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Fine pebbles</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Fine pebbles for Middle layer (sediment)</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Coarse gravel</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Coarse gravel for Top layer (newest sediment)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Small stones from outside</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Small stones from outside for Top layer (newest sediment)</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Markers</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Markers for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Sticky notes cut into flags</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Sticky notes cut into flags for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Index cards</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Index cards for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Painter’s tape strips</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Painter’s tape strips for Labels</span></label></td></tr>
+      </tbody></table></div>
+    <p class="materials-table-note">One container, one bottom-layer material, one middle-layer material, and one top-layer material — plus anything for labels. The exact substitute doesn’t matter; the layer order (oldest at the bottom) does.</p>
+        <div class="slip-preview">
+      <h4>📋 What you're bringing to Day 2:</h4>
+      <ul id="slip-list-preview"></ul>
+      <div class="slip-empty" id="slip-empty">Nothing selected yet.</div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section class="day-block" id="day2">
+    <span class="day-kicker">Day 2 · Build Day</span>
+    <h2>Build a Burial-Layer Model</h2>
+    <p class="day-sub">A real, physical layered model showing how fossil fuels actually form — not a drawing of one. Oldest and deepest goes in first, at the bottom; newest and shallowest goes in last, on top — the same order real burial actually happens in.</p>
+
+    <h3>What you're building</h3>
+    <p>A clear container with three visibly different layers stacked inside it, oldest at the bottom: a dark, organic-rich bottom layer standing in for ancient buried plant and plankton material, a middle layer of sand or fine gravel standing in for sediment burying it deeper over time, and a top layer of coarser gravel or pebbles standing in for the newest sediment still being deposited today. Every layer needs a real, labeled match to a real stage of fossil fuel formation — an analyst who can’t say why coffee grounds stand in for buried organic material hasn’t actually made the connection yet.</p>
+
+    <div class="model3d-wrap">
+      <div class="model3d">
+        <div class="model3d-stage" id="model-stage">
+          <div class="model3d-face f1"><span><span class="f-icon">🪨</span>Bottom layer<br>Organic source material</span></div>
+          <div class="model3d-face f2"><span><span class="f-icon">🟤</span>Middle layer<br>Buried sediment</span></div>
+          <div class="model3d-face f3"><span><span class="f-icon">🏔️</span>Top layer<br>Newest sediment</span></div>
+          <div class="model3d-face f4"><span><span class="f-icon">⏳</span>Millions of years<br>of geologic time</span></div>
+          <div class="model3d-face f5"><span><span class="f-icon">📏</span>Measure<br>every layer in cm</span></div>
+          <div class="model3d-face f6"><span><span class="f-icon">🏷️</span>Label every<br>layer clearly</span></div>
+        </div>
+      </div>
+      <div class="model3d-hint">🖱️ Hover to pause and read each face.</div>
+      <button class="btn btn-ghost model3d-pause" type="button" id="pause-btn">⏸ Pause rotation</button>
+    </div>
+
+    <h3>Build steps</h3>
+    <div class="build-checklist">
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">1.</span><span class="step-text">Choose a clear container and decide how many centimeters tall your total burial profile will be, and record it.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">2.</span><span class="step-text">Add the bottom layer — dark, organic-rich material (used coffee grounds, crushed dead leaves, or dark soil) standing in for ancient buried plant and plankton matter — and press it down firmly.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">3.</span><span class="step-text">Add a middle layer of sand or fine gravel on top, standing in for sediment burying the organic layer deeper over time.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">4.</span><span class="step-text">Add a top layer of coarser gravel or pebbles, standing in for the newest sediment still being deposited today, and label all three layers on the outside with their approximate real age (oldest at the bottom).</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">5.</span><span class="step-text">Set something heavy (a stack of books or a full water bottle) on top for at least a minute to model real underground pressure, then measure each layer’s thickness in centimeters.</span></span></label>
+    </div>
+
+    <h3>Explain what you built</h3>
+    <div class="callout">
+      <label>What did building your burial-layer model teach you about why it actually takes so long for fossil fuels to form, and why depth and pressure matter?</label>
+      <textarea id="refl-b1" placeholder="Use what you just built and measured…"></textarea>
+    </div>
+
+    <h3 id="sec-plan">Log your build</h3>
+    <p>Now that it's built, fill this in — the record of exactly what you used and why it fits. This becomes your notes for tomorrow's presentation.</p>
+    <table class="justify-table">
+      <thead><tr><th>Real stage</th><th>Model layer</th><th>Material I’m using</th><th>Why this material fits</th></tr></thead>
+      <tbody>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+      </tbody>
+    </table>
+
+  </section>
+
+  <!-- DAY 3 -->
+  <section class="day-block" id="day3">
+    <span class="day-kicker">Day 3 · Present the Findings</span>
+    <h2>Present What You Found</h2>
+    <p class="day-sub">A real analyst defends every claim they make. Here's how to open strong and cover everything that matters.</p>
+
+    <div class="hook-box">
+      <div class="hook-label">Your opening move</div>
+      <p style="margin:0;">Don’t open with “I’m going to talk about fossil fuels.” Instead, hold up your burial-layer model and ask the room: <em>“How many million years do you think are stacked inside this one jar?”</em> Let a few guesses land before you tell them.</p>
+    </div>
+
+    <div class="prep-form">
+      <h3>Prepare your presentation</h3>
+      <p>None of this gets typed into a box. Grab a stack of index cards and write short answers to each prompt below in your own hand — one card per prompt is plenty. Bring the cards to Day 3 and glance at them while you talk; they're yours to prepare with, not a script to read word for word.</p>
+
+      <div class="prep-field">
+        <label>i. Your role and responsibility</label>
+        <p style="margin:0;">In your own words — who are you in this story, and what were you responsible for figuring out?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>ii. Three new words or ideas you learned, and what they mean</label>
+        <p style="margin:0;">Pick three, and write a short, correct definition for each in your own words.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>iii. One historical fact you found interesting</label>
+        <p style="margin:0;">Which one, and why it stuck with you.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>iv. A real-world application</label>
+        <p style="margin:0;">Where does this actually show up outside a classroom?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>v. Explain your build</label>
+        <p style="margin:0;">What you built, why each part represents what it does, and what it explains — look back at your Day 2 build reflection if you need a reminder.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>vi. What you're still not sure about</label>
+        <p style="margin:0;">What would you want more explanation or practice on?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>vii. Cover the whole quest</label>
+        <p style="margin:0;">Walk through everything from the quest, one topic at a time, as if you're teaching it to someone hearing it for the first time: what hydrocarbons are, how fossils and fossil fuels form, what plastics are, how it all comes together as one system, and the real trade-off underneath it.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  Hydrocarbons, Plastics &amp; Fossils · Resource Mission Director — Shalom's instance. <a href="../index.html">All three instances →</a>
+</footer>
+
+<!-- Isolated printable materials slip -->
+<div id="print-slip-page">
+  <div class="print-slip-sheet">
+    <h3>📋 Materials I'm Bringing — Day 2</h3>
+    <div class="slip-kid">Resource Mission Director · Shalom</div>
+    <ul id="slip-list-print"></ul>
+  </div>
+</div>
+
+<!-- Side glossary drawer -->
+<div class="notes-backdrop" id="glossary-backdrop"></div>
+<div class="notes-drawer" id="glossary-drawer">
+  <div class="notes-drawer-head">
+    <h4>📖 Glossary</h4>
+    <button id="glossary-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="glossary">
+      <div class="glossary-item"><div class="word">Hydrocarbon</div><div class="def">A molecule made only of carbon and hydrogen atoms — the building block of fossil fuels and most plastics.</div></div>
+      <div class="glossary-item"><div class="word">Fossil fuel</div><div class="def">An energy resource — oil, natural gas, or coal — formed from the buried remains of ancient living things over millions of years.</div></div>
+      <div class="glossary-item"><div class="word">Fossil</div><div class="def">The preserved remains or traces of an ancient organism — bones, shells, or footprints — found in rock.</div></div>
+      <div class="glossary-item"><div class="word">Kerogen</div><div class="def">The waxy, carbon-rich material inside buried source rock that heat and pressure slowly convert into oil and natural gas.</div></div>
+      <div class="glossary-item"><div class="word">Crude oil</div><div class="def">The raw, unrefined liquid mixture of hydrocarbons pumped from the ground, before it's separated into fuels and other products.</div></div>
+      <div class="glossary-item"><div class="word">Polymer</div><div class="def">A long chain molecule made of many smaller repeating units, called monomers, bonded together.</div></div>
+      <div class="glossary-item"><div class="word">Monomer</div><div class="def">A single small molecule that bonds with many others like it to form a long chain called a polymer.</div></div>
+      <div class="glossary-item"><div class="word">Petrochemical</div><div class="def">A chemical made from crude oil or natural gas, used as a raw ingredient for products like plastic.</div></div>
+      <div class="glossary-item"><div class="word">Non-renewable resource</div><div class="def">A resource that forms so slowly, over millions of years, that using it up happens far faster than nature can replace it.</div></div>
+      <div class="glossary-item"><div class="word">Recycling</div><div class="def">Reprocessing a used material into new material instead of throwing it away — though not every plastic type can be recycled the same way.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Side notes drawer -->
+<div class="notes-backdrop" id="notes-backdrop"></div>
+<div class="notes-drawer" id="notes-drawer">
+  <div class="notes-drawer-head">
+    <h4>📝 My Notes</h4>
+    <button id="notes-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="notes-section-label">Highlighted words</div>
+    <ul id="hl-collected-list" class="hl-collected-list"></ul>
+    <div id="hl-collected-empty" style="display:none;">Highlight anything in the reading and it'll show up here.</div>
+    <div class="notes-section-label">Free notes</div>
+    <textarea id="notes-textarea" placeholder="Jot anything down…"></textarea>
+    <div id="notes-saved-msg" class="notes-saved-msg"></div>
+  </div>
+</div>
+
+<script>
+  // Progress-sync Worker — cross-device save. SITE_KEY is a soft deterrent
+  // only (any client-side value is visible in devtools), not real auth.
+  window.QUEST_SYNC_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  window.QUEST_SYNC_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+</script>
+<script src="../js/quest.js"></script>
+<script>
+  QuestUI.initKidGate('Shalom');
+  QuestUI.initFacilitatorCheck();
+
+  QuestUI.initProgressSync('shalom', 'group-03', 'week-03').then(function () {
+    QuestUI.initHighlighter('shalom');
+    QuestUI.initNotesDrawer('shalom');
+    QuestUI.initGlossaryDrawer();
+    QuestUI.initMaterialsPool('shalom');
+    QuestUI.initBuildChecklist('shalom');
+    QuestUI.initFieldAutosave('shalom');
+    QuestUI.initPresentationAutofill('shalom');
+    QuestUI.initDayTimer('shalom');
+    QuestUI.initProgressBar('shalom');
+    QuestUI.initSectionLock('shalom');
+    QuestUI.initDayLock('shalom');
+    QuestUI.initCompleteQuest('shalom');
+    QuestUI.initMatchGame('game-day1', [
+      ["Hydrocarbon", "A molecule made only of carbon and hydrogen atoms \u2014 the building block of fossil fuels and most plastics."],
+      ["Fossil fuel", "An energy resource \u2014 oil, natural gas, or coal \u2014 formed from buried ancient living things over millions of years."],
+      ["Fossil", "The preserved remains or traces of an ancient organism, found in rock."],
+      ["Kerogen", "The waxy, carbon-rich material inside buried source rock that slowly converts into oil and natural gas."],
+      ["Polymer", "A long chain molecule made of many smaller repeating units bonded together."],
+      ["Monomer", "A single small molecule that bonds with many others like it to form a polymer."],
+      ["Petrochemical", "A chemical made from crude oil or natural gas, used as a raw ingredient for plastic."],
+      ["Non-renewable resource", "A resource that forms so slowly it's used up far faster than nature can replace it."]
+    ], { pageKey: 'shalom' });
+    QuestUI.initReflectionChecks('shalom', [
+      { id: 'refl-1', groups: [['carbon'], ['hydrogen']],
+        reread: { anchor: 'sec-1', label: '1. Hydrocarbons' } },
+      { id: 'refl-2', groups: [['oil', 'petroleum', 'crude oil'], ['natural gas', 'gas'], ['coal']],
+        reread: { anchor: 'sec-1', label: '1. Hydrocarbons' } },
+      { id: 'refl-3', groups: [['million', 'millions'], ['non-renewable', 'nonrenewable', "can't be replaced", "cannot be replaced", 'not renewable', "won't replace", "will not replace", 'faster than']],
+        reread: { anchor: 'sec-2', label: '2. How fossils and fossil fuels form' } },
+      { id: 'refl-4', groups: [['plant', 'plants', 'swamp', 'forest'], ['plankton', 'marine', 'ocean', 'algae', 'sea']],
+        reread: { anchor: 'sec-2', label: '2. How fossils and fossil fuels form' } },
+      { id: 'refl-6', groups: [['fossil', 'bone', 'bones', 'shell', 'shells', 'print', 'remains', 'trace', 'traces'], ['fuel', 'energy', 'burn', 'burned', 'burning', 'oil', 'gas', 'coal']],
+        reread: { anchor: 'sec-2', label: '2. How fossils and fossil fuels form' } },
+      { id: 'refl-7', groups: [['synthetic', 'human-made', 'man-made', 'manufactured', 'engineered'], ['polymer', 'monomer', 'hydrocarbon', 'oil', 'petrochemical', 'refin']],
+        reread: { anchor: 'sec-3', label: '3. What plastics are' } },
+      { id: 'refl-8', groups: [['durable', 'lightweight', 'light', 'cheap', 'inexpensive', 'mold', 'moldable', 'waterproof', 'strong', 'flexible']],
+        reread: { anchor: 'sec-3', label: '3. What plastics are' } },
+      { id: 'refl-9', groups: [['fossil fuel', 'oil', 'petroleum', 'natural gas', 'coal'], ['hydrocarbon'], ['plastic', 'polymer']],
+        reread: { anchor: 'sec-4', label: '4. Put together' } },
+      { id: 'refl-10', groups: [['recycl'], ['degrade', 'quality', 'downcycle', 'downcycling', 'contaminat', 'not all', 'limited', 'landfill', 'sorting', 'sorted']],
+        reread: { anchor: 'sec-4', label: '4. Put together' } },
+      { id: 'refl-11', groups: [['durable', "doesn't break down", 'lasts', 'last', 'strength', 'strong', 'useful', 'cheap', 'light'], ['pollution', 'waste', 'environment', 'ocean', 'landfill', 'centuries', 'forever', 'problem']],
+        reread: { anchor: 'sec-4', label: '4. Put together' } },
+      { id: 'refl-b1', groups: [['pressure', 'heat', 'depth', 'deeper', 'deep', 'buried', 'burial'], ['million', 'millions', 'long', 'slow', 'time', 'years']],
+        reread: { anchor: 'day2', label: 'Day 2 build' } }
+    ]);
+
+    var modelPaused = false;
+    document.getElementById('pause-btn').addEventListener('click', function () {
+      modelPaused = !modelPaused;
+      document.getElementById('model-stage').classList.toggle('paused', modelPaused);
+      this.textContent = modelPaused ? '▶ Resume rotation' : '⏸ Pause rotation';
+    });
+  });
+
+  window.addEventListener('beforeprint', function () { document.body.classList.add('printing-slip'); });
+  window.addEventListener('afterprint', function () { document.body.classList.remove('printing-slip'); });
+</script>
+</body>
+</html>

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plant & Animal Cell — Body Connector</title>
+<script>
+  (function () {
+    // Facilitator View: ?fac=1 must be read and set BEFORE quest.js or any
+    // of its init calls run, so tracking never has a chance to start before
+    // this takes effect — see initFacilitatorCheck's comment in quest.js.
+    try {
+      window.QUEST_FACILITATOR_MODE = new URLSearchParams(window.location.search).get('fac') === '1';
+    } catch (e) { window.QUEST_FACILITATOR_MODE = false; }
+    try {
+      var kid = localStorage.getItem('imm-l3-kid');
+      if (!kid || kid.toLowerCase() !== 'zach') document.documentElement.classList.add('gate-locked');
+    } catch (e) { document.documentElement.classList.add('gate-locked'); }
+  })();
+</script>
+<style>
+  html.gate-locked main, html.gate-locked .progress-summary { display: none !important; }
+  html.facilitator-mode #facilitator-banner { display: block; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="lens-zach">
+
+<div id="facilitator-banner" style="display:none;">🧑‍🏫 Facilitator View — nothing on this page is being timed, saved, or synced. <a href="?" id="facilitator-banner-exit">Exit Facilitator View →</a></div>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand-group">
+      <a href="../index.html" class="brand">🔬 Plant & Animal Cell<small>Body Connector</small></a>
+      <span class="day-badge" id="quest-day-badge"></span>
+      <span class="session-timer" id="session-timer"></span>
+    </div>
+    <nav class="day-nav">
+      <a href="#day1">Part 1</a>
+      <a href="#day2">Part 2</a>
+      <a href="#day3">Part 3</a>
+      <button class="notes-toggle-btn" id="glossary-toggle-btn" type="button">📖 Glossary</button>
+      <button class="notes-toggle-btn" id="notes-toggle-btn" type="button">📝 My Notes</button>
+      <button class="print-btn" id="print-slip-btn" type="button">🖨️ Print my bringing slip</button>
+    </nav>
+  </div>
+</header>
+
+<div class="progress-summary">
+  <div class="container">
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 1</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day1-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day1-label">0/4</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 2</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day2-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day2-label">0/6</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 3</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day3-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="quest-gate-block">
+  <div class="gate-block-wrap">
+    <div class="gate-icon">🔒</div>
+    <h2>This is Zach's investigation</h2>
+    <p>Confirm it's you to continue.</p>
+    <div class="name-gate-card">
+      <button class="btn btn-primary gate-confirm-btn" id="gate-confirm-btn" type="button">✅ Yes, I'm Zach — Continue</button>
+      <div class="name-gate-msg" id="gate-name-msg"></div>
+    </div>
+    <a class="gate-not-you" href="../index.html">Not you? Find your own quest link →</a>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- COVER -->
+  <section class="cover">
+    <div class="cover-watermark" aria-hidden="true">🫀</div>
+    <div class="format-pill">Discovery Quest</div><br>
+    <span class="lens-pill">🫀 Body Connector</span>
+    <h1>A Cell Is a Tiny Body</h1>
+    <p class="subtitle">Every body has a control center, an energy source, a boundary, and a repair crew. So does every single cell — just small enough that you need a microscope to find them.</p>
+    <div class="kid-name">Prepared for: Zach</div>
+    <div class="framing">
+      <p style="margin:0;">You are a <strong>Body Connector</strong>. Names like "mitochondria" and "ribosome" stop being confusing the moment you connect each one to a body part that already does the exact same job. Part 1 briefs you on the full picture: what every cell has, what only a plant cell has, and why. Part 2, you build one real cell as a labeled body-map, and every single match has to survive you defending it out loud. This week, your map only counts if every connection actually holds up.</p>
+    </div>
+  </section>
+
+  <!-- DAY 1 -->
+  <section class="day-block" id="day1">
+    <span class="day-kicker">Part 1 · Full Body Scan</span>
+    <h2>Everything a Cell Actually Needs</h2>
+    <p class="day-sub">You can't map a body without knowing what every organ actually does. This briefing covers the full picture: what every cell has in common, what only a plant cell has, and exactly why those differences exist.</p>
+
+    <h3>Why one tiny structure runs everything alive</h3>
+    <p>Every living thing, from a single bacterium to you, is built out of <strong>cells</strong> — the basic working unit of life. A cell isn't empty space with some parts floating in it; it's a fully organized, self-running structure, with different parts doing different jobs, the same way your own body has different organs doing different jobs. Before you can map your own cell-body, you need to know exactly what's already inside every single cell, plant or animal.</p>
+
+    <h3 id="sec-shared"><span class="sec-num">1</span>What every cell has, no exceptions</h3>
+    <p>Every plant and animal cell shares five core parts. The <strong>cell membrane</strong> is the outer boundary, controlling exactly what enters and leaves — your <strong>skin</strong>, deciding what gets in and what gets kept out. The <strong>cytoplasm</strong> is the jelly-like fluid filling the cell, where everything else sits and reactions happen — the fluid filling your whole body between your organs. The <strong>nucleus</strong> holds the cell's DNA and controls all its activity — your <strong>brain</strong>, the control center. <strong>Mitochondria</strong> release energy from food through respiration — your <strong>stomach</strong>, turning food into usable energy. <strong>Ribosomes</strong> build proteins the cell needs — your <strong>muscles</strong>, which are themselves built and constantly repaired out of protein.</p>
+
+    <div class="diagram-card">
+      <div class="diagram-title">🔬 What every cell shares</div>
+      <div class="diagram-sub">Five body parts every single cell already has a copy of.</div>
+      <div class="diagram-svg-wrap">
+        <svg viewBox="0 0 240 200" width="230" height="190" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="120" cy="100" rx="105" ry="80" fill="#fff1f2" stroke="#e11d48" stroke-width="3"/>
+          <circle cx="120" cy="95" r="34" fill="#fecdd3" stroke="#881337" stroke-width="2.5"/>
+          <text x="120" y="99" text-anchor="middle" fill="#881337" font-size="9" font-weight="700">1</text>
+          <ellipse cx="65" cy="140" rx="16" ry="9" fill="#fb7185" stroke="#881337" stroke-width="2"/>
+          <text x="65" y="143" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">2</text>
+          <circle cx="175" cy="60" r="7" fill="#f43f5e"/>
+          <text x="175" y="63" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">3</text>
+        </svg>
+      </div>
+      <div class="diagram-legend">
+        <div class="diagram-legend-item"><span class="dl-num">1</span><span class="dl-text"><strong>Nucleus</strong> — the brain, holds the DNA</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">2</span><span class="dl-text"><strong>Mitochondria</strong> — the stomach, releases energy</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">3</span><span class="dl-text"><strong>Ribosome</strong> — the muscles, builds protein</span></div>
+      </div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🩺 System Check</span>
+      <p style="margin:0;">Every cell's cytoplasm and ribosomes have real, separate jobs. What does the cytoplasm do, and what do the ribosomes do?</p>
+      <textarea id="refl-6" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-plantonly"><span class="sec-num">2</span>What only a plant cell has</h3>
+    <p>A plant cell has three extra parts an animal cell's body never needs. The <strong>cell wall</strong> is a rigid outer layer made of cellulose, sitting outside the membrane — a permanent <strong>skeleton</strong> built around every single cell, giving it a fixed shape it never has to change. The <strong>chloroplast</strong> contains chlorophyll and makes food from sunlight through photosynthesis — a stomach that never has to eat, because it manufactures its own food from scratch. A large, permanent <strong>vacuole</strong> stores water and keeps the cell firm — like how your own body staying hydrated keeps your tissue firm, except a plant cell depends on it permanently and completely.</p>
+
+    <div class="card-grid">
+      <div class="info-card"><h4>🦴 Cell wall</h4><p>Rigid, made of cellulose, sits outside the membrane. Gives the cell a fixed shape and real structural support — its own personal skeleton.</p></div>
+      <div class="info-card"><h4>☀️ Chloroplast</h4><p>Contains chlorophyll (what makes plants green). Captures sunlight to make the plant's own food — photosynthesis. No human organ can do this.</p></div>
+      <div class="info-card"><h4>💧 Permanent vacuole</h4><p>Large, filled with cell sap. Keeps the cell firm and upright by pushing outward against the cell wall.</p></div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🧾 Case Notes</span>
+      <p style="margin:0;">A cell under the microscope in your scan has a fixed rectangular shape, is colored green, and has a thick outer boundary just outside its membrane. Is it a plant or animal cell, and what specific evidence proves it?</p>
+      <textarea id="refl-2" placeholder="Name the cell type and the evidence…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">💧 Hydration Job</span>
+      <p style="margin:0;">A large, permanent vacuole is one of the plant-only marks. What does it store, and what job does that storage do for the cell?</p>
+      <textarea id="refl-7" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">🩺 Body Scan — something doesn't add up</span>
+      <p style="margin:0;">A scan note in your file reads: <em>"Every cell, plant and animal both, comes with its own built-in skeleton — a rigid cell wall."</em> Something in that note is wrong. What is it, and what should the note have said instead?</p>
+      <textarea id="refl-1" placeholder="Type your correction here…"></textarea>
+    </div>
+
+<h3 id="sec-whydiffer"><span class="sec-num">3</span>Why the differences actually matter</h3>
+    <p>None of this is random. A plant can't get up and move to find food or escape danger — so it needs a fixed, upright structure it can rely on permanently, and it needs to make its own food since it can't go looking for any. That's exactly what the cell wall and chloroplast solve. An animal, on the other hand, needs to move, change shape, and squeeze through gaps — imagine if your own skin turned to bone: you'd never be able to bend an elbow again. That's why animal cells stay flexible, with only a membrane at the edge.</p>
+
+    <div class="callout">
+      <span class="callout-label">🎓 New Recruit Briefing</span>
+      <p style="margin:0;">A trainee on your team asks why a plant cell bothers with a rigid wall when an animal cell manages fine without one. Explain it in two or three sentences, simple enough for them to repeat back correctly.</p>
+      <textarea id="refl-3" placeholder="Explain it simply…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🚧 Mobility Problem</span>
+      <p style="margin:0;">Why would a rigid cell wall actually be a problem for an animal cell, even though it's such an advantage for a plant cell?</p>
+      <textarea id="refl-8" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-comparison">Two bodies, side by side</h3>
+    <table class="data-table">
+      <thead><tr><th>Feature</th><th>Plant cell</th><th>Animal cell</th></tr></thead>
+      <tbody>
+        <tr><td>Cell wall</td><td class="num">Yes</td><td class="num">No</td></tr>
+        <tr><td>Chloroplast</td><td class="num">Yes</td><td class="num">No</td></tr>
+        <tr><td>Vacuole</td><td class="num">Large, permanent</td><td class="num">Small or none</td></tr>
+        <tr><td>Shape</td><td class="num">Fixed, regular</td><td class="num">Flexible, irregular</td></tr>
+        <tr><td>Nucleus, mitochondria, ribosomes, membrane</td><td class="num">Yes</td><td class="num">Yes</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔍 Compare Two Cases</span>
+      <p style="margin:0 0 8px;"><strong>Cell A:</strong> irregular round shape, no visible outer wall, no large central storage space.<br><strong>Cell B:</strong> fixed rectangular shape, a thick outer boundary beyond the membrane, one large central storage space.</p>
+      <p style="margin:0;">Which is the plant cell and which is the animal cell, and what evidence tells you?</p>
+      <textarea id="refl-4" placeholder="Explain both cases…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🧩 Rule It Out</span>
+      <p style="margin:0;">A cell sample shows no cell wall and no chloroplast, but does have mitochondria and a nucleus. What type of cell is it, and why don't the mitochondria and nucleus help you decide?</p>
+      <textarea id="refl-9" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3>History: how we found out bodies this small even existed</h3>
+    <div class="timeline">
+      <div class="timeline-item"><div class="t-year">1665</div><div class="t-body"><strong>Robert Hooke</strong> examines a thin slice of cork under a microscope, sees tiny box-like compartments, and names them "cells" — the first time the word is ever used this way.</div></div>
+      <div class="timeline-item"><div class="t-year">1670s</div><div class="t-body"><strong>Antonie van Leeuwenhoek</strong> builds far more powerful microscopes and becomes the first person to observe living cells and microorganisms moving under one.</div></div>
+      <div class="timeline-item"><div class="t-year">1838–1839</div><div class="t-body"><strong>Matthias Schleiden</strong> (studying plants) and <strong>Theodor Schwann</strong> (studying animals) jointly propose <strong>Cell Theory</strong>: all living things are made of cells.</div></div>
+      <div class="timeline-item"><div class="t-year">1855</div><div class="t-body"><strong>Rudolf Virchow</strong> adds the missing piece: every new cell comes from an existing cell dividing, not from anywhere else.</div></div>
+    </div>
+
+    <h3>Real-world application: a chloroplast has a stranger backstory than most organs</h3>
+    <p>Most biologists believe chloroplasts were once free-living bacteria that got absorbed by an early plant cell nearly two billion years ago and simply never left — the "endosymbiotic theory," one of biology's strangest real backstories, still visible today in the fact that chloroplasts carry their own separate DNA. And since almost all food energy on Earth traces back to a plant capturing sunlight first, that one absorbed bacterium is arguably the starting point of every food chain you've ever been part of.</p>
+
+    <div class="game-card">
+      <div class="game-title">🔬 Specimen Match</div>
+      <div class="game-sub">Key terms from today's whole examination. Click a term, then its matching definition — no penalty for a wrong guess, just try again.</div>
+      <div id="game-day1"></div>
+    </div>
+
+  </section>
+
+  <!-- MATERIALS -->
+  <section class="day-block">
+    <span class="day-kicker">Before Part 2 · Build Kit</span>
+    <h2>Choose What You're Bringing</h2>
+    <p class="day-sub">This is a pool, not a checklist — pick what your specific cell-body actually needs.</p>
+
+    <div class="materials-table-wrap">
+      <table class="materials-table">
+      <thead><tr><th>Material</th><th>Body outline</th><th>Organ stand-ins</th><th>Vessels / nerves</th><th>Plant-only organ</th><th>Vacuole reservoir</th><th>Labels</th></tr></thead>
+      <tbody>
+      <tr><td class="mat-name">Large paper or poster board</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Large paper or poster board for Body outline</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Cardboard cut into a body shape</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Cardboard cut into a body shape for Body outline</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A pillowcase or old T-shirt outline</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A pillowcase or old T-shirt outline for Body outline</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Butcher paper</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Butcher paper for Body outline</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Tape and scissors</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Tape and scissors for Body outline</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Small boxes, blocks, or cutouts</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Small boxes, blocks, or cutouts for Organ stand-ins</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Balloons of different sizes</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Balloons of different sizes for Organ stand-ins</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Clay or play-dough shaped into organs</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Clay or play-dough shaped into organs for Organ stand-ins</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Sponges cut into organ shapes</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Sponges cut into organ shapes for Organ stand-ins</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Felt cutouts stuffed with cotton</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Felt cutouts stuffed with cotton for Organ stand-ins</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Small plastic containers</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Small plastic containers for Organ stand-ins</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">String or yarn</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">String or yarn for Vessels / nerves</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Red and blue thread (arteries vs. veins)</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Red and blue thread (arteries vs. veins) for Vessels / nerves</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Pipe cleaners</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Pipe cleaners for Vessels / nerves</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Yarn in two colors</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Yarn in two colors for Vessels / nerves</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Ribbon</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Ribbon for Vessels / nerves</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Green paper or paint</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Green paper or paint for Plant-only organ</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Colored paper or felt</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Colored paper or felt for Plant-only organ</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Green felt or fabric</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Green felt or fabric for Plant-only organ</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Green construction paper</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Green construction paper for Plant-only organ</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Green pom-poms</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Green pom-poms for Plant-only organ</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A small container or cup</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A small container or cup for Vacuole reservoir</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A small balloon</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A small balloon for Vacuole reservoir</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A film canister</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A film canister for Vacuole reservoir</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A small plastic bottle</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A small plastic bottle for Vacuole reservoir</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A paper cone cup</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A paper cone cup for Vacuole reservoir</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Markers and small labeled flags</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Markers and small labeled flags for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Sticky notes cut into flags</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Sticky notes cut into flags for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Index cards</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Index cards for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Small flags on toothpicks</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Small flags on toothpicks for Labels</span></label></td></tr>
+      <tr><td class="mat-name">Painter's tape strips</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Painter's tape strips for Labels</span></label></td></tr>
+      </tbody></table></div>
+      <p class="materials-table-note">The plant-only organ and vacuole reservoir only apply if you're building a plant cell.</p>
+          <div class="slip-preview">
+      <h4>📋 What you're bringing to Part 2:</h4>
+      <ul id="slip-list-preview"></ul>
+      <div class="slip-empty" id="slip-empty">Nothing selected yet.</div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section class="day-block" id="day2">
+    <span class="day-kicker">Part 2 · Build the Body-Map</span>
+    <h2>Plan and Build One Real Cell-Body</h2>
+    <p class="day-sub">Pick ONE cell type — plant or animal — and build it as a labeled body outline, with every organelle standing in for the real body part that does its job.</p>
+
+    <div class="model3d-wrap">
+      <div class="model3d">
+        <div class="model3d-stage" id="model-stage">
+          <div class="model3d-face f1" style="background:linear-gradient(135deg,#fb7185,#e11d48);"><span><span class="f-icon">🧠</span>Nucleus<br>Brain</span></div>
+          <div class="model3d-face f2" style="background:linear-gradient(135deg,#f43f5e,#be123c);"><span><span class="f-icon">🫃</span>Mitochondria<br>Stomach</span></div>
+          <div class="model3d-face f3" style="background:linear-gradient(135deg,#fb7185,#881337);"><span><span class="f-icon">💪</span>Ribosomes<br>Muscles</span></div>
+          <div class="model3d-face f4" style="background:linear-gradient(135deg,#f43f5e,#4c0519);"><span><span class="f-icon">🧴</span>Membrane<br>Skin</span></div>
+          <div class="model3d-face f5" style="background:linear-gradient(135deg,#fb7185,#be123c);"><span><span class="f-icon">🗺️</span>Pick ONE<br>cell to map</span></div>
+          <div class="model3d-face f6" style="background:linear-gradient(135deg,#f43f5e,#881337);"><span><span class="f-icon">🏷️</span>Label every<br>body match</span></div>
+        </div>
+      </div>
+      <div class="model3d-hint">🖱️ Hover to pause and read each face.</div>
+      <button class="btn btn-ghost model3d-pause" type="button" id="pause-btn">⏸ Pause rotation</button>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">What your body-map has to prove</span>
+      <p style="margin:0;">Every organelle in your cell needs a real, labeled body part it's matched to — not just a name copied from the reading. A connector who can't explain why the brain equals the nucleus hasn't actually made the connection yet.</p>
+    </div>
+
+    <h3 id="sec-plan">Plan before you build</h3>
+    <p>Fill this in before you glue anything down. This connection table <em>is</em> the real planning decision — the build itself is just carrying it out.</p>
+    <table class="justify-table">
+      <thead><tr><th>Organelle</th><th>Body part</th><th>Material I'm using</th><th>Why this match fits</th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="e.g. Nucleus"></td><td><input placeholder="e.g. Brain"></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout subtle">
+      <span class="callout-label">📸 Picture the finished result</span>
+      <p style="margin:0;">Picture a finished cell-body: a paper body outline with small labeled boxes standing in for each organ — a box near the head for the nucleus as "control center" — connected by yarn "blood vessels," with a green-paper organ marking the plant-only parts if you're building a plant cell.</p>
+    </div>
+
+    <h3>Build it</h3>
+    <div class="build-checklist">
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">1.</span><span class="step-text">Choose plant or animal cell to model, and write down why.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">2.</span><span class="step-text">Draw or lay out your body outline, then place each organelle as its matched organ, one at a time, checking off your plan table.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">3.</span><span class="step-text">Label every organ with its real organelle name AND its body job — nothing unlabeled counts as finished.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">4.</span><span class="step-text">Connect your organs with string showing how they'd realistically interact.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">5.</span><span class="step-text">Write one sentence per organ explaining why that body job fits that organelle.</span></span></label>
+    </div>
+
+    <h3>Results</h3>
+    <p>Write up your body-map report — this doubles as notes for tomorrow's presentation.</p>
+    <table class="plan-table">
+      <tr><td style="width:180px;"><strong>Cell type built</strong></td><td><input placeholder="e.g. Plant cell"></td></tr>
+      <tr><td><strong>Body parts labeled</strong></td><td><input placeholder="e.g. 8 of 8"></td></tr>
+      <tr><td><strong>Short description</strong></td><td><textarea placeholder="Describe your cell-body in 2–3 sentences…"></textarea></td></tr>
+    </table>
+
+    <div class="callout">
+      <span class="callout-label">🪞 Body-Map Review — self-check</span>
+      <p style="margin:0;">What might someone misunderstand about your body-map without your explanation? Which labeled match are you least confident about — and why did you still include it?</p>
+      <textarea id="refl-5" placeholder="Write your honest review…"></textarea>
+    </div>
+  </section>
+
+  <!-- DAY 3 -->
+  <section class="day-block" id="day3">
+    <span class="day-kicker">Part 3 · Present the Body-Map</span>
+    <h2>Present Your Cell-Body</h2>
+    <p class="day-sub">A real body-connector defends every match they've drawn. Here's how to open strong and cover everything that matters.</p>
+
+    <div class="hook-box">
+      <div class="hook-label">Your opening move</div>
+      <p style="margin:0;">Don't say "I'm going to talk about cells." Instead, hold up your body-map and ask the room: <em>"If this were a body, what do you think each part does?"</em> Let a few guesses land before you reveal the real organelle names.</p>
+    </div>
+
+    <div class="prep-form">
+      <h3>Prepare your presentation</h3>
+      <p>Fill this in before Part 3 — it's your own script, not busywork.</p>
+
+      <div class="prep-field">
+        <label>i. Your role and responsibility</label>
+        <textarea placeholder="In your own words — who are you in this story, and what were you responsible for figuring out?"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>ii. Three new words or ideas you learned, and what they mean</label>
+        <textarea placeholder="1) &#10;2) &#10;3) "></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>iii. One historical fact you found interesting</label>
+        <textarea placeholder="Which one, and why it stuck with you"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>iv. A real-world application</label>
+        <textarea placeholder="Where does this actually show up outside a classroom?"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>v. Explain your build</label>
+        <div class="prep-autofill-row">
+          <span class="prep-autofill-hint">Materials &amp; reasoning below are pulled from your Part 2 plan table — edit freely.</span>
+          <button type="button" class="prep-autofill-btn">&#8635; Pull from Part 2 again</button>
+        </div>
+        <textarea class="prep-build-materials" placeholder="Materials used and why you chose them…"></textarea>
+        <textarea placeholder="Every label on your build, and what it explains…"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>vi. What you're still not sure about</label>
+        <textarea placeholder="What would you want more explanation or practice on?"></textarea>
+      </div>
+    </div>
+
+    <div class="facilitator-tip">
+      <span class="fac-label">Facilitator only</span>
+      <p>If one of Zach's body matches feels like a stretch, that's the best moment of the presentation, not a flaw to smooth over — ask him directly "what's a different body part that might fit better?" A connector who can propose a second option is showing real understanding of the organelle's actual job, not just memorizing one label.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  Plant & Animal Cell · Body Connector — Zach's instance. <a href="../index.html">All three instances →</a>
+</footer>
+
+<!-- Isolated printable materials slip -->
+<div id="print-slip-page">
+  <div class="print-slip-sheet">
+    <h3>📋 Materials I'm Bringing — Part 2</h3>
+    <div class="slip-kid">Body Connector · Zach</div>
+    <ul id="slip-list-print"></ul>
+  </div>
+</div>
+
+<!-- Side glossary drawer -->
+<div class="notes-backdrop" id="glossary-backdrop"></div>
+<div class="notes-drawer" id="glossary-drawer">
+  <div class="notes-drawer-head">
+    <h4>📖 Glossary</h4>
+    <button id="glossary-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="glossary">
+      <div class="glossary-item"><div class="word">Cell membrane</div><div class="def">The outer boundary controlling what enters and leaves a cell.</div></div>
+      <div class="glossary-item"><div class="word">Nucleus</div><div class="def">Holds the cell's DNA and controls its activity.</div></div>
+      <div class="glossary-item"><div class="word">Mitochondria</div><div class="def">Releases energy from food through respiration.</div></div>
+      <div class="glossary-item"><div class="word">Cell wall</div><div class="def">A rigid, cellulose outer layer found only in plant cells.</div></div>
+      <div class="glossary-item"><div class="word">Chloroplast</div><div class="def">Captures sunlight to make food — photosynthesis. Plant cells only.</div></div>
+      <div class="glossary-item"><div class="word">Cell Theory</div><div class="def">All living things are made of cells, and every cell comes from an existing cell.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Side notes drawer -->
+<div class="notes-backdrop" id="notes-backdrop"></div>
+<div class="notes-drawer" id="notes-drawer">
+  <div class="notes-drawer-head">
+    <h4>📝 My Notes</h4>
+    <button id="notes-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="notes-section-label">Highlighted words</div>
+    <ul id="hl-collected-list" class="hl-collected-list"></ul>
+    <div id="hl-collected-empty" style="display:none;">Highlight anything in the reading and it'll show up here.</div>
+    <div class="notes-section-label">Free notes</div>
+    <textarea id="notes-textarea" placeholder="Jot anything down…"></textarea>
+    <div id="notes-saved-msg" class="notes-saved-msg"></div>
+  </div>
+</div>
+
+<script>
+  // Progress-sync Worker — cross-device save. SITE_KEY is a soft deterrent
+  // only (any client-side value is visible in devtools), not real auth.
+  window.QUEST_SYNC_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  window.QUEST_SYNC_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+</script>
+<script src="../js/quest.js"></script>
+<script>
+  QuestUI.initKidGate('Zach');
+  QuestUI.initFacilitatorCheck();
+
+  QuestUI.initProgressSync('zach', 'group-01', 'week-01').then(function () {
+    QuestUI.initHighlighter('zach');
+    QuestUI.initNotesDrawer('zach');
+    QuestUI.initGlossaryDrawer();
+    QuestUI.initMaterialsPool('zach');
+    QuestUI.initBuildChecklist('zach');
+    QuestUI.initFieldAutosave('zach');
+    QuestUI.initPresentationAutofill('zach');
+    QuestUI.initDayTimer('zach');
+    QuestUI.initProgressBar('zach');
+    QuestUI.initSectionLock('zach');
+    QuestUI.initDayLock('zach');
+    QuestUI.initCompleteQuest('zach');
+    QuestUI.initMatchGame('game-day1', [
+      ["Cell membrane", "The outer boundary controlling what enters and leaves a cell."],
+      ["Nucleus", "Holds the cell's DNA and controls its activity."],
+      ["Mitochondria", "Releases energy from food through respiration."],
+      ["Cell wall", "A rigid, cellulose outer layer found only in plant cells."],
+      ["Chloroplast", "Captures sunlight to make food — photosynthesis. Plant cells only."],
+      ["Cell Theory", "All living things are made of cells, and every cell comes from an existing cell."]
+    ], { pageKey: 'zach' });
+    QuestUI.initReflectionChecks('zach', [
+      { id: 'refl-1', groups: [['plant', 'plants'], ['animal', 'animals'], ["don't have", "doesn't have", "not both", "only one", "wrong", "incorrect", "lack"]],
+        reread: { anchor: 'sec-plantonly', label: '2. What only a plant cell has' } },
+      { id: 'refl-6', groups: [['cytoplasm', 'jelly', 'fluid'], ['ribosome', 'ribosomes', 'protein', 'proteins']],
+        reread: { anchor: 'sec-shared', label: '1. What every cell has, no exceptions' } },
+      { id: 'refl-2', groups: [['plant'], ['wall', 'rigid', 'rectangular', 'green', 'chloroplast', 'chlorophyll']],
+        reread: { anchor: 'sec-plantonly', label: '2. What only a plant cell has' } },
+      { id: 'refl-7', groups: [['vacuole'], ['water', 'sap', 'firm', 'upright', 'support', 'structure', 'pressure']],
+        reread: { anchor: 'sec-plantonly', label: '2. What only a plant cell has' } },
+      { id: 'refl-3', groups: [['stand', 'support', 'structure', 'shape', 'upright', 'rigid'], ['move', 'moving', 'flexible', 'flexibility', 'change shape']],
+        reread: { anchor: 'sec-whydiffer', label: '3. Why the differences actually matter' } },
+      { id: 'refl-8', groups: [['move', 'moving', 'movement', 'squeeze', 'change shape', 'flexible'], ['rigid', 'wall', "can't move", "wouldn't be able to", 'impossible']],
+        reread: { anchor: 'sec-whydiffer', label: '3. Why the differences actually matter' } },
+      { id: 'refl-4', groups: [['animal'], ['plant']],
+        reread: { anchor: 'sec-plantonly', label: '2. What only a plant cell has' } },
+      { id: 'refl-9', groups: [['animal'], ['shared', 'both', 'on file for both', 'common', 'every cell']],
+        reread: { anchor: 'sec-comparison', label: 'Two bodies, side by side' } },
+      { id: 'refl-5', groups: [],
+        reread: { anchor: 'sec-plan', label: 'Plan before you build' } }
+    ]);
+
+    var modelPaused = false;
+    document.getElementById('pause-btn').addEventListener('click', function () {
+      modelPaused = !modelPaused;
+      document.getElementById('model-stage').classList.toggle('paused', modelPaused);
+      this.textContent = modelPaused ? '▶ Resume rotation' : '⏸ Pause rotation';
+    });
+  });
+
+  window.addEventListener('beforeprint', function () { document.body.classList.add('printing-slip'); });
+  window.addEventListener('afterprint', function () { document.body.classList.remove('printing-slip'); });
+</script>
+</body>
+</html>

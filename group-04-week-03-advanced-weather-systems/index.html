@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Weather Systems — Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="brand">🌩️ Advanced Weather Systems<small>Atmospheric Circulation Forecaster</small></a>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hub-hero">
+    <div class="format-pill">Quest</div>
+    <h1>Read the Sky Like a Forecaster</h1>
+    <p>Air masses and fronts, how storms actually form, and how hurricanes and tornadoes get their real numbers on the Saffir-Simpson and Enhanced Fujita scales — then a real barometer you build and read yourself. Type your name below to continue.</p>
+  </section>
+
+  <section class="name-gate">
+    <div class="name-gate-card">
+      <div id="ask-block">
+        <h3>👋 Continuing your quest?</h3>
+        <p>Type your name exactly as your facilitator gave it to you.</p>
+        <form id="hub-name-form">
+          <div class="name-gate-row">
+            <input type="text" id="hub-name-input" placeholder="Type your name…" maxlength="40" autocomplete="off">
+            <button class="btn btn-primary" type="submit">Continue</button>
+          </div>
+        </form>
+        <div class="name-gate-msg" id="hub-name-msg"></div>
+      </div>
+      <div class="name-gate-welcome" id="welcome-block">
+        <div class="who" id="welcome-who"></div>
+        <div class="btn-row" style="justify-content:center;">
+          <a class="btn btn-primary" id="welcome-continue-btn" href="#">Continue my quest →</a>
+        </div>
+        <button class="name-gate-switch" id="welcome-switch-btn" type="button">Not you? Enter a different name</button>
+      </div>
+    </div>
+  </section>
+
+  <section style="max-width:680px; margin: 0 auto 70px;">
+    <div class="callout subtle">
+      <span class="callout-label">What's different about this one</span>
+      <p style="margin:0;">This is a solo quest, built just for one forecaster. It picks up the circulation idea from Week 1's circulatory system — this time it's the atmosphere doing the circulating, not blood — and carries it into real severe-weather science: the four front types, low-pressure systems, the jet stream, and the actual numeric scales meteorologists use to rate hurricanes and tornadoes. Day 2 is a real, working barometer you build and read over real time, not a diagram of one.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  Advanced Weather Systems — Atmospheric Circulation Forecaster.
+</footer>
+
+<script src="js/quest.js"></script>
+<script>
+  var KID_KEY = QuestUI.KID_KEY;
+  var ROSTER = {
+    'benjamin': { name: 'Benjamin', path: 'benjamin/index.html' }
+  };
+
+  var askBlock = document.getElementById('ask-block');
+  var welcomeBlock = document.getElementById('welcome-block');
+  var welcomeWho = document.getElementById('welcome-who');
+  var continueBtn = document.getElementById('welcome-continue-btn');
+
+  function showWelcome(entry) {
+    askBlock.style.display = 'none';
+    welcomeBlock.classList.add('show');
+    welcomeWho.textContent = '✅ Welcome back, ' + entry.name + '!';
+    continueBtn.href = entry.path;
+  }
+
+  function showAsk() {
+    welcomeBlock.classList.remove('show');
+    askBlock.style.display = 'block';
+  }
+
+  var current = null;
+  try { current = localStorage.getItem(KID_KEY); } catch (e) {}
+  if (current && ROSTER[current.toLowerCase()]) {
+    showWelcome(ROSTER[current.toLowerCase()]);
+  }
+
+  document.getElementById('hub-name-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var val = (document.getElementById('hub-name-input').value || '').trim().toLowerCase();
+    var msg = document.getElementById('hub-name-msg');
+    var entry = ROSTER[val];
+    if (entry) {
+      try { localStorage.setItem(KID_KEY, entry.name); } catch (err) {}
+      window.location.href = entry.path;
+    } else {
+      msg.textContent = "That name isn't part of this quest group — check the spelling, or ask your facilitator.";
+    }
+  });
+
+  document.getElementById('welcome-switch-btn').addEventListener('click', function () {
+    try { localStorage.removeItem(KID_KEY); } catch (e) {}
+    showAsk();
+  });
+</script>
+</body>
+</html>

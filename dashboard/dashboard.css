@@ -1,0 +1,121 @@
+:root {
+  --paper: #fffaf3;
+  --paper-soft: #fdf3e7;
+  --ink: #2b2320;
+  --ink-soft: #6b5f56;
+  --border: #ecdfd0;
+  --accent: #e0672e;
+  --accent-dark: #b84f1f;
+  --accent-soft: #fde8da;
+  --good: #1f8a54;
+  --good-soft: #e3f6ec;
+  --font-head: 'Source Serif 4', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+
+#app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* ---- Name gate ---- */
+.name-gate {
+  max-width: 380px;
+  margin: 80px auto 0;
+  text-align: center;
+  background: var(--paper-soft);
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  padding: 36px 30px;
+}
+.name-gate h1 { font-family: var(--font-head); font-size: 1.8rem; margin: 0 0 8px; }
+.name-gate p { color: var(--ink-soft); margin: 0 0 20px; }
+#gate-name-input {
+  width: 100%; box-sizing: border-box; font-size: 1.05rem; padding: 12px 14px;
+  border-radius: 10px; border: 1.5px solid var(--border); font-family: var(--font-body);
+  margin-bottom: 14px;
+}
+#gate-name-input:focus { outline: none; border-color: var(--accent); }
+.btn {
+  font-family: var(--font-body); font-weight: 700; border: none; border-radius: 999px;
+  cursor: pointer; padding: 12px 28px; font-size: 1rem;
+}
+.btn-primary { background: var(--accent); color: #fff; width: 100%; }
+.btn-primary:hover { background: var(--accent-dark); }
+.gate-msg { margin-top: 12px; font-size: .88rem; color: var(--accent-dark); min-height: 1.2em; }
+
+/* ---- Header ---- */
+.dash-header { position: relative; padding-top: 4px; }
+.dash-header h1 { font-family: var(--font-head); font-size: 2.2rem; margin: 0 0 4px; padding-right: 110px; }
+.dash-sub { color: var(--ink-soft); margin: 0 0 32px; font-size: 1.05rem; }
+.switch-kid-link {
+  position: absolute; top: 0; right: 0; display: inline-block;
+  padding: 9px 18px; border: 1.5px solid var(--border); border-radius: 999px;
+  background: #fff; color: var(--ink-soft); font-weight: 700;
+  text-decoration: none; font-size: .85rem;
+}
+.switch-kid-link:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-dark); }
+
+.dash-section-title { font-family: var(--font-head); font-size: 1.3rem; margin: 0 0 16px; }
+
+/* ---- One block per week: its quest card, then its own three-column
+   strengths/growth/gaps summary right underneath. ---- */
+.week-block {
+  background: var(--paper-soft); border: 1.5px solid var(--border); border-radius: 20px;
+  padding: 24px 26px 28px; margin-bottom: 28px;
+}
+.quest-card {
+  background: #fff; border: 1.5px solid var(--border); border-radius: 16px;
+  padding: 20px 22px; box-shadow: 0 2px 10px rgba(0,0,0,.03); margin-bottom: 22px;
+}
+.quest-card.load-error { border-color: #e8b34d; background: #fffaf0; }
+.quest-card.load-error h3 { margin: 0 0 10px; }
+.load-error-msg { color: #8a5a00; font-size: .9rem; margin: 0 0 16px; }
+.quest-card-top { margin-bottom: 8px; }
+.quest-badge {
+  display: inline-block; font-size: .78rem; font-weight: 700; padding: 4px 10px;
+  border-radius: 999px;
+}
+.status-done { background: var(--good-soft); color: var(--good); }
+.status-progress { background: var(--accent-soft); color: var(--accent-dark); }
+.status-new { background: #f1ede7; color: var(--ink-soft); }
+.quest-card h3 { font-family: var(--font-head); font-size: 1.25rem; margin: 4px 0 14px; }
+.progress-track {
+  height: 10px; border-radius: 999px; background: var(--paper-soft); overflow: hidden; margin-bottom: 8px;
+}
+.progress-fill { height: 100%; background: var(--accent); border-radius: 999px; transition: width .4s ease; }
+.progress-fill-build { background: var(--good); }
+.quest-pct { font-size: .85rem; color: var(--ink-soft); margin-bottom: 16px; }
+.quest-open-btn {
+  display: inline-block; background: var(--accent); color: #fff; text-decoration: none;
+  font-weight: 700; font-size: .9rem; padding: 9px 18px; border-radius: 999px;
+}
+.quest-open-btn:hover { background: var(--accent-dark); }
+
+/* ---- Strengths / Growth Areas / Learning Gaps — three per-week columns ---- */
+.dash-columns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 760px) { .dash-columns { grid-template-columns: 1fr; } }
+.dash-col h4 {
+  font-family: var(--font-head); font-size: 1.02rem; margin: 0 0 12px; font-weight: 600;
+}
+.summary-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.summary-list li {
+  background: #fff; border: 1.5px solid var(--border); border-radius: 12px;
+  padding: 12px 14px; font-size: .88rem;
+}
+.summary-link {
+  display: block; margin-top: 8px; color: var(--accent-dark); font-weight: 700;
+  font-size: .82rem; text-decoration: none;
+}
+.summary-link:hover { text-decoration: underline; }
+.summary-empty { color: var(--ink-soft); font-size: .85rem; font-style: italic; margin: 0; }

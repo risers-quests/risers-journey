@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Materials in Everyday Life — Elyon</title>
+<script>
+  (function () {
+    // Facilitator View: ?fac=1 must be read and set BEFORE quest.js or any
+    // of its init calls run, so tracking never has a chance to start before
+    // this takes effect — see initFacilitatorCheck's comment in quest.js.
+    try {
+      window.QUEST_FACILITATOR_MODE = new URLSearchParams(window.location.search).get('fac') === '1';
+    } catch (e) { window.QUEST_FACILITATOR_MODE = false; }
+    try {
+      var kid = localStorage.getItem('imm-l3-kid');
+      if (!kid || kid.toLowerCase() !== 'elyon') document.documentElement.classList.add('gate-locked');
+    } catch (e) { document.documentElement.classList.add('gate-locked'); }
+  })();
+</script>
+<style>
+  html.gate-locked main, html.gate-locked .progress-summary { display: none !important; }
+  html.facilitator-mode #facilitator-banner { display: block; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="lens-elyon">
+
+<div id="facilitator-banner" style="display:none;">🧑‍🏫 Facilitator View — nothing on this page is being timed, saved, or synced. <a href="?" id="facilitator-banner-exit">Exit Facilitator View →</a></div>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand-group">
+      <a href="../index.html" class="brand">🧱 Materials<small>Elyon's Quest</small></a>
+      <span class="day-badge" id="quest-day-badge"></span>
+      <span class="session-timer" id="session-timer"></span>
+    </div>
+    <nav class="day-nav">
+      <a href="#day1">Day 1</a>
+      <a href="#day2">Day 2</a>
+      <a href="#day3">Day 3</a>
+      <button class="notes-toggle-btn" id="glossary-toggle-btn" type="button">📖 Glossary</button>
+      <button class="notes-toggle-btn" id="notes-toggle-btn" type="button">📝 My Notes</button>
+      <button class="print-btn" id="print-slip-btn" type="button">🖨️ Print my bringing slip</button>
+    </nav>
+  </div>
+</header>
+
+<div class="progress-summary">
+  <div class="container">
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 1</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day1-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day1-label">0/10</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 2</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day2-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day2-label">0/5</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Day 3</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day3-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="quest-gate-block">
+  <div class="gate-block-wrap">
+    <div class="gate-icon">🔒</div>
+    <h2>This is Elyon's page</h2>
+    <p>Confirm it's you to continue.</p>
+    <div class="name-gate-card">
+      <button class="btn btn-primary gate-confirm-btn" id="gate-confirm-btn" type="button">✅ Yes, I'm Elyon — Continue</button>
+      <div class="name-gate-msg" id="gate-name-msg"></div>
+    </div>
+    <a class="gate-not-you" href="../index.html">Not you? Find your own quest link →</a>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- COVER -->
+  <section class="cover">
+    <div class="cover-watermark" aria-hidden="true">🔍</div>
+    <div class="format-pill">Discovery Quest</div><br>
+    <h1>What Are Things Made Of?</h1>
+    <p class="subtitle">Every single thing around you is made of some material. Today you'll learn how to test and sort materials for yourself, and prove why the material has to match the job.</p>
+    <div class="kid-name">Prepared for: Elyon</div>
+    <div class="framing">
+      <p style="margin:0;">Day 1, you will read about what materials are, five materials you see every day, and why we pick different materials for different jobs. Day 2, you will test and sort real household objects by what they're made of. Day 3, you will show what you found and explain what you learned.</p>
+    </div>
+  </section>
+
+  <!-- DAY 1 -->
+  <section class="day-block" id="day1">
+    <span class="day-kicker">Day 1 · Read and Learn</span>
+    <h2>What Materials Are, and How We Test Them</h2>
+    <p class="day-sub">Let's learn the real facts: what a material is, how to test one, five materials you see every day, why the material has to match the job, and why reusing and recycling matter.</p>
+
+    <p>Look around you right now: your chair, your shoe, your cup. Every single one is made of something, and today you'll learn what that "something" is called — plus exactly how to test and prove it for yourself.</p>
+
+    <h3 id="sec-what-materials-are"><span class="sec-num">1</span>What is a material?</h3>
+    <p>A <span class="gloss-word" data-term="material"><strong>material</strong></span> is what an object is made of. Wood, metal, plastic, glass, and fabric are all materials. Some objects are made of just one material. Other objects, like a pencil, are made of several.</p>
+    <p>We don't have to guess what a material is like. We can test it with our own hands and eyes, using a few simple checks.</p>
+    <p>Is it <span class="gloss-word" data-term="hard-soft"><strong>hard or soft</strong></span>? Press it gently. A rock is hard. A pillow is soft.</p>
+    <p>Is it <span class="gloss-word" data-term="bendy-stiff"><strong>bendy or stiff</strong></span>? Try to bend it a little. A rubber band is bendy. A ruler is stiff.</p>
+
+    <div class="diagram-card">
+      <div class="diagram-title">🔍 Four ways to test a material</div>
+      <div class="diagram-sub">Simple checks you can do with just your hands and eyes.</div>
+      <div class="diagram-svg-wrap">
+        <svg viewBox="0 0 280 120" width="280" height="120" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="38" cy="55" r="24" fill="#ddd6fe" stroke="#5b21b6" stroke-width="2.5"/>
+          <text x="38" y="60" text-anchor="middle" fill="#5b21b6" font-size="11" font-weight="700">1</text>
+          <circle cx="108" cy="55" r="24" fill="#ddd6fe" stroke="#5b21b6" stroke-width="2.5"/>
+          <text x="108" y="60" text-anchor="middle" fill="#5b21b6" font-size="11" font-weight="700">2</text>
+          <circle cx="178" cy="55" r="24" fill="#ddd6fe" stroke="#5b21b6" stroke-width="2.5"/>
+          <text x="178" y="60" text-anchor="middle" fill="#5b21b6" font-size="11" font-weight="700">3</text>
+          <circle cx="248" cy="55" r="24" fill="#ddd6fe" stroke="#5b21b6" stroke-width="2.5"/>
+          <text x="248" y="60" text-anchor="middle" fill="#5b21b6" font-size="11" font-weight="700">4</text>
+        </svg>
+      </div>
+      <div class="diagram-legend">
+        <div class="diagram-legend-item"><span class="dl-num">1</span><span class="dl-text"><strong>Hard or soft?</strong> — press it gently</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">2</span><span class="dl-text"><strong>Bendy or stiff?</strong> — bend it a little</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">3</span><span class="dl-text"><strong>See-through or not?</strong> — hold it to the light</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">4</span><span class="dl-text"><strong>Heavy or light?</strong> — feel its weight in your hand</span></div>
+      </div>
+    </div>
+
+    <p>Is it <span class="gloss-word" data-term="see-through"><strong>see-through or solid</strong></span>? Hold it up to a light or a window. A clean window is see-through. A wall is solid.</p>
+    <p>Is it <span class="gloss-word" data-term="heavy-light"><strong>heavy or light</strong></span>? Feel its weight in your hand. A brick is heavy. A feather is light.</p>
+
+    <div class="video-card">
+      <div class="video-title">📹 Properties of Materials</div>
+      <div class="video-sub">You can watch this video twice. After that, use the reading above to answer the questions.</div>
+      <div class="video-embed-wrap" data-video-id="0aUUuJ3LRUE">
+        <iframe src="https://www.youtube.com/embed/0aUUuJ3LRUE?enablejsapi=1" title="Properties of Materials" allowfullscreen loading="lazy"></iframe>
+        <div class="video-lock-overlay"></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">📋 Fix the Mistake</span>
+      <p style="margin:0;">Someone wrote: <em>"The only way to know if something is hard or soft is to look at its color."</em> Something here is wrong. What is wrong, and what should it say instead?</p>
+      <textarea id="refl-1" placeholder="Type your correction here…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🖐️ Two Tests</span>
+      <p style="margin:0;">Name two different ways you could test what a material is like.</p>
+      <textarea id="refl-6" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">↔️ Bendy vs. Stiff</span>
+      <p style="margin:0;">How is a material that is stiff different from a material that is bendy?</p>
+      <textarea id="refl-7" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-material-types"><span class="sec-num">2</span>Five materials you see every day</h3>
+    <p>Now that you know how to test a material, let's meet five you already see every single day: wood, metal, plastic, glass, and fabric.</p>
+    <p><strong>Wood</strong> comes from trees. It is a little bit bendy, but strong. You can find wood in tables, doors, and pencils.</p>
+    <p><strong>Plastic</strong> is made by people, usually starting from oil. It can be hard or soft, and it can be almost any color. You can find plastic in toys, bottles, and toothbrushes.</p>
+    <p><strong>Fabric</strong> is made of tiny threads, woven or knitted together. It is soft and bendy. You can find fabric in shirts, blankets, and backpacks.</p>
+
+    <div class="card-grid">
+      <div class="info-card"><h4>🪵 Wood</h4><p>Comes from trees. A little bendy, but strong. Used for furniture, doors, and pencils.</p></div>
+      <div class="info-card"><h4>🔧 Metal</h4><p>Dug from the ground as rock called ore. Hard, heavy, and strong. Used for spoons, nails, and cars.</p></div>
+      <div class="info-card"><h4>🪟 Glass</h4><p>Made by heating sand until it melts, then cooling it. Hard, but see-through. Used for windows, cups, and jars.</p></div>
+    </div>
+
+    <p><span class="gloss-word" data-term="metal"><strong>Metal</strong></span> is dug out of the ground as a rock called ore. It is hard, heavy, and strong. You can find metal in spoons, nails, and cars.</p>
+    <p><span class="gloss-word" data-term="glass"><strong>Glass</strong></span> is made by heating sand until it melts, then letting it cool and harden. It is hard, but you can see right through it. You can find glass in windows, cups, and jars.</p>
+
+    <div class="video-card">
+      <div class="video-title">📹 Materials and Their Properties</div>
+      <div class="video-sub">Watch once, then come back and try the questions below.</div>
+      <div class="video-embed-wrap" data-video-id="JCKSMsbpn1Y">
+        <iframe src="https://www.youtube.com/embed/JCKSMsbpn1Y?enablejsapi=1" title="Materials and Their Properties" allowfullscreen loading="lazy"></iframe>
+        <div class="video-lock-overlay"></div>
+      </div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔎 Name the Material</span>
+      <p style="margin:0;">A material is shiny, feels cold, and is strong. Which material from the reading is this? What clue from the reading tells you?</p>
+      <textarea id="refl-2" placeholder="Name the material and the clue…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🆚 Compare Two Materials</span>
+      <p style="margin:0;">Name one way glass is different from fabric.</p>
+      <textarea id="refl-8" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-right-job"><span class="sec-num">3</span>The right material for the job</h3>
+    <p>People don't pick a material by accident. They pick it because of what it can actually do — the material has to match the job.</p>
+    <p>Windows are made of glass. Glass is see-through, so light can pass through it and you can see outside. Wood or metal would block the light completely.</p>
+    <p>Chairs are usually made of wood or metal. Both are strong and stiff, so they can hold you up without bending or breaking.</p>
+    <p>Shirts are made of fabric. Fabric is soft and bendy, so it can move with your body and feel comfortable on your skin.</p>
+
+    <div class="diagram-card">
+      <div class="diagram-title">🪟🪑👕 Same job, different material</div>
+      <div class="diagram-sub">The material is picked because of what the job actually needs.</div>
+      <div class="diagram-svg-wrap">
+        <svg viewBox="0 0 260 130" width="260" height="130" xmlns="http://www.w3.org/2000/svg">
+          <rect x="18" y="28" width="56" height="72" rx="5" fill="#ddd6fe" fill-opacity="0.55" stroke="#5b21b6" stroke-width="2.5"/>
+          <line x1="46" y1="28" x2="46" y2="100" stroke="#5b21b6" stroke-width="1.5" stroke-dasharray="3 3"/>
+          <line x1="18" y1="64" x2="74" y2="64" stroke="#5b21b6" stroke-width="1.5" stroke-dasharray="3 3"/>
+          <text x="46" y="118" text-anchor="middle" fill="#5b21b6" font-size="9" font-weight="700">Window: glass</text>
+
+          <rect x="102" y="38" width="56" height="62" rx="6" fill="#a16207" stroke="#78350f" stroke-width="2.5"/>
+          <text x="130" y="118" text-anchor="middle" fill="#5b21b6" font-size="9" font-weight="700">Chair: wood/metal</text>
+
+          <rect x="186" y="32" width="56" height="68" rx="20" fill="#a78bfa" stroke="#5b21b6" stroke-width="2.5"/>
+          <text x="214" y="118" text-anchor="middle" fill="#5b21b6" font-size="9" font-weight="700">Shirt: fabric</text>
+        </svg>
+      </div>
+      <div class="diagram-legend">
+        <div class="diagram-legend-item"><span class="dl-text">Window is glass — see-through, so light gets in.</span></div>
+        <div class="diagram-legend-item"><span class="dl-text">Chair is wood or metal — stiff, so it holds you up.</span></div>
+        <div class="diagram-legend-item"><span class="dl-text">Shirt is fabric — soft and bendy, so it's comfortable.</span></div>
+      </div>
+    </div>
+
+    <p>If you picked the wrong material, the job just wouldn't work. A glass shirt would be stiff and could shatter. A fabric window wouldn't let you see outside at all.</p>
+
+    <div class="callout">
+      <span class="callout-label">🎓 Explain It Simply</span>
+      <p style="margin:0;">A younger Riser asks why windows are made of glass and not wood. Explain it simply, in two or three sentences they could repeat back correctly.</p>
+      <textarea id="refl-3" placeholder="Explain it simply…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🪑 Why This Material?</span>
+      <p style="margin:0;">Why are chairs usually made of wood or metal, and not fabric alone?</p>
+      <textarea id="refl-9" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">👕 Why This Material Too?</span>
+      <p style="margin:0;">Why are shirts made of fabric, and not metal or glass?</p>
+      <textarea id="refl-10" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-reduce-reuse-recycle"><span class="sec-num">4</span>Reusing and recycling materials</h3>
+    <p>Materials don't have to be used just once. Many of them can be used again, or turned into something brand new.</p>
+    <p><span class="gloss-word" data-term="reuse"><strong>Reusing</strong></span> means using an object again, for the same job or a new one — like using an old jar to hold pencils, or using a paper bag for lunch again.</p>
+    <p><span class="gloss-word" data-term="recycle"><strong>Recycling</strong></span> means breaking a material down and turning it into a new object. Glass, metal, paper, and many plastics can all be recycled.</p>
+    <p>A recycled metal can might become part of a brand new can, or even part of a bicycle. A recycled glass jar can be melted down and made into a new jar or bottle.</p>
+    <p>Reusing and recycling both help. They mean fewer new materials have to be dug up or made from scratch, and less trash ends up buried in the ground.</p>
+
+    <div class="video-card">
+      <div class="video-title">📹 Recycling for Kids</div>
+      <div class="video-sub">Watch once, then come back and try the last two questions.</div>
+      <div class="video-embed-wrap" data-video-id="Fex-wvrOZf4">
+        <iframe src="https://www.youtube.com/embed/Fex-wvrOZf4?enablejsapi=1" title="Recycling for Kids" allowfullscreen loading="lazy"></iframe>
+        <div class="video-lock-overlay"></div>
+      </div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">♻️ Reuse or Recycle?</span>
+      <p style="margin:0 0 8px;"><strong>Object A:</strong> an old jar gets washed out and used to hold pencils on your desk.<br><strong>Object B:</strong> an old glass jar gets crushed, melted down, and made into a brand new bottle.</p>
+      <p style="margin:0;">Which one is reusing, and which one is recycling? What is the difference between them?</p>
+      <textarea id="refl-4" placeholder="Explain both objects…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🌍 Why It Matters</span>
+      <p style="margin:0;">Why is it a good idea to reuse or recycle materials instead of always throwing them away?</p>
+      <textarea id="refl-11" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3>History: how we found out</h3>
+    <div class="timeline">
+      <div class="timeline-item"><div class="t-year">c. 3300 BCE</div><div class="t-body">People of the <strong>Bronze Age</strong> learn to mix copper and tin together. The new metal, bronze, is harder and stronger than either metal alone — an early lesson that mixing materials can make something better than the parts you started with.</div></div>
+      <div class="timeline-item"><div class="t-year">1907</div><div class="t-body"><strong>Leo Baekeland</strong> invents Bakelite, one of the very first fully man-made plastics. Before this, most "plastic-like" objects were made from natural materials, like tree sap or animal horn.</div></div>
+      <div class="timeline-item"><div class="t-year">1970</div><div class="t-body">The first <strong>Earth Day</strong> is held in the United States. It helps kick off the modern recycling movement, encouraging people everywhere to reuse and recycle materials instead of always throwing them away.</div></div>
+    </div>
+
+    <h3>Real-world use: real people use these same facts</h3>
+    <p>Real engineers and builders use these exact same ideas every single day. When engineers build a bridge, they choose strong metal and stone, not soft fabric. When designers make a raincoat, they choose a material that keeps water out. Recycling centers sort glass, metal, plastic, and paper into separate piles, so each material can be melted down or reused to make something brand new.</p>
+
+    <div class="game-card">
+      <div class="game-title">🔍 Word Match</div>
+      <div class="game-sub">Match each word from today's reading to its meaning. No penalty for a wrong guess — just try again.</div>
+      <div id="game-day1"></div>
+    </div>
+
+  </section>
+
+  <!-- MATERIALS -->
+  <section class="day-block">
+    <span class="day-kicker">Before Day 2 · Build Kit</span>
+    <h2>Choose What You're Bringing</h2>
+    <p class="day-sub">This is a pool to pick from, not a checklist — choose a small collection of test objects made of different materials, something to test floating and sinking, and something to record your results on.</p>
+
+    <div class="materials-table-wrap">
+      <table class="materials-table">
+      <thead><tr><th>Material</th><th>Test objects</th><th>Water container</th><th>Recording sheet</th></tr></thead>
+      <tbody>
+      <tr><td class="mat-name">A wooden spoon or block</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A wooden spoon or block for Test objects</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A metal spoon or key</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A metal spoon or key for Test objects</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A plastic cup or toy</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A plastic cup or toy for Test objects</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A rubber band or bouncy ball</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A rubber band or bouncy ball for Test objects</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A fabric scrap or sock</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A fabric scrap or sock for Test objects</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A glass marble or jar (adult helps)</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A glass marble or jar (adult helps) for Test objects</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A piece of foam or a sponge</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A piece of foam or a sponge for Test objects</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A bowl or basin of water</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A bowl or basin of water for Water container</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A clear plastic tub of water</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A clear plastic tub of water for Water container</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A notebook and pencil</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A notebook and pencil for Recording sheet</span></label></td></tr>
+      <tr><td class="mat-name">Index cards</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Index cards for Recording sheet</span></label></td></tr>
+      </tbody></table></div>
+      <p class="materials-table-note">Pick at least 5 test objects made of different materials, one way to test floating and sinking, and something to write your results on.</p>
+          <div class="slip-preview">
+      <h4>📋 What you're bringing to Day 2:</h4>
+      <ul id="slip-list-preview"></ul>
+      <div class="slip-empty" id="slip-empty">Nothing selected yet.</div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section class="day-block" id="day2">
+    <span class="day-kicker">Day 2 · Test and Sort</span>
+    <h2>Test Real Objects, and Sort Them by Material</h2>
+    <p class="day-sub">Test each object for real, with your own hands and eyes. Write down what you actually find — not what you expect to find.</p>
+
+    <h3>What you're building</h3>
+    <p>A real, hands-on test of what materials are really like — not just a guess. Gather at least 5 objects made of different materials from around your home: something wood, something metal, something plastic, something glass, and something fabric. For each object, run the same 4 tests from Day 1: press it to check hard or soft, bend it a little to check bendy or stiff, hold it to the light to check see-through or not, and gently drop it in a bowl of water to check floats or sinks. Write down exactly what you find for each one.</p>
+
+    <div class="model3d-wrap">
+      <div class="model3d">
+        <div class="model3d-stage" id="model-stage">
+          <div class="model3d-face f1" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);"><span><span class="f-icon">🧺</span>Gather objects<br>different materials</span></div>
+          <div class="model3d-face f2" style="background:linear-gradient(135deg,#8b5cf6,#5b21b6);"><span><span class="f-icon">👉</span>Press each one<br>hard or soft?</span></div>
+          <div class="model3d-face f3" style="background:linear-gradient(135deg,#a78bfa,#6d28d9);"><span><span class="f-icon">🤏</span>Bend gently<br>bendy or stiff?</span></div>
+          <div class="model3d-face f4" style="background:linear-gradient(135deg,#8b5cf6,#4c1d95);"><span><span class="f-icon">🔍</span>Hold to light<br>see-through or not?</span></div>
+          <div class="model3d-face f5" style="background:linear-gradient(135deg,#a78bfa,#5b21b6);"><span><span class="f-icon">💧</span>Drop in water<br>floats or sinks?</span></div>
+          <div class="model3d-face f6" style="background:linear-gradient(135deg,#8b5cf6,#4c1d95);"><span><span class="f-icon">✅</span>Write down<br>what you found</span></div>
+        </div>
+      </div>
+      <div class="model3d-hint">🖱️ Hover to pause and read each face.</div>
+      <button class="btn btn-ghost model3d-pause" type="button" id="pause-btn">⏸ Pause rotation</button>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">What your test has to show</span>
+      <p style="margin:0;">It's not enough to just guess. Every object needs all 4 real tests, and your table needs to show what you actually found for each one, not what you expected.</p>
+    </div>
+
+    <h3>Test it, then record it</h3>
+    <div class="build-checklist">
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">1.</span><span class="step-text">Gather at least 5 objects made of different materials: wood, metal, plastic, glass, and fabric.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">2.</span><span class="step-text">Press each object gently and write down whether it's hard or soft.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">3.</span><span class="step-text">Try to bend each object a little, and write down whether it's bendy or stiff.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">4.</span><span class="step-text">Hold each object up to a light or window, and write down whether it's see-through or not.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">5.</span><span class="step-text">Gently drop each object in a bowl of water, and write down whether it floats or sinks.</span></span></label>
+    </div>
+
+    <h3 id="sec-plan">Log your test results</h3>
+    <p>Fill this in as you go — the record of exactly what you tested and what you actually found. This becomes your notes for tomorrow's presentation.</p>
+    <table class="justify-table">
+      <thead><tr><th>Object</th><th>What material is it?</th><th>Hard/soft? Bendy/stiff?</th><th>What I found</th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="e.g. wooden spoon"></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- DAY 3 -->
+  <section class="day-block" id="day3">
+    <span class="day-kicker">Day 3 · Show What You Found</span>
+    <h2>Present What You Learned</h2>
+    <p class="day-sub">Here's how to open strong, and cover everything that matters.</p>
+
+    <div class="hook-box">
+      <div class="hook-label">Your opening move</div>
+      <p style="margin:0;">Don't say "I'm going to talk about materials." Instead, hold up one of your test objects and ask the room: <em>"Do you think this floats or sinks?"</em> Let a few guesses land before you show them your real, tested answer.</p>
+    </div>
+
+    <div class="prep-form">
+      <h3>Prepare your presentation</h3>
+      <p>None of this gets typed into a box. Grab a stack of index cards and write short answers to each prompt below in your own hand — one card per prompt is plenty. Bring the cards to Day 3 and glance at them while you talk; they're yours to prepare with, not a script to read word for word.</p>
+
+      <div class="prep-field">
+        <label>i. Your role and responsibility</label>
+        <p style="margin:0;">In your own words: what was your job to figure out?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>ii. Three new words or ideas you learned, and what they mean</label>
+        <p style="margin:0;">Pick three, and write a short, correct definition for each in your own words.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>iii. One historical fact you found interesting</label>
+        <p style="margin:0;">Which one, and why it stuck with you</p>
+      </div>
+
+      <div class="prep-field">
+        <label>iv. A real-world application</label>
+        <p style="margin:0;">Where does this actually show up outside a classroom?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>v. Explain your test</label>
+        <p style="margin:0;">What you tested, what you found for each object, and what it shows — look back at your Day 2 results if you need a reminder.</p>
+      </div>
+
+      <div class="prep-field">
+        <label>vi. What you're still not sure about</label>
+        <p style="margin:0;">What would you want more explanation or practice on?</p>
+      </div>
+
+      <div class="prep-field">
+        <label>vii. Cover the whole quest</label>
+        <p style="margin:0;">Walk through everything from the quest, one topic at a time, as if you're teaching it to someone hearing it for the first time: what a material is and how to test one, five materials you see every day, why the material has to match the job, reusing and recycling, and the history behind it — the Bronze Age, Bakelite, and Earth Day.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  Materials in Everyday Life · Elyon's page. <a href="../index.html">All three pages →</a>
+</footer>
+
+<!-- Isolated printable materials slip -->
+<div id="print-slip-page">
+  <div class="print-slip-sheet">
+    <h3>📋 Materials I'm Bringing — Day 2</h3>
+    <div class="slip-kid">Elyon</div>
+    <ul id="slip-list-print"></ul>
+  </div>
+</div>
+
+<!-- Side glossary drawer -->
+<div class="notes-backdrop" id="glossary-backdrop"></div>
+<div class="notes-drawer" id="glossary-drawer">
+  <div class="notes-drawer-head">
+    <h4>📖 Glossary</h4>
+    <button id="glossary-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="glossary">
+      <div class="glossary-item" data-term="material"><div class="word">Material</div><div class="def">What an object is made of, like wood, metal, plastic, glass, or fabric.</div></div>
+      <div class="glossary-item" data-term="hard-soft"><div class="word">Hard / Soft</div><div class="def">Whether pressing on something feels firm (hard) or squishy (soft).</div></div>
+      <div class="glossary-item" data-term="bendy-stiff"><div class="word">Bendy / Stiff</div><div class="def">Whether something curves easily (bendy) or stays straight (stiff).</div></div>
+      <div class="glossary-item" data-term="see-through"><div class="word">See-through</div><div class="def">Lets light pass through it, so you can see what's on the other side.</div></div>
+      <div class="glossary-item" data-term="heavy-light"><div class="word">Heavy / Light</div><div class="def">How much something weighs when you hold it in your hand.</div></div>
+      <div class="glossary-item" data-term="wood"><div class="word">Wood</div><div class="def">A material from trees; a little bendy, but strong.</div></div>
+      <div class="glossary-item" data-term="metal"><div class="word">Metal</div><div class="def">A hard, heavy, strong material dug from the ground as rock called ore.</div></div>
+      <div class="glossary-item" data-term="plastic"><div class="word">Plastic</div><div class="def">A man-made material, usually made starting from oil.</div></div>
+      <div class="glossary-item" data-term="glass"><div class="word">Glass</div><div class="def">A hard, see-through material made by melting sand.</div></div>
+      <div class="glossary-item" data-term="fabric"><div class="word">Fabric</div><div class="def">A soft, bendy material made of woven or knitted threads.</div></div>
+      <div class="glossary-item" data-term="reuse"><div class="word">Reuse</div><div class="def">Using an object again instead of throwing it away.</div></div>
+      <div class="glossary-item" data-term="recycle"><div class="word">Recycle</div><div class="def">Breaking a material down and turning it into a new object.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Side notes drawer -->
+<div class="notes-backdrop" id="notes-backdrop"></div>
+<div class="notes-drawer" id="notes-drawer">
+  <div class="notes-drawer-head">
+    <h4>📝 My Notes</h4>
+    <button id="notes-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="notes-section-label">Highlighted words</div>
+    <ul id="hl-collected-list" class="hl-collected-list"></ul>
+    <div id="hl-collected-empty" style="display:none;">Highlight anything in the reading and it'll show up here.</div>
+    <div class="notes-section-label">Free notes</div>
+    <textarea id="notes-textarea" placeholder="Jot anything down…"></textarea>
+    <div id="notes-saved-msg" class="notes-saved-msg"></div>
+  </div>
+</div>
+
+<script>
+  // Progress-sync Worker — cross-device save. SITE_KEY is a soft deterrent
+  // only (any client-side value is visible in devtools), not real auth.
+  window.QUEST_SYNC_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  window.QUEST_SYNC_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+</script>
+<script src="../js/quest.js"></script>
+<script>
+  QuestUI.initKidGate('Elyon');
+  QuestUI.initFacilitatorCheck();
+
+  QuestUI.initProgressSync('elyon', 'group-00', 'week-03').then(function () {
+    QuestUI.initHighlighter('elyon');
+    QuestUI.initNotesDrawer('elyon');
+    QuestUI.initGlossaryDrawer();
+    QuestUI.initMaterialsPool('elyon');
+    QuestUI.initBuildChecklist('elyon');
+    QuestUI.initFieldAutosave('elyon');
+    QuestUI.initPresentationAutofill('elyon');
+    QuestUI.initDayTimer('elyon');
+    QuestUI.initProgressBar('elyon');
+    QuestUI.initSectionLock('elyon');
+    QuestUI.initDayLock('elyon');
+    QuestUI.initCompleteQuest('elyon');
+    QuestUI.initVideoWatchLimit('elyon');
+    QuestUI.initMatchGame('game-day1', [
+      ["Material", "What an object is made of."],
+      ["Property", "A way to describe what a material is like, such as hard or soft."],
+      ["Bendy", "Able to curve or fold without breaking."],
+      ["Stiff", "Does not bend or fold easily."],
+      ["Metal", "A hard, heavy material dug from the ground; used for spoons and cars."],
+      ["Glass", "A hard, see-through material made by melting sand."],
+      ["Fabric", "A soft, bendy material made of woven threads; used for clothes."],
+      ["Recycle", "To break a material down and turn it into something new."]
+    ], { pageKey: 'elyon' });
+    QuestUI.initReflectionChecks('elyon', [
+      { id: 'refl-1', groups: [['press', 'touch', 'feel', 'squeeze', 'hands', 'hold'], ['wrong', 'not color', "isn't color", "isn't about color", 'not about color']],
+        reread: { anchor: 'sec-what-materials-are', label: '1. What is a material?' } },
+      { id: 'refl-6', groups: [['hard', 'soft', 'bend', 'bendy', 'stiff', 'see-through', 'seethrough', 'floats', 'sinks', 'heavy', 'light', 'press', 'touch']],
+        reread: { anchor: 'sec-what-materials-are', label: '1. What is a material?' } },
+      { id: 'refl-7', groups: [['stiff', 'rigid', 'straight', "doesn't bend", 'does not bend', 'stays straight'], ['bendy', 'bend', 'flexible', 'folds', 'curve']],
+        reread: { anchor: 'sec-what-materials-are', label: '1. What is a material?' } },
+      { id: 'refl-2', groups: [['metal'], ['shiny', 'cold', 'strong', 'hard', 'heavy']],
+        reread: { anchor: 'sec-material-types', label: '2. Five materials you see every day' } },
+      { id: 'refl-8', groups: [['glass', 'see-through', 'seethrough', 'hard', 'breaks', 'breakable'], ['fabric', 'cloth', 'soft', 'bendy', 'bends']],
+        reread: { anchor: 'sec-material-types', label: '2. Five materials you see every day' } },
+      { id: 'refl-3', groups: [['see-through', 'seethrough', 'see through', 'clear', 'light'], ['wood', 'solid', "can't see", 'cannot see', 'blocks']],
+        reread: { anchor: 'sec-right-job', label: '3. The right material for the job' } },
+      { id: 'refl-9', groups: [['strong', 'sturdy', 'hold', 'support', 'hard', 'stiff'], ['fabric', 'soft', "wouldn't hold", 'would not hold', 'bend too much', 'not strong enough']],
+        reread: { anchor: 'sec-right-job', label: '3. The right material for the job' } },
+      { id: 'refl-10', groups: [['soft', 'bendy', 'comfortable', 'comfy', 'stretch'], ['metal', 'glass', 'hard', 'stiff', 'uncomfortable']],
+        reread: { anchor: 'sec-right-job', label: '3. The right material for the job' } },
+      { id: 'refl-4', groups: [['reuse', 'reusing', 'again', 'jar'], ['recycl', 'melt', 'melted', 'broken down', 'break down']],
+        reread: { anchor: 'sec-reduce-reuse-recycle', label: '4. Reusing and recycling materials' } },
+      { id: 'refl-11', groups: [['save', 'saves', 'less trash', 'less waste', 'help the earth', 'helps the earth', 'reduce'], ['new material', 'dug up', 'made from scratch', 'used again', 'reuse', 'recycle']],
+        reread: { anchor: 'sec-reduce-reuse-recycle', label: '4. Reusing and recycling materials' } }
+    ]);
+
+    var modelPaused = false;
+    document.getElementById('pause-btn').addEventListener('click', function () {
+      modelPaused = !modelPaused;
+      document.getElementById('model-stage').classList.toggle('paused', modelPaused);
+      this.textContent = modelPaused ? '▶ Resume rotation' : '⏸ Pause rotation';
+    });
+  });
+
+  window.addEventListener('beforeprint', function () { document.body.classList.add('printing-slip'); });
+  window.addEventListener('afterprint', function () { document.body.classList.remove('printing-slip'); });
+</script>
+</body>
+</html>

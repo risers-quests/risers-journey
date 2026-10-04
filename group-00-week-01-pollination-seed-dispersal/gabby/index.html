@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pollination & Seed Dispersal — Seed Explorer</title>
+<script>
+  (function () {
+    // Facilitator View: ?fac=1 must be read and set BEFORE quest.js or any
+    // of its init calls run, so tracking never has a chance to start before
+    // this takes effect — see initFacilitatorCheck's comment in quest.js.
+    try {
+      window.QUEST_FACILITATOR_MODE = new URLSearchParams(window.location.search).get('fac') === '1';
+    } catch (e) { window.QUEST_FACILITATOR_MODE = false; }
+    try {
+      var kid = localStorage.getItem('imm-l3-kid');
+      if (!kid || kid.toLowerCase() !== 'gabby') document.documentElement.classList.add('gate-locked');
+    } catch (e) { document.documentElement.classList.add('gate-locked'); }
+  })();
+</script>
+<style>
+  html.gate-locked main, html.gate-locked .progress-summary { display: none !important; }
+  html.facilitator-mode #facilitator-banner { display: block; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="lens-gabby">
+
+<div id="facilitator-banner" style="display:none;">🧑‍🏫 Facilitator View — nothing on this page is being timed, saved, or synced. <a href="?" id="facilitator-banner-exit">Exit Facilitator View →</a></div>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand-group">
+      <a href="../index.html" class="brand">🌼 Pollination & Seed Dispersal<small>Seed Explorer</small></a>
+      <span class="day-badge" id="quest-day-badge"></span>
+      <span class="session-timer" id="session-timer"></span>
+    </div>
+    <nav class="day-nav">
+      <a href="#day1">Part 1</a>
+      <a href="#day2">Part 2</a>
+      <a href="#day3">Part 3</a>
+      <button class="notes-toggle-btn" id="glossary-toggle-btn" type="button">📖 Glossary</button>
+      <button class="notes-toggle-btn" id="notes-toggle-btn" type="button">📝 My Notes</button>
+      <button class="print-btn" id="print-slip-btn" type="button">🖨️ Print my bringing slip</button>
+    </nav>
+  </div>
+</header>
+
+<div class="progress-summary">
+  <div class="container">
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 1</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day1-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day1-label">0/4</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 2</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day2-fill"></div></div>
+      <span class="progress-seg-count" id="progress-day2-label">0/6</span>
+    </div>
+    <div class="progress-seg">
+      <span class="progress-seg-label">Part 3</span>
+      <div class="progress-seg-track"><div class="progress-seg-fill" id="progress-day3-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="quest-gate-block">
+  <div class="gate-block-wrap">
+    <div class="gate-icon">🔒</div>
+    <h2>This is Gabby's investigation</h2>
+    <p>Confirm it's you to continue.</p>
+    <div class="name-gate-card">
+      <button class="btn btn-primary gate-confirm-btn" id="gate-confirm-btn" type="button">✅ Yes, I'm Gabby — Continue</button>
+      <div class="name-gate-msg" id="gate-name-msg"></div>
+    </div>
+    <a class="gate-not-you" href="../index.html">Not you? Find your own quest link →</a>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- COVER -->
+  <section class="cover">
+    <div class="cover-watermark" aria-hidden="true">🌱</div>
+    <div class="format-pill">Discovery Quest</div><br>
+    <span class="lens-pill">🌱 Seed Explorer</span>
+    <h1>One Seed's Whole Journey</h1>
+    <p class="subtitle">Every seed that grew into a plant made a real trip first. Wind, water, an animal, or the parent plant's last push carried it. You're about to become one of these seeds.</p>
+    <div class="kid-name">Prepared for: Gabby</div>
+    <div class="framing">
+      <p style="margin:0;">You are a <strong>Seed Explorer</strong>. Before you can tell a seed's story, you need to know the real story: how pollination happens, how a seed forms, and how it really makes its trip to new ground. Part 1 teaches you all of this. Part 2, you become one real seed — you build a working model of how it really travels, and put it to a real test, not just describe how it moves but really measure it. This week, your diary can only say what your seed actually did.</p>
+    </div>
+  </section>
+
+  <!-- DAY 1 -->
+  <section class="day-block" id="day1">
+    <span class="day-kicker">Part 1 · Field Notes</span>
+    <h2>Everything a Seed Needs to Know Before It Travels</h2>
+    <p class="day-sub">You can't write an honest travel diary without knowing the real trip first. This part covers everything: what pollination is, which visitors like which flowers, how a seed forms, and every real way a seed can travel.</p>
+
+    <h3>Why a flower isn't just decoration</h3>
+    <p>A flower's job was never to look pretty for us. Every color, shape, and smell it has does one job: it moves pollen from one flower to another, usually with a visitor's help. Before your seed's story can even begin, you need to know how that pollen moves, and why a flower goes to all that trouble.</p>
+
+    <h3 id="sec-pollination"><span class="sec-num">1</span>What pollination actually is</h3>
+    <p>A flower's male part is called the <strong>stamen</strong>. It has a stalk (the <strong>filament</strong>) topped with an <strong>anther</strong>, and the anther makes <strong>pollen</strong>. A flower's female part is called the <strong>pistil</strong>. It has a sticky top called the <strong>stigma</strong>, sitting on a tube called the <strong>style</strong>. The style leads down to the <strong>ovary</strong>, where the <strong>ovules</strong> wait. <strong>Pollination</strong> is simple: it's just pollen moving from an anther to a stigma — the very first step of my whole story.</p>
+
+    <div class="diagram-card">
+      <div class="diagram-title">🌸 Anatomy of a flower</div>
+      <div class="diagram-sub">Your seed's story starts inside a part of this diagram.</div>
+      <div class="diagram-svg-wrap">
+        <svg viewBox="0 0 240 220" width="230" height="210" xmlns="http://www.w3.org/2000/svg">
+          <path d="M120 100 C90 60 60 60 60 100 C60 130 90 140 120 100 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="2.5"/>
+          <path d="M120 100 C150 60 180 60 180 100 C180 130 150 140 120 100 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="2.5"/>
+          <path d="M120 100 C80 100 70 130 100 160 C112 172 128 172 140 160 C170 130 160 100 120 100 Z" fill="#bae6fd" stroke="#0284c7" stroke-width="2.5"/>
+          <line x1="95" y1="95" x2="82" y2="60" stroke="#075985" stroke-width="3"/>
+          <circle cx="82" cy="56" r="7" fill="#0284c7"/>
+          <text x="82" y="60" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">1</text>
+          <line x1="120" y1="100" x2="120" y2="55" stroke="#075985" stroke-width="3.5"/>
+          <circle cx="120" cy="50" r="8" fill="#075985"/>
+          <text x="120" y="54" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">2</text>
+          <ellipse cx="120" cy="150" rx="20" ry="26" fill="#f0f9ff" stroke="#0284c7" stroke-width="2"/>
+          <text x="120" y="154" text-anchor="middle" fill="#075985" font-size="9" font-weight="700">3</text>
+        </svg>
+      </div>
+      <div class="diagram-legend">
+        <div class="diagram-legend-item"><span class="dl-num">1</span><span class="dl-text"><strong>Anther</strong> — makes the pollen (part of the stamen)</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">2</span><span class="dl-text"><strong>Stigma</strong> — sticky tip that catches pollen (top of the pistil)</span></div>
+        <div class="diagram-legend-item"><span class="dl-num">3</span><span class="dl-text"><strong>Ovary</strong> — where I'll be waiting as an ovule</span></div>
+      </div>
+    </div>
+
+    <p><strong>Self-pollination</strong> is pollen moving within the same flower or the same plant. <strong>Cross-pollination</strong> is pollen moving between two different plants of the same kind. Most flowers are built for cross-pollination — it makes stronger, more varied seeds. Every bright petal and every strong smell has one job: get a visitor to carry pollen somewhere else.</p>
+
+    <div class="video-card">
+      <div class="video-title">📹 Self- and Cross-Pollination</div>
+      <div class="video-sub">Watch before the questions below.</div>
+      <div class="video-embed-wrap">
+        <iframe src="https://www.youtube.com/embed/hCloCHwrJdQ" title="Self- and Cross-Pollination" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔬 Pollen Pathway</span>
+      <p style="margin:0;">What's the real difference between self-pollination and cross-pollination, and which one are most flowers actually built for?</p>
+      <textarea id="refl-6" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-pollinators"><span class="sec-num">2</span>Who visits which flower, and why</h3>
+    <p>Every regular visitor is pulled in by clues the flower leaves on purpose:</p>
+
+    <div class="card-grid">
+      <div class="info-card"><h4>🐝 Bees</h4><p>Bees like blue, purple, and yellow flowers. Bees can see UV patterns we can't see — the patterns work like an arrow pointing straight to the nectar. The flower's petals make a flat "landing pad" for the bee.</p></div>
+      <div class="info-card"><h4>🦋 Butterflies</h4><p>Butterflies like red, orange, and pink flowers. They need a place to land. They reach deep nectar with a long tube-shaped mouthpart called a proboscis.</p></div>
+      <div class="info-card"><h4>🐦 Hummingbirds & sunbirds</h4><p>Hummingbirds and sunbirds like red, tube-shaped flowers with lots of nectar deep inside. They don't need a landing pad — they hover in the air. They can't smell well, so scent doesn't matter to them.</p></div>
+      <div class="info-card"><h4>🦇 Moths & bats</h4><p>Moths and bats visit at night. These flowers stay pale or white, so they're easy to see in the dark. They also make a strong sweet smell after dark, since color alone is hard to notice at night.</p></div>
+    </div>
+
+    <p>A few flowers use a stranger trick. Some flies and beetles like the smell of rotting meat, so these flowers copy that smell — they turn dull brown or purple and make a truly bad smell — because that's exactly what those insects want.</p>
+
+    <p><strong>Wind pollination</strong> is a totally different plan. Grasses, wheat, corn, and most trees don't try to attract any visitor at all. Their flowers are small, dull, and have no scent or nectar — there's no visitor to reward, so why bother? Instead, they release huge amounts of very light pollen into the air, and grow large, feathery stigmas to catch whatever pollen drifts by. <strong>Water pollination</strong> is rare. It happens mostly in water plants, whose pollen just floats or drifts through the water.</p>
+
+    <div class="callout subtle">
+      <span class="callout-label">🧾 Field Evidence</span>
+      <p style="margin:0;">A flower opens only at night. It stays pale white and makes a strong sweet smell after dark. Which visitor is most likely coming to this flower, and what proof from the reading tells you that?</p>
+      <textarea id="refl-2" placeholder="Name the pollinator and the evidence…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🌾 Missing Features</span>
+      <p style="margin:0;">Wind-pollinated flowers like grass or corn look nothing like a bee-pollinated flower. Name two things they don't have, and explain why they don't need them.</p>
+      <textarea id="refl-7" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <div class="callout">
+      <span class="callout-label">📋 Field Note — something doesn't add up</span>
+      <p style="margin:0;">A note in your journal says: <em>"This flower is bright red, shaped like a long tube, and full of sweet nectar deep inside — it must be pollinated by wind."</em> Something in that note is wrong. What is wrong, and what should it say instead?</p>
+      <textarea id="refl-1" placeholder="Type your correction here…"></textarea>
+    </div>
+
+<h3 id="sec-fromflowertoseed"><span class="sec-num">3</span>From flower to seed — this is where I begin</h3>
+    <p>Once pollen lands on a stigma, it grows a tiny tube. The tube grows down through the style until it reaches an ovule inside the ovary — this is called <strong>fertilization</strong>. Every fertilized ovule becomes a <strong>seed</strong>. A seed holds a tiny baby plant, plus some food to help it start growing. The ovary around it swells up and becomes a <strong>fruit</strong>. In science, "fruit" means more than you might think — even things you'd never call "fruit" in a kitchen count: a pea pod, a maple's spinning "key," and a dandelion's fluffy puff are all really fruits.</p>
+
+        <div class="callout subtle">
+      <span class="callout-label">🧬 Where I Begin</span>
+      <p style="margin:0;">Once pollen lands on the stigma, what has to happen before an ovule can become a seed? Name the process.</p>
+      <textarea id="refl-8" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🍒 Real Definition</span>
+      <p style="margin:0;">A maple “key” and a dandelion's fluffy puff are both real fruits in science — even though nobody would call them "fruit" in a kitchen. What actually makes something a fruit?</p>
+      <textarea id="refl-9" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-whytravel"><span class="sec-num">4</span>Why I can't just stay put</h3>
+    <p>If I dropped straight down and grew right under my own parent, I'd have a problem. I'd be fighting my own parent — and every seed beside me — for the same small amount of sunlight, water, and soil food. I'd also land in dirt that already has whatever pests or sickness my parent attracts. Traveling gives me a real chance to grow without that competition. It also lets my whole species spread into new territory it could never reach otherwise.</p>
+
+    <div class="callout">
+      <span class="callout-label">🎓 Explain It Simply</span>
+      <p style="margin:0;">A younger Riser asks why a plant doesn't just drop its seeds right under itself — that seems so much easier. Explain why, in two or three simple sentences they could repeat back correctly.</p>
+      <textarea id="refl-3" placeholder="Explain it simply…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🌍 Second Reason</span>
+      <p style="margin:0;">Traveling helps a seed avoid competing with its own parent plant. But it also gives the whole species a second real benefit. What is it?</p>
+      <textarea id="refl-10" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3 id="sec-dispersal"><span class="sec-num">5</span>Five ways I could make my journey</h3>
+    <div class="card-grid">
+      <div class="info-card"><h4>💨 Wind</h4><p>A dandelion's fluffy white pappus catches the wind. A maple seed's "wing" spins like a helicopter blade — this slows its fall so the wind can carry it further. Orchid seeds are almost as light as dust.</p></div>
+      <div class="info-card"><h4>🌊 Water</h4><p>A coconut has a thick, waterproof husk. This lets it float across an ocean for months and still grow on a new shore. Mangrove seeds float upright, and they start growing roots the moment they touch mud.</p></div>
+      <div class="info-card"><h4>🐾 Hitchhiking</h4><p>Burdock and cocklebur seeds are covered in tiny hooks. The hooks catch on fur or clothing, and the seed falls off far from its parent plant. This exact trick is what inspired Velcro.</p></div>
+      <div class="info-card"><h4>🍒 Eaten & carried</h4><p>Berries and cherries are bright and sweet on purpose, so an animal will eat them. The seed inside survives the animal's stomach and comes out somewhere else, with a bit of natural fertilizer.</p></div>
+    </div>
+    <p>A fifth way needs no outside help at all: <strong>explosive dispersal</strong>. A ripe pea pod, or a touch-me-not seed pod, dries out. As it dries, tension builds up inside it — until it suddenly splits open and flings its seeds outward. A squirting cucumber can launch its seeds several metres this way.</p>
+
+    <div class="process-scene" style="background:linear-gradient(135deg, #0ea5e9, #075985);">
+      <div class="ps-stage">
+        <svg viewBox="0 0 150 130" style="position:absolute; inset:0;">
+          <circle class="ps-blob" cx="75" cy="90" r="10" fill="#f0f9ff"/>
+          <g class="ps-cilium" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round">
+            <path d="M75 90 q-14 -8 -18 -22"/>
+            <path d="M75 90 q0 -18 6 -30"/>
+            <path d="M75 90 q14 -6 20 -20"/>
+          </g>
+        </svg>
+      </div>
+      <div class="ps-caption">💨 One gust, and I'm gone</div>
+      <div class="ps-sub">If I'm a wind-traveler, my whole shape is built to catch exactly this moment.</div>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">🔍 Compare Two Cases</span>
+      <p style="margin:0 0 8px;"><strong>Seed A:</strong> light and fluffy, covered in fine white hairs that catch even a light breeze.<br><strong>Seed B:</strong> a thick, waterproof shell, found washed up on a beach far from any parent plant.</p>
+      <p style="margin:0;">Which way does each seed travel, and what evidence tells you that?</p>
+      <textarea id="refl-4" placeholder="Explain both cases…"></textarea>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">💥 No Outside Help</span>
+      <p style="margin:0;">Explosive dispersal doesn't need wind, water, or an animal at all. How does a pea pod or touch-me-not actually launch its own seeds?</p>
+      <textarea id="refl-11" placeholder="Type your answer here…"></textarea>
+    </div>
+
+    <h3>History: real seeds that changed what we know</h3>
+    <div class="timeline">
+      <div class="timeline-item"><div class="t-year">1793</div><div class="t-body"><strong>Christian Konrad Sprengel</strong> shows, for the first time, that flowers are shaped on purpose to attract certain pollinators. This was a brand new idea back then.</div></div>
+      <div class="timeline-item"><div class="t-year">1862</div><div class="t-body"><strong>Charles Darwin</strong> studies a Madagascar orchid with a very long nectar tube. He predicts a moth with an equally long tongue must exist to pollinate it — even though no one had ever seen one.</div></div>
+      <div class="timeline-item"><div class="t-year">1903</div><div class="t-body">Darwin's predicted moth, <strong>Xanthopan morganii praedicta</strong>, is finally described. But no one photographs it actually pollinating that orchid until 1992 — proving Darwin right, 130 years later.</div></div>
+      <div class="timeline-item"><div class="t-year">1941</div><div class="t-body">Swiss engineer <strong>George de Mestral</strong> looks at burdock burrs stuck to his dog's fur under a microscope. He studies the tiny hooks and invents Velcro — a seed's own trick, copied.</div></div>
+    </div>
+
+    <h3>Real-world use: someone is tracking every seed's journey</h3>
+    <p>Ocean scientists have tracked real coconuts drifting for months across whole ocean currents. The coconuts can still sprout after washing up on a totally different island. Some pinecones, like the lodgepole pine, are sealed shut with sticky resin. They only pop open to release seeds after a wildfire's heat melts that resin — a travel plan timed to disaster. And invasive weeds usually spread fastest through a new country by using one of the same five journeys you're choosing between this week.</p>
+
+    <div class="game-card">
+      <div class="game-title">🔍 Evidence Match</div>
+      <div class="game-sub">Six-plus key terms from today's whole briefing. Click a term, then its matching definition — no penalty for a wrong guess, just try again.</div>
+      <div id="game-day1"></div>
+    </div>
+
+  </section>
+
+  <!-- MATERIALS -->
+  <section class="day-block">
+    <span class="day-kicker">Before Part 2 · Build Kit</span>
+    <h2>Choose What You're Bringing</h2>
+    <p class="day-sub">This is a list to pick from, not a checklist — choose only what your seed's journey actually needs.</p>
+
+    <div class="materials-table-wrap">
+      <table class="materials-table">
+      <thead><tr><th>Material</th><th>Wind-seed parachute</th><th>Water-seed body</th><th>Wings / parachute shape</th><th>Float test</th><th>Wind test</th><th>Measurement</th></tr></thead>
+      <tbody>
+      <tr><td class="mat-name">Tissue paper or cotton wool</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Tissue paper or cotton wool for Wind-seed parachute</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A thin fabric scrap or coffee filter</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A thin fabric scrap or coffee filter for Wind-seed parachute</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Cotton balls pulled apart</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Cotton balls pulled apart for Wind-seed parachute</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A paper doily cut into fringe</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A paper doily cut into fringe for Wind-seed parachute</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A fringed paper circle (dandelion-style)</td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A fringed paper circle (dandelion-style) for Wind-seed parachute</span></label></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A small ball of clay, plasticine, or a bottle cap</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A small ball of clay, plasticine, or a bottle cap for Water-seed body</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A cork or a ping-pong ball</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A cork or a ping-pong ball for Water-seed body</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A walnut shell half</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A walnut shell half for Water-seed body</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A small dried gourd or nutshell</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A small dried gourd or nutshell for Water-seed body</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A film canister or small plastic capsule</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A film canister or small plastic capsule for Water-seed body</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A folded wax-paper pouch</td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A folded wax-paper pouch for Water-seed body</span></label></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Paper for wings or a parachute shape</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Paper for wings or a parachute shape for Wings / parachute shape</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A plastic bag scrap cut into a parachute shape</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A plastic bag scrap cut into a parachute shape for Wings / parachute shape</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A leaf-shaped cardstock cutout</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A leaf-shaped cardstock cutout for Wings / parachute shape</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A cardboard "wing" cutout</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A cardboard "wing" cutout for Wings / parachute shape</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A coffee filter cut into a parachute</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A coffee filter cut into a parachute for Wings / parachute shape</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">Tissue paper cut into a fan shape</td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Tissue paper cut into a fan shape for Wings / parachute shape</span></label></td><td></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A bowl or basin of water</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A bowl or basin of water for Float test</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A sink or a large plastic tub</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A sink or a large plastic tub for Float test</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A bathtub</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A bathtub for Float test</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A large pot filled with water</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A large pot filled with water for Float test</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">An outdoor bucket</td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">An outdoor bucket for Float test</span></label></td><td></td><td></td></tr>
+      <tr><td class="mat-name">A fan, or an open space to drop-test</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A fan, or an open space to drop-test for Wind test</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A hairdryer on the cool setting</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A hairdryer on the cool setting for Wind test</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Blowing through a straw</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Blowing through a straw for Wind test</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A handheld paper fan</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A handheld paper fan for Wind test</span></label></td><td></td></tr>
+      <tr><td class="mat-name">Standing near an open window on a breezy day</td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Standing near an open window on a breezy day for Wind test</span></label></td><td></td></tr>
+      <tr><td class="mat-name">A stopwatch or phone timer</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A stopwatch or phone timer for Measurement</span></label></td></tr>
+      <tr><td class="mat-name">A ruler or measuring tape</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A ruler or measuring tape for Measurement</span></label></td></tr>
+      <tr><td class="mat-name">A notebook for recording trials</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">A notebook for recording trials for Measurement</span></label></td></tr>
+      <tr><td class="mat-name">Sidewalk chalk to mark landing spots</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Sidewalk chalk to mark landing spots for Measurement</span></label></td></tr>
+      <tr><td class="mat-name">Masking tape to mark a start line</td><td></td><td></td><td></td><td></td><td></td><td><label class="pool-item"><input type="checkbox"><span class="pool-name">Masking tape to mark a start line for Measurement</span></label></td></tr>
+      </tbody></table></div>
+      <p class="materials-table-note">Pick ONE seed type (wind or water) to build, then run the matching real test.</p>
+          <div class="slip-preview">
+      <h4>📋 What you're bringing to Part 2:</h4>
+      <ul id="slip-list-preview"></ul>
+      <div class="slip-empty" id="slip-empty">Nothing selected yet.</div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section class="day-block" id="day2">
+    <span class="day-kicker">Part 2 · Take the Journey</span>
+    <h2>Become One Real Seed</h2>
+    <p class="day-sub">Pick ONE real seed and how it really travels, from the reading. Build a working model of it, and put it through the real test — a real measured result, not a guess.</p>
+
+    <div class="model3d-wrap">
+      <div class="model3d">
+        <div class="model3d-stage" id="model-stage">
+          <div class="model3d-face f1" style="background:linear-gradient(135deg,#7dd3fc,#0284c7);"><span><span class="f-icon">💨</span>Dandelion<br>wind — airtime test</span></div>
+          <div class="model3d-face f2" style="background:linear-gradient(135deg,#38bdf8,#075985);"><span><span class="f-icon">🥥</span>Coconut<br>water — float test</span></div>
+          <div class="model3d-face f3" style="background:linear-gradient(135deg,#7dd3fc,#0369a1);"><span><span class="f-icon">🍂</span>Maple seed<br>wind — spin & distance</span></div>
+          <div class="model3d-face f4" style="background:linear-gradient(135deg,#38bdf8,#0c4a6e);"><span><span class="f-icon">🌰</span>Pea pod<br>explosive — launch distance</span></div>
+          <div class="model3d-face f5" style="background:linear-gradient(135deg,#7dd3fc,#075985);"><span><span class="f-icon">🐾</span>Burr<br>hitchhiking — stick test</span></div>
+          <div class="model3d-face f6" style="background:linear-gradient(135deg,#38bdf8,#0c4a6e);"><span><span class="f-icon">📏</span>Pick ONE<br>and measure it for real</span></div>
+        </div>
+      </div>
+      <div class="model3d-hint">🖱️ Hover to pause and read each face.</div>
+      <button class="btn btn-ghost model3d-pause" type="button" id="pause-btn">⏸ Pause rotation</button>
+    </div>
+
+    <div class="callout subtle">
+      <span class="callout-label">What your build has to prove</span>
+      <p style="margin:0;">A drawing of a dandelion is not a journey. It has to actually fly, float, stick, or launch. You have to write down a real number: how long it stayed in the air, whether it floated, how far it traveled. Your diary can only report what really happened.</p>
+    </div>
+
+    <h3 id="sec-plan">Plan before you build</h3>
+    <p>Fill this in before you glue anything down. This plan <em>is</em> the real decision — building it is just carrying out your plan.</p>
+    <table class="justify-table">
+      <thead><tr><th>Part</th><th>What it represents</th><th>Material I'm using</th><th>Why this material fits</th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="e.g. Parachute"></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+        <tr><td><input></td><td><input></td><td><input></td><td><textarea></textarea></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout subtle">
+      <span class="callout-label">📸 Picture the finished result</span>
+      <p style="margin:0;">Picture your finished result — for example, a tissue-paper parachute seed you actually drop-tested and timed. Or a clay "seed" shaped to float, tested in a bowl of water. Either way, you write a real measured number (airtime or float time) right next to your seed — not just the seed sitting there alone.</p>
+    </div>
+
+    <h3>Build it</h3>
+    <div class="build-checklist">
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">1.</span><span class="step-text">Pick ONE real seed and how it really travels, from the reading. Write down which one, and why.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">2.</span><span class="step-text">Build a real model shaped the way that seed actually works — a real parachute, wing, or floating shell shape, not just a decoration.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">3.</span><span class="step-text">Run the real test: drop it, blow it, float it, or launch it. Time or measure what really happens.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">4.</span><span class="step-text">Run the test again, to make sure the result is fair, not just lucky.</span></span></label>
+      <label class="build-check-item"><input type="checkbox"><span><span class="step-num">5.</span><span class="step-text">Write down what really happened, even the parts you didn't expect.</span></span></label>
+    </div>
+
+    <h3>Results</h3>
+    <p>Write up your real numbers — you'll use these notes for tomorrow's story too.</p>
+    <table class="plan-table">
+      <tr><td style="width:180px;"><strong>Seed and method chosen</strong></td><td><input placeholder="e.g. Dandelion, wind"></td></tr>
+      <tr><td><strong>Real test result</strong></td><td><input placeholder="e.g. Floated 4 min / drifted 2.3 m"></td></tr>
+      <tr><td><strong>Short description</strong></td><td><textarea placeholder="Describe your build and test in 2–3 sentences…"></textarea></td></tr>
+    </table>
+
+    <div class="callout">
+      <span class="callout-label">🪞 Diary Review — self-check</span>
+      <p style="margin:0;">If someone only read your diary and never saw your seed, what might they picture wrong? Which part of your build are you least sure about — and why did you still include it?</p>
+      <textarea id="refl-5" placeholder="Write your honest reflection…"></textarea>
+    </div>
+  </section>
+
+  <!-- DAY 3 -->
+  <section class="day-block" id="day3">
+    <span class="day-kicker">Part 3 · Tell the Story</span>
+    <h2>Share Your Journey</h2>
+    <p class="day-sub">A real explorer's diary reports what actually happened, not what was supposed to happen. Here's how to open strong, and cover everything that matters.</p>
+
+    <div class="hook-box">
+      <div class="hook-label">Your opening move</div>
+      <p style="margin:0;">Don't say "I'm going to talk about seed dispersal." Instead, hold up your seed model and ask the room: <em>"How far do you think I traveled?"</em> Let people guess, then show your real measured number.</p>
+    </div>
+
+    <div class="prep-form">
+      <h3>Prepare your presentation</h3>
+      <p>Fill this in before Part 3 — it's your own script, not busywork.</p>
+
+      <div class="prep-field">
+        <label>i. Your role and responsibility</label>
+        <textarea placeholder="In your own words: who are you in this story? What was your job to figure out?"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>ii. Three new words or ideas you learned, and what they mean</label>
+        <textarea placeholder="1) &#10;2) &#10;3) "></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>iii. One historical fact you found interesting</label>
+        <textarea placeholder="Which one, and why it stuck with you"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>iv. A real-world application</label>
+        <textarea placeholder="Where does this actually show up outside a classroom?"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>v. Explain your build</label>
+        <div class="prep-autofill-row">
+          <span class="prep-autofill-hint">Materials &amp; reasoning below are pulled from your Part 2 plan table — edit freely.</span>
+          <button type="button" class="prep-autofill-btn">&#8635; Pull from Part 2 again</button>
+        </div>
+        <textarea class="prep-build-materials" placeholder="Materials used and why you chose them…"></textarea>
+        <textarea placeholder="Every label on your build, and what it explains…"></textarea>
+      </div>
+
+      <div class="prep-field">
+        <label>vi. What you're still not sure about</label>
+        <textarea placeholder="What would you want more explanation or practice on?"></textarea>
+      </div>
+    </div>
+
+    <div class="facilitator-tip">
+      <span class="fac-label">Facilitator only</span>
+      <p>If Gabby's real test result was disappointing — it didn't float long, didn't fly far — that's the most interesting part of her diary, not something to gloss over. Ask her directly "what do you think a real seed does differently?" A kid who can name why her model fell short of the real thing understands the mechanism better than one whose test happened to go perfectly.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  Pollination & Seed Dispersal · Seed Explorer — Gabby's instance. <a href="../index.html">All three instances →</a>
+</footer>
+
+<!-- Isolated printable materials slip -->
+<div id="print-slip-page">
+  <div class="print-slip-sheet">
+    <h3>📋 Materials I'm Bringing — Part 2</h3>
+    <div class="slip-kid">Seed Explorer · Gabby</div>
+    <ul id="slip-list-print"></ul>
+  </div>
+</div>
+
+<!-- Side glossary drawer -->
+<div class="notes-backdrop" id="glossary-backdrop"></div>
+<div class="notes-drawer" id="glossary-drawer">
+  <div class="notes-drawer-head">
+    <h4>📖 Glossary</h4>
+    <button id="glossary-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="glossary">
+      <div class="glossary-item"><div class="word">Pollination</div><div class="def">Pollen moving from an anther to a stigma.</div></div>
+      <div class="glossary-item"><div class="word">Cross-pollination</div><div class="def">Pollen moving between two different plants of the same species.</div></div>
+      <div class="glossary-item"><div class="word">Fertilization</div><div class="def">Pollen reaching and joining with an ovule inside the ovary.</div></div>
+      <div class="glossary-item"><div class="word">Seed dispersal</div><div class="def">A seed traveling away from its parent plant so it doesn't have to compete with it.</div></div>
+      <div class="glossary-item"><div class="word">Pappus</div><div class="def">The fluffy, parachute-like structure on a wind-dispersed seed like a dandelion's.</div></div>
+      <div class="glossary-item"><div class="word">Hitchhiking seed</div><div class="def">A seed covered in hooks or barbs that catch on animal fur.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Side notes drawer -->
+<div class="notes-backdrop" id="notes-backdrop"></div>
+<div class="notes-drawer" id="notes-drawer">
+  <div class="notes-drawer-head">
+    <h4>📝 My Notes</h4>
+    <button id="notes-drawer-close" type="button">✕</button>
+  </div>
+  <div class="notes-drawer-body">
+    <div class="notes-section-label">Highlighted words</div>
+    <ul id="hl-collected-list" class="hl-collected-list"></ul>
+    <div id="hl-collected-empty" style="display:none;">Highlight anything in the reading and it'll show up here.</div>
+    <div class="notes-section-label">Free notes</div>
+    <textarea id="notes-textarea" placeholder="Jot anything down…"></textarea>
+    <div id="notes-saved-msg" class="notes-saved-msg"></div>
+  </div>
+</div>
+
+<script>
+  // Progress-sync Worker — cross-device save. SITE_KEY is a soft deterrent
+  // only (any client-side value is visible in devtools), not real auth.
+  window.QUEST_SYNC_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  window.QUEST_SYNC_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+</script>
+<script src="../js/quest.js"></script>
+<script>
+  QuestUI.initKidGate('Gabby');
+  QuestUI.initFacilitatorCheck();
+
+  QuestUI.initProgressSync('gabby', 'group-00', 'week-01').then(function () {
+    QuestUI.initHighlighter('gabby');
+    QuestUI.initNotesDrawer('gabby');
+    QuestUI.initGlossaryDrawer();
+    QuestUI.initMaterialsPool('gabby');
+    QuestUI.initBuildChecklist('gabby');
+    QuestUI.initFieldAutosave('gabby');
+    QuestUI.initPresentationAutofill('gabby');
+    QuestUI.initDayTimer('gabby');
+    QuestUI.initProgressBar('gabby');
+    QuestUI.initSectionLock('gabby');
+    QuestUI.initDayLock('gabby');
+    QuestUI.initCompleteQuest('gabby');
+    QuestUI.initMatchGame('game-day1', [
+      ["Pollination", "Pollen moving from an anther to a stigma."],
+      ["Cross-pollination", "Pollen moving between two different plants of the same species."],
+      ["Fertilization", "Pollen reaching and joining with an ovule inside the ovary."],
+      ["Seed dispersal", "A seed traveling away from its parent plant to reduce competition."],
+      ["Pappus", "The fluffy, parachute-like structure on a wind-dispersed seed like a dandelion's."],
+      ["Hitchhiking seed", "A seed covered in hooks or barbs that catch on animal fur."]
+    ], { pageKey: 'gabby' });
+    QuestUI.initReflectionChecks('gabby', [
+      { id: 'refl-1', groups: [['bird', 'hummingbird', 'insect', 'animal', 'bee', 'moth', 'bat'], ["wind is wrong", "not wind", "isn't pollinated by wind", "wouldn't be pollinated by wind", "shouldn't be wind", "wrong"]],
+        reread: { anchor: 'sec-pollinators', label: '2. Who visits which flower, and why' } },
+      { id: 'refl-6', groups: [['self-pollination', 'same flower', 'same plant'], ['cross-pollination', 'different plant', 'different plants']],
+        reread: { anchor: 'sec-pollination', label: '1. What pollination actually is' } },
+      { id: 'refl-2', groups: [['moth', 'bat'], ['night', 'dark', 'scent', 'smell', 'white', 'pale']],
+        reread: { anchor: 'sec-pollinators', label: '2. Who visits which flower, and why' } },
+      { id: 'refl-7', groups: [['nectar', 'scent', 'smell', 'color', 'petals', 'dull'], ["don't need", "doesn't need", 'no visitor', 'nobody to attract', 'not attracting']],
+        reread: { anchor: 'sec-pollinators', label: '2. Who visits which flower, and why' } },
+      { id: 'refl-8', groups: [['pollen tube', 'tube', 'grows', 'style'], ['fertiliz', 'ovule', 'fuse', 'join']],
+        reread: { anchor: 'sec-fromflowertoseed', label: "3. From flower to seed — this is where I begin" } },
+      { id: 'refl-9', groups: [['ovary', 'swell', 'swollen', 'swells'], ['fruit']],
+        reread: { anchor: 'sec-fromflowertoseed', label: "3. From flower to seed — this is where I begin" } },
+      { id: 'refl-3', groups: [['compete', 'competition', 'crowd', 'share'], ['light', 'water', 'space', 'nutrients', 'sun', 'room', 'new ground', 'new place', 'spread']],
+        reread: { anchor: 'sec-whytravel', label: '4. Why I can\'t just stay put' } },
+      { id: 'refl-10', groups: [['spread', 'territory', 'new area', 'new ground', 'new place'], ['species', 'population']],
+        reread: { anchor: 'sec-whytravel', label: '4. Why I can\'t just stay put' } },
+      { id: 'refl-4', groups: [['wind', 'breeze', 'blow'], ['water', 'float', 'waterproof', 'ocean', 'sea', 'beach']],
+        reread: { anchor: 'sec-dispersal', label: '5. Five ways I could make my journey' } },
+      { id: 'refl-11', groups: [['dries', 'dry', 'tension', 'builds up', 'pressure'], ['splits', 'burst', 'explode', 'pop', 'flings', 'launch']],
+        reread: { anchor: 'sec-dispersal', label: '5. Five ways I could make my journey' } },
+      { id: 'refl-5', groups: [],
+        reread: { anchor: 'sec-plan', label: 'Plan before you build' } }
+    ]);
+
+    var modelPaused = false;
+    document.getElementById('pause-btn').addEventListener('click', function () {
+      modelPaused = !modelPaused;
+      document.getElementById('model-stage').classList.toggle('paused', modelPaused);
+      this.textContent = modelPaused ? '▶ Resume rotation' : '⏸ Pause rotation';
+    });
+  });
+
+  window.addEventListener('beforeprint', function () { document.body.classList.add('printing-slip'); });
+  window.addEventListener('afterprint', function () { document.body.classList.remove('printing-slip'); });
+</script>
+</body>
+</html>
