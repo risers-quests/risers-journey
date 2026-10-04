@@ -42,7 +42,7 @@
 
   function showStaffPicker() {
     app.innerHTML = '';
-    app.appendChild(el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">End of Term 2</a>'));
+    app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/index.html">Home</a> &middot; <a href="../index.html">End of Term 2</a>'));
     var card = el('div', 'eot2-picker');
     var options = window.EOT2_KIDS.map(function (k) { return '<option value="' + k.slug + '">' + k.name + '</option>'; }).join('');
     card.innerHTML =
@@ -62,7 +62,7 @@
     var weekKey = 'term2-self-assessment-' + rater;
     app.innerHTML = '';
 
-    var crumb = el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">End of Term 2</a>' + (isStaff ? ' &middot; <a href="index.html?rater=' + rater + '&pick=1">switch kid</a>' : ''));
+    var crumb = el('div', 'eot2-crumb', '<a href="' + (isStaff ? '../../staff/index.html' : '../../index.html') + '">Home</a> &middot; <a href="../index.html">End of Term 2</a>' + (isStaff ? ' &middot; <a href="index.html?rater=' + rater + '&pick=1">switch kid</a>' : ''));
     app.appendChild(crumb);
 
     var header = el('div', 'eot2-form-header');

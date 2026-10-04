@@ -28,7 +28,7 @@
 
   function showStaffPicker() {
     app.innerHTML = '';
-    app.appendChild(el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">End of Term 2</a>'));
+    app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/index.html">Home</a> &middot; <a href="../index.html">End of Term 2</a>'));
     var card = el('div', 'eot2-picker');
     var kidOptions = window.EOT2_KIDS.map(function (k) { return '<option value="' + k.slug + '">' + k.name + '</option>'; }).join('');
     card.innerHTML =
@@ -46,7 +46,7 @@
 
   function renderEditForm(kid) {
     app.innerHTML = '';
-    var crumb = el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">End of Term 2</a> &middot; <a href="index.html?editAs=' + editAs + '&pick=1">switch kid</a>');
+    var crumb = el('div', 'eot2-crumb', '<a href="../../staff/index.html">Home</a> &middot; <a href="../index.html">End of Term 2</a> &middot; <a href="index.html?editAs=' + editAs + '&pick=1">switch kid</a>');
     app.appendChild(crumb);
 
     var header = el('div', 'eot2-form-header');

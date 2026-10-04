@@ -45,8 +45,15 @@
     app.innerHTML = '';
 
     var head = el('div', 'home-head');
-    head.innerHTML = '<h1>Hi ' + kidEntry.displayName + ',</h1><p>Here’s where things stand right now.</p>';
+    head.innerHTML =
+      '<a href="#" id="logout-link" class="switch-kid-link">Log out</a>' +
+      '<h1>Hi ' + kidEntry.displayName + ',</h1><p>Here’s where things stand right now.</p>';
     app.appendChild(head);
+    document.getElementById('logout-link').addEventListener('click', function (e) {
+      e.preventDefault();
+      try { localStorage.removeItem(KID_KEY); } catch (err) {}
+      init();
+    });
 
     var grid = el('div', 'home-grid');
 

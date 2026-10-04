@@ -2,8 +2,8 @@
    tokens and name-gate styles dashboard/dashboard.css already defines
    (loaded alongside this file), so the whole site reads as one system. */
 
-.home-head { padding-top: 4px; margin-bottom: 30px; }
-.home-head h1 { font-family: var(--font-head); font-size: 2.2rem; margin: 0 0 4px; }
+.home-head { position: relative; padding-top: 4px; margin-bottom: 30px; }
+.home-head h1 { font-family: var(--font-head); font-size: 2.2rem; margin: 0 0 4px; padding-right: 110px; }
 .home-head p { color: var(--ink-soft); margin: 0; font-size: 1.05rem; }
 
 .home-grid {

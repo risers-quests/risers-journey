@@ -1,0 +1,29 @@
+/* Staff home — adds the "who are you" select and the all-kids card grid
+   on top of dashboard/dashboard.css's tokens + name-gate styles, and
+   end-of-term-2/shared/eot2.css's badge/button styles, so this reads as
+   the same system as everywhere else. */
+
+#staff-select {
+  width: 100%; font-size: 1.05rem; padding: 12px 14px; border-radius: 10px;
+  border: 1.5px solid var(--border); font-family: var(--font-body); margin-bottom: 14px; background: #fff;
+}
+#staff-select:focus { outline: none; border-color: var(--accent); }
+
+.staff-home-link { margin: -16px 0 26px; }
+.staff-home-link a { color: var(--accent-dark); font-weight: 700; font-size: .9rem; text-decoration: none; }
+.staff-home-link a:hover { text-decoration: underline; }
+
+.staff-kid-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px;
+}
+.staff-kid-card {
+  background: #fff; border: 1.5px solid var(--border); border-radius: 16px;
+  padding: 20px 22px; box-shadow: 0 2px 10px rgba(0,0,0,.03);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.staff-kid-card h3 { font-family: var(--font-head); font-size: 1.2rem; margin: 0; }
+.staff-kid-group { color: var(--ink-soft); font-size: .82rem; margin: -6px 0 0; }
+.staff-kid-badges { display: flex; flex-wrap: wrap; gap: 5px; }
+.staff-kid-badges .eot2-roster-badge { min-width: 22px; padding: 4px 7px; }
+.staff-kid-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.staff-kid-actions .eot2-btn { text-decoration: none; text-align: center; display: block; padding: 9px 14px; font-size: .85rem; }
