@@ -1,0 +1,148 @@
+/* End of Term 2 — shared styles across Self-Assessment, Term Reflection,
+   and MOM. Reuses the same tokens as dashboard/dashboard.css so this reads
+   as one site, not a bolted-on tool. */
+:root {
+  --paper: #fffaf3;
+  --paper-soft: #fdf3e7;
+  --ink: #2b2320;
+  --ink-soft: #6b5f56;
+  --border: #ecdfd0;
+  --accent: #e0672e;
+  --accent-dark: #b84f1f;
+  --accent-soft: #fde8da;
+  --good: #1f8a54;
+  --good-soft: #e3f6ec;
+  --warn: #b07a2e;
+  --warn-soft: #f5ebd8;
+  --font-head: 'Source Serif 4', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { background: var(--paper); color: var(--ink); font-family: var(--font-body); line-height: 1.5; }
+#app { max-width: 820px; margin: 0 auto; padding: 32px 20px 90px; }
+
+.eot2-crumb { font-size: .85rem; color: var(--ink-soft); margin-bottom: 10px; }
+.eot2-crumb a { color: var(--ink-soft); text-decoration: none; }
+.eot2-crumb a:hover { color: var(--accent-dark); text-decoration: underline; }
+
+.eot2-head h1 { font-family: var(--font-head); font-size: 1.9rem; margin: 0 0 6px; }
+.eot2-head p { color: var(--ink-soft); margin: 0 0 26px; font-size: 1rem; }
+
+/* ---- picker card (kid gate / rater+kid picker) ---- */
+.eot2-picker {
+  max-width: 420px; margin: 40px auto 0; text-align: center;
+  background: var(--paper-soft); border: 1.5px solid var(--border);
+  border-radius: 18px; padding: 32px 28px;
+}
+.eot2-picker h1 { font-family: var(--font-head); font-size: 1.6rem; margin: 0 0 8px; }
+.eot2-picker p { color: var(--ink-soft); margin: 0 0 20px; font-size: .95rem; }
+.eot2-field { text-align: left; margin-bottom: 16px; }
+.eot2-field label { display: block; font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-soft); margin-bottom: 6px; }
+.eot2-field input, .eot2-field select {
+  width: 100%; font-size: 1rem; padding: 11px 13px; border-radius: 10px;
+  border: 1.5px solid var(--border); font-family: var(--font-body); background: #fff; color: var(--ink);
+}
+.eot2-field input:focus, .eot2-field select:focus { outline: none; border-color: var(--accent); }
+.eot2-msg { font-size: .85rem; color: var(--accent-dark); min-height: 1.2em; margin: 0 0 6px; }
+
+.eot2-btn {
+  font-family: var(--font-body); font-weight: 700; border: none; border-radius: 999px;
+  cursor: pointer; padding: 12px 26px; font-size: .95rem; background: var(--accent); color: #fff; width: 100%;
+}
+.eot2-btn:hover { background: var(--accent-dark); }
+.eot2-btn-secondary { background: #fff; color: var(--ink-soft); border: 1.5px solid var(--border); width: auto; }
+.eot2-btn-secondary:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-dark); }
+
+/* ---- form header: who/what + save status ---- */
+.eot2-form-header {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap;
+  margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1.5px solid var(--border);
+}
+.eot2-form-header h1 { font-family: var(--font-head); font-size: 1.6rem; margin: 0 0 4px; }
+.eot2-form-header .eot2-sub { color: var(--ink-soft); font-size: .92rem; }
+.eot2-status { font-size: .82rem; font-weight: 700; padding: 6px 14px; border-radius: 999px; white-space: nowrap; }
+.eot2-status-saved { background: var(--good-soft); color: var(--good); }
+.eot2-status-saving { background: var(--warn-soft); color: var(--warn); }
+.eot2-status-offline { background: #f1ede7; color: var(--ink-soft); }
+
+.eot2-progress-line { font-size: .85rem; color: var(--ink-soft); margin: -10px 0 24px; }
+
+/* ---- rubric sections ---- */
+.eot2-section { margin-bottom: 30px; }
+.eot2-section-title {
+  font-family: var(--font-head); font-size: 1.25rem; margin: 0 0 14px; padding: 10px 16px;
+  background: var(--paper-soft); border-radius: 10px;
+}
+.eot2-sub-title { font-weight: 700; font-size: .95rem; margin: 18px 0 10px; color: var(--ink); }
+
+.eot2-item {
+  background: #fff; border: 1.5px solid var(--border); border-radius: 12px;
+  padding: 14px 16px; margin-bottom: 10px;
+}
+.eot2-item-text { font-size: .92rem; margin: 0 0 10px; }
+.eot2-scale { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+@media (max-width: 480px) { .eot2-scale { grid-template-columns: repeat(2, 1fr); } }
+.eot2-scale label {
+  display: flex; align-items: center; justify-content: center; gap: 6px; text-align: center;
+  border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 6px; font-size: .8rem;
+  font-weight: 600; color: var(--ink-soft); cursor: pointer; background: #fff;
+}
+.eot2-scale input { margin: 0; accent-color: var(--accent); }
+.eot2-scale input:checked + span { color: var(--accent-dark); }
+.eot2-scale label:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark); }
+
+/* ---- plain multiple-choice / short-answer (Term Reflection) ---- */
+.eot2-question { background: #fff; border: 1.5px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
+.eot2-question-text { font-weight: 600; font-size: .95rem; margin: 0 0 10px; }
+.eot2-choices { display: flex; flex-wrap: wrap; gap: 8px; }
+.eot2-choices label {
+  display: inline-flex; align-items: center; gap: 6px; border: 1.5px solid var(--border); border-radius: 999px;
+  padding: 7px 14px; font-size: .85rem; cursor: pointer; background: #fff; color: var(--ink-soft);
+}
+.eot2-choices input { margin: 0; accent-color: var(--accent); }
+.eot2-choices label:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark); font-weight: 700; }
+.eot2-matrix { width: 100%; border-collapse: collapse; font-size: .85rem; margin-top: 4px; }
+.eot2-matrix th, .eot2-matrix td { padding: 8px 6px; text-align: center; border-bottom: 1px solid var(--border); }
+.eot2-matrix td:first-child, .eot2-matrix th:first-child { text-align: left; }
+.eot2-matrix input { accent-color: var(--accent); }
+.eot2-textarea {
+  width: 100%; min-height: 64px; border-radius: 10px; border: 1.5px solid var(--border);
+  font-family: var(--font-body); font-size: .92rem; padding: 10px 12px; resize: vertical;
+}
+.eot2-textarea:focus { outline: none; border-color: var(--accent); }
+
+/* ---- MOM template ---- */
+.eot2-mom-field { margin-bottom: 20px; }
+.eot2-mom-field label { display: block; font-family: var(--font-head); font-size: 1.05rem; margin-bottom: 8px; }
+.eot2-mom-hint { color: var(--ink-soft); font-size: .85rem; margin: 0 0 8px; }
+.eot2-mom-field textarea { width: 100%; min-height: 96px; }
+
+/* ---- hub links ---- */
+.eot2-hub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.eot2-hub-card {
+  display: block; background: #fff; border: 1.5px solid var(--border); border-radius: 14px;
+  padding: 20px; text-decoration: none; color: inherit;
+}
+.eot2-hub-card:hover { border-color: var(--accent); }
+.eot2-hub-card h3 { font-family: var(--font-head); font-size: 1.1rem; margin: 0 0 6px; }
+.eot2-hub-card p { color: var(--ink-soft); font-size: .88rem; margin: 0; }
+
+.eot2-footer-actions { margin-top: 30px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ---- staff roster-wide status table ---- */
+.eot2-roster-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+.eot2-roster-table th, .eot2-roster-table td { padding: 8px 10px; text-align: center; border-bottom: 1px solid var(--border); }
+.eot2-roster-table thead th { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-soft); }
+.eot2-roster-name { text-align: left !important; font-weight: 700; white-space: nowrap; }
+.eot2-roster-badge {
+  display: inline-block; min-width: 26px; padding: 5px 9px; border-radius: 999px; font-size: .78rem;
+  font-weight: 700; text-decoration: none; border: 1.5px solid var(--border);
+}
+.eot2-roster-done { background: var(--good-soft); color: var(--good); border-color: transparent; }
+.eot2-roster-empty { background: #fff; color: var(--ink-soft); }
+.eot2-roster-badge:hover { border-color: var(--accent); }
+@media (max-width: 700px) {
+  #app:has(.eot2-roster-table) { max-width: 100%; }
+  .eot2-roster-table { display: block; overflow-x: auto; }
+}
