@@ -2,10 +2,10 @@
    Development Rubric". Wording kept exactly as the source PDF, for both
    the kid's own copy and every staff copy (per direction: no rewrite). */
 window.EOT2_RUBRIC_SCALE = [
-  { code: 'NE', label: 'Not Yet Evident' },
-  { code: 'E', label: 'Emerging' },
-  { code: 'D', label: 'Developing' },
-  { code: 'CD', label: 'Consistently Demonstrates' }
+  { code: 'NE', label: 'Not Yet Evident', desc: "The behavior hasn't been observed yet — the child hasn't attempted it, or the right situation hasn't come up to show it." },
+  { code: 'E', label: 'Emerging', desc: 'The child is beginning to show this, usually with a prompt, a model, or direct support from a guide.' },
+  { code: 'D', label: 'Developing', desc: "The child shows the behavior with some independence, but it isn't yet reliable across contexts." },
+  { code: 'CD', label: 'Consistently Demonstrates', desc: 'The child applies the behavior independently and reliably, without needing reminders.' }
 ];
 
 window.EOT2_RUBRIC = [

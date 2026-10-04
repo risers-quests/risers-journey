@@ -66,7 +66,16 @@ body { background: var(--paper); color: var(--ink); font-family: var(--font-body
 .eot2-status-saving { background: var(--warn-soft); color: var(--warn); }
 .eot2-status-offline { background: #f1ede7; color: var(--ink-soft); }
 
-.eot2-progress-line { font-size: .85rem; color: var(--ink-soft); margin: -10px 0 24px; }
+.eot2-progress-line { font-size: .85rem; color: var(--ink-soft); margin: -10px 0 10px; }
+
+.eot2-scale-legend {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px;
+  background: var(--paper-soft); border: 1.5px solid var(--border); border-radius: 12px;
+  padding: 14px 16px; margin-bottom: 24px;
+}
+.eot2-scale-legend-item { font-size: .8rem; color: var(--ink); }
+.eot2-scale-legend-item strong { color: var(--accent-dark); }
+.eot2-scale-legend-item span { display: block; color: var(--ink-soft); font-size: .76rem; margin-top: 2px; line-height: 1.4; }
 
 /* ---- rubric sections ---- */
 .eot2-section { margin-bottom: 30px; }

@@ -72,6 +72,12 @@
     var progressLine = el('p', 'eot2-progress-line', '');
     app.appendChild(progressLine);
 
+    var legend = el('div', 'eot2-scale-legend');
+    legend.innerHTML = window.EOT2_RUBRIC_SCALE.map(function (opt) {
+      return '<div class="eot2-scale-legend-item"><strong>' + opt.code + '</strong> &mdash; ' + opt.label + '<span>' + opt.desc + '</span></div>';
+    }).join('');
+    app.appendChild(legend);
+
     var form = el('div');
     app.appendChild(form);
 
@@ -113,6 +119,7 @@
           var scale = el('div', 'eot2-scale');
           window.EOT2_RUBRIC_SCALE.forEach(function (opt) {
             var label = el('label');
+            label.title = opt.label + ' — ' + opt.desc;
             label.innerHTML = '<input type="radio" name="' + item.id + '" value="' + opt.code + '" /><span>' + opt.code + '</span>';
             var input = label.querySelector('input');
             input.addEventListener('change', function () {
