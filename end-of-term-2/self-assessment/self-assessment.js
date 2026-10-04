@@ -118,7 +118,7 @@
         if (sub.title) sEl.appendChild(el('h3', 'eot2-sub-title', sub.title));
         sub.items.forEach(function (item) {
           var row = el('div', 'eot2-item');
-          row.appendChild(el('p', 'eot2-item-text', item.text));
+          row.appendChild(el('p', 'eot2-item-text', isStaff ? item.text : item.kidText));
           var scale = el('div', 'eot2-scale');
           window.EOT2_RUBRIC_SCALE.forEach(function (opt) {
             var label = el('label');
