@@ -2,22 +2,21 @@
    Kid-safe: slug, display name, group only (same shape dashboard/roster.js
    already uses for routing). Kept separate from dashboard/roster.js since
    that file is quest-topic data; this is just who's who for EOT2 forms. */
-/* ageBand: '8-10' | '11-13' | null. Null means "not set yet" — Term
-   Reflection falls back to asking on the page until the real age list
-   comes in; fill these in once we have it instead of guessing. */
+/* ageBand: '8-10' | '11-13' — purely internal, picks which Term Reflection
+   question set a kid gets. Never shown on the page in any form. */
 window.EOT2_KIDS = [
-  { slug: 'eva', name: 'Eva', group: 'group-00', ageBand: null },
-  { slug: 'gabby', name: 'Gabby', group: 'group-00', ageBand: null },
-  { slug: 'elyon', name: 'Elyon', group: 'group-00', ageBand: null },
-  { slug: 'chris', name: 'Chris', group: 'group-01', ageBand: null },
-  { slug: 'yokesh', name: 'Yokesh', group: 'group-01', ageBand: null },
-  { slug: 'zach', name: 'Zach', group: 'group-01', ageBand: null },
-  { slug: 'owen', name: 'Owen', group: 'group-02', ageBand: null },
-  { slug: 'pranavi', name: 'Pranavi', group: 'group-02', ageBand: null },
-  { slug: 'shalom', name: 'Shalom', group: 'group-03', ageBand: null },
-  { slug: 'michael', name: 'Michael', group: 'group-03', ageBand: null },
-  { slug: 'karis', name: 'Karis', group: 'group-03', ageBand: null },
-  { slug: 'benjamin', name: 'Benjamin', group: 'group-04', ageBand: null }
+  { slug: 'eva', name: 'Eva', group: 'group-00', ageBand: '8-10' },
+  { slug: 'gabby', name: 'Gabby', group: 'group-00', ageBand: '8-10' },
+  { slug: 'elyon', name: 'Elyon', group: 'group-00', ageBand: '8-10' },
+  { slug: 'chris', name: 'Chris', group: 'group-01', ageBand: '8-10' },
+  { slug: 'yokesh', name: 'Yokesh', group: 'group-01', ageBand: '8-10' },
+  { slug: 'zach', name: 'Zach', group: 'group-01', ageBand: '8-10' },
+  { slug: 'owen', name: 'Owen', group: 'group-02', ageBand: '11-13' },
+  { slug: 'pranavi', name: 'Pranavi', group: 'group-02', ageBand: '11-13' },
+  { slug: 'shalom', name: 'Shalom', group: 'group-03', ageBand: '11-13' },
+  { slug: 'michael', name: 'Michael', group: 'group-03', ageBand: '11-13' },
+  { slug: 'karis', name: 'Karis', group: 'group-03', ageBand: '11-13' },
+  { slug: 'benjamin', name: 'Benjamin', group: 'group-04', ageBand: '11-13' }
 ];
 
 /* The three staff raters plus the manually-authored consolidated copy.

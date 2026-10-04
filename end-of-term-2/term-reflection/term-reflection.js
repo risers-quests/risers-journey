@@ -32,19 +32,10 @@
   }
 
   function resolveAgeBand(kid) {
-    if (kid.ageBand === '8-10' || kid.ageBand === '11-13') { renderForm(kid, kid.ageBand); return; }
-    app.innerHTML = '';
-    var card = el('div', 'eot2-picker');
-    card.innerHTML =
-      '<h1>One more thing</h1>' +
-      '<p>Your age group isn\'t set up yet — pick the one that\'s right for you for now.</p>' +
-      '<div class="eot2-field"><label for="band-select">Age group</label><select id="band-select">' +
-      '<option value="8-10">8–10</option><option value="11-13">11–13</option></select></div>' +
-      '<button class="eot2-btn" id="band-go">Continue</button>';
-    app.appendChild(card);
-    document.getElementById('band-go').addEventListener('click', function () {
-      renderForm(kid, document.getElementById('band-select').value);
-    });
+    // Internal detail only — never surfaced to the kid. A kid missing from
+    // the roster's age mapping silently gets the 8-10 question set rather
+    // than being asked to pick one themselves.
+    renderForm(kid, (kid.ageBand === '11-13') ? '11-13' : '8-10');
   }
 
   function renderForm(kid, band) {
@@ -56,8 +47,7 @@
 
     var header = el('div', 'eot2-form-header');
     header.innerHTML =
-      '<div><h1>Term Reflection &mdash; ' + kid.name + '</h1>' +
-      '<div class="eot2-sub">Age group: ' + band + '</div></div>' +
+      '<div><h1>Term Reflection &mdash; ' + kid.name + '</h1></div>' +
       '<div class="eot2-status eot2-status-offline" id="save-status">Loading&hellip;</div>';
     app.appendChild(header);
 
