@@ -302,36 +302,11 @@
     });
   }
 
-  function showGate(roster) {
-    var app = document.getElementById('app');
-    app.innerHTML = '';
-    app.appendChild(el('div', 'dash-crumb', '<a href="../index.html">&larr; Home</a>'));
-    var gate = el('div', 'name-gate');
-    gate.innerHTML =
-      '<h1>My Quests</h1>' +
-      '<p>Type your name to see your quests.</p>' +
-      '<input type="text" id="gate-name-input" placeholder="Your name" autocomplete="off">' +
-      '<button type="button" class="btn btn-primary" id="gate-go-btn">Go →</button>' +
-      '<div class="gate-msg" id="gate-msg"></div>';
-    app.appendChild(gate);
-
-    var input = document.getElementById('gate-name-input');
-    var msg = document.getElementById('gate-msg');
-    function tryEnter() {
-      var name = (input.value || '').trim().toLowerCase();
-      if (!name) return;
-      if (!roster[name]) {
-        msg.textContent = 'Hmm, that name isn’t set up yet — check with your facilitator.';
-        return;
-      }
-      try { localStorage.setItem(KID_KEY, name); } catch (e) {}
-      renderDashboard(name, roster[name]);
-    }
-    document.getElementById('gate-go-btn').addEventListener('click', tryEnter);
-    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') tryEnter(); });
-    input.focus();
-  }
-
+  // No login of its own anymore — Home is the one sign-in for the whole
+  // site. Arriving here already signed in (the normal path, via Home's
+  // Quests card) goes straight to the dashboard; arriving any other way
+  // (a stale bookmark, a direct link, after logging out) bounces to Home,
+  // which signs you in and sends you right back.
   function init() {
     var roster = window.DASHBOARD_ROSTER || {};
     var kid = null;
@@ -339,7 +314,7 @@
     if (kid && roster[kid]) {
       renderDashboard(kid, roster[kid]);
     } else {
-      showGate(roster);
+      location.href = '../index.html';
     }
   }
 
