@@ -1,22 +1,15 @@
 /* Risers Journey — Staff home. The one sign-in for the staff side (name
    only, from the fixed list of three), then every kid in one elegant
-   grid: group, End of Term 2 status at a glance, and one-click shortcuts
-   into this staff member's own Self-Assessment and MOM entries — no
-   re-picking the kid, no re-typing who you are. */
+   grid: their Quests — status and a direct link, same at-a-glance style
+   as the old Teacher's View — plus one-click shortcuts into this staff
+   member's own End of Term 2 entries for that kid. No re-picking the
+   kid, no re-typing who you are. */
 (function () {
   var STAFF_KEY = 'rj-staff-name';
+  var WORKER_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  var SITE_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
   var app = document.getElementById('app');
   var STAFF_NAMES = window.EOT2_STAFF_RATERS.filter(function (r) { return r.id !== 'consolidated'; });
-
-  var RECORDS = [
-    { label: 'Self', short: 'S', week: 'term2-self-assessment-self' },
-    { label: 'Jeran', short: 'J', week: 'term2-self-assessment-jeran' },
-    { label: 'Nishitha', short: 'N', week: 'term2-self-assessment-nishitha' },
-    { label: 'Blessy', short: 'B', week: 'term2-self-assessment-blessy' },
-    { label: 'Final', short: 'F', week: 'term2-self-assessment-consolidated' },
-    { label: 'Reflection', short: 'R', week: 'term2-term-reflection' },
-    { label: 'MOM', short: 'M', week: 'term2-mom' }
-  ];
 
   function el(tag, cls, html) {
     var e = document.createElement(tag);
@@ -30,13 +23,37 @@
     return 'Group ' + (m ? parseInt(m[1], 10) : group);
   }
 
-  function hasAnyAnswer(state) {
-    if (!state) return false;
-    return Object.keys(state).some(function (k) {
-      var v = state[k];
-      if (v && typeof v === 'object') return Object.keys(v).length > 0;
-      return v !== undefined && v !== null && String(v).trim() !== '';
+  function fetchJSON(path) {
+    return fetch(path, { headers: { 'X-Site-Key': SITE_KEY } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; });
+  }
+
+  /* Same read as Teacher's View: completed is authoritative from the
+     kid's own "Complete My Quest" click; in-progress is any real sign of
+     activity (a reflect attempt, a checked build item, time logged);
+     Incomplete is staff's own manual override via /status, shown instead
+     of in-progress/not-started unless the kid has since actually finished. */
+  function countKidCompletion(state) {
+    if (state && state.completed) return 'completed';
+    var reflectState = (state && state.reflect) || {};
+    var anyReflectActivity = Object.keys(reflectState).some(function (id) {
+      var s = reflectState[id];
+      return !!(s && (s.attempts > 0 || (s.text && s.text.trim())));
     });
+    var buildState = (state && state.build) || {};
+    var buildDoneCount = Object.keys(buildState).filter(function (k) { return buildState[k]; }).length;
+    var dayTimeState = (state && state.dayTime) || {};
+    var anyTimeSpent = Object.keys(dayTimeState).some(function (k) { return (dayTimeState[k] || 0) > 0; });
+    if (anyReflectActivity || buildDoneCount > 0 || anyTimeSpent) return 'in-progress';
+    return 'not-started';
+  }
+
+  function questBadgeHtml(state, marked) {
+    if (state === 'completed') return '<span class="quest-badge status-done">✅ Completed</span>';
+    if (marked) return '<span class="quest-badge status-incomplete">\u{1F6A9} Incomplete</span>';
+    if (state === 'in-progress') return '<span class="quest-badge status-progress">\u{1F7E1} In progress</span>';
+    return '<span class="quest-badge status-new">⚪ Not started</span>';
   }
 
   function showGate() {
@@ -58,12 +75,13 @@
 
   function renderHome(staffInfo) {
     app.innerHTML = '';
+    var roster = window.DASHBOARD_ROSTER || {};
 
     var header = el('div', 'dash-header');
     header.innerHTML =
       '<a href="#" id="logout-link" class="switch-kid-link">Log out</a>' +
       '<h1>Hi, ' + staffInfo.label + '! \u{1F44B}</h1>' +
-      '<p class="dash-sub">Every kid, and where their End of Term 2 stands.</p>';
+      '<p class="dash-sub">Every kid — their Quests, and their End of Term 2.</p>';
     app.appendChild(header);
     document.getElementById('logout-link').addEventListener('click', function (e) {
       e.preventDefault();
@@ -71,32 +89,46 @@
       init();
     });
 
-    app.appendChild(el('p', 'staff-home-link', '<a href="../end-of-term-2/staff/index.html">Open the full status table &rarr;</a>'));
+    app.appendChild(el('p', 'staff-home-link', '<a href="../end-of-term-2/staff/index.html">Open the full End of Term 2 status table &rarr;</a>'));
 
     var grid = el('div', 'staff-kid-grid');
     app.appendChild(grid);
 
     window.EOT2_KIDS.forEach(function (kid) {
+      var weeks = (roster[kid.slug] && roster[kid.slug].weeks) || [];
+
       var card = el('div', 'staff-kid-card');
+      var questRows = weeks.map(function (w) {
+        return '<div class="staff-quest-row" id="qrow-' + kid.slug + '-' + w.key + '">' +
+          '<span class="staff-quest-week">' + w.label.replace(/^Quest \d+ . /, '') + '</span>' +
+          '<span class="quest-badge status-loading">&hellip;</span>' +
+          '<a class="staff-quest-link" href="' + w.path + '?fac=1" target="_blank" rel="noopener">Open →</a>' +
+          '</div>';
+      }).join('') || '<p class="eot2-mom-hint">No quests on record yet.</p>';
+
       card.innerHTML =
         '<h3>' + kid.name + '</h3>' +
         '<p class="staff-kid-group">' + groupLabel(kid.group) + '</p>' +
-        '<div class="staff-kid-badges" id="badges-' + kid.slug + '"><span class="eot2-roster-badge eot2-roster-empty">&hellip;</span></div>' +
+        '<div class="staff-kid-section-title">Quests</div>' +
+        '<div class="staff-quest-list">' + questRows + '</div>' +
+        '<div class="staff-kid-section-title">End of Term 2</div>' +
         '<div class="staff-kid-actions">' +
         '<a class="eot2-btn eot2-btn-secondary" href="../end-of-term-2/self-assessment/index.html?rater=' + staffInfo.id + '&kid=' + kid.slug + '">Rate self-assessment</a>' +
         '<a class="eot2-btn eot2-btn-secondary" href="../end-of-term-2/mom/index.html?editAs=' + staffInfo.label + '&kid=' + kid.slug + '">Write MOM</a>' +
         '</div>';
       grid.appendChild(card);
 
-      var badgeWrap = card.querySelector('.staff-kid-badges');
-      Promise.all(RECORDS.map(function (rec) {
-        return window.eot2Fetch(kid.group, kid.slug, rec.week).then(function (data) {
-          return { rec: rec, done: hasAnyAnswer(data && data.state) };
+      weeks.forEach(function (w) {
+        var base = WORKER_URL.replace(/\/$/, '');
+        var syncUrl = base + '/sync?group=' + encodeURIComponent(w.group) + '&kid=' + encodeURIComponent(kid.slug) + '&week=' + encodeURIComponent(w.key);
+        var statusUrl = base + '/status?group=' + encodeURIComponent(w.group) + '&kid=' + encodeURIComponent(kid.slug) + '&week=' + encodeURIComponent(w.key);
+        Promise.all([fetchJSON(syncUrl), fetchJSON(statusUrl)]).then(function (results) {
+          var syncRes = results[0], statusRes = results[1];
+          var state = (syncRes && syncRes.found) ? countKidCompletion(syncRes.data.state) : 'not-started';
+          var marked = !!(statusRes && statusRes.incomplete);
+          var row = document.getElementById('qrow-' + kid.slug + '-' + w.key);
+          if (row) row.querySelector('.quest-badge').outerHTML = questBadgeHtml(state, marked);
         });
-      })).then(function (results) {
-        badgeWrap.innerHTML = results.map(function (r) {
-          return '<span class="eot2-roster-badge ' + (r.done ? 'eot2-roster-done' : 'eot2-roster-empty') + '" title="' + r.rec.label + (r.done ? ': done' : ': not yet') + '">' + r.rec.short + '</span>';
-        }).join('');
       });
     });
   }

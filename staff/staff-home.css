@@ -23,7 +23,22 @@
 }
 .staff-kid-card h3 { font-family: var(--font-head); font-size: 1.2rem; margin: 0; }
 .staff-kid-group { color: var(--ink-soft); font-size: .82rem; margin: -6px 0 0; }
-.staff-kid-badges { display: flex; flex-wrap: wrap; gap: 5px; }
-.staff-kid-badges .eot2-roster-badge { min-width: 22px; padding: 4px 7px; }
+
+.staff-kid-section-title {
+  font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+  color: var(--ink-soft); margin: 4px 0 -2px;
+}
+.staff-quest-list { display: flex; flex-direction: column; }
+.staff-quest-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 8px 0; border-bottom: 1px solid var(--border); font-size: .85rem;
+}
+.staff-quest-row:last-child { border-bottom: none; }
+.staff-quest-week { flex: 1; min-width: 0; font-weight: 600; }
+.staff-quest-link { color: var(--accent-dark); font-weight: 700; font-size: .78rem; text-decoration: none; white-space: nowrap; }
+.staff-quest-link:hover { text-decoration: underline; }
+.quest-badge.status-loading { background: var(--paper-soft); color: var(--ink-soft); }
+.quest-badge.status-incomplete { background: #fde3e3; color: #b3261e; }
+
 .staff-kid-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
 .staff-kid-actions .eot2-btn { text-decoration: none; text-align: center; display: block; padding: 9px 14px; font-size: .85rem; }
