@@ -48,3 +48,15 @@
   .t1-file, .t1-drop { flex-wrap: wrap; }
   .t1-file .eot2-btn, .t1-drop .eot2-btn { width: 100%; text-align: center; }
 }
+
+/* ---- "Not imported yet" banner on the staff list ---- */
+.t1-import-banner {
+  display: flex; align-items: center; gap: 16px; max-width: 760px; margin-bottom: 18px;
+  background: #fffaf0; border-color: #f0d9a8;
+}
+.t1-import-banner[hidden] { display: none; }
+.t1-import-banner .t1-import-link { width: auto; white-space: nowrap; text-decoration: none; }
+@media (max-width: 560px) {
+  .t1-import-banner { flex-wrap: wrap; }
+  .t1-import-banner .t1-import-link { width: 100%; text-align: center; }
+}

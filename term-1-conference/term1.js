@@ -199,6 +199,14 @@
   function renderRoster() {
     app.innerHTML = '';
     app.appendChild(head('Term 1 &middot; Student-led conference', 'Term 1 Conference', 'Each Riser’s feedback from their Term 1 conference.'));
+    // Shown only while some Risers have no notes: the feedback is imported
+    // once from the private staff site (it isn't stored in this repo).
+    var importBanner = el('div', 'hd-card t1-import-banner',
+      '<span class="t1-file-text"><strong>Term 1 notes not imported yet</strong>' +
+      '<span>Some Risers have no notes. Import them once from the staff site.</span></span>' +
+      '<a class="eot2-btn t1-import-link" href="' + (window.LH_STAFF_SITE || '') + 'term1-conference/index.html" target="_blank" rel="noopener">Open import page</a>');
+    importBanner.hidden = true;
+    app.appendChild(importBanner);
     var list = el('div', 'hd-card sq-list');
     window.EOT2_KIDS.forEach(function (kid) {
       var row = el('a', 'sq-row');
@@ -216,6 +224,7 @@
         if (r[1].file) parts.push('slideshow uploaded');
         meta.textContent = parts.join(' · ');
         meta.classList.toggle('is-done', added);
+        if (!added) importBanner.hidden = false;
       });
     });
     app.appendChild(list);
