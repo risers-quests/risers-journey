@@ -74,6 +74,12 @@
     header.innerHTML = '<h1>' + kid.name + '’s Quests</h1><p class="dash-sub">' + groupLabel(kid.group) + '</p>';
     app.appendChild(header);
 
+    var ref = window.STAFF_REF;
+    app.appendChild(el('div', 'staff-ref-row staff-ref-row-tight',
+      ref.answerKey(kid.group, groupLabel(kid.group) + ' answer key', 'staff-ref-pill') +
+      ref.guide('Facilitator Guide', 'staff-ref-pill') +
+      ref.teachersView('Mark a week Incomplete', 'staff-ref-pill')));
+
     var weeks = (window.DASHBOARD_ROSTER[kid.slug] && window.DASHBOARD_ROSTER[kid.slug].weeks) || [];
     if (!weeks.length) {
       app.appendChild(el('p', 'rep-empty', 'No quests on record yet for ' + kid.name + '.'));
@@ -89,6 +95,7 @@
       row.innerHTML =
         '<span class="staff-quest-week">' + w.label + '</span>' +
         '<span class="quest-badge status-loading">&hellip;</span>' +
+        ref.feedback(w.group, kid.slug, w.key, 'Feedback', 'staff-quest-link') +
         '<a class="staff-quest-link" href="' + w.path + '?fac=1" target="_blank" rel="noopener">Open →</a>';
       list.appendChild(row);
 

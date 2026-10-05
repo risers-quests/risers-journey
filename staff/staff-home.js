@@ -55,7 +55,24 @@
       init();
     });
 
-    app.appendChild(el('p', 'staff-home-link', '<a href="../end-of-term-2/staff/index.html">Open the full End of Term 2 status table &rarr;</a>'));
+    var ref = window.STAFF_REF;
+    var groups = [];
+    window.EOT2_KIDS.forEach(function (k) { if (groups.indexOf(k.group) === -1) groups.push(k.group); });
+    groups.sort();
+    var refPanel = el('div', 'staff-ref-panel');
+    refPanel.innerHTML =
+      '<div class="staff-ref-row">' +
+        '<span class="staff-ref-label">Status</span>' +
+        '<a class="staff-ref-pill" href="../end-of-term-2/staff/index.html">End of Term 2 table</a>' +
+        ref.teachersView('Teacher’s View &amp; Incomplete flags', 'staff-ref-pill') +
+      '</div>' +
+      '<div class="staff-ref-row">' +
+        '<span class="staff-ref-label">Reference</span>' +
+        ref.guide('Facilitator Guide', 'staff-ref-pill') +
+        groups.map(function (g) { return ref.answerKey(g, groupLabel(g) + ' answer key', 'staff-ref-pill'); }).join('') +
+      '</div>' +
+      (ref.isSet() ? '' : '<p class="staff-ref-note">Answer keys, Feedback and the Guide live on the private staff site — its link isn’t set up here yet.</p>');
+    app.appendChild(refPanel);
 
     window.EOT2_KIDS.forEach(function (kid) {
       var block = el('div', 'staff-kid-block');
@@ -65,7 +82,7 @@
 
       var questsCard = el('a', 'home-card');
       questsCard.href = 'quests/index.html?kid=' + kid.slug;
-      questsCard.innerHTML = '<h3>Quests</h3><p>Week-by-week status and a direct link into each one.</p>';
+      questsCard.innerHTML = '<h3>Quests</h3><p>Week-by-week status, Feedback, and a direct link into each one.</p>';
       grid.appendChild(questsCard);
 
       var eotCard = el('div', 'home-card');

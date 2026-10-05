@@ -15,3 +15,7 @@
 .staff-quest-link:hover { text-decoration: underline; }
 .quest-badge.status-loading { background: var(--paper-soft); color: var(--ink-soft); }
 .quest-badge.status-incomplete { background: #fde3e3; color: #b3261e; }
+@media (max-width: 560px) {
+  .staff-quest-row { flex-wrap: wrap; row-gap: 8px; }
+  .staff-quest-week { flex-basis: 100%; }
+}

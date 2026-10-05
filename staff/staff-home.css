@@ -30,3 +30,24 @@
 
 .staff-kid-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 2px; }
 .staff-kid-actions .eot2-btn { text-decoration: none; text-align: center; display: block; padding: 8px 12px; font-size: .82rem; }
+
+/* Staff reference links — out to the private staff-data site (see staff-links.js). */
+.staff-ref-panel {
+  background: #fff; border: 1px solid var(--border); border-radius: 18px;
+  padding: 16px 20px; margin: -8px 0 30px; display: flex; flex-direction: column; gap: 12px;
+}
+.staff-ref-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.staff-ref-row-tight { margin: -14px 0 22px; }
+.staff-ref-label {
+  font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-soft); min-width: 86px;
+}
+.staff-ref-pill {
+  display: inline-block; font-size: .82rem; font-weight: 600; text-decoration: none;
+  padding: 6px 13px; border-radius: 999px; border: 1px solid var(--border);
+  background: #fff; color: var(--accent);
+}
+a.staff-ref-pill:hover { background: var(--accent-soft); border-color: #cfe3b3; color: var(--accent-dark); }
+.staff-ref-off, .staff-quest-link.staff-ref-off { color: var(--ink-soft); opacity: .6; cursor: not-allowed; }
+.staff-ref-note { margin: 0; font-size: .8rem; color: var(--ink-soft); }
+@media (max-width: 560px) { .staff-ref-label { min-width: 100%; } }
