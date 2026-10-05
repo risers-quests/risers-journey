@@ -60,3 +60,8 @@
   .t1-import-banner { flex-wrap: wrap; }
   .t1-import-banner .t1-import-link { width: 100%; text-align: center; }
 }
+.t1-file-actions { display: inline-flex; gap: 8px; flex-shrink: 0; }
+@media (max-width: 560px) {
+  .t1-file-actions { width: 100%; }
+  .t1-file-actions .eot2-btn { flex: 1; }
+}

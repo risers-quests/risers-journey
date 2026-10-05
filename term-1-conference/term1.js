@@ -12,7 +12,8 @@
    upload it once; after that the upload option is gone and everyone only
    gets Download. The Worker's /file endpoint enforces the same rule (a
    second upload for the same Riser is refused), so it holds even outside
-   this page.
+   this page. Files are always named <Name>_Term1SlideShow.<ext>, and can
+   be viewed in the browser (PDF, PowerPoint, ODP) as well as downloaded.
 
    Kid view: the signed-in Riser's own notes, and their slideshow if one
    has been uploaded.
@@ -68,6 +69,32 @@
     return window.EOT2_WORKER_URL.replace(/\/$/, '') + '/file?group=' + encodeURIComponent(kid.group) +
       '&kid=' + encodeURIComponent(kid.slug) + '&slot=' + SLOT + (extra || '');
   }
+  // Every slideshow is named the same way, whatever the uploaded file was
+  // called: <Name>_Term1SlideShow.<ext>. Applied at upload, and again
+  // whenever it's shown or downloaded (so a file stored under any other
+  // name still reads the standard way).
+  function extOf(name) {
+    var m = String(name || '').match(/\.([a-z0-9]+)$/i);
+    return m ? m[1].toLowerCase() : '';
+  }
+  function standardName(kid, fileName) {
+    return kid.name.replace(/[^A-Za-z0-9]+/g, '') + '_Term1SlideShow.' + extOf(fileName);
+  }
+  // View opens a plain link in a new tab: PDFs straight from the Worker
+  // (?inline=1, so the browser shows rather than downloads it); PowerPoint
+  // and ODP through Microsoft's free online viewer, which fetches that same
+  // link (key in the query, file name at the end of the path). Keynote has
+  // no online viewer, so it's download only.
+  var OFFICE_VIEWER = 'https://view.officeapps.live.com/op/view.aspx?src=';
+  function canView(fileName) {
+    return ['pdf', 'ppt', 'pptx', 'odp'].indexOf(extOf(fileName)) !== -1;
+  }
+  function publicFileUrl(kid, fileName) {
+    return window.EOT2_WORKER_URL.replace(/\/$/, '') + '/file/' + encodeURIComponent(standardName(kid, fileName)) +
+      '?group=' + encodeURIComponent(kid.group) + '&kid=' + encodeURIComponent(kid.slug) + '&slot=' + SLOT +
+      '&key=' + encodeURIComponent(window.EOT2_SITE_KEY);
+  }
+
   // Resolves to { ready, file }: ready:false means the Worker doesn't have
   // the /file endpoint yet (or couldn't be reached); file is null when
   // nothing has been uploaded.
@@ -96,7 +123,7 @@
       .then(function (blob) {
         var a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = file.name;
+        a.download = standardName(kid, file.name);
         document.body.appendChild(a);
         a.click();
         setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
@@ -106,13 +133,23 @@
       .then(function () { btn.disabled = false; });
   }
 
+  function view(kid, file) {
+    var link = publicFileUrl(kid, file.name);
+    window.open(extOf(file.name) === 'pdf' ? link + '&inline=1' : OFFICE_VIEWER + encodeURIComponent(link), '_blank', 'noopener');
+  }
+
   function fileCard(kid, file) {
     var card = el('section', 'hd-card t1-file',
       fileIcon() +
-      '<span class="t1-file-text"><strong>' + escapeHtml(file.name) + '</strong>' +
+      '<span class="t1-file-text"><strong>' + escapeHtml(standardName(kid, file.name)) + '</strong>' +
         '<span>' + fmtSize(file.size) + ' &middot; uploaded ' + new Date(file.uploadedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + '</span></span>' +
-      '<button type="button" class="eot2-btn t1-download">Download</button>');
+      '<span class="t1-file-actions">' +
+        (canView(file.name) ? '<button type="button" class="eot2-btn eot2-btn-secondary t1-view">View</button>' : '') +
+        '<button type="button" class="eot2-btn t1-download">Download</button>' +
+      '</span>');
     card.querySelector('.t1-download').addEventListener('click', function () { download(kid, file, this); });
+    var viewBtn = card.querySelector('.t1-view');
+    if (viewBtn) viewBtn.addEventListener('click', function () { view(kid, file); });
     return card;
   }
 
@@ -134,10 +171,10 @@
       if (!f) return;
       if (!/\.(pdf|pptx?|key|odp)$/i.test(f.name)) { msg.textContent = 'That file type isn’t supported — use PDF, PowerPoint, Keynote or ODP.'; return; }
       if (f.size > MAX_BYTES) { msg.textContent = 'That file is over 25 MB. Export a smaller copy (a PDF usually is) and try again.'; return; }
-      if (!confirm('Upload “' + f.name + '” as ' + kid.name + '’s slideshow? Once uploaded it can’t be replaced from here.')) { input.value = ''; return; }
+      if (!confirm('Upload this as ' + kid.name + '’s slideshow (' + standardName(kid, f.name) + ')? Once uploaded it can’t be replaced from here.')) { input.value = ''; return; }
       card.classList.add('is-busy');
       msg.textContent = 'Uploading…';
-      fetch(fileUrl(kid, '&name=' + encodeURIComponent(f.name)), {
+      fetch(fileUrl(kid, '&name=' + encodeURIComponent(standardName(kid, f.name))), {
         method: 'POST', headers: { 'X-Site-Key': window.EOT2_SITE_KEY }, body: f
       })
         .then(function (r) { return r.json().then(function (d) { return { status: r.status, d: d }; }); })
