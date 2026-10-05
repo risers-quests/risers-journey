@@ -1,0 +1,234 @@
+/* LifeHub theme — loaded last on every Risers Journey page, so it re-skins
+   dashboard.css / eot2.css / home.css without touching their layout rules.
+   Brand colours sampled from the LifeHub logo: leaf green #8FC63F and
+   slate #607A8E. The green is too light to carry white text, so buttons
+   and links use a deeper shade of it (--accent) and the bright logo
+   green is kept for fills — progress bars, highlights, the header rule. */
+
+:root {
+  --brand-green: #8fc63f;
+  --brand-green-soft: #f1f8e6;
+  --brand-slate: #607a8e;
+
+  --paper: #f7f9f5;
+  --paper-soft: #f0f4ec;
+  --card: #ffffff;
+  --ink: #1e2a33;
+  --ink-soft: #56687a;
+  --ink-faint: #7d8c99;
+  --border: #e3e9df;
+  --accent: #3f7718;
+  --accent-dark: #2f5e10;
+  --accent-soft: #eef6e2;
+  --good: #2e7d46;
+  --good-soft: #e5f4ea;
+  --warn: #9a6a1c;
+  --warn-soft: #fbf1df;
+
+  --font-head: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow-sm: 0 1px 2px rgba(30, 42, 51, .04), 0 2px 8px rgba(30, 42, 51, .04);
+  --shadow-md: 0 2px 4px rgba(30, 42, 51, .04), 0 12px 32px rgba(30, 42, 51, .08);
+}
+
+body {
+  background:
+    radial-gradient(1200px 420px at 50% -120px, rgba(143, 198, 63, .14), transparent 70%),
+    var(--paper);
+  background-repeat: no-repeat;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#app { width: 100%; max-width: 900px; flex: 1 0 auto; padding: 44px 24px 80px; }
+@media (max-width: 560px) { #app { padding: 28px 16px 64px; } }
+h1, h2, h3, h4 { letter-spacing: -.01em; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--brand-green); outline-offset: 2px; }
+
+/* ---- Site header / footer (markup injected by assets/brand.js) ---- */
+.lh-header {
+  position: sticky; top: 0; z-index: 20;
+  background: #fff;
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.lh-header::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+  background: linear-gradient(90deg, var(--brand-green), var(--brand-slate));
+  opacity: .55;
+}
+.lh-header-inner {
+  max-width: 900px; margin: 0 auto; padding: 10px 24px;
+  display: flex; align-items: center; gap: 16px;
+}
+.lh-brand { display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; }
+.lh-brand img { height: 50px; width: auto; display: block; }
+.lh-brand-divider { width: 1px; height: 30px; background: var(--border); }
+.lh-brand-title {
+  font-family: var(--font-head); font-weight: 600; font-size: 1.02rem; color: var(--ink);
+  line-height: 1.2;
+}
+.lh-brand-title small {
+  display: block; font-family: var(--font-body); font-weight: 600; font-size: .66rem;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--brand-slate);
+}
+.lh-header-tag {
+  margin-left: auto; font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--accent-dark); background: var(--accent-soft); border: 1px solid #d9eac2;
+  padding: 5px 11px; border-radius: 999px;
+}
+@media (max-width: 560px) {
+  .lh-header-inner { padding: 8px 16px; gap: 10px; }
+  .lh-brand img { height: 36px; }
+  .lh-brand-divider, .lh-brand-title small { display: none; }
+  .lh-brand-title { font-size: .92rem; }
+}
+
+.lh-footer {
+  flex-shrink: 0; border-top: 1px solid var(--border); background: #fff;
+  font-size: .8rem; color: var(--ink-faint);
+}
+.lh-footer-inner {
+  max-width: 900px; margin: 0 auto; padding: 20px 24px;
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 20px;
+}
+.lh-footer strong { color: var(--ink-soft); font-weight: 600; }
+.lh-footer .lh-dot { color: var(--brand-green); padding: 0 4px; }
+
+/* ---- Type ---- */
+.home-head h1, .dash-header h1, .rep-header h1, .eot2-head h1 {
+  font-family: var(--font-head); font-weight: 600; font-size: clamp(1.8rem, 4vw, 2.4rem);
+  line-height: 1.15; color: var(--ink);
+}
+.home-head p, .dash-sub, .eot2-head p { color: var(--ink-soft); }
+.eot2-form-header h1, .name-gate h1, .eot2-picker h1 { font-family: var(--font-head); font-weight: 600; }
+.home-card h3, .eot2-hub-card h3, .quest-card h3, .rep-quest-col h3, .dash-section-title,
+.dash-col h4, .rep-note-block h4, .eot2-section-title, .eot2-mom-field label, .staff-kid-name {
+  font-family: var(--font-head); font-weight: 600;
+}
+
+/* ---- Breadcrumbs / log out ---- */
+.dash-crumb, .eot2-crumb { font-size: .82rem; font-weight: 500; margin-bottom: 18px; }
+.dash-crumb a, .eot2-crumb a { color: var(--ink-soft); }
+.dash-crumb a:hover, .eot2-crumb a:hover { color: var(--accent); }
+.switch-kid-link {
+  background: #fff; border: 1px solid var(--border); color: var(--ink-soft);
+  font-weight: 600; box-shadow: var(--shadow-sm); transition: all .15s ease;
+}
+.switch-kid-link:hover { background: var(--accent-soft); border-color: #cfe3b3; color: var(--accent-dark); }
+
+/* ---- Buttons ---- */
+.btn, .eot2-btn, .quest-open-btn, .rep-open-link {
+  font-weight: 600; letter-spacing: .01em; transition: background .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+.btn-primary, .eot2-btn, .quest-open-btn, .rep-open-link {
+  background: var(--accent); color: #fff; box-shadow: 0 1px 2px rgba(47, 94, 16, .2), 0 6px 16px rgba(63, 119, 24, .18);
+}
+.btn-primary:hover, .eot2-btn:hover, .quest-open-btn:hover, .rep-open-link:hover {
+  background: var(--accent-dark); transform: translateY(-1px);
+}
+.eot2-btn-secondary {
+  background: #fff; color: var(--ink); border: 1px solid var(--border); box-shadow: var(--shadow-sm);
+}
+.eot2-btn-secondary:hover { background: var(--accent-soft); border-color: #cfe3b3; color: var(--accent-dark); }
+
+/* ---- Sign-in cards ---- */
+.name-gate, .eot2-picker {
+  background: #fff; border: 1px solid var(--border); border-radius: 24px;
+  box-shadow: var(--shadow-md); padding: 40px 34px 34px; margin-top: 56px;
+}
+.name-gate::before, .eot2-picker::before {
+  content: ''; display: block; width: 56px; height: 56px; margin: 0 auto 18px;
+  background: var(--brand-green-soft) url('lifehub-mark.png') center / 38px no-repeat;
+  border-radius: 16px;
+}
+.name-gate h1 { font-size: 1.7rem; }
+#gate-name-input, #staff-select, .eot2-field input, .eot2-field select, .eot2-textarea {
+  border: 1px solid #d6ded1; border-radius: 12px; background: #fff; color: var(--ink);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+#gate-name-input:focus, #staff-select:focus, .eot2-field input:focus, .eot2-field select:focus, .eot2-textarea:focus {
+  border-color: var(--brand-green); box-shadow: 0 0 0 4px rgba(143, 198, 63, .2);
+}
+.gate-msg, .eot2-msg { color: #a3432b; }
+
+/* ---- Cards ---- */
+.home-grid { gap: 20px; }
+.home-card, .eot2-hub-card {
+  position: relative; background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 26px 24px 24px; box-shadow: var(--shadow-sm);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+a.home-card::after, .eot2-hub-card::after {
+  content: 'Open \2192'; margin-top: auto; padding-top: 10px;
+  font-size: .82rem; font-weight: 600; color: var(--accent);
+}
+.eot2-hub-card { display: flex; flex-direction: column; gap: 6px; }
+a.home-card::before, .eot2-hub-card::before {
+  content: ''; width: 36px; height: 4px; border-radius: 4px; background: var(--brand-green); margin-bottom: 6px;
+}
+a.home-card:hover, .eot2-hub-card:hover {
+  transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: #d3e6b8;
+}
+.home-card-soon { background: rgba(255, 255, 255, .6); box-shadow: none; border-style: dashed; }
+.home-card-soon:hover { border-color: var(--border); }
+.home-card-soon h3 { color: var(--ink-soft); }
+.home-card .home-badge, .staff-kid-group-tag {
+  background: var(--paper-soft); color: var(--brand-slate); letter-spacing: .08em; font-size: .66rem;
+}
+.home-head { margin-bottom: 34px; }
+
+.week-block, .eot2-scale-legend, .rep-bloom-explainer, .rep-note-block {
+  background: var(--paper-soft); border: 1px solid var(--border);
+}
+.week-block { border-radius: 22px; }
+.quest-card, .rep-quest-col, .staff-quest-list, .eot2-item, .eot2-question, .summary-list li {
+  background: var(--card); border: 1px solid var(--border); box-shadow: var(--shadow-sm);
+}
+.quest-card, .rep-quest-col, .staff-quest-list { border-radius: var(--radius); }
+.eot2-item, .eot2-question { border-radius: 14px; transition: border-color .15s ease; }
+.eot2-item:has(input:checked) { border-color: #d3e6b8; }
+
+/* ---- Status, progress, badges ---- */
+.progress-track { background: #e9efe4; height: 8px; }
+.progress-fill { background: linear-gradient(90deg, var(--brand-green), #6fae2a); }
+.progress-fill-build { background: linear-gradient(90deg, #7aa3bd, var(--brand-slate)); }
+.status-done, .rep-badge-done, .eot2-roster-done, .eot2-status-saved { background: var(--good-soft); color: var(--good); }
+.status-progress { background: #fff4dc; color: var(--warn); }
+.status-new, .eot2-status-offline { background: #eef1f4; color: var(--ink-soft); }
+.bloom-tier.reached { background: var(--brand-green); color: #1d3a08; border-color: #7ab432; }
+
+/* ---- Forms: rating scale + choices ---- */
+.eot2-section-title {
+  background: none; padding: 0 0 10px; border-radius: 0; font-size: 1.3rem;
+  border-bottom: 2px solid var(--brand-green); display: inline-block; margin-bottom: 18px;
+}
+.eot2-scale label, .eot2-choices label { border: 1px solid #dde4d8; transition: all .15s ease; }
+.eot2-scale label:hover, .eot2-choices label:hover { border-color: var(--brand-green); }
+.eot2-scale input, .eot2-choices input, .eot2-matrix input { accent-color: var(--accent); }
+.eot2-scale label:has(input:checked), .eot2-choices label:has(input:checked) {
+  border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark);
+}
+.eot2-scale-legend-item strong, .bloom-ceiling-label strong { color: var(--accent-dark); }
+.eot2-form-header { border-bottom: 1px solid var(--border); }
+
+/* ---- Tables ---- */
+.eot2-roster-table, .staff-quest-list { background: #fff; }
+.eot2-roster-table { border-radius: var(--radius-sm); overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
+.eot2-roster-table thead th { background: var(--paper-soft); color: var(--brand-slate); }
+.eot2-roster-table tbody tr:hover { background: #fafcf8; }
+
+/* ---- Staff home ---- */
+.staff-kid-block { background: rgba(255, 255, 255, .55); border: 1px solid var(--border); border-radius: 22px; padding: 20px 20px 22px; }
+.staff-kid-cardset { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
+.staff-kid-cardset .home-card { padding: 18px 18px 16px; }
+.staff-home-link a, .staff-quest-link, .summary-link { color: var(--accent); }

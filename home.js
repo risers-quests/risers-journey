@@ -67,9 +67,9 @@
     eotCard.innerHTML = '<h3>End of Term 2</h3><p>Your self-assessment, your reflection, and your conference notes.</p>';
     grid.appendChild(eotCard);
 
-    var academicsCard = el('div', 'home-card home-card-soon');
-    academicsCard.innerHTML = '<span class="home-badge">Coming soon</span><h3>Academics</h3><p>Subject-by-subject progress, on the way.</p>';
-    grid.appendChild(academicsCard);
+    var coreSkillsCard = el('div', 'home-card home-card-soon');
+    coreSkillsCard.innerHTML = '<span class="home-badge">Coming soon</span><h3>Core Skills</h3><p>Subject-by-subject progress, on the way.</p>';
+    grid.appendChild(coreSkillsCard);
 
     var selCard = el('div', 'home-card home-card-soon');
     selCard.innerHTML = '<span class="home-badge">Coming soon</span><h3>SEL</h3><p>Social &amp; emotional growth notes, on the way.</p>';
