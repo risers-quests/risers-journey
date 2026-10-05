@@ -65,3 +65,5 @@
   .t1-file-actions { width: 100%; }
   .t1-file-actions .eot2-btn { flex: 1; }
 }
+.t1-file { flex-wrap: wrap; }
+.t1-view-msg { flex-basis: 100%; margin: 0; }

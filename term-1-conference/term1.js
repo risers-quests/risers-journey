@@ -149,7 +149,28 @@
       '</span>');
     card.querySelector('.t1-download').addEventListener('click', function () { download(kid, file, this); });
     var viewBtn = card.querySelector('.t1-view');
-    if (viewBtn) viewBtn.addEventListener('click', function () { view(kid, file); });
+    if (viewBtn) {
+      // View relies on the Worker serving the file from a plain link (no
+      // header). Check that once when the card appears, so a Worker that
+      // hasn't been updated yet gives a clear message here rather than an
+      // error page from the online viewer. (The check runs ahead of the tap
+      // so View can still open its tab immediately, which iPad Safari needs
+      // to not block it as a pop-up.)
+      var viewReady = null;
+      fetch(publicFileUrl(kid, file.name) + '&meta=1')
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) { viewReady = !!(d && d.found); })
+        .catch(function () { viewReady = false; });
+      viewBtn.addEventListener('click', function () {
+        var msg = card.querySelector('.t1-view-msg');
+        if (viewReady === false) {
+          if (!msg) card.appendChild(msg = el('p', 't1-msg t1-view-msg'));
+          msg.textContent = 'View isn’t available yet — the progress service needs its latest update. Download still works.';
+          return;
+        }
+        view(kid, file);
+      });
+    }
     return card;
   }
 
