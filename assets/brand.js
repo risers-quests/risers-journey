@@ -1,43 +1,159 @@
-/* LifeHub site chrome — the header (logo + "Risers Journey") and footer
-   shared by every page. Paths are worked out from this script's own URL,
-   so the same tag works at any folder depth. Add data-area="staff" on the
-   script tag for staff pages: the logo then links to Staff home and a
-   "Staff" tag shows on the right. */
+/* LifeHub app shell — the sidebar (desktop) / top bar + bottom tabs
+   (phone), signed-in profile chip, and footer shared by every page. The
+   page's own #app is moved into the shell's main column untouched, so
+   page scripts don't need to know the shell exists.
+
+   Paths are worked out from this script's own URL, so the same tag works
+   at any folder depth. data-area="staff" on the script tag (or a staff
+   rater/editAs link into a shared End of Term 2 form) switches to the
+   staff navigation. While nobody is signed in, the shell stays out of the
+   way: no navigation, just the logo above the sign-in card. */
 (function () {
   var script = document.currentScript;
   var assets = script.src.replace(/[^/]*$/, '');
   var root = assets.replace(/assets\/$/, '');
-  var isStaff = script.getAttribute('data-area') === 'staff';
+  var params = new URLSearchParams(location.search);
+  var rater = params.get('rater');
+  var isStaff = script.getAttribute('data-area') === 'staff' ||
+    !!params.get('editAs') || (!!rater && rater !== 'self');
+
+  var KID_KEY = 'imm-l3-kid';
+  var STAFF_KEY = 'rj-staff-name';
+  // The private staff reference site (risers-term2-digital-quests-staff-data).
+  // staff/staff-links.js reads this too, so it's set in this one place.
+  var STAFF_SITE = window.LH_STAFF_SITE = 'https://risers-term2-digital-quests-staff-d.vercel.app/';
 
   var icon = document.createElement('link');
   icon.rel = 'icon';
   icon.href = assets + 'lifehub-mark.png';
   document.head.appendChild(icon);
 
-  function build() {
-    var header = document.createElement('header');
-    header.className = 'lh-header';
-    header.innerHTML =
-      '<div class="lh-header-inner">' +
-        '<a class="lh-brand" href="' + root + (isStaff ? 'staff/index.html' : 'index.html') + '">' +
-          '<img src="' + assets + 'lifehub-logo.png" alt="LifeHub — A Homeschooling Cooperative">' +
-          '<span class="lh-brand-divider"></span>' +
-          '<span class="lh-brand-title"><small>Term 2</small>Risers Journey</span>' +
-        '</a>' +
-        (isStaff ? '<span class="lh-header-tag">Staff</span>' : '') +
-      '</div>';
-    document.body.insertBefore(header, document.body.firstChild);
-
-    var footer = document.createElement('footer');
-    footer.className = 'lh-footer';
-    footer.innerHTML =
-      '<div class="lh-footer-inner">' +
-        '<span><strong>LifeHub</strong> &middot; A Homeschooling Cooperative</span>' +
-        '<span>Connect<span class="lh-dot">&bull;</span>Create<span class="lh-dot">&bull;</span>Cultivate</span>' +
-      '</div>';
-    document.body.appendChild(footer);
+  var ICONS = {
+    home: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/>',
+    quests: '<path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2.5Z"/><path d="M8 7h7M8 11h5"/>',
+    term: '<rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/><path d="m9 15 2 2 4-4"/>',
+    skills: '<path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 13 9 5 9-5"/>',
+    sel: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/>',
+    table: '<rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 10h18M9 10v10"/>',
+    eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
+    guide: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14"/><path d="M12 17.5h.01"/>',
+    key: '<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3M15 8l2 2"/>',
+    logout: '<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5M5 12h11"/>',
+    ext: '<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>'
+  };
+  function svg(name, cls) {
+    return '<svg class="' + (cls || 'lh-ico') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[name] + '</svg>';
   }
 
-  if (document.body) build();
+  var NAV = isStaff ? [
+    { label: 'Overview', href: root + 'staff/index.html', icon: 'home', match: /\/staff\/(index\.html)?$/ },
+    { label: 'Quests', href: root + 'staff/quests/index.html', icon: 'quests', match: /\/staff\/quests\// },
+    { label: 'End of Term 2', href: root + 'end-of-term-2/staff/index.html', icon: 'table', match: /\/end-of-term-2\// },
+    { section: 'Staff reference' },
+    { label: 'Teacher’s View', href: STAFF_SITE + 'index.html', icon: 'eye', ext: true },
+    { label: 'Facilitator Guide', href: STAFF_SITE + 'guide/index.html', icon: 'guide', ext: true },
+    { label: 'Answer keys', href: STAFF_SITE + 'answer-keys/group-00/index.html', icon: 'key', ext: true }
+  ] : [
+    { label: 'Home', href: root + 'index.html', icon: 'home', match: /\/(index\.html)?$/, exact: true },
+    { label: 'My Quests', href: root + 'dashboard/index.html', icon: 'quests', match: /\/dashboard\// },
+    { label: 'End of Term 2', href: root + 'end-of-term-2/index.html', icon: 'term', match: /\/end-of-term-2\// },
+    { section: 'Coming soon' },
+    { label: 'Core Skills', icon: 'skills', soon: true },
+    { label: 'SEL', icon: 'sel', soon: true }
+  ];
+
+  function isActive(item) {
+    if (!item.match) return false;
+    var path = location.pathname;
+    if (item.exact) {
+      // Home is the site root only, not every folder's index.html.
+      var rootPath = new URL(root, location.href).pathname;
+      return path === rootPath || path === rootPath + 'index.html';
+    }
+    return item.match.test(path);
+  }
+
+  function signedInName() {
+    var v = null;
+    try { v = localStorage.getItem(isStaff ? STAFF_KEY : KID_KEY); } catch (e) {}
+    if (!v) return null;
+    return v.charAt(0).toUpperCase() + v.slice(1);
+  }
+
+  function navHtml(compact) {
+    return NAV.map(function (item) {
+      if (item.section) return compact ? '' : '<div class="lh-nav-section">' + item.section + '</div>';
+      if (compact && (item.soon || item.ext)) return '';
+      var cls = 'lh-nav-item' + (isActive(item) ? ' is-active' : '') + (item.soon ? ' is-soon' : '');
+      var inner = svg(item.icon) + '<span>' + item.label + '</span>' +
+        (item.soon ? '<em>Soon</em>' : '') + (item.ext ? svg('ext', 'lh-ico-ext') : '');
+      if (item.soon) return '<span class="' + cls + '">' + inner + '</span>';
+      return '<a class="' + cls + '" href="' + item.href + '"' +
+        (item.ext ? ' target="_blank" rel="noopener"' : '') +
+        (isActive(item) ? ' aria-current="page"' : '') + '>' + inner + '</a>';
+    }).join('');
+  }
+
+  function logout(e) {
+    e.preventDefault();
+    try { localStorage.removeItem(isStaff ? STAFF_KEY : KID_KEY); } catch (err) {}
+    location.href = root + (isStaff ? 'staff/index.html' : 'index.html');
+  }
+
+  function build() {
+    var app = document.getElementById('app');
+    var name = signedInName();
+    var homeHref = root + (isStaff ? 'staff/index.html' : 'index.html');
+    var logo = '<a class="lh-logo" href="' + homeHref + '"><img src="' + assets + 'lifehub-logo.png" alt="LifeHub — A Homeschooling Cooperative"></a>';
+    var footer =
+      '<footer class="lh-footer"><span><strong>LifeHub</strong> &middot; A Homeschooling Cooperative</span>' +
+      '<span>Connect<i>&bull;</i>Create<i>&bull;</i>Cultivate</span></footer>';
+
+    document.body.classList.add('lh-has-shell', name ? 'lh-signed-in' : 'lh-signed-out');
+    if (isStaff) document.body.classList.add('lh-staff');
+
+    var shell = document.createElement('div');
+    shell.className = 'lh-shell';
+
+    if (name) {
+      var initial = name.charAt(0);
+      shell.innerHTML =
+        '<aside class="lh-side">' +
+          logo +
+          '<div class="lh-side-title">Risers Journey<span>' + (isStaff ? 'Staff workspace' : 'Term 2') + '</span></div>' +
+          '<nav class="lh-nav" aria-label="Main">' + navHtml(false) + '</nav>' +
+          '<div class="lh-profile">' +
+            '<span class="lh-avatar">' + initial + '</span>' +
+            '<span class="lh-profile-name">' + name + '<small>' + (isStaff ? 'Facilitator' : 'Riser') + '</small></span>' +
+            '<a href="#" class="lh-logout" title="Log out" aria-label="Log out">' + svg('logout') + '</a>' +
+          '</div>' +
+        '</aside>' +
+        '<div class="lh-main">' +
+          '<header class="lh-topbar">' + logo +
+            '<span class="lh-topbar-title">Risers Journey</span>' +
+            '<span class="lh-avatar lh-avatar-sm">' + initial + '</span>' +
+            '<a href="#" class="lh-logout" aria-label="Log out">' + svg('logout') + '</a>' +
+          '</header>' +
+        '</div>' +
+        '<nav class="lh-tabbar" aria-label="Main">' + navHtml(true) + '</nav>';
+    } else {
+      shell.innerHTML = '<div class="lh-main"><header class="lh-gatebar">' + logo + '</header></div>';
+    }
+
+    document.body.insertBefore(shell, document.body.firstChild);
+    var main = shell.querySelector('.lh-main');
+    if (app) main.appendChild(app);
+    main.insertAdjacentHTML('beforeend', footer);
+
+    Array.prototype.forEach.call(shell.querySelectorAll('.lh-logout'), function (a) { a.addEventListener('click', logout); });
+    // Pages' own in-page "Log out" links re-render a sign-in card without
+    // a reload; send them through the same full logout so the shell resets.
+    document.addEventListener('click', function (e) {
+      var t = e.target.closest && e.target.closest('#logout-link');
+      if (t) { e.stopImmediatePropagation(); logout(e); }
+    }, true);
+  }
+
+  if (document.body && document.getElementById('app')) build();
   else document.addEventListener('DOMContentLoaded', build);
 })();

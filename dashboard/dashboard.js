@@ -19,10 +19,9 @@
    Term 3's fully different, hands-on build-and-make quests replace
    these — without revealing anything about what Term 3 actually is. */
 (function () {
-  var WORKER_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
-  var SITE_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+  var QD = window.QUEST_DATA;
   var KID_KEY = 'imm-l3-kid';
-  var BLOOM_LEVELS = ['Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate'];
+  var BLOOM_LEVELS = QD.BLOOM_LEVELS;
   var TERM_START = 'Aug 31';
   var TERM_END = 'Sep 30';
 
@@ -37,80 +36,12 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  function fmtTime(ms) {
-    if (!ms) return '0m';
-    var mins = Math.round(ms / 60000);
-    if (mins < 1) return '<1m';
-    if (mins < 60) return mins + 'm';
-    return Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm';
-  }
-
-  // Same rule the staff Feedback page uses: a question counts as genuinely
-  // understood if it passed on the kid's own merit, or a facilitator
-  // granted a pass specifically because the reasoning was right (not just
-  // "close enough, move on").
-  function isGenuinePass(r) {
-    if (!r) return false;
-    if (r.success && !r.contentFlagged) return true;
-    if (r.contentFlagged && r.passReasons && r.passReasons.length) {
-      var reasons = r.passReasons;
-      var logicRight = reasons.indexOf('Logic right') !== -1 || reasons.indexOf('Full pass — everything right') !== -1;
-      var logicShaky = reasons.indexOf('Partially right') !== -1 || reasons.indexOf('Logic wrong') !== -1;
-      return logicRight && !logicShaky;
-    }
-    return false;
-  }
-
-  // Returns { ok, state }. ok:false means the fetch itself failed or the
-  // Worker rejected it — a real problem, NOT the same as ok:true/state:
-  // null (Worker reached fine, kid just hasn't started/finished this
-  // quest yet). Conflating those two silently hides real, already-done
-  // work behind "not completed yet" — exactly the failure mode a kid's
-  // sync can hit (see the Facilitator View / offline-push cases), so it
-  // has to surface as a visible warning, not vanish quietly.
-  function fetchWeekState(group, kid, week) {
-    var url = WORKER_URL + '/sync?group=' + encodeURIComponent(group) + '&kid=' + encodeURIComponent(kid) + '&week=' + encodeURIComponent(week);
-    return fetch(url, { headers: { 'X-Site-Key': SITE_KEY } })
-      .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('http ' + r.status)); })
-      .then(function (res) { return { ok: true, state: (res && res.found) ? res.data.state : null }; })
-      .catch(function () { return { ok: false, state: null }; });
-  }
-
-  function fetchRating(group, kid, week) {
-    var url = WORKER_URL + '/rating?group=' + encodeURIComponent(group) + '&kid=' + encodeURIComponent(kid) + '&week=' + encodeURIComponent(week);
-    return fetch(url, { headers: { 'X-Site-Key': SITE_KEY } })
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (res) { return (res && res.found) ? res.data : null; })
-      .catch(function () { return null; });
-  }
-
   function scoreBand(total, max) {
     var pct = total / max;
     if (pct >= 0.9) return 'Outstanding';
     if (pct >= 0.7) return 'Solid';
     if (pct >= 0.5) return 'Developing';
     return 'Needs support';
-  }
-
-  // Highest Bloom's level the kid has shown solid (>=60%) genuine mastery
-  // of, among tagged questions for this quest — same threshold and same
-  // "keep overwriting as you climb the ordered list" approach the staff
-  // Feedback page uses, so a parent and a facilitator never see two
-  // different answers to "how high did they reach" for the same kid.
-  function bloomCeiling(bloomMap, reflect) {
-    var counts = {};
-    BLOOM_LEVELS.forEach(function (l) { counts[l] = { total: 0, hit: 0 }; });
-    Object.keys(bloomMap).forEach(function (id) {
-      var level = bloomMap[id];
-      if (!counts[level]) return;
-      counts[level].total++;
-      if (isGenuinePass(reflect[id])) counts[level].hit++;
-    });
-    var ceiling = null;
-    BLOOM_LEVELS.forEach(function (l) {
-      if (counts[l].total && (counts[l].hit / counts[l].total) >= 0.6) ceiling = l;
-    });
-    return { counts: counts, ceiling: ceiling };
   }
 
   function bloomPyramidHtml(bloomInfo) {
@@ -188,7 +119,7 @@
 
     var rows = [
       { label: 'Completion Status', html: '<span class="rep-badge rep-badge-done">✅ Completed</span>' },
-      { label: 'Time Taken', html: fmtTime(q.timeMs) },
+      { label: 'Time Taken', html: QD.fmtTime(q.timeMs) },
       { label: 'Bloom’s Taxonomy', html: bloomPyramidHtml(q.bloomInfo) },
       {
         label: 'Presentation',
@@ -228,7 +159,7 @@
     header.innerHTML =
       '<a href="#" id="logout-link" class="switch-kid-link">Log out</a>' +
       '<h1>Hi, ' + escapeHtml(roster.displayName) + '! 👋</h1>' +
-      '<p class="dash-sub">Here is your Term 2 Quests.</p>' +
+      '<p class="dash-sub">Here are your Term 2 quests.</p>' +
       '<p class="rep-note">These quests are self-paced — there’s no single deadline for each one, you worked through them at your own speed between <strong>' + TERM_START + '</strong> and <strong>' + TERM_END + '</strong>.</p>';
     app.appendChild(header);
 
@@ -243,8 +174,8 @@
 
     var loaders = roster.weeks.map(function (weekCfg) {
       return Promise.all([
-        fetchWeekState(weekCfg.group, kidKey, weekCfg.key),
-        fetchRating(weekCfg.group, kidKey, weekCfg.key)
+        QD.fetchWeekState(weekCfg.group, kidKey, weekCfg.key),
+        QD.fetchRating(weekCfg.group, kidKey, weekCfg.key)
       ]).then(function (results) {
         var syncResult = results[0];
         var rating = results[1];
@@ -252,8 +183,8 @@
         if (!syncResult.ok) return { loadError: true };
         if (!state || !state.completed) return null; // not actually finished — leave out entirely
         var reflect = state.reflect || {};
-        var timeMs = Object.keys(state.dayTime || {}).reduce(function (sum, k) { return sum + (state.dayTime[k] || 0); }, 0);
-        var bloomInfo = weekCfg.bloom ? bloomCeiling(weekCfg.bloom, reflect) : null;
+        var timeMs = QD.totalTimeMs(state);
+        var bloomInfo = weekCfg.bloom ? QD.bloomCeiling(weekCfg.bloom, reflect) : null;
         return { weekCfg: weekCfg, timeMs: timeMs, bloomInfo: bloomInfo, rating: rating };
       });
     });

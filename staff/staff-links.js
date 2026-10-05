@@ -4,11 +4,11 @@
    Incomplete toggle in Teacher's View stay there on purpose — this repo is
    public, so none of that content is copied in, only linked to.
 
-   Set STAFF_DATA_URL to that site's deployed address, with a trailing
-   slash. While it's empty, every link below renders as a disabled
-   "not set up yet" pill instead of a broken link. */
+   The site's address is set once, as STAFF_SITE in assets/brand.js. If
+   it's ever empty, every link below renders as a disabled "not set up
+   yet" pill instead of a broken link. */
 (function () {
-  var STAFF_DATA_URL = 'https://risers-term2-digital-quests-staff-d.vercel.app/';
+  var STAFF_DATA_URL = window.LH_STAFF_SITE || '';
 
   function url(path) {
     return STAFF_DATA_URL ? STAFF_DATA_URL.replace(/\/?$/, '/') + path : null;
