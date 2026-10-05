@@ -1,4 +1,4 @@
-/* End of Term 2 — sync helper. Reuses the SAME Cloudflare Worker and the
+/* Term 2 Conference (folder: end-of-term-2) — sync helper. Reuses the SAME Cloudflare Worker and the
    same generic /sync endpoint every quest page already uses (group/kid/week
    -> arbitrary state JSON) — no Worker changes needed. Each EOT2 record
    just uses a synthetic "week" value instead of a real quest week:

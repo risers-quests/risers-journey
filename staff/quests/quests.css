@@ -1,24 +1,10 @@
-/* Staff — Quests page: the Riser list (grouped) and one Riser's weeks.
-   Page header, cards and chips are the hd-* components in home.css. */
+/* Staff — Quests page: the group headings and one Riser's weeks. Page
+   header, cards, chips and the Riser list rows (sq-row) are in home.css. */
 .sq-group { max-width: 760px; margin-bottom: 26px; }
 .sq-group-title {
   font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
   color: var(--ink-faint); margin: 0 0 10px 4px;
 }
-.sq-list { padding: 6px 12px; max-width: 760px; }
-.sq-row {
-  display: flex; align-items: center; gap: 14px; padding: 13px 12px; border-radius: 14px;
-  text-decoration: none; color: inherit; transition: background .15s ease;
-}
-.sq-row + .sq-row { border-top: 1px solid var(--border); }
-.sq-row:hover { background: #f8fbf5; }
-.sq-avatar { width: 36px; height: 36px; font-size: .9rem; }
-.sq-name { flex: 1; font-weight: 600; }
-.sq-meta { font-size: .85rem; color: var(--ink-faint); }
-.sq-meta.is-done { color: var(--good); font-weight: 600; }
-.sq-go { color: var(--ink-faint); transition: transform .15s ease, color .15s ease; }
-.sq-row:hover .sq-go { color: var(--accent); transform: translateX(3px); }
-
 .sq-week { display: flex; align-items: center; gap: 16px; padding: 16px 12px; }
 .sq-week + .sq-week { border-top: 1px solid var(--border); }
 .sq-week-main { flex: 1; min-width: 0; }

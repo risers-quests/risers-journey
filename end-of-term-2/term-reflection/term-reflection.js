@@ -12,7 +12,7 @@
 
   function showKidGate() {
     app.innerHTML = '';
-    app.appendChild(el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">End of Term 2</a>'));
+    app.appendChild(el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>'));
     var card = el('div', 'eot2-picker');
     card.innerHTML =
       '<h1>Term Reflection</h1>' +
@@ -43,7 +43,7 @@
     app.innerHTML = '';
     var total = window.EOT2_REFLECTION_ITEM_COUNT(band);
 
-    var crumb = el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">End of Term 2</a>');
+    var crumb = el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>');
     app.appendChild(crumb);
 
     var header = el('div', 'eot2-form-header');

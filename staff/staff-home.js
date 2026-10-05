@@ -1,7 +1,7 @@
 /* Risers Journey — Staff home. The one sign-in for the staff side (name
    only, from the fixed list of three), then the same calm launchpad as the
    kid Home: a greeting and one tile per category. Each category's
-   details — the Risers' quest progress, End of Term 2 status — live only
+   details — the Risers' quest progress, Term 2 Conference status — live only
    on that category's own page. */
 (function () {
   var STAFF_KEY = 'rj-staff-name';
@@ -43,7 +43,8 @@
       '<p>Where would you like to go today?</p>'));
     app.appendChild(el('div', 'hd-tiles', window.LH_tiles([
       { title: 'Quests', desc: 'Every Riser’s self-paced quests, with feedback.', href: 'quests/index.html', icon: 'quests', tone: 'green' },
-      { title: 'End of Term 2', desc: 'Self-assessments, reflections and MOMs.', href: '../end-of-term-2/staff/index.html', icon: 'term', tone: 'slate' },
+      { title: 'Term 1 Conference', desc: 'Each Riser’s Term 1 conference feedback.', href: '../term-1-conference/index.html?view=staff', icon: 'conf', tone: 'violet' },
+      { title: 'Term 2 Conference', desc: 'Self-assessments, reflections and MOMs.', href: '../end-of-term-2/staff/index.html', icon: 'term', tone: 'slate' },
       { title: 'Core Skills', desc: 'Subject-by-subject progress.', icon: 'skills', tone: 'amber', soon: true },
       { title: 'SEL', desc: 'Social & emotional growth.', icon: 'sel', tone: 'rose', soon: true }
     ])));

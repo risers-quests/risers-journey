@@ -33,10 +33,10 @@
     return a;
   }
 
-  app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/index.html">Home</a> &middot; <a href="../index.html">End of Term 2</a>'));
+  app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/index.html">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>'));
 
   var head = el('div', 'eot2-head');
-  head.innerHTML = '<h1>End of Term 2 — Staff View</h1><p>Completion across every kid and every form. Click a badge to open that record.</p>';
+  head.innerHTML = '<h1>Term 2 Conference — Staff View</h1><p>Completion across every kid and every form. Click a badge to open that record.</p>';
   app.appendChild(head);
 
   var tableWrap = el('div', null, '<p class="eot2-msg">Loading…</p>');

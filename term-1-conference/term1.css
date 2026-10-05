@@ -1,0 +1,20 @@
+/* Term 1 Conference — the three notes, read-only for Risers and editable
+   for staff. Cards and page header are hd-* components in home.css. */
+.t1-notes { display: flex; flex-direction: column; gap: 16px; max-width: 760px; }
+.t1-note { position: relative; padding: 22px 26px 22px 30px; overflow: hidden; }
+.t1-note::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; }
+.t1-tone-green::before { background: var(--brand-green); }
+.t1-tone-slate::before { background: var(--brand-slate); }
+.t1-tone-rose::before { background: #d98a9b; }
+.t1-note h2 {
+  margin: 0 0 8px; font-size: .74rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+}
+.t1-tone-green h2 { color: #4a851c; }
+.t1-tone-slate h2 { color: #4f6577; }
+.t1-tone-rose h2 { color: #b2475e; }
+.t1-note p { margin: 0; font-size: 1.02rem; line-height: 1.7; color: var(--ink); }
+.t1-muted { color: var(--ink-faint); margin: 0; }
+.t1-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+.t1-actions .eot2-btn { width: auto; }
+.t1-msg { font-size: .85rem; color: #a3432b; }
+.t1-notes .eot2-textarea { min-height: 110px; }

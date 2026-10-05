@@ -1,4 +1,4 @@
-/* End of Term 2 — shared roster + rater list.
+/* Term 2 Conference (folder: end-of-term-2) — shared roster + rater list.
    Kid-safe: slug, display name, group only (same shape dashboard/roster.js
    already uses for routing). Kept separate from dashboard/roster.js since
    that file is quest-topic data; this is just who's who for EOT2 forms. */

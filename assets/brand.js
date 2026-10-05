@@ -5,7 +5,8 @@
 
    Paths are worked out from this script's own URL, so the same tag works
    at any folder depth. data-area="staff" on the script tag (or a staff
-   rater/editAs link into a shared End of Term 2 form) switches to the
+   rater/editAs link into a shared Term 2 Conference form, or ?view=staff)
+   switches to the
    staff navigation. While nobody is signed in, the shell stays out of the
    way: no navigation, just the logo above the sign-in card. */
 (function () {
@@ -14,7 +15,7 @@
   var root = assets.replace(/assets\/$/, '');
   var params = new URLSearchParams(location.search);
   var rater = params.get('rater');
-  var isStaff = script.getAttribute('data-area') === 'staff' ||
+  var isStaff = script.getAttribute('data-area') === 'staff' || params.get('view') === 'staff' ||
     !!params.get('editAs') || (!!rater && rater !== 'self');
 
   var KID_KEY = 'imm-l3-kid';
@@ -31,6 +32,7 @@
   var ICONS = {
     home: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/>',
     quests: '<path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2.5Z"/><path d="M8 7h7M8 11h5"/>',
+    conf: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h8A2.5 2.5 0 0 1 17 5.5v5a2.5 2.5 0 0 1-2.5 2.5H9l-4 3v-3.2A2.5 2.5 0 0 1 4 10.5v-5Z"/><path d="M20 9.5v5a2.5 2.5 0 0 1-1 2V20l-3-2.5h-4.5"/>',
     term: '<rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/><path d="m9 15 2 2 4-4"/>',
     skills: '<path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 13 9 5 9-5"/>',
     sel: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/>',
@@ -48,8 +50,9 @@
     return tiles.map(function (t) {
       var inner =
         '<span class="hd-tile-ico hd-tone-' + t.tone + '">' + svg(t.icon) + '</span>' +
-        '<span class="hd-tile-text"><strong>' + t.title + '</strong><span>' + t.desc + '</span></span>' +
-        (t.soon ? '<em class="hd-tile-soon">Coming soon</em>' : '<span class="hd-tile-go" aria-hidden="true">&rarr;</span>');
+        '<span class="hd-tile-text">' + (t.soon ? '<em class="hd-tile-soon">Coming soon</em>' : '') +
+          '<strong>' + t.title + '</strong><span>' + t.desc + '</span></span>' +
+        (t.soon ? '' : '<span class="hd-tile-go" aria-hidden="true">&rarr;</span>');
       return t.soon
         ? '<div class="hd-tile is-soon">' + inner + '</div>'
         : '<a class="hd-tile" href="' + t.href + '">' + inner + '</a>';
@@ -59,14 +62,16 @@
   var NAV = isStaff ? [
     { label: 'Home', href: root + 'staff/index.html', icon: 'home', match: /\/staff\/(index\.html)?$/ },
     { label: 'Quests', href: root + 'staff/quests/index.html', icon: 'quests', match: /\/staff\/quests\// },
-    { label: 'End of Term 2', href: root + 'end-of-term-2/staff/index.html', icon: 'term', match: /\/end-of-term-2\// },
+    { label: 'Term 1 Conference', href: root + 'term-1-conference/index.html?view=staff', icon: 'conf', short: 'Term 1', match: /\/term-1-conference\// },
+    { label: 'Term 2 Conference', href: root + 'end-of-term-2/staff/index.html', icon: 'term', short: 'Term 2', match: /\/end-of-term-2\// },
     { section: 'Coming soon' },
     { label: 'Core Skills', icon: 'skills', soon: true },
     { label: 'SEL', icon: 'sel', soon: true }
   ] : [
     { label: 'Home', href: root + 'index.html', icon: 'home', match: /\/(index\.html)?$/, exact: true },
     { label: 'Quests', href: root + 'dashboard/index.html', icon: 'quests', match: /\/dashboard\// },
-    { label: 'End of Term 2', href: root + 'end-of-term-2/index.html', icon: 'term', match: /\/end-of-term-2\// },
+    { label: 'Term 1 Conference', href: root + 'term-1-conference/index.html', icon: 'conf', short: 'Term 1', match: /\/term-1-conference\// },
+    { label: 'Term 2 Conference', href: root + 'end-of-term-2/index.html', icon: 'term', short: 'Term 2', match: /\/end-of-term-2\// },
     { section: 'Coming soon' },
     { label: 'Core Skills', icon: 'skills', soon: true },
     { label: 'SEL', icon: 'sel', soon: true }
@@ -95,7 +100,7 @@
       if (item.section) return compact ? '' : '<div class="lh-nav-section">' + item.section + '</div>';
       if (compact && item.soon) return '';
       var cls = 'lh-nav-item' + (isActive(item) ? ' is-active' : '') + (item.soon ? ' is-soon' : '');
-      var inner = svg(item.icon) + '<span>' + item.label + '</span>' +
+      var inner = svg(item.icon) + '<span>' + (compact && item.short ? item.short : item.label) + '</span>' +
         (item.soon ? '<em>Soon</em>' : '');
       if (item.soon) return '<span class="' + cls + '">' + inner + '</span>';
       return '<a class="' + cls + '" href="' + item.href + '"' +
@@ -129,7 +134,7 @@
       shell.innerHTML =
         '<aside class="lh-side">' +
           logo +
-          '<div class="lh-side-title">Risers Journey<span>' + (isStaff ? 'Staff workspace' : 'Term 2') + '</span></div>' +
+          '<div class="lh-side-title">Risers Journey<span>' + (isStaff ? 'Staff workspace' : 'Student portal') + '</span></div>' +
           '<nav class="lh-nav" aria-label="Main">' + navHtml(false) + '</nav>' +
           '<div class="lh-profile">' +
             '<span class="lh-avatar">' + initial + '</span>' +
