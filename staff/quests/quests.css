@@ -1,21 +1,36 @@
-/* Staff — Quests detail page. Reuses dashboard.css's .dash-header/.dash-crumb
-   and .quest-badge status-* classes, and eot2.css's picker/field/button
-   styles; this file is just the week-row list. */
-.staff-quest-list {
-  background: #fff; border: 1.5px solid var(--border); border-radius: 16px;
-  padding: 6px 22px; box-shadow: 0 2px 10px rgba(0,0,0,.03);
+/* Staff — Quests page: the Riser list (grouped) and one Riser's weeks.
+   Page header, cards and chips are the hd-* components in home.css. */
+.sq-group { max-width: 760px; margin-bottom: 26px; }
+.sq-group-title {
+  font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-faint); margin: 0 0 10px 4px;
 }
-.staff-quest-row {
-  display: flex; align-items: center; justify-content: space-between; gap: 14px;
-  padding: 16px 0; border-bottom: 1px solid var(--border);
+.sq-list { padding: 6px 12px; max-width: 760px; }
+.sq-row {
+  display: flex; align-items: center; gap: 14px; padding: 13px 12px; border-radius: 14px;
+  text-decoration: none; color: inherit; transition: background .15s ease;
 }
-.staff-quest-row:last-child { border-bottom: none; }
-.staff-quest-week { flex: 1; min-width: 0; font-weight: 600; font-size: .95rem; }
-.staff-quest-link { color: var(--accent-dark); font-weight: 700; font-size: .85rem; text-decoration: none; white-space: nowrap; }
+.sq-row + .sq-row { border-top: 1px solid var(--border); }
+.sq-row:hover { background: #f8fbf5; }
+.sq-avatar { width: 36px; height: 36px; font-size: .9rem; }
+.sq-name { flex: 1; font-weight: 600; }
+.sq-meta { font-size: .85rem; color: var(--ink-faint); }
+.sq-meta.is-done { color: var(--good); font-weight: 600; }
+.sq-go { color: var(--ink-faint); transition: transform .15s ease, color .15s ease; }
+.sq-row:hover .sq-go { color: var(--accent); transform: translateX(3px); }
+
+.sq-week { display: flex; align-items: center; gap: 16px; padding: 16px 12px; }
+.sq-week + .sq-week { border-top: 1px solid var(--border); }
+.sq-week-main { flex: 1; min-width: 0; }
+.sq-week-main small { display: block; font-size: .72rem; color: var(--ink-faint); font-weight: 600; letter-spacing: .04em; }
+.sq-week-main strong { display: block; font-weight: 600; }
+.sq-week-links { display: inline-flex; gap: 14px; }
+.staff-quest-link { font-weight: 600; font-size: .85rem; text-decoration: none; white-space: nowrap; }
 .staff-quest-link:hover { text-decoration: underline; }
-.quest-badge.status-loading { background: var(--paper-soft); color: var(--ink-soft); }
-.quest-badge.status-incomplete { background: #fde3e3; color: #b3261e; }
+.sq-ref { max-width: 760px; margin-top: 18px; }
+
 @media (max-width: 560px) {
-  .staff-quest-row { flex-wrap: wrap; row-gap: 8px; }
-  .staff-quest-week { flex-basis: 100%; }
+  .sq-week { flex-wrap: wrap; row-gap: 8px; }
+  .sq-week-main { flex-basis: 100%; }
+  .sq-week-links { margin-left: auto; }
 }

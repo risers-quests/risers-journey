@@ -1,14 +1,22 @@
-/* Staff — one kid's Quests, in detail. Same live status read as the old
-   staff-data Teacher's View: Completed is authoritative from the kid's
+/* Staff — Quests. Two views on one page:
+
+   - no ?kid=: every Riser, grouped by group, with how many self-paced
+     quests they've completed;
+   - ?kid=<slug>: that Riser's quests, one row per week with its live
+     status, Feedback, and a direct link in.
+
+   Status uses the same rule as the old staff-data Teacher's View
+   (dashboard/quest-data.js): Completed is authoritative from the kid's
    own "Complete My Quest" click; In progress is any real sign of
-   activity; Incomplete is staff's own manual override via /status,
-   shown unless the kid has since actually finished. */
+   activity; Incomplete is staff's own manual override via /status, shown
+   unless the kid has since actually finished. */
 (function () {
   var WORKER_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
   var SITE_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+  var QD = window.QUEST_DATA;
+  var ROSTER = window.DASHBOARD_ROSTER || {};
   var app = document.getElementById('app');
-  var params = new URLSearchParams(location.search);
-  var slug = params.get('kid');
+  var slug = new URLSearchParams(location.search).get('kid');
 
   function el(tag, cls, html) {
     var e = document.createElement(tag);
@@ -22,98 +30,122 @@
     return 'Group ' + (m ? parseInt(m[1], 10) : group);
   }
 
-  function fetchJSON(path) {
-    return fetch(path, { headers: { 'X-Site-Key': SITE_KEY } })
+  function completedText(n) {
+    return n === 0 ? 'No quests completed yet' : n + (n === 1 ? ' quest' : ' quests') + ' completed';
+  }
+
+  function fetchIncomplete(group, kid, week) {
+    var url = WORKER_URL + '/status?group=' + encodeURIComponent(group) + '&kid=' + encodeURIComponent(kid) + '&week=' + encodeURIComponent(week);
+    return fetch(url, { headers: { 'X-Site-Key': SITE_KEY } })
       .then(function (r) { return r.ok ? r.json() : null; })
-      .catch(function () { return null; });
+      .then(function (res) { return !!(res && res.incomplete); })
+      .catch(function () { return false; });
   }
 
-  function countKidCompletion(state) {
-    if (state && state.completed) return 'completed';
-    var reflectState = (state && state.reflect) || {};
-    var anyReflectActivity = Object.keys(reflectState).some(function (id) {
-      var s = reflectState[id];
-      return !!(s && (s.attempts > 0 || (s.text && s.text.trim())));
-    });
-    var buildState = (state && state.build) || {};
-    var buildDoneCount = Object.keys(buildState).filter(function (k) { return buildState[k]; }).length;
-    var dayTimeState = (state && state.dayTime) || {};
-    var anyTimeSpent = Object.keys(dayTimeState).some(function (k) { return (dayTimeState[k] || 0) > 0; });
-    if (anyReflectActivity || buildDoneCount > 0 || anyTimeSpent) return 'in-progress';
-    return 'not-started';
+  function chip(status, marked) {
+    if (status === 'completed') return '<span class="hd-chip hd-chip-done">Completed</span>';
+    if (status === 'unknown') return '<span class="hd-chip hd-chip-new">Couldn’t load</span>';
+    if (marked) return '<span class="hd-chip hd-chip-todo">Incomplete</span>';
+    if (status === 'in-progress') return '<span class="hd-chip hd-chip-progress">In progress</span>';
+    return '<span class="hd-chip hd-chip-new">Not started</span>';
   }
 
-  function questBadgeHtml(state, marked) {
-    if (state === 'completed') return '<span class="quest-badge status-done">✅ Completed</span>';
-    if (marked) return '<span class="quest-badge status-incomplete">\u{1F6A9} Incomplete</span>';
-    if (state === 'in-progress') return '<span class="quest-badge status-progress">\u{1F7E1} In progress</span>';
-    return '<span class="quest-badge status-new">⚪ Not started</span>';
-  }
-
-  function showKidPicker() {
+  function renderRoster() {
     app.innerHTML = '';
-    app.appendChild(el('div', 'dash-crumb', '<a href="../index.html">&larr; Home</a>'));
-    var card = el('div', 'eot2-picker');
-    var options = window.EOT2_KIDS.map(function (k) { return '<option value="' + k.slug + '">' + k.name + '</option>'; }).join('');
-    card.innerHTML =
-      '<h1>Quests</h1>' +
-      '<p>Choose a kid.</p>' +
-      '<div class="eot2-field"><select id="kid-select">' + options + '</select></div>' +
-      '<button class="eot2-btn" id="kid-go">Open</button>';
-    app.appendChild(card);
-    document.getElementById('kid-go').addEventListener('click', function () {
-      location.href = 'index.html?kid=' + document.getElementById('kid-select').value;
+    app.appendChild(el('header', 'hd-page-head',
+      '<p class="hd-eyebrow">Term 2 &middot; Self-paced quests</p><h1>Quests</h1>' +
+      '<p>Choose a Riser to see their quests and feedback.</p>'));
+
+    var groups = [];
+    window.EOT2_KIDS.forEach(function (k) { if (groups.indexOf(k.group) === -1) groups.push(k.group); });
+    groups.sort();
+
+    groups.forEach(function (g) {
+      var section = el('section', 'sq-group');
+      section.appendChild(el('h2', 'sq-group-title', groupLabel(g)));
+      var list = el('div', 'hd-card sq-list');
+      window.EOT2_KIDS.filter(function (k) { return k.group === g; }).forEach(function (kid) {
+        var weeks = (ROSTER[kid.slug] && ROSTER[kid.slug].weeks) || [];
+        var row = el('a', 'sq-row');
+        row.href = 'index.html?kid=' + kid.slug;
+        row.innerHTML =
+          '<span class="lh-avatar sq-avatar">' + kid.name.charAt(0) + '</span>' +
+          '<span class="sq-name">' + kid.name + '</span>' +
+          '<span class="sq-meta">&nbsp;</span>' +
+          '<span class="sq-go" aria-hidden="true">&rarr;</span>';
+        list.appendChild(row);
+        Promise.all(weeks.map(function (w) {
+          return QD.fetchWeekState(w.group, kid.slug, w.key).then(function (res) {
+            return res.ok ? QD.summarizeWeek(w, res.state).status : 'unknown';
+          });
+        })).then(function (statuses) {
+          var failed = statuses.indexOf('unknown') !== -1;
+          var done = statuses.filter(function (s) { return s === 'completed'; }).length;
+          row.querySelector('.sq-meta').textContent = failed ? 'Couldn’t load — refresh' : completedText(done);
+          row.querySelector('.sq-meta').classList.toggle('is-done', !failed && done > 0);
+        });
+      });
+      section.appendChild(list);
+      app.appendChild(section);
     });
-  }
-
-  function render(kid) {
-    app.innerHTML = '';
-    app.appendChild(el('div', 'dash-crumb', '<a href="../index.html">&larr; Home</a>'));
-
-    var header = el('div', 'dash-header');
-    header.innerHTML = '<h1>' + kid.name + '’s Quests</h1><p class="dash-sub">' + groupLabel(kid.group) + '</p>';
-    app.appendChild(header);
 
     var ref = window.STAFF_REF;
-    app.appendChild(el('div', 'staff-ref-row staff-ref-row-tight',
-      ref.answerKey(kid.group, groupLabel(kid.group) + ' answer key', 'staff-ref-pill') +
+    app.appendChild(el('div', 'staff-ref-row sq-ref',
+      '<span class="staff-ref-label">Reference</span>' +
       ref.guide('Facilitator Guide', 'staff-ref-pill') +
-      ref.teachersView('Mark a week Incomplete', 'staff-ref-pill')));
+      ref.teachersView('Teacher’s View', 'staff-ref-pill') +
+      groups.map(function (g) { return ref.answerKey(g, groupLabel(g) + ' key', 'staff-ref-pill'); }).join('')));
+  }
 
-    var weeks = (window.DASHBOARD_ROSTER[kid.slug] && window.DASHBOARD_ROSTER[kid.slug].weeks) || [];
+  function renderKid(kid) {
+    app.innerHTML = '';
+    app.appendChild(el('div', 'dash-crumb', '<a href="index.html">&larr; All Risers</a>'));
+    app.appendChild(el('header', 'hd-page-head',
+      '<p class="hd-eyebrow">' + groupLabel(kid.group) + ' &middot; Self-paced quests</p>' +
+      '<h1>' + kid.name + '</h1><p class="sq-summary">&nbsp;</p>'));
+
+    var weeks = (ROSTER[kid.slug] && ROSTER[kid.slug].weeks) || [];
     if (!weeks.length) {
       app.appendChild(el('p', 'rep-empty', 'No quests on record yet for ' + kid.name + '.'));
       return;
     }
 
-    var list = el('div', 'staff-quest-list');
+    var list = el('div', 'hd-card sq-list');
     app.appendChild(list);
 
-    weeks.forEach(function (w) {
-      var row = el('div', 'staff-quest-row');
-      row.id = 'qrow-' + w.key;
-      row.innerHTML =
-        '<span class="staff-quest-week">' + w.label + '</span>' +
-        '<span class="quest-badge status-loading">&hellip;</span>' +
-        ref.feedback(w.group, kid.slug, w.key, 'Feedback', 'staff-quest-link') +
-        '<a class="staff-quest-link" href="' + w.path + '?fac=1" target="_blank" rel="noopener">Open →</a>';
-      list.appendChild(row);
+    var ref = window.STAFF_REF;
+    app.appendChild(el('div', 'staff-ref-row sq-ref',
+      '<span class="staff-ref-label">Reference</span>' +
+      ref.answerKey(kid.group, groupLabel(kid.group) + ' answer key', 'staff-ref-pill') +
+      ref.teachersView('Mark a week Incomplete', 'staff-ref-pill')));
 
-      var base = WORKER_URL.replace(/\/$/, '');
-      var syncUrl = base + '/sync?group=' + encodeURIComponent(w.group) + '&kid=' + encodeURIComponent(kid.slug) + '&week=' + encodeURIComponent(w.key);
-      var statusUrl = base + '/status?group=' + encodeURIComponent(w.group) + '&kid=' + encodeURIComponent(kid.slug) + '&week=' + encodeURIComponent(w.key);
-      Promise.all([fetchJSON(syncUrl), fetchJSON(statusUrl)]).then(function (results) {
-        var syncRes = results[0], statusRes = results[1];
-        var state = (syncRes && syncRes.found) ? countKidCompletion(syncRes.data.state) : 'not-started';
-        var marked = !!(statusRes && statusRes.incomplete);
-        row.querySelector('.quest-badge').outerHTML = questBadgeHtml(state, marked);
+    var statuses = weeks.map(function (w) {
+      var row = el('div', 'sq-week');
+      var parts = String(w.label).split(' · ');
+      row.innerHTML =
+        '<span class="sq-week-main"><small>' + (parts.length > 1 ? parts[0] : '') + '</small><strong>' + (parts.length > 1 ? parts.slice(1).join(' · ') : w.label) + '</strong></span>' +
+        '<span class="sq-week-status"><span class="hd-chip hd-chip-new">&hellip;</span></span>' +
+        '<span class="sq-week-links">' +
+          ref.feedback(w.group, kid.slug, w.key, 'Feedback', 'staff-quest-link') +
+          '<a class="staff-quest-link" href="../../' + w.path.replace(/^\.\.\//, '') + '?fac=1" target="_blank" rel="noopener">Open &rarr;</a>' +
+        '</span>';
+      list.appendChild(row);
+      return Promise.all([QD.fetchWeekState(w.group, kid.slug, w.key), fetchIncomplete(w.group, kid.slug, w.key)]).then(function (r) {
+        var status = r[0].ok ? QD.summarizeWeek(w, r[0].state).status : 'unknown';
+        row.querySelector('.sq-week-status').innerHTML = chip(status, r[1]);
+        return status;
       });
+    });
+
+    Promise.all(statuses).then(function (s) {
+      var done = s.filter(function (x) { return x === 'completed'; }).length;
+      app.querySelector('.sq-summary').textContent = completedText(done) + '.';
     });
   }
 
   function init() {
     var kid = slug ? window.EOT2_findKid(slug) : null;
-    if (kid) { render(kid); } else { showKidPicker(); }
+    if (kid) { renderKid(kid); } else { renderRoster(); }
   }
 
   document.addEventListener('DOMContentLoaded', init);

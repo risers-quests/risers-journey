@@ -97,7 +97,6 @@ a { color: var(--accent); }
   text-transform: uppercase; background: var(--paper-soft); color: var(--brand-slate); padding: 3px 7px; border-radius: 999px;
 }
 .lh-ico { width: 20px; height: 20px; flex-shrink: 0; }
-.lh-ico-ext { width: 14px; height: 14px; margin-left: auto; opacity: .5; }
 
 .lh-profile {
   display: flex; align-items: center; gap: 10px; padding: 12px 8px 4px; margin-top: 12px;
@@ -122,9 +121,6 @@ a { color: var(--accent); }
 .lh-gatebar .lh-logo img { height: 64px; }
 .lh-signed-out .name-gate, .lh-signed-out .eot2-picker { margin-top: 28px; }
 
-/* In-page "Log out" buttons are replaced by the shell's profile chip. */
-.lh-signed-in .switch-kid-link { display: none; }
-.lh-signed-in .dash-header h1 { padding-right: 0; }
 
 .lh-footer {
   margin-top: auto; border-top: 1px solid var(--border);
@@ -165,35 +161,29 @@ a { color: var(--accent); }
 }
 
 /* ---- Type ---- */
-.dash-header h1, .rep-header h1, .eot2-head h1 {
+.eot2-head h1 {
   font-family: var(--font-head); font-weight: 600; font-size: clamp(1.8rem, 4vw, 2.4rem);
   line-height: 1.15; color: var(--ink);
 }
-.dash-sub, .eot2-head p { color: var(--ink-soft); }
+.eot2-head p { color: var(--ink-soft); }
 .eot2-form-header h1, .name-gate h1, .eot2-picker h1 { font-family: var(--font-head); font-weight: 600; }
-.eot2-hub-card h3, .quest-card h3, .rep-quest-col h3, .dash-section-title,
-.dash-col h4, .rep-note-block h4, .eot2-section-title, .eot2-mom-field label {
+.eot2-hub-card h3, .eot2-section-title, .eot2-mom-field label {
   font-family: var(--font-head); font-weight: 600;
 }
 
-/* ---- Breadcrumbs / log out ---- */
+/* ---- Breadcrumbs ---- */
 .dash-crumb, .eot2-crumb { font-size: .82rem; font-weight: 500; margin-bottom: 18px; }
 .dash-crumb a, .eot2-crumb a { color: var(--ink-soft); }
 .dash-crumb a:hover, .eot2-crumb a:hover { color: var(--accent); }
-.switch-kid-link {
-  background: #fff; border: 1px solid var(--border); color: var(--ink-soft);
-  font-weight: 600; box-shadow: var(--shadow-sm); transition: all .15s ease;
-}
-.switch-kid-link:hover { background: var(--accent-soft); border-color: #cfe3b3; color: var(--accent-dark); }
 
 /* ---- Buttons ---- */
-.btn, .eot2-btn, .quest-open-btn, .rep-open-link {
+.btn, .eot2-btn {
   font-weight: 600; letter-spacing: .01em; transition: background .15s ease, box-shadow .15s ease, transform .15s ease;
 }
-.btn-primary, .eot2-btn, .quest-open-btn, .rep-open-link {
+.btn-primary, .eot2-btn {
   background: var(--accent); color: #fff; box-shadow: 0 1px 2px rgba(47, 94, 16, .2), 0 6px 16px rgba(63, 119, 24, .18);
 }
-.btn-primary:hover, .eot2-btn:hover, .quest-open-btn:hover, .rep-open-link:hover {
+.btn-primary:hover, .eot2-btn:hover {
   background: var(--accent-dark); transform: translateY(-1px);
 }
 .eot2-btn-secondary {
@@ -239,25 +229,14 @@ a { color: var(--accent); }
   transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: #d3e6b8;
 }
 
-.week-block, .eot2-scale-legend, .rep-bloom-explainer, .rep-note-block {
-  background: var(--paper-soft); border: 1px solid var(--border);
-}
-.week-block { border-radius: 22px; }
-.quest-card, .rep-quest-col, .staff-quest-list, .eot2-item, .eot2-question, .summary-list li {
-  background: var(--card); border: 1px solid var(--border); box-shadow: var(--shadow-sm);
-}
-.quest-card, .rep-quest-col, .staff-quest-list { border-radius: var(--radius); }
+.eot2-scale-legend { background: var(--paper-soft); border: 1px solid var(--border); }
+.eot2-item, .eot2-question { background: var(--card); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
 .eot2-item, .eot2-question { border-radius: 14px; transition: border-color .15s ease; }
 .eot2-item:has(input:checked) { border-color: #d3e6b8; }
 
-/* ---- Status, progress, badges ---- */
-.progress-track { background: #e9efe4; height: 8px; }
-.progress-fill { background: linear-gradient(90deg, var(--brand-green), #6fae2a); }
-.progress-fill-build { background: linear-gradient(90deg, #7aa3bd, var(--brand-slate)); }
-.status-done, .rep-badge-done, .eot2-roster-done, .eot2-status-saved { background: var(--good-soft); color: var(--good); }
-.status-progress { background: #fff4dc; color: var(--warn); }
-.status-new, .eot2-status-offline { background: #eef1f4; color: var(--ink-soft); }
-.bloom-tier.reached { background: var(--brand-green); color: #1d3a08; border-color: #7ab432; }
+/* ---- Status badges ---- */
+.eot2-roster-done, .eot2-status-saved { background: var(--good-soft); color: var(--good); }
+.eot2-status-offline { background: #eef1f4; color: var(--ink-soft); }
 
 /* ---- Forms: rating scale + choices ---- */
 .eot2-section-title {
@@ -270,20 +249,15 @@ a { color: var(--accent); }
 .eot2-scale label:has(input:checked), .eot2-choices label:has(input:checked) {
   border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark);
 }
-.eot2-scale-legend-item strong, .bloom-ceiling-label strong { color: var(--accent-dark); }
+.eot2-scale-legend-item strong { color: var(--accent-dark); }
 .eot2-form-header { border-bottom: 1px solid var(--border); }
 
 /* ---- Tables ---- */
-.eot2-roster-table, .staff-quest-list { background: #fff; }
+.eot2-roster-table { background: #fff; }
 .eot2-roster-table { border-radius: var(--radius-sm); overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
 .eot2-roster-table thead th { background: var(--paper-soft); color: var(--brand-slate); }
 .eot2-roster-table tbody tr:hover { background: #fafcf8; }
 
-/* ---- Staff home ---- */
-.staff-quest-link, .summary-link { color: var(--accent); }
-
-/* ---- Quest report: a single finished quest shouldn't stretch full width ---- */
-.rep-table { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
 
 /* The full logo already sits above the sign-in card, so drop the small mark. */
 .lh-signed-out .name-gate::before, .lh-signed-out .eot2-picker::before { display: none; }

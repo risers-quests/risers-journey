@@ -21,7 +21,7 @@
   var STAFF_KEY = 'rj-staff-name';
   // The private staff reference site (risers-term2-digital-quests-staff-data).
   // staff/staff-links.js reads this too, so it's set in this one place.
-  var STAFF_SITE = window.LH_STAFF_SITE = 'https://risers-term2-digital-quests-staff-d.vercel.app/';
+  window.LH_STAFF_SITE = 'https://risers-term2-digital-quests-staff-d.vercel.app/';
 
   var icon = document.createElement('link');
   icon.rel = 'icon';
@@ -34,28 +34,38 @@
     term: '<rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/><path d="m9 15 2 2 4-4"/>',
     skills: '<path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 13 9 5 9-5"/>',
     sel: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/>',
-    table: '<rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 10h18M9 10v10"/>',
-    eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
-    guide: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14"/><path d="M12 17.5h.01"/>',
-    key: '<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3M15 8l2 2"/>',
     logout: '<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5M5 12h11"/>',
-    ext: '<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>'
   };
   function svg(name, cls) {
     return '<svg class="' + (cls || 'lh-ico') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[name] + '</svg>';
   }
 
+  // Pages reuse the same icon set (Home's category tiles).
+  window.LH_ICON = function (name, cls) { return svg(name, cls); };
+
+  // Category tiles for the Home pages: [{ title, desc, href, icon, tone, soon }].
+  window.LH_tiles = function (tiles) {
+    return tiles.map(function (t) {
+      var inner =
+        '<span class="hd-tile-ico hd-tone-' + t.tone + '">' + svg(t.icon) + '</span>' +
+        '<span class="hd-tile-text"><strong>' + t.title + '</strong><span>' + t.desc + '</span></span>' +
+        (t.soon ? '<em class="hd-tile-soon">Coming soon</em>' : '<span class="hd-tile-go" aria-hidden="true">&rarr;</span>');
+      return t.soon
+        ? '<div class="hd-tile is-soon">' + inner + '</div>'
+        : '<a class="hd-tile" href="' + t.href + '">' + inner + '</a>';
+    }).join('');
+  };
+
   var NAV = isStaff ? [
-    { label: 'Overview', href: root + 'staff/index.html', icon: 'home', match: /\/staff\/(index\.html)?$/ },
+    { label: 'Home', href: root + 'staff/index.html', icon: 'home', match: /\/staff\/(index\.html)?$/ },
     { label: 'Quests', href: root + 'staff/quests/index.html', icon: 'quests', match: /\/staff\/quests\// },
-    { label: 'End of Term 2', href: root + 'end-of-term-2/staff/index.html', icon: 'table', match: /\/end-of-term-2\// },
-    { section: 'Staff reference' },
-    { label: 'Teacher’s View', href: STAFF_SITE + 'index.html', icon: 'eye', ext: true },
-    { label: 'Facilitator Guide', href: STAFF_SITE + 'guide/index.html', icon: 'guide', ext: true },
-    { label: 'Answer keys', href: STAFF_SITE + 'answer-keys/group-00/index.html', icon: 'key', ext: true }
+    { label: 'End of Term 2', href: root + 'end-of-term-2/staff/index.html', icon: 'term', match: /\/end-of-term-2\// },
+    { section: 'Coming soon' },
+    { label: 'Core Skills', icon: 'skills', soon: true },
+    { label: 'SEL', icon: 'sel', soon: true }
   ] : [
     { label: 'Home', href: root + 'index.html', icon: 'home', match: /\/(index\.html)?$/, exact: true },
-    { label: 'My Quests', href: root + 'dashboard/index.html', icon: 'quests', match: /\/dashboard\// },
+    { label: 'Quests', href: root + 'dashboard/index.html', icon: 'quests', match: /\/dashboard\// },
     { label: 'End of Term 2', href: root + 'end-of-term-2/index.html', icon: 'term', match: /\/end-of-term-2\// },
     { section: 'Coming soon' },
     { label: 'Core Skills', icon: 'skills', soon: true },
@@ -83,13 +93,12 @@
   function navHtml(compact) {
     return NAV.map(function (item) {
       if (item.section) return compact ? '' : '<div class="lh-nav-section">' + item.section + '</div>';
-      if (compact && (item.soon || item.ext)) return '';
+      if (compact && item.soon) return '';
       var cls = 'lh-nav-item' + (isActive(item) ? ' is-active' : '') + (item.soon ? ' is-soon' : '');
       var inner = svg(item.icon) + '<span>' + item.label + '</span>' +
-        (item.soon ? '<em>Soon</em>' : '') + (item.ext ? svg('ext', 'lh-ico-ext') : '');
+        (item.soon ? '<em>Soon</em>' : '');
       if (item.soon) return '<span class="' + cls + '">' + inner + '</span>';
       return '<a class="' + cls + '" href="' + item.href + '"' +
-        (item.ext ? ' target="_blank" rel="noopener"' : '') +
         (isActive(item) ? ' aria-current="page"' : '') + '>' + inner + '</a>';
     }).join('');
   }
