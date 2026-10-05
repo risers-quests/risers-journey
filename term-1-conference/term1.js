@@ -247,6 +247,10 @@
       document.getElementById('t1-save').addEventListener('click', function () {
         var next = {};
         FIELDS.forEach(function (f) { next[f.id] = document.getElementById('t1-' + f.id).value.trim(); });
+        if (!hasNotes(next)) {
+          document.getElementById('t1-msg').textContent = 'Add at least one note before saving.';
+          return;
+        }
         var editor = null;
         try { editor = localStorage.getItem(STAFF_KEY); } catch (e) {}
         if (editor) next.editedBy = editor;
