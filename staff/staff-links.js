@@ -8,7 +8,7 @@
    slash. While it's empty, every link below renders as a disabled
    "not set up yet" pill instead of a broken link. */
 (function () {
-  var STAFF_DATA_URL = '';
+  var STAFF_DATA_URL = 'https://risers-term2-digital-quests-staff-d.vercel.app/';
 
   function url(path) {
     return STAFF_DATA_URL ? STAFF_DATA_URL.replace(/\/?$/, '/') + path : null;
