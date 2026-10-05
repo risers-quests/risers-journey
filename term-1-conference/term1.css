@@ -18,3 +18,33 @@
 .t1-actions .eot2-btn { width: auto; }
 .t1-msg { font-size: .85rem; color: #a3432b; }
 .t1-notes .eot2-textarea { min-height: 110px; }
+
+/* ---- Conference slideshow ---- */
+.t1-slides { max-width: 760px; margin-top: 30px; }
+.t1-section-title {
+  font-size: .74rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-faint); margin: 0 0 10px 2px;
+}
+.t1-file, .t1-drop { display: flex; align-items: center; gap: 16px; }
+.t1-file { padding: 18px 20px; }
+.t1-file-ico {
+  width: 46px; height: 46px; border-radius: 14px; flex-shrink: 0; background: #f0edfb; color: #6450b5;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.t1-file-ico svg { width: 24px; height: 24px; }
+.t1-file-text { flex: 1; min-width: 0; }
+.t1-file-text strong { display: block; font-weight: 600; overflow-wrap: anywhere; }
+.t1-file-text span { display: block; font-size: .82rem; color: var(--ink-faint); margin-top: 2px; }
+.t1-file .eot2-btn, .t1-drop .eot2-btn { width: auto; white-space: nowrap; }
+.t1-upload { position: relative; padding: 0; border-style: dashed; border-width: 1.5px; box-shadow: none; }
+.t1-drop { padding: 20px; cursor: pointer; border-radius: 20px; transition: background .15s ease; }
+.t1-drop:hover { background: #fafcf8; }
+.t1-drop input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.t1-drop:focus-within { outline: 2px solid var(--brand-green); outline-offset: 2px; }
+.t1-upload .t1-msg { margin: 0; padding: 0 20px; }
+.t1-upload .t1-msg:not(:empty) { padding-bottom: 16px; }
+.t1-upload.is-busy { opacity: .6; pointer-events: none; }
+@media (max-width: 560px) {
+  .t1-file, .t1-drop { flex-wrap: wrap; }
+  .t1-file .eot2-btn, .t1-drop .eot2-btn { width: 100%; text-align: center; }
+}

@@ -8,9 +8,16 @@
    imported once from the private staff-data repo's term1-conference/
    page, and staff can edit it here afterwards.
 
-   Kid view: the signed-in Riser's own notes.
+   Each Riser can also have their conference slideshow attached. Staff
+   upload it once; after that the upload option is gone and everyone only
+   gets Download. The Worker's /file endpoint enforces the same rule (a
+   second upload for the same Riser is refused), so it holds even outside
+   this page.
+
+   Kid view: the signed-in Riser's own notes, and their slideshow if one
+   has been uploaded.
    Staff view (?view=staff): every Riser, then one Riser's notes
-   (&kid=<slug>), editable. */
+   (&kid=<slug>), editable, plus the slideshow upload/download. */
 (function () {
   var KID_KEY = 'imm-l3-kid';
   var STAFF_KEY = 'rj-staff-name';
@@ -18,6 +25,10 @@
   var app = document.getElementById('app');
   var params = new URLSearchParams(location.search);
   var isStaff = params.get('view') === 'staff';
+
+  var SLOT = 'term1-slideshow';
+  var ACCEPT = '.pdf,.ppt,.pptx,.key,.odp';
+  var MAX_BYTES = 25 * 1024 * 1024;
 
   var FIELDS = [
     { id: 'growth', kidLabel: 'Where we’ve seen growth', staffLabel: 'Area we have seen growth', tone: 'green' },
@@ -51,6 +62,122 @@
     }).join('');
   }
 
+  /* ---------- slideshow (Worker /file) ---------- */
+
+  function fileUrl(kid, extra) {
+    return window.EOT2_WORKER_URL.replace(/\/$/, '') + '/file?group=' + encodeURIComponent(kid.group) +
+      '&kid=' + encodeURIComponent(kid.slug) + '&slot=' + SLOT + (extra || '');
+  }
+  // Resolves to { ready, file }: ready:false means the Worker doesn't have
+  // the /file endpoint yet (or couldn't be reached); file is null when
+  // nothing has been uploaded.
+  function fetchSlideshow(kid) {
+    return fetch(fileUrl(kid, '&meta=1'), { headers: { 'X-Site-Key': window.EOT2_SITE_KEY } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { return d ? { ready: true, file: d.found ? d.file : null } : { ready: false, file: null }; })
+      .catch(function () { return { ready: false, file: null }; });
+  }
+  function fmtSize(bytes) {
+    return bytes >= 1048576 ? (bytes / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(bytes / 1024)) + ' KB';
+  }
+  function fileIcon() {
+    return '<span class="t1-file-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+      '<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/><path d="m10 8.5 4 2-4 2z"/></svg></span>';
+  }
+
+  // Download goes through fetch (the Worker wants the X-Site-Key header,
+  // which a plain link can't send), then hands the browser a local copy.
+  function download(kid, file, btn) {
+    btn.disabled = true;
+    var label = btn.textContent;
+    btn.textContent = 'Downloading…';
+    fetch(fileUrl(kid), { headers: { 'X-Site-Key': window.EOT2_SITE_KEY } })
+      .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.blob(); })
+      .then(function (blob) {
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = file.name;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+        btn.textContent = label;
+      })
+      .catch(function () { btn.textContent = 'Couldn’t download — try again'; })
+      .then(function () { btn.disabled = false; });
+  }
+
+  function fileCard(kid, file) {
+    var card = el('section', 'hd-card t1-file',
+      fileIcon() +
+      '<span class="t1-file-text"><strong>' + escapeHtml(file.name) + '</strong>' +
+        '<span>' + fmtSize(file.size) + ' &middot; uploaded ' + new Date(file.uploadedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + '</span></span>' +
+      '<button type="button" class="eot2-btn t1-download">Download</button>');
+    card.querySelector('.t1-download').addEventListener('click', function () { download(kid, file, this); });
+    return card;
+  }
+
+  // Staff only: the upload box, shown only while nothing has been uploaded.
+  function uploadCard(kid, onDone) {
+    var card = el('section', 'hd-card t1-upload',
+      '<label class="t1-drop">' +
+        '<input type="file" accept="' + ACCEPT + '">' +
+        fileIcon() +
+        '<span class="t1-file-text"><strong>Upload ' + escapeHtml(kid.name) + '’s slideshow</strong>' +
+        '<span>PDF, PowerPoint, Keynote or ODP, up to 25 MB. It can only be uploaded once.</span></span>' +
+        '<span class="eot2-btn eot2-btn-secondary t1-pick">Choose file</span>' +
+      '</label>' +
+      '<p class="t1-msg" aria-live="polite"></p>');
+    var input = card.querySelector('input');
+    var msg = card.querySelector('.t1-msg');
+    input.addEventListener('change', function () {
+      var f = input.files && input.files[0];
+      if (!f) return;
+      if (!/\.(pdf|pptx?|key|odp)$/i.test(f.name)) { msg.textContent = 'That file type isn’t supported — use PDF, PowerPoint, Keynote or ODP.'; return; }
+      if (f.size > MAX_BYTES) { msg.textContent = 'That file is over 25 MB. Export a smaller copy (a PDF usually is) and try again.'; return; }
+      if (!confirm('Upload “' + f.name + '” as ' + kid.name + '’s slideshow? Once uploaded it can’t be replaced from here.')) { input.value = ''; return; }
+      card.classList.add('is-busy');
+      msg.textContent = 'Uploading…';
+      fetch(fileUrl(kid, '&name=' + encodeURIComponent(f.name)), {
+        method: 'POST', headers: { 'X-Site-Key': window.EOT2_SITE_KEY }, body: f
+      })
+        .then(function (r) { return r.json().then(function (d) { return { status: r.status, d: d }; }); })
+        .then(function (res) {
+          if (res.d && res.d.ok) { onDone(res.d.file); return; }
+          if (res.status === 409) { fetchSlideshow(kid).then(function (x) { if (x.file) onDone(x.file); }); return; }
+          throw new Error((res.d && res.d.error) || 'upload failed');
+        })
+        .catch(function () {
+          card.classList.remove('is-busy');
+          input.value = '';
+          msg.textContent = 'Couldn’t upload — check your connection and try again.';
+        });
+    });
+    return card;
+  }
+
+  // Slideshow section for a Riser: Download if uploaded; for staff, the
+  // upload box if not; for the Riser, nothing until there's something.
+  function slideshowSection(kid, asStaff) {
+    var wrap = el('div', 't1-slides');
+    fetchSlideshow(kid).then(function (res) {
+      if (res.file) {
+        wrap.appendChild(el('h2', 't1-section-title', 'Conference slideshow'));
+        wrap.appendChild(fileCard(kid, res.file));
+      } else if (asStaff) {
+        wrap.appendChild(el('h2', 't1-section-title', 'Conference slideshow'));
+        if (!res.ready) {
+          wrap.appendChild(el('p', 't1-muted', 'Slideshow uploads switch on once the progress service is updated.'));
+          return;
+        }
+        var up = uploadCard(kid, function (file) {
+          up.replaceWith(fileCard(kid, file));
+        });
+        wrap.appendChild(up);
+      }
+    });
+    return wrap;
+  }
+
   /* ---------- kid ---------- */
 
   function renderKid(kid) {
@@ -58,6 +185,7 @@
     app.appendChild(head('Term 1 &middot; Student-led conference', 'Term 1 Conference', 'What we talked about at your Term 1 conference.'));
     var body = el('div', 't1-notes', '<p class="t1-muted">Loading…</p>');
     app.appendChild(body);
+    app.appendChild(slideshowSection(kid, false));
     window.eot2Fetch(kid.group, kid.slug, WEEK_KEY).then(function (data) {
       var state = data && data.state;
       body.innerHTML = hasNotes(state)
@@ -81,10 +209,12 @@
         '<span class="sq-meta">&nbsp;</span>' +
         '<span class="sq-go" aria-hidden="true">&rarr;</span>';
       list.appendChild(row);
-      window.eot2Fetch(kid.group, kid.slug, WEEK_KEY).then(function (data) {
+      Promise.all([window.eot2Fetch(kid.group, kid.slug, WEEK_KEY), fetchSlideshow(kid)]).then(function (r) {
         var meta = row.querySelector('.sq-meta');
-        var added = hasNotes(data && data.state);
-        meta.textContent = added ? 'Notes added' : 'Not added yet';
+        var added = hasNotes(r[0] && r[0].state);
+        var parts = [added ? 'Notes added' : 'No notes yet'];
+        if (r[1].file) parts.push('slideshow uploaded');
+        meta.textContent = parts.join(' · ');
         meta.classList.toggle('is-done', added);
       });
     });
@@ -97,6 +227,7 @@
     app.appendChild(head('Term 1 Conference', kid.name));
     var body = el('div', 't1-notes', '<p class="t1-muted">Loading…</p>');
     app.appendChild(body);
+    app.appendChild(slideshowSection(kid, true));
 
     var state = {};
     function showNotes() {
