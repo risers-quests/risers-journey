@@ -155,3 +155,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--font-body
   #app:has(.eot2-roster-table) { max-width: 100%; }
   .eot2-roster-table { display: block; overflow-x: auto; }
 }
+
+.eot2-head-action { margin: -8px 0 26px; }
+.eot2-head-action .eot2-btn { width: auto; display: inline-block; text-decoration: none; padding: 10px 20px; }
+.eot2-hub-card[hidden] { display: none; }

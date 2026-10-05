@@ -1,0 +1,70 @@
+/* Consolidate (staff) — toolbar, one card per rubric item with the three
+   staff ratings, the Riser's own, and the final-rating picker. */
+.cs-body [hidden] { display: none !important; }
+.cs-body { max-width: 900px; }
+.cs-muted { color: var(--ink-faint); }
+
+.cs-bar {
+  position: sticky; top: 12px; z-index: 5; display: grid; gap: 14px 24px;
+  grid-template-columns: 1fr auto; align-items: center; margin-bottom: 26px; padding: 18px 22px;
+}
+.cs-progress { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.cs-count { font-family: var(--font-head); font-weight: 600; font-size: 1.05rem; }
+.cs-status { font-size: .8rem; color: var(--ink-faint); }
+.cs-track { flex-basis: 100%; height: 6px; border-radius: 999px; background: #e9efe4; overflow: hidden; margin-top: 6px; }
+.cs-fill { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--brand-green), #6fae2a); transition: width .3s ease; }
+.cs-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; justify-content: flex-end; }
+.cs-actions .eot2-btn { width: auto; padding: 9px 16px; font-size: .85rem; }
+.cs-toggle { display: inline-flex; align-items: center; gap: 8px; font-size: .85rem; color: var(--ink-soft); cursor: pointer; }
+.cs-toggle input { accent-color: var(--accent); width: 16px; height: 16px; }
+.cs-share { grid-column: 1 / -1; padding-top: 14px; border-top: 1px solid var(--border); }
+.cs-switch { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.cs-switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.cs-switch-ui {
+  width: 44px; height: 26px; border-radius: 999px; background: #d6ded1; position: relative; flex-shrink: 0; transition: background .2s ease;
+}
+.cs-switch-ui::after {
+  content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%;
+  background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .2); transition: transform .2s ease;
+}
+.cs-switch input:checked + .cs-switch-ui { background: var(--accent); }
+.cs-switch input:checked + .cs-switch-ui::after { transform: translateX(18px); }
+.cs-switch input:focus-visible + .cs-switch-ui { outline: 2px solid var(--brand-green); outline-offset: 2px; }
+.cs-switch input:disabled + .cs-switch-ui { opacity: .45; }
+.cs-switch:has(input:disabled) { cursor: default; }
+.cs-share-text strong { display: block; font-size: .92rem; }
+.cs-share-text span { display: block; font-size: .8rem; color: var(--ink-faint); }
+
+.cs-section { margin-bottom: 26px; }
+.cs-item { padding: 16px 20px; margin-bottom: 10px; border-left: 4px solid transparent; }
+.cs-item.is-decided { border-left-color: var(--brand-green); }
+.cs-text { margin: 0 0 12px; font-size: .95rem; }
+.cs-ratings { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
+.cs-rating {
+  display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: .82rem;
+  padding: 5px 10px; border-radius: 10px; background: var(--paper-soft); color: var(--ink);
+}
+.cs-rating small { font-weight: 600; font-size: .72rem; color: var(--ink-faint); }
+.cs-rating.is-missing { color: var(--ink-faint); }
+.cs-rating.is-self { background: #fff; border: 1px dashed #cfd8ca; }
+.cs-flag { margin-left: auto; }
+.cs-final { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding-top: 12px; border-top: 1px solid var(--border); }
+.cs-final-label { font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+.cs-pick { display: inline-flex; gap: 6px; }
+.cs-opt {
+  font: inherit; font-weight: 700; font-size: .85rem; min-width: 52px; padding: 8px 10px; border-radius: 10px;
+  border: 1px solid #dde4d8; background: #fff; color: var(--ink-soft); cursor: pointer; transition: all .15s ease;
+}
+.cs-opt:hover { border-color: var(--brand-green); }
+.cs-opt.is-suggested { border-style: dashed; border-color: var(--brand-green); }
+.cs-opt.is-on { background: var(--accent); border: 1px solid var(--accent); color: #fff; }
+.cs-suggest { font-size: .8rem; color: var(--ink-faint); }
+.cs-suggest strong { color: var(--accent-dark); }
+
+@media (max-width: 720px) {
+  .cs-bar { grid-template-columns: 1fr; position: static; }
+  .cs-actions { justify-content: flex-start; }
+  .cs-flag { margin-left: 0; }
+  .cs-pick { width: 100%; }
+  .cs-opt { flex: 1; min-width: 0; }
+}

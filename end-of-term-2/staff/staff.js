@@ -36,7 +36,8 @@
   app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/index.html">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>'));
 
   var head = el('div', 'eot2-head');
-  head.innerHTML = '<h1>Term 2 Conference — Staff View</h1><p>Completion across every kid and every form. Click a badge to open that record.</p>';
+  head.innerHTML = '<h1>Term 2 Conference — Staff View</h1><p>Completion across every kid and every form. Click a badge to open that record.</p>' +
+    '<p class="eot2-head-action"><a class="eot2-btn" href="../consolidate/index.html">Consolidate self-assessments &rarr;</a></p>';
   app.appendChild(head);
 
   var tableWrap = el('div', null, '<p class="eot2-msg">Loading…</p>');
@@ -63,7 +64,9 @@
       var td = document.createElement('td');
       tr.appendChild(td);
       var weekKey = 'term2-self-assessment-' + rater.id;
-      var href = '../self-assessment/index.html?rater=' + rater.id + '&kid=' + kid.slug;
+      var href = rater.id === 'consolidated'
+        ? '../consolidate/index.html?kid=' + kid.slug
+        : '../self-assessment/index.html?rater=' + rater.id + '&kid=' + kid.slug;
       fetches.push(window.eot2Fetch(kid.group, kid.slug, weekKey).then(function (data) {
         td.appendChild(badge(hasAnyAnswer(data && data.state), href, hasAnyAnswer(data && data.state) ? '✓' : '—'));
       }));

@@ -86,8 +86,10 @@
 
     var state = {};
 
+    // Only rubric items count — the consolidated record also carries a
+    // _shared flag (set on the Consolidate page).
     function answeredCount() {
-      return Object.keys(state).filter(function (k) { return state[k]; }).length;
+      return Object.keys(state).filter(function (k) { return k.charAt(0) !== '_' && state[k]; }).length;
     }
     function updateProgress() {
       progressLine.textContent = answeredCount() + ' of ' + window.EOT2_RUBRIC_ITEM_COUNT + ' answered';
