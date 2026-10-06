@@ -91,3 +91,4 @@
 .rc-lightbox { position: fixed; inset: 0; z-index: 1000; background: rgba(20, 28, 34, .88); display: flex; align-items: center; justify-content: center; padding: 24px; cursor: zoom-out; }
 .rc-lightbox img { max-width: 100%; max-height: 100%; border-radius: 12px; box-shadow: 0 12px 40px rgba(0, 0, 0, .4); }
 @media (max-width: 520px) { .rc-photos-3 { grid-template-columns: 1fr 1fr; } .rc-photos-2 .rc-photo, .rc-photos-3 .rc-photo { height: 180px; } }
+.rc-video { display: block; width: 100%; max-height: 420px; margin-top: 8px; border-radius: 12px; background: #111; }

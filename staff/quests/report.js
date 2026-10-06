@@ -37,7 +37,8 @@
       QD.fetchWeekState(w.group, kid.slug, w.key),
       QD.fetchRating(w.group, kid.slug, w.key),
       QR.fetchReport(w.group, kid.slug, w.key),
-      QR.fetchBuildPhotos(w.group, kid.slug, w.key)
+      QR.fetchBuildPhotos(w.group, kid.slug, w.key),
+      QR.fetchBuildVideo(w.group, kid.slug, w.key)
     ]).then(function (r) {
       body.innerHTML = '';
       if (!r[0].ok || !r[2].ok) {
@@ -48,6 +49,7 @@
       var started = summary.status !== 'not-started';
       var report = Object.assign({ shared: false, buildNotes: [] }, r[2].report || {});
       var slots = r[3].slots.slice(); // one entry per picture slot, '' when empty
+      var video = r[4];               // { supported, url }
       var model = QR.build(w, r[0].state, r[1], report);
       var rated = !!(r[1] && r[1].scores && Object.keys(r[1].scores).length);
       var draft = QR.draftNotes(model, report.buildNotes);
@@ -86,7 +88,12 @@
           ? '<div class="rv-photo"><span class="rv-photo-label">Build pictures <small>Optional, up to ' + QR.PHOTO_SLOTS + '. Shown on the Build card; leave empty if there are none.</small></span>' +
               '<div class="rv-photo-row"><span class="rv-photo-thumbs"></span><span class="rv-photo-empty">No pictures yet</span>' +
               '<label class="eot2-btn eot2-btn-secondary rv-photo-pick"><span>Add pictures</span><input type="file" accept="image/*" multiple hidden></label>' +
-              '<span class="rv-photo-msg"></span></div></div>'
+              '<span class="rv-photo-msg"></span></div></div>' +
+            '<div class="rv-video"><span class="rv-photo-label">Build video <small>Optional, one per quest, up to 25 MB (MP4 or MOV).</small></span>' +
+              '<div class="rv-photo-row"><span class="rv-video-state"></span>' +
+              '<label class="eot2-btn eot2-btn-secondary rv-video-pick"><span>Upload video</span><input type="file" accept="video/mp4,video/quicktime,video/webm,.mp4,.mov,.m4v,.webm" hidden></label>' +
+              '<button type="button" class="rv-video-remove">Remove video</button>' +
+              '<span class="rv-video-msg"></span></div></div>'
           : '') +
         '<div class="rv-bar">' +
           '<button type="button" class="eot2-btn eot2-btn-secondary rv-redraft">Redraft from quest data</button>' +
@@ -108,8 +115,9 @@
       shareInput.checked = !!report.shared;
 
       function paint() {
-        preview.innerHTML = QR.render(model, report, { questHref: '../../' + w.path.replace(/^\.\.\//, '') + '?fac=1', photos: slots.filter(Boolean) });
+        preview.innerHTML = QR.render(model, report, { questHref: '../../' + w.path.replace(/^\.\.\//, '') + '?fac=1', photos: slots.filter(Boolean), video: video.url });
         paintPhoto();
+        paintVideo();
         shareInput.disabled = !started && !report.shared;
         panel.querySelector('.cs-share-text span').textContent = report.shared
           ? 'Visible on ' + kid.name + '’s Quests page.'
@@ -203,6 +211,55 @@
                 function () { photoMsg('Couldn’t read “' + file.name + '”. Try a JPG or PNG.'); });
             });
           }, Promise.resolve());
+        });
+      }
+
+      // ---- build video ----
+      var videoBox = panel.querySelector('.rv-video');
+      var VIDEO_MAX = 25 * 1024 * 1024;
+      function videoMsg(t) { videoBox.querySelector('.rv-video-msg').textContent = t; }
+      function paintVideo() {
+        if (!videoBox) return;
+        var pick = videoBox.querySelector('.rv-video-pick');
+        var remove = videoBox.querySelector('.rv-video-remove');
+        var state = videoBox.querySelector('.rv-video-state');
+        if (!video.supported) {
+          state.textContent = 'Video upload needs the progress service update first.';
+          pick.hidden = true; remove.hidden = true;
+          return;
+        }
+        state.textContent = video.url ? 'Video added' : 'No video yet';
+        pick.hidden = !!video.url;
+        remove.hidden = !video.url;
+      }
+      function refreshVideo() {
+        return QR.fetchBuildVideo(w.group, kid.slug, w.key).then(function (v) { video = v; paint(); });
+      }
+      if (videoBox) {
+        videoBox.querySelector('input[type=file]').addEventListener('change', function () {
+          var file = this.files && this.files[0];
+          this.value = '';
+          if (!file) return;
+          if (file.size > VIDEO_MAX) { videoMsg('That video is ' + Math.round(file.size / 1048576) + ' MB; the limit is 25 MB. Trim it or send it at a lower quality.'); return; }
+          videoMsg('Uploading… 0%');
+          QR.uploadBuildVideo(w.group, kid.slug, w.key, file, function (f) { videoMsg('Uploading… ' + Math.round(f * 100) + '%'); })
+            .then(function (res) {
+              if (!res.ok) {
+                videoMsg(res.error === 'unsupported file type' ? 'Use an MP4 or MOV video.' : res.error === 'file too large' ? 'That video is over 25 MB.' : 'Not uploaded — check connection and try again.');
+                return;
+              }
+              videoMsg('Saved');
+              refreshVideo();
+            });
+        });
+        videoBox.querySelector('.rv-video-remove').addEventListener('click', function () {
+          if (!window.confirm('Remove this build video?')) return;
+          videoMsg('Removing…');
+          QR.deleteBuildVideo(w.group, kid.slug, w.key).then(function (res) {
+            if (!res.ok) { videoMsg('Not removed — check connection and try again.'); return; }
+            videoMsg('Removed');
+            refreshVideo();
+          });
         });
       }
 

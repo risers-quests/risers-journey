@@ -81,3 +81,8 @@
 .rv-photo-tile img { width: 120px; height: 90px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border); }
 .rv-photo-tile button { font: inherit; font-size: .8rem; color: #a3432b; background: none; border: none; cursor: pointer; padding: 2px; }
 .rv-photo-pick[hidden] { display: none; }
+.rv-video { display: flex; flex-direction: column; gap: 8px; }
+.rv-video-state { font-size: .88rem; color: var(--ink-soft); }
+.rv-video-pick[hidden], .rv-video-remove[hidden] { display: none; }
+.rv-video-remove { font: inherit; font-size: .85rem; color: #a3432b; background: none; border: none; cursor: pointer; padding: 4px 2px; }
+.rv-video-msg { font-size: .82rem; color: var(--ink-faint); }

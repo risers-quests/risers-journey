@@ -309,6 +309,7 @@
 
   // opts.questHref: link to the quest page (topic links append #anchor).
   // opts.photos: the build pictures (data URLs), shown on the Build card.
+  // opts.video: the build video's URL, shown under them.
   function catHtml(key, cat, opts) {
     var body = '';
     if (key === 'understanding') {
@@ -328,7 +329,8 @@
       var reasons = (opts.buildNotes || []).map(buildNote).filter(Boolean);
       body = '<p class="rc-line">' + esc(cat.line) + '</p>' +
         (reasons.length && cat.band < 3 ? '<ul class="rc-list rc-reasons">' + reasons.map(function (r) { return '<li>' + esc(r.line) + '</li>'; }).join('') + '</ul>' : '') +
-        photosHtml((opts.photos && opts.photos.length) ? opts.photos : cat.photo ? [cat.photo] : []);
+        photosHtml((opts.photos && opts.photos.length) ? opts.photos : cat.photo ? [cat.photo] : []) +
+        (opts.video ? '<video class="rc-video" src="' + esc(opts.video) + '" controls preload="metadata" playsinline></video>' : '');
     } else if (key === 'presentation') {
       body = cat.criteria
         ? '<ul class="rc-crit">' + cat.criteria.map(function (c) { return '<li><span>' + esc(c.name) + '</span>' + meter(c.band) + '<em>' + BANDS[c.band] + '</em></li>'; }).join('') + '</ul>'
@@ -428,6 +430,48 @@
       .catch(function () { return { ok: false }; });
   }
 
+  /* ---------- the build video ----------
+     One per Riser per quest, in the progress service's file store (slot
+     "build-video-<week>", up to 25 MB; staff may remove it and upload
+     another). fetchBuildVideo resolves { ok, supported, url } — supported
+     is false until the service has the build-video update. */
+  function videoUrl(group, kid, week, extra) {
+    return WORKER_URL + '/file?group=' + encodeURIComponent(group) + '&kid=' + encodeURIComponent(kid) +
+      '&slot=build-video-' + encodeURIComponent(week) + (extra || '');
+  }
+  function fetchBuildVideo(group, kid, week) {
+    return fetch(videoUrl(group, kid, week, '&meta=1'), { headers: { 'X-Site-Key': SITE_KEY } })
+      .then(function (r) {
+        if (r.status === 400) return { ok: true, supported: false, url: '' };
+        if (!r.ok) throw new Error('http');
+        return r.json().then(function (res) {
+          return { ok: true, supported: true, url: res && res.found ? videoUrl(group, kid, week, '&key=' + SITE_KEY + '&inline=1&v=' + encodeURIComponent(res.file.uploadedAt)) : '' };
+        });
+      })
+      .catch(function () { return { ok: false, supported: true, url: '' }; });
+  }
+  // onProgress(fraction) while it uploads. Resolves { ok, error }.
+  function uploadBuildVideo(group, kid, week, file, onProgress) {
+    return new Promise(function (resolve) {
+      var ext = (file.name.match(/\.([a-z0-9]+)$/i) || [])[1] || 'mp4';
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', videoUrl(group, kid, week, '&name=' + encodeURIComponent(kid + '_' + week + '_build.' + ext.toLowerCase())));
+      xhr.setRequestHeader('X-Site-Key', SITE_KEY);
+      xhr.upload.onprogress = function (e) { if (e.lengthComputable && onProgress) onProgress(e.loaded / e.total); };
+      xhr.onload = function () {
+        var res = {}; try { res = JSON.parse(xhr.responseText); } catch (e) {}
+        resolve(xhr.status === 200 && res.ok ? { ok: true } : { ok: false, error: res.error || ('http ' + xhr.status) });
+      };
+      xhr.onerror = function () { resolve({ ok: false, error: 'network' }); };
+      xhr.send(file);
+    });
+  }
+  function deleteBuildVideo(group, kid, week) {
+    return fetch(videoUrl(group, kid, week), { method: 'DELETE', headers: { 'X-Site-Key': SITE_KEY } })
+      .then(function (r) { return { ok: r.ok }; })
+      .catch(function () { return { ok: false }; });
+  }
+
   // Click a build picture to see it full size; click again (or Esc) to close.
   document.addEventListener('click', function (e) {
     var img = e.target.closest && e.target.closest('.rc-photo');
@@ -457,6 +501,9 @@
     saveReport: saveReport,
     PHOTO_SLOTS: PHOTO_SLOTS.length,
     fetchBuildPhotos: fetchBuildPhotos,
-    saveBuildPhoto: saveBuildPhoto
+    saveBuildPhoto: saveBuildPhoto,
+    fetchBuildVideo: fetchBuildVideo,
+    uploadBuildVideo: uploadBuildVideo,
+    deleteBuildVideo: deleteBuildVideo
   };
 })();

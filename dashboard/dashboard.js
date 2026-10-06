@@ -137,10 +137,13 @@
     var wrap = el('div', 'qd-report');
     wrap.innerHTML = QR.render(model, q.report, { questHref: q.weekCfg.path });
     app.appendChild(wrap);
-    // Build pictures, if staff uploaded any, arrive a moment later.
-    QR.fetchBuildPhotos(q.weekCfg.group, q.kidKey, q.weekCfg.key).then(function (res) {
-      var photos = res.slots.filter(Boolean);
-      if (photos.length) wrap.innerHTML = QR.render(model, q.report, { questHref: q.weekCfg.path, photos: photos });
+    // Build pictures and video, if staff uploaded any, arrive a moment later.
+    Promise.all([
+      QR.fetchBuildPhotos(q.weekCfg.group, q.kidKey, q.weekCfg.key),
+      QR.fetchBuildVideo(q.weekCfg.group, q.kidKey, q.weekCfg.key)
+    ]).then(function (r) {
+      var photos = r[0].slots.filter(Boolean);
+      if (photos.length || r[1].url) wrap.innerHTML = QR.render(model, q.report, { questHref: q.weekCfg.path, photos: photos, video: r[1].url });
     });
   }
 
