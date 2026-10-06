@@ -527,7 +527,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
       {
         key: 'week-03', group: 'group-02', label: 'Quest 3 · Digestive System',
         path: '../group-02-week-03-digestive-system/owen/index.html',
-        buildTotal: 5,
+        buildTotal: 6,
         topics: {
           'refl-1': '1. The path',
           'refl-2': '1. The path',
@@ -688,7 +688,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
       },      {
         key: 'week-02', group: 'group-03', label: 'Quest 2 · Space & Gravity Concepts',
         path: '../group-03-week-02-space-gravity-concepts/shalom/index.html',
-        buildTotal: 5,
+        buildTotal: 3,
         topics: {
           'refl-1': 'Part 1 · Mass and weight',
           'refl-1b': 'Part 1 · Mass and weight',

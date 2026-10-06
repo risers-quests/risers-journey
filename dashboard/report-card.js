@@ -166,7 +166,7 @@
     var buildTotal = weekCfg.buildTotal || 0;
     if (buildTotal) {
       var b = state.build || {};
-      var done = Math.min(buildTotal, Object.keys(b).filter(function (k) { return b[k]; }).length);
+      var done = Math.min(buildTotal, Object.keys(b).filter(function (k) { return b[k] && +k < buildTotal; }).length);
       // With lost progress, staff can set the steps actually finished.
       if (lost && typeof report.buildDone === 'number') done = Math.max(0, Math.min(buildTotal, report.buildDone));
       cats.build = {

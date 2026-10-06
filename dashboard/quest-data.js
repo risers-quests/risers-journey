@@ -119,7 +119,7 @@
     var passed = questions.filter(function (q) { return q.status === 'done'; }).length;
     var tried = questions.filter(function (q) { return q.status !== 'todo'; }).length;
     var buildTotal = weekCfg.buildTotal || 0;
-    var buildDone = Math.min(buildTotal, Object.keys(build).filter(function (k) { return build[k]; }).length);
+    var buildDone = Math.min(buildTotal, Object.keys(build).filter(function (k) { return build[k] && +k < buildTotal; }).length);
     var timeMs = totalTimeMs(state);
     var completed = !!(state && state.completed);
     var active = tried > 0 || buildDone > 0 || timeMs > 0;
