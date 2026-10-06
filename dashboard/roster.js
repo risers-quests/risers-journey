@@ -80,6 +80,7 @@ window.DASHBOARD_ROSTER = {
         key: 'week-03', group: 'group-01', label: 'Quest 3 · Climate Zones',
         path: '../group-01-week-03-climate-zones/chris/index.html',
         buildTotal: 5,
+        bloom: { 'refl-6': 'Understand', 'refl-2': 'Apply', 'refl-7': 'Understand', 'refl-1': 'Analyze', 'refl-3': 'Understand', 'refl-8': 'Analyze', 'refl-4': 'Analyze', 'refl-9': 'Analyze' },
         topics: {
           'refl-6': '1. What actually determines a location\'s climate',
           'refl-2': '2. The five real climate zones',
@@ -110,6 +111,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-01', group: 'group-00', label: 'Quest 1 · Pollination & Seed Dispersal',
         path: '../group-00-week-01-pollination-seed-dispersal/eva/index.html',
         buildTotal: 5,
+        bloom: { 'refl-6': 'Understand', 'refl-2': 'Apply', 'refl-7': 'Understand', 'refl-1': 'Analyze', 'refl-8': 'Understand', 'refl-9': 'Apply', 'refl-3': 'Understand', 'refl-10': 'Analyze', 'refl-4': 'Analyze', 'refl-11': 'Understand' },
         topics: {
           'refl-1': '2. Meet the suspects: who pollinates what, and why',
           'refl-6': '1. What pollination actually is',
@@ -133,6 +135,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-02', group: 'group-00', label: 'Quest 2 · Solar System',
         path: '../group-00-week-02-solar-system/eva/index.html',
         buildTotal: 5,
+        bloom: { 'refl-6': 'Remember', 'refl-2': 'Apply', 'refl-7': 'Understand', 'refl-1': 'Analyze', 'refl-8': 'Analyze', 'refl-9': 'Understand', 'refl-3': 'Understand', 'refl-10': 'Apply', 'refl-4': 'Analyze', 'refl-11': 'Understand' },
         topics: {
           'refl-1': '2. The eight planets, in order',
           'refl-6': '1. The Sun is a star',
@@ -157,6 +160,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-03', group: 'group-00', label: 'Quest 3 · Materials in Everyday Life',
         path: '../group-00-week-03-materials-everyday-life/eva/index.html',
         buildTotal: 5,
+        bloom: { 'refl-1': 'Analyze', 'refl-6': 'Remember', 'refl-7': 'Understand', 'refl-2': 'Apply', 'refl-8': 'Understand', 'refl-3': 'Understand', 'refl-9': 'Apply', 'refl-10': 'Apply', 'refl-4': 'Apply', 'refl-11': 'Understand' },
         topics: {
           'refl-1': '1. What is a material?',
           'refl-6': '1. What is a material?',
@@ -185,6 +189,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-01', group: 'group-00', label: 'Quest 1 · Pollination & Seed Dispersal',
         path: '../group-00-week-01-pollination-seed-dispersal/gabby/index.html',
         buildTotal: 5,
+        bloom: { 'refl-6': 'Understand', 'refl-2': 'Apply', 'refl-7': 'Understand', 'refl-1': 'Analyze', 'refl-8': 'Understand', 'refl-9': 'Apply', 'refl-3': 'Understand', 'refl-10': 'Analyze', 'refl-4': 'Analyze', 'refl-11': 'Understand', 'refl-5': 'Evaluate' },
         topics: {
           'refl-1': '2. Who visits which flower, and why',
           'refl-6': '1. What pollination actually is',
@@ -208,6 +213,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-02', group: 'group-00', label: 'Quest 2 · Solar System',
         path: '../group-00-week-02-solar-system/gabby/index.html',
         buildTotal: 5,
+        bloom: { 'refl-6': 'Remember', 'refl-2': 'Apply', 'refl-7': 'Understand', 'refl-1': 'Analyze', 'refl-8': 'Analyze', 'refl-9': 'Understand', 'refl-3': 'Understand', 'refl-10': 'Apply', 'refl-4': 'Analyze', 'refl-11': 'Understand' },
         topics: {
           'refl-1': '2. The eight planets, in order',
           'refl-6': '1. The Sun is a star',
@@ -232,6 +238,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-03', group: 'group-00', label: 'Quest 3 · Materials in Everyday Life',
         path: '../group-00-week-03-materials-everyday-life/gabby/index.html',
         buildTotal: 5,
+        bloom: { 'refl-1': 'Analyze', 'refl-6': 'Remember', 'refl-7': 'Understand', 'refl-2': 'Apply', 'refl-8': 'Understand', 'refl-3': 'Understand', 'refl-9': 'Apply', 'refl-10': 'Apply', 'refl-4': 'Apply', 'refl-11': 'Understand' },
         topics: {
           'refl-1': '1. What is a material?',
           'refl-6': '1. What is a material?',
@@ -260,6 +267,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-01', group: 'group-00', label: 'Quest 1 · Pollination & Seed Dispersal',
         path: '../group-00-week-01-pollination-seed-dispersal/elyon/index.html',
         buildTotal: 5,
+        bloom: { 'refl-6': 'Understand', 'refl-2': 'Apply', 'refl-7': 'Understand', 'refl-1': 'Analyze', 'refl-8': 'Understand', 'refl-9': 'Apply', 'refl-3': 'Understand', 'refl-10': 'Analyze', 'refl-4': 'Analyze', 'refl-11': 'Understand', 'refl-5': 'Evaluate' },
         topics: {
           'refl-1': '2. Nature\'s targeted designs: which flower is built for which visitor',
           'refl-6': '1. What pollination actually is',
@@ -283,6 +291,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-02', group: 'group-00', label: 'Quest 2 · Solar System',
         path: '../group-00-week-02-solar-system/elyon/index.html',
         buildTotal: 5,
+        bloom: { 'refl-6': 'Remember', 'refl-2': 'Apply', 'refl-7': 'Understand', 'refl-1': 'Analyze', 'refl-8': 'Analyze', 'refl-9': 'Understand', 'refl-3': 'Understand', 'refl-10': 'Apply', 'refl-4': 'Analyze', 'refl-11': 'Understand' },
         topics: {
           'refl-1': '2. The eight planets, in order',
           'refl-6': '1. The Sun is a star',
@@ -307,6 +316,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-03', group: 'group-00', label: 'Quest 3 · Materials in Everyday Life',
         path: '../group-00-week-03-materials-everyday-life/elyon/index.html',
         buildTotal: 5,
+        bloom: { 'refl-1': 'Analyze', 'refl-6': 'Remember', 'refl-7': 'Understand', 'refl-2': 'Apply', 'refl-8': 'Understand', 'refl-3': 'Understand', 'refl-9': 'Apply', 'refl-10': 'Apply', 'refl-4': 'Apply', 'refl-11': 'Understand' },
         topics: {
           'refl-1': '1. What is a material?',
           'refl-6': '1. What is a material?',
@@ -335,6 +345,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-01', group: 'group-01', label: 'Quest 1 · Plant & Animal Cells',
         path: '../group-01-week-01-plant-animal-cell/yokesh/index.html',
         buildTotal: 5,
+        bloom: { 'refl-6': 'Remember', 'refl-2': 'Apply', 'refl-7': 'Understand', 'refl-1': 'Analyze', 'refl-3': 'Understand', 'refl-8': 'Analyze', 'refl-4': 'Analyze', 'refl-9': 'Apply' },
         topics: {
           'refl-1': '2. What only a plant cell has',
           'refl-6': '1. What every cell has, no exceptions',
@@ -355,6 +366,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-02', group: 'group-01', label: 'Quest 2 · Atomic Structure & Periodic Table',
         path: '../group-01-week-02-atomic-structure-periodic-table/yokesh/index.html',
         buildTotal: 5,
+        bloom: { 'refl-6': 'Remember', 'refl-2': 'Apply', 'refl-7': 'Understand', 'refl-1': 'Analyze', 'refl-3': 'Understand', 'refl-8': 'Analyze', 'refl-4': 'Apply', 'refl-9': 'Analyze' },
         topics: {
           'refl-6': '1. The three particles every atom is built from',
           'refl-2': '2. What makes one element different',
@@ -376,6 +388,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-03', group: 'group-01', label: 'Quest 3 · Climate Zones',
         path: '../group-01-week-03-climate-zones/yokesh/index.html',
         buildTotal: 5,
+        bloom: { 'refl-6': 'Understand', 'refl-2': 'Apply', 'refl-7': 'Understand', 'refl-1': 'Analyze', 'refl-3': 'Understand', 'refl-8': 'Analyze', 'refl-4': 'Analyze', 'refl-9': 'Analyze' },
         topics: {
           'refl-6': '1. What actually determines a location\'s climate',
           'refl-2': '2. The five real climate zoning districts',
@@ -402,6 +415,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-01', group: 'group-01', label: 'Quest 1 · Plant & Animal Cells',
         path: '../group-01-week-01-plant-animal-cell/zach/index.html',
         buildTotal: 5,
+        bloom: { 'refl-6': 'Remember', 'refl-2': 'Apply', 'refl-7': 'Understand', 'refl-1': 'Analyze', 'refl-3': 'Understand', 'refl-8': 'Analyze', 'refl-4': 'Analyze', 'refl-9': 'Apply' },
         topics: {
           'refl-1': '2. What only a plant cell has',
           'refl-6': '1. What every cell has, no exceptions',
@@ -422,6 +436,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-02', group: 'group-01', label: 'Quest 2 · Atomic Structure & Periodic Table',
         path: '../group-01-week-02-atomic-structure-periodic-table/zach/index.html',
         buildTotal: 5,
+        bloom: { 'refl-6': 'Remember', 'refl-2': 'Apply', 'refl-7': 'Understand', 'refl-1': 'Analyze', 'refl-3': 'Understand', 'refl-8': 'Analyze', 'refl-4': 'Apply', 'refl-9': 'Analyze' },
         topics: {
           'refl-6': '1. The three particles every atom is built from',
           'refl-2': '2. What makes one element different',
@@ -443,6 +458,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-03', group: 'group-01', label: 'Quest 3 · Climate Zones',
         path: '../group-01-week-03-climate-zones/zach/index.html',
         buildTotal: 5,
+        bloom: { 'refl-6': 'Understand', 'refl-2': 'Apply', 'refl-7': 'Understand', 'refl-1': 'Analyze', 'refl-3': 'Understand', 'refl-8': 'Analyze', 'refl-4': 'Analyze', 'refl-9': 'Analyze' },
         topics: {
           'refl-6': '1. What actually determines a location\'s climate',
           'refl-2': '2. The five real climate zones',
@@ -469,6 +485,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-01', group: 'group-02', label: 'Quest 1 · Skeletal & Muscular Systems',
         path: '../group-02-week-01-skeletal-muscular-systems/owen/index.html',
         buildTotal: 5,
+        bloom: { 'refl-1': 'Analyze', 'refl-8': 'Remember', 'refl-9': 'Understand', 'refl-10': 'Understand', 'refl-2': 'Apply', 'refl-11': 'Remember', 'refl-12': 'Analyze', 'refl-3': 'Understand', 'refl-13': 'Understand', 'refl-14': 'Remember', 'refl-15': 'Remember', 'refl-4': 'Analyze', 'refl-16': 'Apply', 'refl-17': 'Understand', 'refl-6': 'Evaluate', 'refl-7': 'Apply', 'refl-18': 'Evaluate', 'refl-5': 'Evaluate' },
         topics: {
           'refl-1': '1. The skeletal system',
           'refl-8': '1. The skeletal system',
@@ -498,6 +515,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-02', group: 'group-02', label: 'Quest 2 · Soil Formation',
         path: '../group-02-week-02-soil-formation/owen/index.html',
         buildTotal: 5,
+        bloom: { 'refl-1': 'Analyze', 'refl-8': 'Remember', 'refl-9': 'Understand', 'refl-10': 'Understand', 'refl-2': 'Apply', 'refl-11': 'Remember', 'refl-12': 'Understand', 'refl-3': 'Understand', 'refl-13': 'Analyze', 'refl-14': 'Understand', 'refl-15': 'Analyze', 'refl-16': 'Understand', 'refl-17': 'Apply', 'refl-6': 'Evaluate', 'refl-4': 'Analyze', 'refl-7': 'Apply', 'refl-18': 'Evaluate' },
         topics: {
           'refl-1': '1. The four ingredients',
           'refl-8': '1. The four ingredients',
@@ -528,6 +546,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-03', group: 'group-02', label: 'Quest 3 · Digestive System',
         path: '../group-02-week-03-digestive-system/owen/index.html',
         buildTotal: 6,
+        bloom: { 'refl-1': 'Analyze', 'refl-3': 'Remember', 'refl-4': 'Understand', 'refl-6': 'Understand', 'refl-7': 'Apply', 'refl-8': 'Analyze', 'refl-9': 'Understand', 'refl-10': 'Understand', 'refl-11': 'Analyze', 'refl-13': 'Analyze', 'refl-12': 'Evaluate', 'refl-14': 'Understand', 'refl-16': 'Analyze', 'refl-b1': 'Understand' },
         topics: {
           'refl-1': '1. The path',
           'refl-2': '1. The path',
@@ -562,6 +581,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-01', group: 'group-02', label: 'Quest 1 · Skeletal & Muscular Systems',
         path: '../group-02-week-01-skeletal-muscular-systems/pranavi/index.html',
         buildTotal: 5,
+        bloom: { 'refl-1': 'Analyze', 'refl-8': 'Remember', 'refl-9': 'Understand', 'refl-10': 'Understand', 'refl-2': 'Apply', 'refl-11': 'Remember', 'refl-12': 'Analyze', 'refl-3': 'Understand', 'refl-13': 'Understand', 'refl-14': 'Remember', 'refl-19': 'Apply', 'refl-4': 'Analyze', 'refl-16': 'Apply', 'refl-17': 'Understand', 'refl-6': 'Evaluate', 'refl-7': 'Apply', 'refl-18': 'Evaluate', 'refl-5': 'Evaluate' },
         topics: {
           'refl-1': '1. The skeletal system',
           'refl-8': '1. The skeletal system',
@@ -591,6 +611,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-02', group: 'group-02', label: 'Quest 2 · Soil Formation',
         path: '../group-02-week-02-soil-formation/pranavi/index.html',
         buildTotal: 5,
+        bloom: { 'refl-1': 'Analyze', 'refl-8': 'Remember', 'refl-9': 'Understand', 'refl-10': 'Understand', 'refl-2': 'Apply', 'refl-11': 'Remember', 'refl-12': 'Understand', 'refl-3': 'Understand', 'refl-13': 'Analyze', 'refl-14': 'Understand', 'refl-19': 'Apply', 'refl-16': 'Understand', 'refl-17': 'Apply', 'refl-6': 'Evaluate', 'refl-4': 'Analyze', 'refl-7': 'Apply', 'refl-18': 'Evaluate' },
         topics: {
           'refl-1': '1. The four ingredients',
           'refl-8': '1. The four ingredients',
@@ -621,6 +642,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-03', group: 'group-02', label: 'Quest 3 · Digestive System',
         path: '../group-02-week-03-digestive-system/pranavi/index.html',
         buildTotal: 5,
+        bloom: { 'refl-1': 'Analyze', 'refl-2': 'Remember', 'refl-3': 'Remember', 'refl-4': 'Understand', 'refl-5': 'Remember', 'refl-6': 'Understand', 'refl-7': 'Apply', 'refl-17': 'Apply', 'refl-8': 'Analyze', 'refl-9': 'Understand', 'refl-10': 'Understand', 'refl-11': 'Analyze', 'refl-13': 'Analyze', 'refl-12': 'Evaluate', 'refl-14': 'Understand', 'refl-15': 'Remember', 'refl-16': 'Analyze' },
         topics: {
           'refl-1': '1. The path',
           'refl-2': '1. The path',
@@ -656,6 +678,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-01', group: 'group-03', label: 'Quest 1 · Immune System',
         path: '../group-03-week-01-immune-system/shalom/index.html',
         buildTotal: 5,
+        bloom: { 'refl-6': 'Understand', 'refl-7': 'Remember', 'refl-8': 'Remember', 'refl-9': 'Apply', 'refl-2': 'Analyze', 'refl-10': 'Remember', 'refl-11': 'Understand', 'refl-12': 'Understand', 'refl-3': 'Apply', 'refl-13': 'Remember', 'refl-14': 'Analyze', 'refl-15': 'Analyze', 'refl-4': 'Understand', 'refl-16': 'Remember', 'refl-17': 'Understand', 'refl-18': 'Remember', 'refl-1': 'Analyze', 'refl-19': 'Understand', 'refl-20': 'Analyze', 'refl-21': 'Analyze', 'refl-5': 'Evaluate' },
         topics: {
           'refl-6': '1. The threat',
           'refl-7': '1. The threat',
@@ -689,6 +712,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-02', group: 'group-03', label: 'Quest 2 · Space & Gravity Concepts',
         path: '../group-03-week-02-space-gravity-concepts/shalom/index.html',
         buildTotal: 3,
+        bloom: { 'refl-1': 'Understand', 'refl-1b': 'Apply', 'refl-2': 'Understand', 'refl-2b': 'Apply', 'refl-3': 'Analyze', 'refl-3b': 'Understand', 'refl-4': 'Analyze', 'refl-4b': 'Apply', 'refl-mission': 'Apply', 'refl-b1': 'Understand', 'refl-d1': 'Analyze', 'refl-d2': 'Analyze', 'refl-d3': 'Evaluate' },
         topics: {
           'refl-1': 'Part 1 · Mass and weight',
           'refl-1b': 'Part 1 · Mass and weight',
@@ -718,6 +742,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-03', group: 'group-03', label: 'Quest 3 · Hydrocarbons, Plastics & Fossils',
         path: '../group-03-week-03-hydrocarbons-plastics-fossils/shalom/index.html',
         buildTotal: 5,
+        bloom: { 'refl-1': 'Analyze', 'refl-2': 'Remember', 'refl-4': 'Remember', 'refl-6': 'Understand', 'refl-8': 'Understand', 'refl-9': 'Understand', 'refl-10': 'Evaluate', 'refl-b1': 'Understand' },
         topics: {
           'refl-1': '1. Hydrocarbons',
           'refl-2': '1. Hydrocarbons',
@@ -748,6 +773,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-01', group: 'group-03', label: 'Quest 1 · Immune System',
         path: '../group-03-week-01-immune-system/michael/index.html',
         buildTotal: 5,
+        bloom: { 'refl-6': 'Understand', 'refl-7': 'Remember', 'refl-8': 'Remember', 'refl-9': 'Apply', 'refl-2': 'Analyze', 'refl-10': 'Remember', 'refl-11': 'Understand', 'refl-12': 'Understand', 'refl-3': 'Apply', 'refl-13': 'Remember', 'refl-14': 'Analyze', 'refl-15': 'Analyze', 'refl-4': 'Understand', 'refl-16': 'Remember', 'refl-17': 'Understand', 'refl-18': 'Remember', 'refl-1': 'Analyze', 'refl-19': 'Understand', 'refl-20': 'Analyze', 'refl-21': 'Analyze', 'refl-5': 'Evaluate' },
         topics: {
           'refl-6': '1. The threat',
           'refl-7': '1. The threat',
@@ -781,6 +807,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-02', group: 'group-03', label: 'Quest 2 · Space & Gravity Concepts',
         path: '../group-03-week-02-space-gravity-concepts/michael/index.html',
         buildTotal: 5,
+        bloom: { 'refl-1': 'Understand', 'refl-1b': 'Apply', 'refl-2': 'Understand', 'refl-2b': 'Apply', 'refl-3': 'Analyze', 'refl-3b': 'Understand', 'refl-4': 'Analyze', 'refl-4b': 'Apply', 'refl-mission': 'Apply', 'refl-b1': 'Understand', 'refl-d1': 'Analyze', 'refl-d2': 'Analyze', 'refl-d3': 'Evaluate' },
         topics: {
           'refl-1': 'Part 1 · Mass and weight',
           'refl-1b': 'Part 1 · Mass and weight',
@@ -810,6 +837,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-03', group: 'group-03', label: 'Quest 3 · Hydrocarbons, Plastics & Fossils',
         path: '../group-03-week-03-hydrocarbons-plastics-fossils/michael/index.html',
         buildTotal: 5,
+        bloom: { 'refl-1': 'Analyze', 'refl-2': 'Remember', 'refl-4': 'Remember', 'refl-6': 'Understand', 'refl-8': 'Understand', 'refl-9': 'Understand', 'refl-10': 'Evaluate', 'refl-mission': 'Apply', 'refl-b1': 'Understand' },
         topics: {
           'refl-1': '1. Hydrocarbons',
           'refl-2': '1. Hydrocarbons',
@@ -835,6 +863,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-04', group: 'group-03', label: "Quest 4 · Newton's Laws of Motion",
         path: '../group-03-week-04-newtons-laws-of-motion/michael/index.html',
         buildTotal: 6,
+        bloom: { 'refl-1': 'Understand', 'refl-2': 'Understand', 'refl-3': 'Apply', 'refl-4': 'Apply', 'refl-6': 'Understand', 'refl-8': 'Apply', 'refl-9': 'Analyze', 'refl-10': 'Analyze', 'refl-mission': 'Apply', 'refl-b1': 'Understand' },
         topics: {
           'refl-1': "1. Newton's First Law",
           'refl-2': "1. Newton's First Law",
@@ -863,6 +892,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-01', group: 'group-03', label: 'Quest 1 · Immune System',
         path: '../group-03-week-01-immune-system/karis/index.html',
         buildTotal: 5,
+        bloom: { 'refl-6': 'Understand', 'refl-7': 'Remember', 'refl-8': 'Remember', 'refl-9': 'Apply', 'refl-2': 'Analyze', 'refl-10': 'Remember', 'refl-11': 'Understand', 'refl-12': 'Understand', 'refl-3': 'Apply', 'refl-13': 'Remember', 'refl-14': 'Analyze', 'refl-15': 'Analyze', 'refl-4': 'Understand', 'refl-16': 'Remember', 'refl-17': 'Understand', 'refl-18': 'Remember', 'refl-1': 'Analyze', 'refl-19': 'Understand', 'refl-20': 'Analyze', 'refl-21': 'Analyze', 'refl-5': 'Evaluate' },
         topics: {
           'refl-6': '1. The four kinds of patient you\'ll see',
           'refl-7': '1. The four kinds of patient you\'ll see',
@@ -896,6 +926,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-02', group: 'group-03', label: 'Quest 2 · Space & Gravity Concepts',
         path: '../group-03-week-02-space-gravity-concepts/karis/index.html',
         buildTotal: 5,
+        bloom: { 'refl-1': 'Understand', 'refl-1b': 'Apply', 'refl-2': 'Understand', 'refl-2b': 'Apply', 'refl-3': 'Analyze', 'refl-3b': 'Understand', 'refl-4': 'Analyze', 'refl-4b': 'Apply', 'refl-mission': 'Apply', 'refl-b1': 'Understand', 'refl-d1': 'Analyze', 'refl-d2': 'Analyze', 'refl-d3': 'Evaluate' },
         topics: {
           'refl-1': 'Part 1 · Mass and weight',
           'refl-1b': 'Part 1 · Mass and weight',
@@ -925,6 +956,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-03', group: 'group-03', label: 'Quest 3 · Hydrocarbons, Plastics & Fossils',
         path: '../group-03-week-03-hydrocarbons-plastics-fossils/karis/index.html',
         buildTotal: 5,
+        bloom: { 'refl-1': 'Analyze', 'refl-2': 'Remember', 'refl-4': 'Remember', 'refl-6': 'Understand', 'refl-8': 'Understand', 'refl-9': 'Understand', 'refl-10': 'Evaluate', 'refl-mission': 'Apply', 'refl-b1': 'Understand' },
         topics: {
           'refl-1': '1. Hydrocarbons',
           'refl-2': '1. Hydrocarbons',
@@ -955,6 +987,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-01', group: 'group-04', label: 'Quest 1 · Circulatory System',
         path: '../group-04-week-01-circulatory-system/benjamin/index.html',
         buildTotal: 6,
+        bloom: { 'refl-1': 'Analyze', 'refl-9': 'Understand', 'refl-3': 'Understand', 'refl-10': 'Remember', 'refl-5': 'Remember', 'refl-11': 'Evaluate', 'refl-6': 'Understand', 'refl-13': 'Evaluate' },
         topics: {
           'refl-1': '1. The heart\'s four rooms',
           'refl-2': '2. One-way gates: the valves',
@@ -1021,6 +1054,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-03', group: 'group-04', label: 'Quest 3 · Advanced Weather Systems',
         path: '../group-04-week-03-advanced-weather-systems/benjamin/index.html',
         buildTotal: 5,
+        bloom: { 'refl-1': 'Analyze', 'refl-2': 'Understand', 'refl-4': 'Analyze', 'refl-6': 'Analyze', 'refl-7': 'Understand', 'refl-9': 'Analyze', 'refl-10': 'Apply', 'refl-12': 'Understand', 'refl-14': 'Remember', 'refl-15': 'Understand', 'refl-16': 'Analyze', 'refl-mission': 'Apply', 'refl-b1': 'Understand' },
         topics: {
           'refl-1': '1. Air masses and the four fronts',
           'refl-2': '1. Air masses and the four fronts',
@@ -1049,6 +1083,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         key: 'week-04', group: 'group-04', label: 'Quest 4 · Balancing Chemical Equations',
         path: '../group-04-week-04-balancing-chemical-equations/benjamin/index.html',
         buildTotal: 6,
+        bloom: { 'refl-1': 'Remember', 'refl-2': 'Understand', 'refl-3': 'Apply', 'refl-4': 'Understand', 'refl-6': 'Analyze', 'refl-7': 'Apply', 'refl-8': 'Analyze', 'refl-9': 'Understand', 'refl-mission': 'Apply', 'refl-b1': 'Understand' },
         topics: {
           'refl-1': '1. A chemical equation is a before-and-after count',
           'refl-2': '1. A chemical equation is a before-and-after count',

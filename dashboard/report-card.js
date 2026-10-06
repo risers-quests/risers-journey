@@ -107,10 +107,11 @@
     // Only answered questions are scored; anything left unanswered is listed
     // as Undone, never counted as "not understood".
     var unfinished = !state.completed;
-    var ids = allIds.filter(function (id) {
+    function answered(id) {
       var r = reflect[id];
-      return r && (r.attempts > 0 || r.success || (r.text && String(r.text).trim()));
-    });
+      return !!(r && (r.attempts > 0 || r.success || (r.text && String(r.text).trim())));
+    }
+    var ids = allIds.filter(answered);
     var lost = !!(report && report.dataLost);
     var missing = allIds.length - ids.length;
     var undoneQs = lost ? 0 : missing;
@@ -148,7 +149,9 @@
     var bloomMap = null;
     if (weekCfg.bloom) {
       bloomMap = {};
-      Object.keys(weekCfg.bloom).forEach(function (id) { if (ids.indexOf(id) !== -1) bloomMap[id] = weekCfg.bloom[id]; });
+      // Every tagged question the Riser answered — including ones outside
+      // the reading (mission, build reflection, debrief).
+      Object.keys(weekCfg.bloom).forEach(function (id) { if (answered(id)) bloomMap[id] = weekCfg.bloom[id]; });
       if (!Object.keys(bloomMap).length) {
         cats.depth = { title: 'Depth of thinking', band: lost ? NOT_RECORDED : UNDONE, ceiling: null, ceilingIdx: -1, line: lost ? 'No answers were recorded.' : 'No questions were answered.' };
       }
