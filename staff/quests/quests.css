@@ -61,3 +61,7 @@
 .rv-check { display: flex; align-items: center; gap: 8px; font-size: .9rem; color: var(--ink); cursor: pointer; }
 .rv-check input { accent-color: var(--accent); width: 16px; height: 16px; }
 .rv-check small { color: var(--ink-faint); font-size: .78rem; margin-left: 4px; }
+.rv-lost { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 24px; }
+.rv-lost-build { display: flex; align-items: center; gap: 8px; font-size: .88rem; color: var(--ink-soft); }
+.rv-lost-build[hidden] { display: none; }
+.rv-lost-build select { font: inherit; font-size: .88rem; border: 1px solid var(--border); border-radius: 8px; padding: 5px 8px; background: #fff; }

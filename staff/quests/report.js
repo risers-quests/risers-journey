@@ -71,6 +71,15 @@
         (!rated || report.presentationUndone
           ? '<label class="rv-check"><input type="checkbox" class="rv-no-present"' + (report.presentationUndone ? ' checked' : '') + '> ' + kid.name + ' didn’t present <small>Shows Presentation as Undone</small></label>'
           : '') +
+        '<div class="rv-lost">' +
+          '<label class="rv-check"><input type="checkbox" class="rv-lost-input"' + (report.dataLost ? ' checked' : '') + '> Some of ' + kid.name + '’s saved progress was lost <small>Tells the family; missing work shows as Not recorded, not Undone, and time on task is hidden</small></label>' +
+          (w.buildTotal
+            ? '<label class="rv-lost-build"' + (report.dataLost ? '' : ' hidden') + '>Build steps actually finished <select class="rv-build-done"><option value="">As recorded</option>' +
+                Array.apply(null, Array(w.buildTotal + 1)).map(function (_, i) {
+                  return '<option value="' + i + '"' + (report.buildDone === i ? ' selected' : '') + '>' + i + ' of ' + w.buildTotal + '</option>';
+                }).join('') + '</select></label>'
+            : '') +
+        '</div>' +
         '<div class="rv-bar">' +
           '<button type="button" class="eot2-btn eot2-btn-secondary rv-redraft">Redraft from quest data</button>' +
           '<span class="rv-status"></span>' +
@@ -142,6 +151,24 @@
         });
         paint(); save();
       });
+      var lostInput = panel.querySelector('.rv-lost-input');
+      var buildDoneSel = panel.querySelector('.rv-build-done');
+      function lostChanged() {
+        report.dataLost = lostInput.checked;
+        if (buildDoneSel) {
+          buildDoneSel.parentNode.hidden = !report.dataLost;
+          if (buildDoneSel.value === '' || !report.dataLost) delete report.buildDone; else report.buildDone = parseInt(buildDoneSel.value, 10);
+        }
+        model = QR.build(w, r[0].state, r[1], report);
+        draft = QR.draftNotes(model, report.buildNotes);
+        Array.prototype.forEach.call(boxes, function (t) {
+          var k = t.getAttribute('data-k');
+          if (k === 'growth' || k === 'next') { t.value = draft[k]; report[k] = draft[k]; }
+        });
+        paint(); save();
+      }
+      lostInput.addEventListener('change', lostChanged);
+      if (buildDoneSel) buildDoneSel.addEventListener('change', lostChanged);
       shareInput.addEventListener('change', function () {
         report.shared = shareInput.checked;
         paint(); save(true);

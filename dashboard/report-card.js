@@ -27,6 +27,9 @@
   // Work that wasn't done isn't "Beginning" — it's Undone, and it is never
   // scored. Beginning is for work that was done but is still early.
   var UNDONE = -2;
+  // Staff marked the quest's saved progress as partly lost (report.dataLost):
+  // missing work is "Not recorded" — neutral, unscored, and never Undone.
+  var NOT_RECORDED = -3;
   var BLOOM_PLAIN = {
     Remember: 'Recalls the key facts',
     Understand: 'Explains ideas in their own words',
@@ -108,7 +111,10 @@
       var r = reflect[id];
       return r && (r.attempts > 0 || r.success || (r.text && String(r.text).trim()));
     });
-    var undoneQs = allIds.length - ids.length;
+    var lost = !!(report && report.dataLost);
+    var missing = allIds.length - ids.length;
+    var undoneQs = lost ? 0 : missing;
+    var missWord = lost ? 'not recorded' : 'left undone';
     var cats = {};
     // Only a question or two to go on: say so, so a band isn't over-read.
     var early = ids.length && ids.length < 3 ? ' An early read from a small sample.' : '';
@@ -127,10 +133,11 @@
       var reached = topics.filter(function (t) { return t.reached; });
       cats.understanding = {
         title: 'Understanding',
-        band: ids.length ? band(genuine / ids.length, [0.4, 0.65, 0.85]) : UNDONE,
-        line: !ids.length ? 'No questions were answered.'
-          : 'Got the idea right on ' + genuine + ' of ' + ids.length + (ids.length === 1 ? ' question' : ' questions') + ' answered.' +
-            (undoneQs ? ' ' + undoneQs + (undoneQs === 1 ? ' question' : ' questions') + ' left undone.' : '') + early,
+        band: ids.length ? band(genuine / ids.length, [0.4, 0.65, 0.85]) : lost ? NOT_RECORDED : UNDONE,
+        line: !ids.length ? (lost ? 'No answers were recorded.' : 'No questions were answered.')
+          : 'Got the idea right on ' + genuine + ' of ' + ids.length + (ids.length === 1 ? ' question' : ' questions') + (lost ? ' recorded.' : ' answered.') +
+            (missing ? ' ' + missing + (missing === 1 ? ' question' : ' questions') + ' ' + missWord + '.' : '') + early,
+        missLabel: lost ? 'Not recorded' : 'Undone',
         undoneQs: undoneQs,
         nailed: reached.filter(function (t) { return t.ok; }),
         revisit: reached.filter(function (t) { return !t.ok; }),
@@ -143,7 +150,7 @@
       bloomMap = {};
       Object.keys(weekCfg.bloom).forEach(function (id) { if (ids.indexOf(id) !== -1) bloomMap[id] = weekCfg.bloom[id]; });
       if (!Object.keys(bloomMap).length) {
-        cats.depth = { title: 'Depth of thinking', band: UNDONE, ceiling: null, ceilingIdx: -1, line: 'No questions were answered.' };
+        cats.depth = { title: 'Depth of thinking', band: lost ? NOT_RECORDED : UNDONE, ceiling: null, ceilingIdx: -1, line: lost ? 'No answers were recorded.' : 'No questions were answered.' };
       }
     }
     if (bloomMap && Object.keys(bloomMap).length) {
@@ -160,6 +167,8 @@
     if (buildTotal) {
       var b = state.build || {};
       var done = Math.min(buildTotal, Object.keys(b).filter(function (k) { return b[k]; }).length);
+      // With lost progress, staff can set the steps actually finished.
+      if (lost && typeof report.buildDone === 'number') done = Math.max(0, Math.min(buildTotal, report.buildDone));
       cats.build = {
         title: 'Build', band: done ? band(done / buildTotal, [0.3, 0.6, 1]) : UNDONE,
         line: !done ? 'The build was left undone.' : done === buildTotal ? 'Every build step finished.' : done + ' of ' + buildTotal + ' build steps finished.',
@@ -191,15 +200,16 @@
     if (recovered) habitLines.push('Kept going after a first miss, and got there, on ' + recovered + (recovered === 1 ? ' question.' : ' questions.'));
     if (hl) habitLines.push('Highlighted key ideas while reading.');
     if (notes) habitLines.push('Took their own notes.');
-    if (timeMs) habitLines.push('About ' + QD.fmtTime(timeMs) + ' on the quest.');
-    var anyWork = ids.length || timeMs || hl || notes || Object.keys(state.build || {}).some(function (k) { return state.build[k]; });
+    if (timeMs && !lost) habitLines.push('About ' + QD.fmtTime(timeMs) + ' on the quest.');
+    var anyWork = lost || ids.length || timeMs || hl || notes || Object.keys(state.build || {}).some(function (k) { return state.build[k]; });
     cats.habits = {
-      title: 'Work habits', band: anyWork ? band((persist + engage) / 2, [0.35, 0.6, 0.85]) : UNDONE,
-      lines: habitLines.length ? habitLines : [anyWork ? 'Worked through the quest step by step.' : 'No work was recorded on this quest.'],
+      title: 'Work habits', band: lost ? NOT_RECORDED : anyWork ? band((persist + engage) / 2, [0.35, 0.6, 0.85]) : UNDONE,
+      lines: lost ? (habitLines.length ? habitLines : ['Not fully recorded for this quest.'])
+        : habitLines.length ? habitLines : [anyWork ? 'Worked through the quest step by step.' : 'No work was recorded on this quest.'],
       recovered: recovered, readClosely: hl > 0 || notes
     };
 
-    return { weekCfg: weekCfg, cats: cats, unfinished: unfinished };
+    return { weekCfg: weekCfg, cats: cats, unfinished: unfinished && !lost, lost: lost };
   }
 
   /* ---------- auto-drafted notes ---------- */
@@ -283,6 +293,7 @@
   }
   function pill(b) {
     if (b === UNDONE) return '<span class="rc-pill rc-undone">Undone</span>';
+    if (b === NOT_RECORDED) return '<span class="rc-pill rc-none">Not recorded</span>';
     return b < 0 ? '<span class="rc-pill rc-none">Not rated</span>' : '<span class="rc-pill rc-b' + b + '">' + BANDS[b] + '</span>';
   }
 
@@ -295,8 +306,8 @@
       if (cat.revisit.length) body += '<p class="rc-sub">Worth revisiting</p><ul class="rc-topics">' + cat.revisit.map(function (t) {
         return '<li class="again">' + (opts.questHref && t.anchor ? '<a href="' + esc(opts.questHref + '#' + t.anchor) + '">' + esc(t.name) + '</a>' : esc(t.name)) + '</li>';
       }).join('') + '</ul>';
-      if (cat.undone.length) body += '<p class="rc-sub">Undone</p><ul class="rc-topics">' + cat.undone.map(function (t) { return '<li class="later">' + esc(t.name) + '</li>'; }).join('') + '</ul>';
-    } else if (key === 'depth' && cat.band === UNDONE) {
+      if (cat.undone.length) body += '<p class="rc-sub">' + cat.missLabel + '</p><ul class="rc-topics">' + cat.undone.map(function (t) { return '<li class="later">' + esc(t.name) + '</li>'; }).join('') + '</ul>';
+    } else if (key === 'depth' && cat.band < 0) {
       body = '<p class="rc-line">' + esc(cat.line) + '</p>';
     } else if (key === 'depth') {
       body = '<ol class="rc-ladder">' + QD.BLOOM_LEVELS.map(function (l, i) {
@@ -326,6 +337,9 @@
     var n = notes || {};
     opts = Object.assign({ buildNotes: n.buildNotes || [] }, opts || {});
     var html = '<section class="rc">';
+    if (n.dataLost) {
+      html += '<p class="rc-lost">Part of this quest’s saved progress was lost to a technical issue on our side. Where the record is incomplete, this report draws on facilitator observation.</p>';
+    }
     if (n.strength || n.growth || n.next) {
       html += '<div class="rc-notes">' +
         (n.strength ? '<div class="rc-note rc-note-strength"><h3>Strength</h3><p>' + esc(n.strength) + '</p></div>' : '') +
