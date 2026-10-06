@@ -52,9 +52,17 @@
 
   // A question counts as genuinely understood if it passed on the kid's own
   // merit, or a facilitator granted a pass specifically because the
-  // reasoning was right (not just "close enough, move on").
+  // reasoning was right (not just "close enough, move on") — and either way
+  // within MAX_MISSES wrong tries. Getting there after more misses than that
+  // still needs work. attempts counts every check, including the one that
+  // passed; a facilitator pass comes after misses only.
+  var MAX_MISSES = 3;
+  function misses(r) {
+    return Math.max(0, (r.attempts || 0) - (r.success && !r.contentFlagged ? 1 : 0));
+  }
   function isGenuinePass(r) {
     if (!r) return false;
+    if (misses(r) > MAX_MISSES) return false;
     if (r.success && !r.contentFlagged) return true;
     if (r.contentFlagged && r.passReasons && r.passReasons.length) {
       var reasons = r.passReasons;
@@ -134,6 +142,7 @@
     BLOOM_LEVELS: BLOOM_LEVELS,
     fetchWeekState: fetchWeekState,
     fetchRating: fetchRating,
+    MAX_MISSES: MAX_MISSES,
     isGenuinePass: isGenuinePass,
     bloomCeiling: bloomCeiling,
     totalTimeMs: totalTimeMs,

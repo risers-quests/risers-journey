@@ -72,7 +72,7 @@
   function buildNote(key) { return BUILD_NOTES.filter(function (n) { return n.key === key; })[0]; }
 
   var ABOUT = {
-    understanding: 'Whether the core ideas really landed, judged on the thinking rather than spelling or wording.',
+    understanding: 'Whether the core ideas really landed within a few tries (no more than 3 misses), judged on the thinking rather than spelling or wording.',
     depth: 'How far the thinking went, from recalling facts up to judging ideas (Bloom’s Taxonomy).',
     build: 'How much of the hands-on build was finished.',
     presentation: 'How the learning was shared on presentation day, rated by facilitators.',
