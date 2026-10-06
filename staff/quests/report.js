@@ -45,8 +45,9 @@
       }
       var summary = QD.summarizeWeek(w, r[0].state);
       var started = summary.status !== 'not-started';
-      var model = QR.build(w, r[0].state, r[1]);
       var report = Object.assign({ shared: false, buildNotes: [] }, r[2].report || {});
+      var model = QR.build(w, r[0].state, r[1], report);
+      var rated = !!(r[1] && r[1].scores && Object.keys(r[1].scores).length);
       var draft = QR.draftNotes(model, report.buildNotes);
       ['strength', 'growth', 'next'].forEach(function (k) { if (typeof report[k] !== 'string') report[k] = draft[k]; });
 
@@ -66,6 +67,9 @@
               QR.BUILD_NOTES.map(function (n) {
                 return '<label><input type="checkbox" value="' + n.key + '"' + (report.buildNotes.indexOf(n.key) !== -1 ? ' checked' : '') + '> ' + n.label + '</label>';
               }).join('') + '</fieldset>'
+          : '') +
+        (!rated || report.presentationUndone
+          ? '<label class="rv-check"><input type="checkbox" class="rv-no-present"' + (report.presentationUndone ? ' checked' : '') + '> ' + kid.name + ' didn’t present <small>Shows Presentation as Undone</small></label>'
           : '') +
         '<div class="rv-bar">' +
           '<button type="button" class="eot2-btn eot2-btn-secondary rv-redraft">Redraft from quest data</button>' +
@@ -126,6 +130,17 @@
           });
           paint(); save();
         });
+      });
+      var noPresent = panel.querySelector('.rv-no-present');
+      if (noPresent) noPresent.addEventListener('change', function () {
+        report.presentationUndone = noPresent.checked;
+        model = QR.build(w, r[0].state, r[1], report);
+        draft = QR.draftNotes(model, report.buildNotes);
+        Array.prototype.forEach.call(boxes, function (t) {
+          var k = t.getAttribute('data-k');
+          if (k === 'growth' || k === 'next') { t.value = draft[k]; report[k] = draft[k]; }
+        });
+        paint(); save();
       });
       shareInput.addEventListener('change', function () {
         report.shared = shareInput.checked;

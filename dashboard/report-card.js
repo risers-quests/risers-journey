@@ -24,6 +24,9 @@
   var WORKER_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
   var SITE_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
   var BANDS = ['Beginning', 'Developing', 'Secure', 'Excelling'];
+  // Work that wasn't done isn't "Beginning" — it's Undone, and it is never
+  // scored. Beginning is for work that was done but is still early.
+  var UNDONE = -2;
   var BLOOM_PLAIN = {
     Remember: 'Recalls the key facts',
     Understand: 'Explains ideas in their own words',
@@ -92,20 +95,23 @@
 
   /* ---------- scoring ---------- */
 
-  function build(weekCfg, state, rating) {
+  // report (optional): the saved review record, for staff-recorded facts
+  // such as presentationUndone.
+  function build(weekCfg, state, rating, report) {
     state = state || {};
     var reflect = state.reflect || {};
     var allIds = Object.keys(weekCfg.topics || {});
-    // An unfinished quest is judged only on the questions the Riser actually
-    // reached; the rest show as "not reached yet", never as "not understood".
+    // Only answered questions are scored; anything left unanswered is listed
+    // as Undone, never counted as "not understood".
     var unfinished = !state.completed;
-    var ids = unfinished ? allIds.filter(function (id) {
+    var ids = allIds.filter(function (id) {
       var r = reflect[id];
       return r && (r.attempts > 0 || r.success || (r.text && String(r.text).trim()));
-    }) : allIds;
+    });
+    var undoneQs = allIds.length - ids.length;
     var cats = {};
     // Only a question or two to go on: say so, so a band isn't over-read.
-    var early = unfinished && ids.length && ids.length < 3 ? ' An early read from a small sample.' : '';
+    var early = ids.length && ids.length < 3 ? ' An early read from a small sample.' : '';
 
     if (allIds.length) {
       var genuine = ids.filter(function (id) { return QD.isGenuinePass(reflect[id]); }).length;
@@ -121,19 +127,24 @@
       var reached = topics.filter(function (t) { return t.reached; });
       cats.understanding = {
         title: 'Understanding',
-        band: ids.length ? band(genuine / ids.length, [0.4, 0.65, 0.85]) : -1,
-        line: !ids.length ? 'No questions answered yet.'
-          : 'Got the idea right on ' + genuine + ' of ' + ids.length + (ids.length === 1 ? ' question' : ' questions') + (unfinished ? ' answered so far.' : '.') + early,
+        band: ids.length ? band(genuine / ids.length, [0.4, 0.65, 0.85]) : UNDONE,
+        line: !ids.length ? 'No questions were answered.'
+          : 'Got the idea right on ' + genuine + ' of ' + ids.length + (ids.length === 1 ? ' question' : ' questions') + ' answered.' +
+            (undoneQs ? ' ' + undoneQs + (undoneQs === 1 ? ' question' : ' questions') + ' left undone.' : '') + early,
+        undoneQs: undoneQs,
         nailed: reached.filter(function (t) { return t.ok; }),
         revisit: reached.filter(function (t) { return !t.ok; }),
-        notReached: topics.filter(function (t) { return !t.reached; })
+        undone: topics.filter(function (t) { return !t.reached; })
       };
     }
 
     var bloomMap = null;
     if (weekCfg.bloom) {
       bloomMap = {};
-      Object.keys(weekCfg.bloom).forEach(function (id) { if (!unfinished || ids.indexOf(id) !== -1) bloomMap[id] = weekCfg.bloom[id]; });
+      Object.keys(weekCfg.bloom).forEach(function (id) { if (ids.indexOf(id) !== -1) bloomMap[id] = weekCfg.bloom[id]; });
+      if (!Object.keys(bloomMap).length) {
+        cats.depth = { title: 'Depth of thinking', band: UNDONE, ceiling: null, ceilingIdx: -1, line: 'No questions were answered.' };
+      }
     }
     if (bloomMap && Object.keys(bloomMap).length) {
       var ceiling = QD.bloomCeiling(bloomMap, reflect).ceiling;
@@ -150,14 +161,16 @@
       var b = state.build || {};
       var done = Math.min(buildTotal, Object.keys(b).filter(function (k) { return b[k]; }).length);
       cats.build = {
-        title: 'Build', band: band(done / buildTotal, [0.3, 0.6, 1]),
-        line: done === buildTotal ? 'Every build step finished.' : done + ' of ' + buildTotal + ' build steps finished.',
+        title: 'Build', band: done ? band(done / buildTotal, [0.3, 0.6, 1]) : UNDONE,
+        line: !done ? 'The build was left undone.' : done === buildTotal ? 'Every build step finished.' : done + ' of ' + buildTotal + ' build steps finished.',
         photo: weekCfg.buildPhoto || ''
       };
     }
 
     var scores = rating && rating.scores;
-    if (scores && Object.keys(scores).length) {
+    if (report && report.presentationUndone) {
+      cats.presentation = { title: 'Presentation', band: UNDONE, line: 'The presentation was left undone.' };
+    } else if (scores && Object.keys(scores).length) {
       var crit = RUBRIC.filter(function (c) { return scores[c.key]; }).map(function (c) {
         return { name: c.name, band: Math.max(0, Math.min(3, scores[c.key] - 1)) };
       });
@@ -179,9 +192,10 @@
     if (hl) habitLines.push('Highlighted key ideas while reading.');
     if (notes) habitLines.push('Took their own notes.');
     if (timeMs) habitLines.push('About ' + QD.fmtTime(timeMs) + ' on the quest.');
+    var anyWork = ids.length || timeMs || hl || notes || Object.keys(state.build || {}).some(function (k) { return state.build[k]; });
     cats.habits = {
-      title: 'Work habits', band: band((persist + engage) / 2, [0.35, 0.6, 0.85]),
-      lines: habitLines.length ? habitLines : ['Worked through the quest step by step.'],
+      title: 'Work habits', band: anyWork ? band((persist + engage) / 2, [0.35, 0.6, 0.85]) : UNDONE,
+      lines: habitLines.length ? habitLines : [anyWork ? 'Worked through the quest step by step.' : 'No work was recorded on this quest.'],
       recovered: recovered, readClosely: hl > 0 || notes
     };
 
@@ -198,12 +212,14 @@
   function draftNotes(model, buildNotes) {
     var keys = rated(model);
     var c = model.cats;
-    if (!keys.length) return { strength: '', growth: '', next: '' };
+    if (!keys.length && !ORDER.some(function (k) { return c[k] && c[k].band === UNDONE; })) return { strength: '', growth: '', next: '' };
+    var strength = '', growth = '', next = '';
+    if (keys.length) {
     var top = keys.slice().sort(function (a, b) { return c[b].band - c[a].band || ORDER.indexOf(a) - ORDER.indexOf(b); })[0];
     var low = keys.slice().sort(function (a, b) { return c[a].band - c[b].band || ORDER.indexOf(a) - ORDER.indexOf(b); })[0];
     if (low === top && keys.length > 1) low = keys.filter(function (k) { return k !== top; })[0];
 
-    var strength = {
+    strength = {
       understanding: 'The core ideas really landed' + (c.understanding && c.understanding.nailed.length ? ', especially “' + c.understanding.nailed[0].name.replace(/^\d+\.\s*/, '') + '”.' : '.'),
       depth: c.depth && c.depth.ceiling ? 'Your thinking reached a strong level: you ' + BLOOM_YOU[c.depth.ceiling] + '.' : 'You built a steady foundation, step by step.',
       build: 'You saw your build through and made the ideas real.',
@@ -217,7 +233,7 @@
     var revisitName = revisit ? revisit.name.replace(/^\d+\.\s*/, '') : '';
     var nextBloom = c.depth ? QD.BLOOM_LEVELS[Math.min(QD.BLOOM_LEVELS.length - 1, c.depth.ceilingIdx + 1)] : '';
     var all = c[low].band === 3;
-    var growth = all
+    growth = all
       ? 'Everything here is strong. The stretch now is depth: explaining why something works, not just what happens.'
       : {
           understanding: 'A few ideas haven’t fully landed yet' + (revisitName ? ', especially “' + revisitName + '”.' : '.'),
@@ -226,7 +242,7 @@
           presentation: c.presentation.criteria ? 'In presentations, the area to grow is ' + topCriterion(c.presentation.criteria, false).toLowerCase() + '.' : '',
           habits: 'Slowing down will help: reread the tricky part before answering, and jot your own notes as you go.'
         }[low];
-    var next = all
+    next = all
       ? 'After your next quest, explain one idea out loud to someone at home, and say why it works.'
       : {
           understanding: revisitName ? 'Go back to “' + revisitName + '” in the quest and explain it out loud to someone at home.' : 'Pick the idea you found trickiest and explain it out loud to someone at home.',
@@ -235,10 +251,20 @@
           presentation: 'Before your next presentation, practise it once out loud for a family member.',
           habits: 'In your next quest, highlight two key ideas in each section and write one line about each in your own words.'
         }[low];
+    }
     if (model.unfinished) {
-      var later = c.understanding && c.understanding.notReached[0];
+      var later = c.understanding && c.understanding.undone[0];
       next = 'Pick the quest back up and finish it' + (later ? ', starting with “' + later.name.replace(/^\d+\.\s*/, '') + '”.' : '.');
     }
+    // Undone work comes before anything about how well the rest went.
+    var UNDONE_NOTES = {
+      understanding: { growth: 'Questions were left undone. Every question is part of the learning, so each one needs an honest answer.', next: 'Go back to the questions you left and answer each one in your own words.' },
+      build: { growth: 'The build was left undone, and the build is where the ideas become something real.', next: 'Gather your materials and work through the build steps, one at a time.' },
+      presentation: { growth: 'The presentation was left undone. Sharing what you learned is part of finishing a quest.', next: 'For your next quest, plan your presentation early and practise it once out loud.' }
+    };
+    var undoneKey = ['understanding', 'build', 'presentation'].filter(function (k) { return c[k] && c[k].band === UNDONE; })[0];
+    if (!undoneKey && c.understanding && c.understanding.undoneQs && !model.unfinished) undoneKey = 'understanding';
+    if (undoneKey) { growth = UNDONE_NOTES[undoneKey].growth; next = UNDONE_NOTES[undoneKey].next; }
     var bn = c.build && buildNotes && buildNotes.length && buildNote(buildNotes[0]);
     if (bn) { growth = bn.growth; next = bn.next; }
     return { strength: strength, growth: growth, next: next };
@@ -256,6 +282,7 @@
     return s + '</span>';
   }
   function pill(b) {
+    if (b === UNDONE) return '<span class="rc-pill rc-undone">Undone</span>';
     return b < 0 ? '<span class="rc-pill rc-none">Not rated</span>' : '<span class="rc-pill rc-b' + b + '">' + BANDS[b] + '</span>';
   }
 
@@ -268,7 +295,9 @@
       if (cat.revisit.length) body += '<p class="rc-sub">Worth revisiting</p><ul class="rc-topics">' + cat.revisit.map(function (t) {
         return '<li class="again">' + (opts.questHref && t.anchor ? '<a href="' + esc(opts.questHref + '#' + t.anchor) + '">' + esc(t.name) + '</a>' : esc(t.name)) + '</li>';
       }).join('') + '</ul>';
-      if (cat.notReached.length) body += '<p class="rc-sub">Not reached yet</p><ul class="rc-topics">' + cat.notReached.map(function (t) { return '<li class="later">' + esc(t.name) + '</li>'; }).join('') + '</ul>';
+      if (cat.undone.length) body += '<p class="rc-sub">Undone</p><ul class="rc-topics">' + cat.undone.map(function (t) { return '<li class="later">' + esc(t.name) + '</li>'; }).join('') + '</ul>';
+    } else if (key === 'depth' && cat.band === UNDONE) {
+      body = '<p class="rc-line">' + esc(cat.line) + '</p>';
     } else if (key === 'depth') {
       body = '<ol class="rc-ladder">' + QD.BLOOM_LEVELS.map(function (l, i) {
         return '<li class="' + (i <= cat.ceilingIdx ? 'on' : '') + '" title="' + esc(BLOOM_PLAIN[l]) + '">' + l + '</li>';
@@ -305,7 +334,8 @@
         '</div>';
     }
     html += '<div class="rc-grid">' + ORDER.filter(function (k) { return model.cats[k]; }).map(function (k) { return catHtml(k, model.cats[k], opts); }).join('') + '</div>';
-    html += '<p class="rc-scale">Scale: ' + BANDS.map(function (b, i) { return '<span class="rc-pill rc-b' + i + '">' + b + '</span>'; }).join(' ') + '</p>';
+    html += '<p class="rc-scale">Scale: ' + BANDS.map(function (b, i) { return '<span class="rc-pill rc-b' + i + '">' + b + '</span>'; }).join(' ') +
+      '<span class="rc-scale-sep">·</span><span class="rc-pill rc-undone">Undone</span> means it wasn’t done, so it isn’t scored.</p>';
     return html + '</section>';
   }
 
@@ -347,6 +377,7 @@
 
   window.QUEST_REPORT = {
     BANDS: BANDS,
+    UNDONE: UNDONE,
     BUILD_NOTES: BUILD_NOTES,
     build: build,
     draftNotes: draftNotes,

@@ -101,7 +101,7 @@
       app.appendChild(list);
     }
     var shared = done.concat(going).filter(function (q) { return q.report; });
-    var roll = shared.length ? QR.rollup(shared.map(function (q) { return QR.build(q.weekCfg, q.state, q.rating); })) : null;
+    var roll = shared.length ? QR.rollup(shared.map(function (q) { return QR.build(q.weekCfg, q.state, q.rating, q.report); })) : null;
     if (roll) {
       app.insertBefore(el('div', 'qd-rollup',
         '<span class="qd-rollup-label">Across your quests</span>' +
@@ -133,7 +133,7 @@
     if (s.status !== 'completed') {
       app.appendChild(el('p', 'qd-partial', 'This quest isn’t finished yet (' + s.pct + '% done), so this feedback covers the parts you completed.'));
     }
-    var model = QR.build(q.weekCfg, q.state, q.rating);
+    var model = QR.build(q.weekCfg, q.state, q.rating, q.report);
     var wrap = el('div', 'qd-report');
     wrap.innerHTML = QR.render(model, q.report, { questHref: q.weekCfg.path });
     app.appendChild(wrap);

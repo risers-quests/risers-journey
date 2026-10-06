@@ -77,3 +77,7 @@
   .rc-crit em { display: none; }
   .rc-ladder li { font-size: .6rem; }
 }
+
+/* Undone: not done, so not scored — set apart from the four bands. */
+.rc-pill.rc-undone { background: transparent; color: #a3432b; border: 1px dashed #d9a293; padding: 2px 9px; }
+.rc-scale-sep { color: var(--border); margin: 0 2px; }
