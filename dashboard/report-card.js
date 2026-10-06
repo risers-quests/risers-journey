@@ -302,7 +302,7 @@
 
   function photosHtml(list) {
     if (!list.length) return '';
-    return '<div class="rc-photos rc-photos-' + list.length + '">' + list.map(function (src, i) {
+    return '<div class="rc-photos rc-photos-' + Math.min(list.length, 3) + '">' + list.map(function (src, i) {
       return '<img class="rc-photo" src="' + esc(src) + '" alt="Build picture ' + (i + 1) + '" loading="lazy">';
     }).join('') + '</div>';
   }
@@ -403,13 +403,13 @@
   }
 
   /* ---------- build pictures ----------
-     Up to three per Riser per quest, one record each, at week keys
-     "<week>-buildphoto", "<week>-buildphoto-2" and "<week>-buildphoto-3"
+     Up to six per Riser per quest, one record each, at week keys
+     "<week>-buildphoto", then "<week>-buildphoto-2" … "-6"
      ({ img: <JPEG data URL>, at, by }; img '' once removed). Kept out of
      the report record so reports stay light. Staff shrink each picture in
      the browser before saving (see staff/quests/report.js), since a saved
      record is capped at about 200 KB. No pictures: no picture area. */
-  var PHOTO_SLOTS = ['', '-2', '-3'];
+  var PHOTO_SLOTS = ['', '-2', '-3', '-4', '-5', '-6'];
   function photoWeek(week, slot) { return week + '-buildphoto' + PHOTO_SLOTS[slot]; }
   // Resolves { ok, slots: [img or '', ...] } — one entry per slot.
   function fetchBuildPhotos(group, kid, week) {
