@@ -190,6 +190,19 @@
     });
   }
 
+  // Completed quests get a Report link: review the family-facing report
+  // card and share it (report.html). Shows whether it's been shared yet.
+  function addReportLink(row, kid, w) {
+    var a = el('a', 'staff-quest-link sq-report-link', 'Report');
+    a.href = 'report.html?kid=' + kid.slug + '&week=' + encodeURIComponent(w.key);
+    row.querySelector('.sq-week-links').insertBefore(a, row.querySelector('.sq-week-links').firstChild);
+    window.QUEST_REPORT.fetchReport(w.group, kid.slug, w.key).then(function (res) {
+      var shared = !!(res.report && res.report.shared);
+      a.textContent = shared ? 'Report · Shared' : 'Report · To review';
+      a.classList.toggle('is-shared', shared);
+    });
+  }
+
   function renderKid(kid) {
     app.innerHTML = '';
     app.appendChild(el('div', 'dash-crumb', '<a href="index.html">&larr; All Risers</a>'));
@@ -226,6 +239,7 @@
       return Promise.all([QD.fetchWeekState(w.group, kid.slug, w.key), fetchIncomplete(w.group, kid.slug, w.key)]).then(function (r) {
         var status = r[0].ok ? QD.summarizeWeek(w, r[0].state).status : 'unknown';
         row.querySelector('.sq-week-status').innerHTML = chip(status, r[1]);
+        if (status === 'completed') addReportLink(row, kid, w);
         if (status === 'completed') addUndo(row, kid, w, true);
         else if (status === 'in-progress' && w.buildTotal) addUndo(row, kid, w, false);
         return status;

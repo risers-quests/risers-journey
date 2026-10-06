@@ -1,5 +1,5 @@
-/* Quests page (dashboard/) — the overview list, closing notes, and one
-   quest's metrics. Shared hd-* components (page header, cards, squares)
+/* Quests page (dashboard/) — the overview list and one quest's page
+   (its report card styles are in report-card.css). Shared hd-* components (page header, cards, squares)
    come from home.css; tokens from assets/lifehub.css. Parent-safe, so it
    stays warm and readable at a glance on a phone. */
 
@@ -11,7 +11,6 @@
   background: #fffaf0; border: 1px solid #e8b34d; color: #8a5a00;
   border-radius: 12px; padding: 14px 18px; font-size: .9rem; margin: 0 0 24px;
 }
-.rep-no-data { color: var(--ink-faint); font-size: .85rem; font-style: italic; margin: 0; }
 
 /* ---- Overview list ---- */
 .qd-list { padding: 6px 12px; max-width: 760px; }
@@ -31,60 +30,24 @@
 .qd-row-go { color: var(--ink-faint); font-size: 1.1rem; transition: transform .15s ease, color .15s ease; }
 .qd-row:hover .qd-row-go { color: var(--accent); transform: translateX(3px); }
 
-/* ---- Closing notes ---- */
-.qd-section-title { font-family: var(--font-head); font-weight: 600; font-size: 1.2rem; margin: 40px 0 14px; }
-.qd-notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.qd-notes > div { border-left: 3px solid var(--brand-green); padding: 2px 0 2px 16px; }
-.qd-notes h3 { font-family: var(--font-head); font-weight: 600; font-size: .98rem; margin: 0 0 6px; }
-.qd-notes p { margin: 0; font-size: .9rem; line-height: 1.6; color: var(--ink-soft); }
-.qd-footnote { margin: 36px 0 0; font-size: .82rem; color: var(--ink-faint); }
-
 /* ---- One quest ---- */
 .qd-open {
   display: inline-flex; margin-top: 6px; background: var(--accent); color: #fff; text-decoration: none;
   font-weight: 600; font-size: .9rem; padding: 10px 20px; border-radius: 999px;
 }
 .qd-open:hover { background: var(--accent-dark); }
-.qd-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.qd-metric { display: flex; flex-direction: column; gap: 8px; }
-.qd-metric-wide { grid-column: 1 / -1; }
-.qd-label { font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
-.qd-value { font-family: var(--font-head); font-weight: 600; font-size: 1.5rem; color: var(--ink); line-height: 1.2; }
-.qd-hint { margin: 4px 0 0; font-size: .8rem; color: var(--ink-faint); line-height: 1.5; max-width: 60ch; }
-.rep-build-photo {
-  display: block; width: 100%; max-width: 520px; max-height: 320px; object-fit: cover;
-  border-radius: 12px; border: 1px solid var(--border);
-}
-
-/* ---- Bloom's stepped pyramid: narrow at the top (Evaluate), wide at the
-   bottom (Remember). Reached tiers, up through the kid's ceiling, are
-   solid with a checkmark; tiers above it are a plain dashed outline — a
-   strong filled vs. empty contrast at a glance. ---- */
-.bloom-pyramid {
-  display: flex; flex-direction: column-reverse; align-items: center; gap: 4px; margin: 6px 0 8px; max-width: 420px;
-}
-.bloom-tier {
-  font-size: .74rem; font-weight: 700; text-align: center; padding: 7px 4px;
-  border-radius: 6px; background: #fff; color: var(--ink-faint);
-  border: 1.5px dashed var(--border);
-}
-.bloom-tier.reached { background: var(--brand-green); color: #1d3a08; border: 1.5px solid #7ab432; }
-.bloom-ceiling-label { font-size: .88rem; margin: 4px 0 0; color: var(--ink-soft); }
-.bloom-ceiling-label strong { color: var(--accent-dark); }
-
-@media (max-width: 760px) {
-  .qd-notes { grid-template-columns: 1fr; }
-  .qd-metrics { grid-template-columns: 1fr 1fr; }
-}
-@media (max-width: 420px) {
-  .qd-metrics { grid-template-columns: 1fr; }
-}
-.qd-value .qd-muted { font-family: var(--font-body); font-weight: 500; font-size: 1rem; }
-
-/* In-progress rows: a slim progress bar instead of "See how it went". */
+/* In-progress rows: a slim progress bar instead of the feedback line. */
 .qd-row-text .qd-row-bar { display: flex; align-items: center; gap: 10px; }
 .qd-row-track { flex: 0 1 160px; height: 5px; border-radius: 99px; background: var(--border); overflow: hidden; }
 .qd-row-track > span { display: block; height: 100%; border-radius: inherit; background: var(--brand-green); }
 .qd-row.is-progress .qd-row-num { background: #fff4dc; color: #93600f; }
 .qd-row-chip { flex-shrink: 0; }
 @media (max-width: 520px) { .qd-row-chip { display: none; } }
+
+/* "Across your quests" — from shared reports only. */
+.qd-rollup { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 22px; margin: 0 0 14px; font-size: .92rem; color: var(--ink-soft); }
+.qd-rollup strong { color: var(--ink); font-weight: 600; }
+.qd-rollup-label { font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+.qd-waiting { display: flex; flex-direction: column; gap: 4px; max-width: 620px; }
+.qd-waiting span { color: var(--ink-soft); font-size: .92rem; }
+.qd-report { margin-top: 8px; }

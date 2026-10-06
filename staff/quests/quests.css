@@ -35,3 +35,21 @@
 .sq-undo-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .sq-undo-actions .eot2-btn { width: auto; padding: 9px 16px; font-size: .85rem; }
 .sq-undo-msg { font-size: .82rem; color: #a3432b; margin: 0; }
+
+/* ---- Quest report review (report.html) ---- */
+.rv-note { margin: 0 0 14px; color: var(--ink-soft); font-size: .92rem; max-width: 760px; }
+.rv-panel { max-width: 1000px; display: flex; flex-direction: column; gap: 16px; }
+.rv-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.rv-field { display: flex; flex-direction: column; gap: 6px; }
+.rv-field > span { font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+.rv-field textarea {
+  font: inherit; font-size: .9rem; line-height: 1.5; color: var(--ink); resize: vertical; min-height: 96px;
+  border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; background: var(--paper);
+}
+.rv-field textarea:focus { outline: 2px solid var(--brand-green); outline-offset: 1px; background: #fff; }
+.rv-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
+.rv-status { font-size: .82rem; color: var(--ink-faint); min-width: 60px; }
+.rv-share { margin-left: auto; }
+.rv-preview-title { font-family: var(--font-head); font-weight: 600; font-size: 1rem; color: var(--ink-soft); margin: 30px 0 12px; }
+.sq-report-link.is-shared { color: var(--good); }
+@media (max-width: 860px) { .rv-fields { grid-template-columns: 1fr; } .rv-share { margin-left: 0; } }

@@ -1,27 +1,17 @@
 /* Quests — the kid-facing quest page. Two views:
 
-   - overview: how many self-paced quests the kid completed, a row per
-     completed quest, and three auto-drafted closing notes;
-   - ?quest=<week key>: that one quest's own performance — time taken,
-     questions answered, presentation rating, a Bloom's Taxonomy ceiling,
-     and the build picture if there is one.
+   - overview: one list of the Riser's quests, completed first, then the
+     ones in progress (badge + progress bar + Continue), with a short
+     "across your quests" line once any feedback has been shared;
+   - ?quest=<week key>: that quest's report card (dashboard/report-card.js)
+     — but only after staff have reviewed it and switched on Share.
 
-   Only quests actually finished (state.completed === true) are shown.
-   Reads the same synced data the staff Feedback page uses, but never
-   anything staff-private — this page, and its link, is safe to share
-   with families.
-
-   The three closing paragraphs are auto-drafted from the same
-   underlying signals the staff Feedback page computes (Bloom's ceiling,
-   genuine-pass rate), deliberately worded around the underlying skill
-   rather than reading-quest mechanics ("questions," "-level thinking"
-   as a label), so the same drafting logic keeps making sense once
-   Term 3's fully different, hands-on build-and-make quests replace
-   these — without revealing anything about what Term 3 actually is. */
+   Never shows anything staff-private, so this page, and its link, is safe
+   to share with families. */
 (function () {
   var QD = window.QUEST_DATA;
+  var QR = window.QUEST_REPORT;
   var KID_KEY = 'imm-l3-kid';
-  var BLOOM_LEVELS = QD.BLOOM_LEVELS;
   var TERM_START = 'Aug 31';
   var TERM_END = 'Sep 30';
 
@@ -36,91 +26,6 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  function scoreBand(total, max) {
-    var pct = total / max;
-    if (pct >= 0.9) return 'Outstanding';
-    if (pct >= 0.7) return 'Solid';
-    if (pct >= 0.5) return 'Developing';
-    return 'Needs support';
-  }
-
-  function bloomPyramidHtml(bloomInfo) {
-    if (!bloomInfo) return '<p class="rep-no-data">Not tracked for this quest yet.</p>';
-    var ceilingIdx = bloomInfo.ceiling ? BLOOM_LEVELS.indexOf(bloomInfo.ceiling) : -1;
-    // BLOOM_LEVELS is already low-to-high (Remember...Evaluate). Fed in
-    // that same order, .bloom-pyramid's column-reverse CSS puts the FIRST
-    // item (Remember) at main-start, which for column-reverse is the
-    // bottom — so this needs no .reverse() here; adding one, like an
-    // earlier version of this did, cancels out the CSS reversal and flips
-    // the whole pyramid (Evaluate at the base, Remember at the tip).
-    var rows = BLOOM_LEVELS.map(function (level, idx) {
-      var reached = idx <= ceilingIdx;
-      var widthPct = 100 - idx * 15; // widest at the base (Remember), narrowest at the tip (Evaluate)
-      return '<div class="bloom-tier ' + (reached ? 'reached' : 'not-reached') + '" style="width:' + widthPct + '%;">' +
-        (reached ? '✓ ' : '') + level + '</div>';
-    }).join('');
-    return '<div class="bloom-pyramid">' + rows + '</div>' +
-      (bloomInfo.ceiling
-        ? '<p class="bloom-ceiling-label">Reached <strong>' + bloomInfo.ceiling + '</strong>-level thinking</p>'
-        : '<p class="bloom-ceiling-label rep-no-data">Still building toward its first level here.</p>');
-  }
-
-  // Deliberately written to describe the underlying skill, not the
-  // reading-quest mechanics behind it (no "questions," no naming Bloom's
-  // Taxonomy in the prose) — Term 3 is a completely different, hands-on
-  // build-and-make format, and this same drafting logic needs to keep
-  // making sense once the quests it's describing look nothing like Term
-  // 2's. The Bloom's ceiling itself still drives which sentence gets
-  // picked; only the wording is kept generic.
-  function draftClosingNotes(quests) {
-    var highestCeilingIdx = -1;
-    var anyGrowth = false;
-    quests.forEach(function (q) {
-      if (!q.bloomInfo) return;
-      BLOOM_LEVELS.forEach(function (l) {
-        var c = q.bloomInfo.counts[l];
-        if (c.total && c.hit < c.total) anyGrowth = true;
-      });
-      if (q.bloomInfo.ceiling) {
-        var idx = BLOOM_LEVELS.indexOf(q.bloomInfo.ceiling);
-        if (idx > highestCeilingIdx) highestCeilingIdx = idx;
-      }
-    });
-
-    var didWell, canImprove, canLearn;
-    if (highestCeilingIdx >= 0) {
-      var topLevel = BLOOM_LEVELS[highestCeilingIdx];
-      var howLabel = topLevel === 'Remember' ? 'getting the basic facts right, consistently'
-        : topLevel === 'Understand' ? 'explaining things clearly in your own words, not just repeating them'
-        : topLevel === 'Apply' ? 'taking what you’ve learned and using it on something new, not just remembering it'
-        : topLevel === 'Analyze' ? 'breaking things down and figuring out how the different parts connect'
-        : 'weighing different ideas and judging which explanation actually holds up';
-      didWell = 'You’ve been ' + howLabel + ' this term — real thinking, not just going through the motions.';
-    } else {
-      didWell = 'You’re building a real foundation this term, working through each quest step by step.';
-    }
-
-    // Always a concrete, actionable suggestion — never "nothing to work
-    // on." Even a clean run has a real next step (going deeper/faster,
-    // explaining it to someone else); the difference is which one fits
-    // what actually happened, not whether there's anything to say.
-    canImprove = anyGrowth
-      ? 'A few parts took more than one attempt before they really clicked. Next time, try slowing down on the part that feels trickiest and double-checking your first idea before locking it in — that’s usually where the extra tries come from.'
-      : 'Everything landed on the first real try, which is genuinely great — the next challenge is depth, not correctness: try explaining your answers out loud to someone else, or pushing a little further into the details before moving on, since that’s what separates “got it right” from “really owns it.”';
-
-    canLearn = 'The next stretch is getting comfortable explaining <strong>why</strong> something works, not just what happened or what you did — that kind of thinking is exactly what future quests will keep building on.';
-
-    return { didWell: didWell, canImprove: canImprove, canLearn: canLearn };
-  }
-
-  function presentationHtml(rating) {
-    if (!rating) return '<span class="qd-muted">Not yet rated</span>';
-    var scores = rating.scores || {};
-    var keys = Object.keys(scores);
-    var total = keys.reduce(function (sum, k) { return sum + scores[k]; }, 0);
-    return escapeHtml(scoreBand(total, keys.length * 4 || 20));
-  }
-
   function completedText(n) {
     return n + (n === 1 ? ' quest' : ' quests');
   }
@@ -131,7 +36,8 @@
   }
 
   // Loads every quest week once; each result is { weekCfg, loadError } or
-  // { weekCfg, state, summary, rating } (state null = not started yet).
+  // { weekCfg, state, summary, rating, report } (state null = not started
+  // yet; report only when staff have shared it).
   function loadQuests(kidKey, roster) {
     return Promise.all(roster.weeks.map(function (weekCfg) {
       return Promise.all([
@@ -139,7 +45,12 @@
         QD.fetchRating(weekCfg.group, kidKey, weekCfg.key)
       ]).then(function (r) {
         if (!r[0].ok) return { weekCfg: weekCfg, loadError: true };
-        return { weekCfg: weekCfg, state: r[0].state, summary: QD.summarizeWeek(weekCfg, r[0].state), rating: r[1] };
+        var q = { weekCfg: weekCfg, state: r[0].state, summary: QD.summarizeWeek(weekCfg, r[0].state), rating: r[1], report: null };
+        if (q.summary.status !== 'completed') return q;
+        return QR.fetchReport(weekCfg.group, kidKey, weekCfg.key).then(function (rep) {
+          q.report = rep.report && rep.report.shared ? rep.report : null;
+          return q;
+        });
       });
     }));
   }
@@ -158,7 +69,7 @@
     row.innerHTML =
       '<span class="qd-row-num">' + escapeHtml(lbl.num.replace(/^Quest\s*/, '')) + '</span>' +
       '<span class="qd-row-text"><strong>' + escapeHtml(lbl.title) + '</strong>' +
-        (done ? '<span>See how it went</span>'
+        (done ? '<span>' + (q.report ? 'See your feedback' : 'Feedback coming soon') + '</span>'
               : '<span class="qd-row-bar"><span class="qd-row-track"><span style="width:' + q.summary.pct + '%"></span></span>' + q.summary.pct + '% done · Continue</span>') +
       '</span>' +
       (done ? '<span class="hd-chip hd-chip-done qd-row-chip">Completed</span>' : '<span class="hd-chip hd-chip-progress qd-row-chip">In progress</span>') +
@@ -173,7 +84,7 @@
     var going = ok.filter(function (r) { return r.summary.status === 'in-progress'; });
 
     app.querySelector('.qd-lede').innerHTML = done.length
-      ? 'You completed <strong>' + completedText(done.length) + '</strong> in your self-paced quests.'
+      ? 'You completed <strong>' + completedText(done.length) + '</strong> in your self-paced quests.' + (going.length ? ' ' + going.length + ' in progress.' : '')
       : going.length ? 'Your quests in progress are below — pick up where you left off.'
       : 'Your quests will show up here once you start one.';
     if (anyLoadError) app.appendChild(loadWarning());
@@ -188,13 +99,14 @@
     }
     if (!done.length) return;
 
-    var notes = draftClosingNotes(done.map(function (q) { return { bloomInfo: q.summary.bloom }; }));
-    app.appendChild(el('h2', 'qd-section-title', 'Looking back'));
-    app.appendChild(el('div', 'qd-notes',
-      '<div><h3>What you did well</h3><p>' + notes.didWell + '</p></div>' +
-      '<div><h3>What you can do better</h3><p>' + notes.canImprove + '</p></div>' +
-      '<div><h3>What you can learn</h3><p>' + notes.canLearn + '</p></div>'));
-    app.appendChild(el('p', 'qd-footnote', 'Term 3 quests will be different.'));
+    var shared = done.filter(function (q) { return q.report; });
+    var roll = shared.length ? QR.rollup(shared.map(function (q) { return QR.build(q.weekCfg, q.state, q.rating); })) : null;
+    if (roll) {
+      app.insertBefore(el('div', 'qd-rollup',
+        '<span class="qd-rollup-label">Across your quests</span>' +
+        '<span>Strongest: <strong>' + roll.strongest + '</strong></span>' +
+        (roll.growing ? '<span>Growing: <strong>' + roll.growing + '</strong></span>' : '')), app.querySelector('.qd-list'));
+    }
   }
 
   // ---- One quest: its own performance, and a way back in. ----
@@ -209,24 +121,19 @@
     var s = q.summary;
     if (s.status !== 'completed') {
       app.appendChild(el('p', 'qd-muted qd-pending', s.status === 'in-progress'
-        ? 'In progress — ' + s.pct + '% done so far. How it went will show here once it’s completed.'
+        ? 'In progress — ' + s.pct + '% done so far. Your feedback will show here once it’s completed.'
         : 'Not started yet.'));
       return;
     }
-
-    var grid = el('div', 'qd-metrics');
-    grid.innerHTML =
-      '<div class="hd-card qd-metric"><span class="qd-label">Time taken</span><span class="qd-value">' + QD.fmtTime(s.timeMs) + '</span></div>' +
-      '<div class="hd-card qd-metric"><span class="qd-label">Questions answered</span><span class="qd-value">' + s.passed + ' of ' + s.questionTotal + '</span>' +
-        '<div class="hd-squares">' + s.questions.map(function (x) { return '<span class="hd-sq hd-sq-' + x.status + '"></span>'; }).join('') + '</div></div>' +
-      '<div class="hd-card qd-metric"><span class="qd-label">Presentation</span><span class="qd-value">' + presentationHtml(q.rating) + '</span></div>' +
-      '<div class="hd-card qd-metric qd-metric-wide"><span class="qd-label">Depth of thinking</span>' + bloomPyramidHtml(s.bloom) +
-        (s.bloom ? '<p class="qd-hint">From remembering facts, up through explaining and using ideas, to connecting and judging them — Bloom’s Taxonomy. The filled bars show how high you reached.</p>' : '') +
-      '</div>' +
-      (q.weekCfg.buildPhoto
-        ? '<div class="hd-card qd-metric qd-metric-wide"><span class="qd-label">Your build</span><img class="rep-build-photo" src="' + escapeHtml(q.weekCfg.buildPhoto) + '" alt="' + escapeHtml(roster.displayName + '’s build for ' + q.weekCfg.label) + '" loading="lazy"></div>'
-        : '');
-    app.appendChild(grid);
+    if (!q.report) {
+      app.appendChild(el('div', 'hd-card qd-waiting',
+        '<strong>Your facilitators are reviewing this quest.</strong><span>Your feedback will appear here soon.</span>'));
+      return;
+    }
+    var model = QR.build(q.weekCfg, q.state, q.rating);
+    var wrap = el('div', 'qd-report');
+    wrap.innerHTML = QR.render(model, q.report, { questHref: q.weekCfg.path });
+    app.appendChild(wrap);
   }
 
   function renderDashboard(kidKey, roster) {

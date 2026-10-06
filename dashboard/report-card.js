@@ -1,0 +1,301 @@
+/* Quest report card — the one feedback format Risers and their families
+   see for a finished quest, and the staff page that reviews it uses the
+   very same renderer, so what staff approve is exactly what goes out.
+
+   Five categories, all on one four-step scale (Beginning, Developing,
+   Secure, Excelling) — words, not percentages:
+     Understanding      did the core ideas land (isGenuinePass, same rule
+                        as the staff Feedback page), plus topics nailed /
+                        worth revisiting, linked back into the quest
+     Depth of thinking  Bloom's ceiling, in plain words
+     Build              build steps finished, plus the build photo
+     Presentation       the Day 3 presentation rubric, per criterion
+     Work habits        persistence, highlights + notes, time on task
+
+   Plus three short notes — Strength, Growth, Next step — auto-drafted from
+   the categories, edited by staff, and saved with the report.
+
+   Nothing here is shown to a Riser until staff switch on Share: the report
+   record lives at week key "<week>-report" ({ shared, strength, growth,
+   next, by, at }). Staff-only signals (writing flags, who passed what,
+   keyword checks, per-question attempt counts) never appear. */
+(function () {
+  var QD = window.QUEST_DATA;
+  var WORKER_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  var SITE_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+  var BANDS = ['Beginning', 'Developing', 'Secure', 'Excelling'];
+  var BLOOM_PLAIN = {
+    Remember: 'Recalls the key facts',
+    Understand: 'Explains ideas in their own words',
+    Apply: 'Uses ideas on something new',
+    Analyze: 'Breaks ideas down and connects the parts',
+    Evaluate: 'Weighs ideas and judges what holds up'
+  };
+  var BLOOM_YOU = {
+    Remember: 'got the key facts right', Understand: 'explained ideas in your own words',
+    Apply: 'used ideas on something new', Analyze: 'broke ideas down and connected the parts',
+    Evaluate: 'weighed ideas and judged what holds up'
+  };
+  var BLOOM_ING = {
+    Remember: 'getting the key facts right', Understand: 'explaining ideas in your own words',
+    Apply: 'using ideas on something new', Analyze: 'breaking ideas down and connecting the parts',
+    Evaluate: 'weighing ideas and judging what holds up'
+  };
+  var RUBRIC = [
+    { key: 'content', name: 'Content accuracy' },
+    { key: 'evidence', name: 'Evidence & reasoning' },
+    { key: 'clarity', name: 'Clarity & organisation' },
+    { key: 'delivery', name: 'Confidence & delivery' },
+    { key: 'questions', name: 'Handling questions' }
+  ];
+  var ABOUT = {
+    understanding: 'Whether the core ideas really landed, judged on the thinking rather than spelling or wording.',
+    depth: 'How far the thinking went, from recalling facts up to judging ideas (Bloom’s Taxonomy).',
+    build: 'How much of the hands-on build was finished.',
+    presentation: 'How the learning was shared on presentation day, rated by facilitators.',
+    habits: 'How the work was approached: sticking with it, note-taking and time on task.'
+  };
+  // Strength / growth tie-break order.
+  var ORDER = ['understanding', 'depth', 'presentation', 'build', 'habits'];
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function band(x, cuts) { // cuts: thresholds for Developing, Secure, Excelling
+    return x >= cuts[2] ? 3 : x >= cuts[1] ? 2 : x >= cuts[0] ? 1 : 0;
+  }
+
+  /* ---------- scoring ---------- */
+
+  function build(weekCfg, state, rating) {
+    state = state || {};
+    var reflect = state.reflect || {};
+    var ids = Object.keys(weekCfg.topics || {});
+    var cats = {};
+
+    if (ids.length) {
+      var genuine = ids.filter(function (id) { return QD.isGenuinePass(reflect[id]); }).length;
+      var topics = [];
+      ids.forEach(function (id) {
+        var t = weekCfg.topics[id];
+        var entry = topics.filter(function (x) { return x.name === t; })[0];
+        if (!entry) { entry = { name: t, anchor: (weekCfg.anchors || {})[t] || '', ok: true }; topics.push(entry); }
+        if (!QD.isGenuinePass(reflect[id])) entry.ok = false;
+      });
+      cats.understanding = {
+        title: 'Understanding', band: band(genuine / ids.length, [0.4, 0.65, 0.85]),
+        line: 'Got the idea right on ' + genuine + ' of ' + ids.length + ' questions.',
+        nailed: topics.filter(function (t) { return t.ok; }),
+        revisit: topics.filter(function (t) { return !t.ok; })
+      };
+    }
+
+    if (weekCfg.bloom) {
+      var ceiling = QD.bloomCeiling(weekCfg.bloom, reflect).ceiling;
+      var ci = ceiling ? QD.BLOOM_LEVELS.indexOf(ceiling) : -1;
+      cats.depth = {
+        title: 'Depth of thinking', band: ci < 0 ? 0 : ci <= 1 ? 1 : ci === 2 ? 2 : 3,
+        ceiling: ceiling, ceilingIdx: ci,
+        line: ceiling ? BLOOM_PLAIN[ceiling] + '.' : 'Building toward the first step.'
+      };
+    }
+
+    var buildTotal = weekCfg.buildTotal || 0;
+    if (buildTotal) {
+      var b = state.build || {};
+      var done = Math.min(buildTotal, Object.keys(b).filter(function (k) { return b[k]; }).length);
+      cats.build = {
+        title: 'Build', band: band(done / buildTotal, [0.3, 0.6, 1]),
+        line: done === buildTotal ? 'Every build step finished.' : done + ' of ' + buildTotal + ' build steps finished.',
+        photo: weekCfg.buildPhoto || ''
+      };
+    }
+
+    var scores = rating && rating.scores;
+    if (scores && Object.keys(scores).length) {
+      var crit = RUBRIC.filter(function (c) { return scores[c.key]; }).map(function (c) {
+        return { name: c.name, band: Math.max(0, Math.min(3, scores[c.key] - 1)) };
+      });
+      var avg = crit.reduce(function (s, c) { return s + c.band; }, 0) / crit.length;
+      cats.presentation = { title: 'Presentation', band: Math.round(avg), criteria: crit };
+    } else {
+      cats.presentation = { title: 'Presentation', band: -1, line: 'Not rated yet.' };
+    }
+
+    var retried = ids.filter(function (id) { return reflect[id] && reflect[id].attempts > 1; });
+    var recovered = retried.filter(function (id) { return reflect[id].success; }).length;
+    var hl = (state.hl || []).length;
+    var notes = !!(state.notes && String(state.notes).trim());
+    var persist = retried.length ? recovered / retried.length : 1;
+    var engage = Math.min(1, (hl / 12) * 0.7 + (notes ? 0.3 : 0));
+    var timeMs = QD.totalTimeMs(state);
+    var habitLines = [];
+    if (recovered) habitLines.push('Kept going after a first miss, and got there, on ' + recovered + (recovered === 1 ? ' question.' : ' questions.'));
+    if (hl) habitLines.push('Highlighted key ideas while reading.');
+    if (notes) habitLines.push('Took their own notes.');
+    if (timeMs) habitLines.push('About ' + QD.fmtTime(timeMs) + ' on the quest.');
+    cats.habits = {
+      title: 'Work habits', band: band((persist + engage) / 2, [0.35, 0.6, 0.85]),
+      lines: habitLines.length ? habitLines : ['Worked through the quest step by step.']
+    };
+
+    return { weekCfg: weekCfg, cats: cats };
+  }
+
+  /* ---------- auto-drafted notes ---------- */
+
+  function rated(model) {
+    return ORDER.filter(function (k) { return model.cats[k] && model.cats[k].band >= 0; });
+  }
+
+  function draftNotes(model) {
+    var keys = rated(model);
+    var c = model.cats;
+    if (!keys.length) return { strength: '', growth: '', next: '' };
+    var top = keys.slice().sort(function (a, b) { return c[b].band - c[a].band || ORDER.indexOf(a) - ORDER.indexOf(b); })[0];
+    var low = keys.slice().sort(function (a, b) { return c[a].band - c[b].band || ORDER.indexOf(a) - ORDER.indexOf(b); })[0];
+    if (low === top && keys.length > 1) low = keys.filter(function (k) { return k !== top; })[0];
+
+    var strength = {
+      understanding: 'The core ideas really landed' + (c.understanding && c.understanding.nailed.length ? ', especially “' + c.understanding.nailed[0].name.replace(/^\d+\.\s*/, '') + '”.' : '.'),
+      depth: c.depth && c.depth.ceiling ? 'Your thinking reached a strong level: you ' + BLOOM_YOU[c.depth.ceiling] + '.' : 'You built a steady foundation, step by step.',
+      build: 'You saw your build through and made the ideas real.',
+      presentation: c.presentation.criteria ? 'Your presentation stood out for its ' + topCriterion(c.presentation.criteria, true).toLowerCase() + '.' : '',
+      habits: 'You stuck with it: when something didn’t land the first time, you came back and got there.'
+    }[top];
+
+    var revisit = c.understanding && c.understanding.revisit[0];
+    var revisitName = revisit ? revisit.name.replace(/^\d+\.\s*/, '') : '';
+    var nextBloom = c.depth ? QD.BLOOM_LEVELS[Math.min(QD.BLOOM_LEVELS.length - 1, c.depth.ceilingIdx + 1)] : '';
+    var all = c[low].band === 3;
+    var growth = all
+      ? 'Everything here is strong. The stretch now is depth: explaining why something works, not just what happens.'
+      : {
+          understanding: 'A few ideas haven’t fully landed yet' + (revisitName ? ', especially “' + revisitName + '”.' : '.'),
+          depth: 'The next step up in your thinking is ' + BLOOM_ING[nextBloom] + '.',
+          build: 'The build is the part to finish: it’s where the ideas become something real.',
+          presentation: c.presentation.criteria ? 'In presentations, the area to grow is ' + topCriterion(c.presentation.criteria, false).toLowerCase() + '.' : '',
+          habits: 'Slowing down will help: reread the tricky part before answering, and jot your own notes as you go.'
+        }[low];
+    var next = all
+      ? 'After your next quest, explain one idea out loud to someone at home, and say why it works.'
+      : {
+          understanding: revisitName ? 'Go back to “' + revisitName + '” in the quest and explain it out loud to someone at home.' : 'Pick the idea you found trickiest and explain it out loud to someone at home.',
+          depth: 'When you learn something new, ask “where else would this work?” and try it on one new example.',
+          build: 'Pick up the build where you left off and finish the remaining steps.',
+          presentation: 'Before your next presentation, practise it once out loud for a family member.',
+          habits: 'In your next quest, highlight two key ideas in each section and write one line about each in your own words.'
+        }[low];
+    return { strength: strength, growth: growth, next: next };
+  }
+
+  function topCriterion(crit, best) {
+    return crit.slice().sort(function (a, b) { return best ? b.band - a.band : a.band - b.band; })[0].name;
+  }
+
+  /* ---------- rendering ---------- */
+
+  function meter(b) {
+    var s = '<span class="rc-meter rc-b' + b + '" aria-hidden="true">';
+    for (var i = 0; i < 4; i++) s += '<span' + (i <= b ? ' class="on"' : '') + '></span>';
+    return s + '</span>';
+  }
+  function pill(b) {
+    return b < 0 ? '<span class="rc-pill rc-none">Not rated</span>' : '<span class="rc-pill rc-b' + b + '">' + BANDS[b] + '</span>';
+  }
+
+  // opts.questHref: link to the quest page (topic links append #anchor).
+  function catHtml(key, cat, opts) {
+    var body = '';
+    if (key === 'understanding') {
+      body = '<p class="rc-line">' + esc(cat.line) + '</p>';
+      if (cat.nailed.length) body += '<p class="rc-sub">Nailed</p><ul class="rc-topics">' + cat.nailed.map(function (t) { return '<li class="ok">' + esc(t.name) + '</li>'; }).join('') + '</ul>';
+      if (cat.revisit.length) body += '<p class="rc-sub">Worth revisiting</p><ul class="rc-topics">' + cat.revisit.map(function (t) {
+        return '<li class="again">' + (opts.questHref && t.anchor ? '<a href="' + esc(opts.questHref + '#' + t.anchor) + '">' + esc(t.name) + '</a>' : esc(t.name)) + '</li>';
+      }).join('') + '</ul>';
+    } else if (key === 'depth') {
+      body = '<ol class="rc-ladder">' + QD.BLOOM_LEVELS.map(function (l, i) {
+        return '<li class="' + (i <= cat.ceilingIdx ? 'on' : '') + '" title="' + esc(BLOOM_PLAIN[l]) + '">' + l + '</li>';
+      }).join('') + '</ol><p class="rc-line">' + esc(cat.line) + '</p>';
+    } else if (key === 'build') {
+      body = '<p class="rc-line">' + esc(cat.line) + '</p>' +
+        (cat.photo ? '<img class="rc-photo" src="' + esc(cat.photo) + '" alt="Build photo" loading="lazy">' : '');
+    } else if (key === 'presentation') {
+      body = cat.criteria
+        ? '<ul class="rc-crit">' + cat.criteria.map(function (c) { return '<li><span>' + esc(c.name) + '</span>' + meter(c.band) + '<em>' + BANDS[c.band] + '</em></li>'; }).join('') + '</ul>'
+        : '<p class="rc-line rc-muted">' + esc(cat.line) + '</p>';
+    } else if (key === 'habits') {
+      body = '<ul class="rc-list">' + cat.lines.map(function (l) { return '<li>' + esc(l) + '</li>'; }).join('') + '</ul>';
+    }
+    return '<article class="rc-cat rc-cat-' + key + '">' +
+      '<header><h3>' + cat.title + '</h3>' + pill(cat.band) + '</header>' +
+      (cat.band >= 0 ? meter(cat.band) : '') +
+      '<p class="rc-about">' + ABOUT[key] + '</p>' + body +
+      '</article>';
+  }
+
+  // notes: { strength, growth, next } (already reviewed text).
+  function render(model, notes, opts) {
+    opts = opts || {};
+    var n = notes || {};
+    var html = '<section class="rc">';
+    if (n.strength || n.growth || n.next) {
+      html += '<div class="rc-notes">' +
+        (n.strength ? '<div class="rc-note rc-note-strength"><h3>Strength</h3><p>' + esc(n.strength) + '</p></div>' : '') +
+        (n.growth ? '<div class="rc-note rc-note-growth"><h3>Growth</h3><p>' + esc(n.growth) + '</p></div>' : '') +
+        (n.next ? '<div class="rc-note rc-note-next"><h3>Next step</h3><p>' + esc(n.next) + '</p></div>' : '') +
+        '</div>';
+    }
+    html += '<div class="rc-grid">' + ORDER.filter(function (k) { return model.cats[k]; }).map(function (k) { return catHtml(k, model.cats[k], opts); }).join('') + '</div>';
+    html += '<p class="rc-scale">Scale: ' + BANDS.map(function (b, i) { return '<span class="rc-pill rc-b' + i + '">' + b + '</span>'; }).join(' ') + '</p>';
+    return html + '</section>';
+  }
+
+  // The strongest and growing categories across several quest models.
+  function rollup(models) {
+    var sum = {}, cnt = {};
+    models.forEach(function (m) {
+      rated(m).forEach(function (k) { sum[k] = (sum[k] || 0) + m.cats[k].band; cnt[k] = (cnt[k] || 0) + 1; });
+    });
+    var keys = Object.keys(sum);
+    if (!keys.length) return null;
+    function avg(k) { return sum[k] / cnt[k]; }
+    var best = keys.slice().sort(function (a, b) { return avg(b) - avg(a) || ORDER.indexOf(a) - ORDER.indexOf(b); })[0];
+    var grow = keys.slice().sort(function (a, b) { return avg(a) - avg(b) || ORDER.indexOf(a) - ORDER.indexOf(b); })[0];
+    var label = function (k) { return models[0].cats[k] ? models[0].cats[k].title : k; };
+    return { strongest: label(best), growing: grow === best ? '' : label(grow) };
+  }
+
+  /* ---------- the report record ---------- */
+
+  function reportUrl(group, kid, week) {
+    return WORKER_URL + '/sync?group=' + encodeURIComponent(group) + '&kid=' + encodeURIComponent(kid) + '&week=' + encodeURIComponent(week + '-report');
+  }
+  function fetchReport(group, kid, week) {
+    return fetch(reportUrl(group, kid, week), { headers: { 'X-Site-Key': SITE_KEY } })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('http')); })
+      .then(function (res) { return { ok: true, report: (res && res.found && res.data.state) || null }; })
+      .catch(function () { return { ok: false, report: null }; });
+  }
+  function saveReport(group, kid, week, report) {
+    return fetch(WORKER_URL + '/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Site-Key': SITE_KEY },
+      body: JSON.stringify({ group: group, kid: kid, week: week + '-report', state: report })
+    }).then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (out) { return { ok: !!(out && out.ok) }; })
+      .catch(function () { return { ok: false }; });
+  }
+
+  window.QUEST_REPORT = {
+    BANDS: BANDS,
+    build: build,
+    draftNotes: draftNotes,
+    render: render,
+    rollup: rollup,
+    fetchReport: fetchReport,
+    saveReport: saveReport
+  };
+})();
