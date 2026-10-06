@@ -149,28 +149,45 @@
       '⚠️ Some of your quest data couldn’t load just now — your work is safe, this is just a loading hiccup. Try refreshing the page.');
   }
 
-  // ---- Overview: how many self-paced quests were completed, and each one. ----
+  // ---- Overview: how many self-paced quests were completed, plus the ones
+  // still under way (so a Riser can see where they are and jump back in). ----
+  function questRow(q, done) {
+    var lbl = splitLabel(q.weekCfg.label);
+    var row = el('a', 'qd-row' + (done ? '' : ' is-progress'));
+    row.href = done ? '?quest=' + encodeURIComponent(q.weekCfg.key) : q.weekCfg.path;
+    row.innerHTML =
+      '<span class="qd-row-num">' + escapeHtml(lbl.num.replace(/^Quest\s*/, '')) + '</span>' +
+      '<span class="qd-row-text"><strong>' + escapeHtml(lbl.title) + '</strong>' +
+        (done ? '<span>See how it went</span>'
+              : '<span class="qd-row-bar"><span class="qd-row-track"><span style="width:' + q.summary.pct + '%"></span></span>' + q.summary.pct + '% · Continue</span>') +
+      '</span>' +
+      '<span class="qd-row-go" aria-hidden="true">&rarr;</span>';
+    return row;
+  }
+
   function renderOverview(app, roster, results) {
     var anyLoadError = results.some(function (r) { return r.loadError; });
-    var done = results.filter(function (r) { return !r.loadError && r.summary.status === 'completed'; });
+    var ok = results.filter(function (r) { return !r.loadError; });
+    var done = ok.filter(function (r) { return r.summary.status === 'completed'; });
+    var going = ok.filter(function (r) { return r.summary.status === 'in-progress'; });
 
     app.querySelector('.qd-lede').innerHTML = done.length
       ? 'You completed <strong>' + completedText(done.length) + '</strong> in your self-paced quests.'
-      : 'Your completed quests will show up here.';
+      : going.length ? 'Your quests in progress are below — pick up where you left off.'
+      : 'Your quests will show up here once you start one.';
     if (anyLoadError) app.appendChild(loadWarning());
+
+    if (going.length) {
+      app.appendChild(el('h2', 'qd-section-title', 'In progress'));
+      var gList = el('div', 'hd-card qd-list');
+      going.forEach(function (q) { gList.appendChild(questRow(q, false)); });
+      app.appendChild(gList);
+    }
     if (!done.length) return;
 
+    if (going.length) app.appendChild(el('h2', 'qd-section-title', 'Completed'));
     var list = el('div', 'hd-card qd-list');
-    done.forEach(function (q) {
-      var lbl = splitLabel(q.weekCfg.label);
-      var row = el('a', 'qd-row');
-      row.href = '?quest=' + encodeURIComponent(q.weekCfg.key);
-      row.innerHTML =
-        '<span class="qd-row-num">' + escapeHtml(lbl.num.replace(/^Quest\s*/, '')) + '</span>' +
-        '<span class="qd-row-text"><strong>' + escapeHtml(lbl.title) + '</strong><span>See how it went</span></span>' +
-        '<span class="qd-row-go" aria-hidden="true">&rarr;</span>';
-      list.appendChild(row);
-    });
+    done.forEach(function (q) { list.appendChild(questRow(q, true)); });
     app.appendChild(list);
 
     var notes = draftClosingNotes(done.map(function (q) { return { bloomInfo: q.summary.bloom }; }));
@@ -193,7 +210,9 @@
     if (q.loadError) { app.appendChild(loadWarning()); return; }
     var s = q.summary;
     if (s.status !== 'completed') {
-      app.appendChild(el('p', 'qd-muted qd-pending', 'This quest isn’t completed yet, so there’s nothing to show here.'));
+      app.appendChild(el('p', 'qd-muted qd-pending', s.status === 'in-progress'
+        ? 'In progress — ' + s.pct + '% done so far. How it went will show here once it’s completed.'
+        : 'Not started yet.'));
       return;
     }
 

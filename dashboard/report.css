@@ -80,3 +80,10 @@
   .qd-metrics { grid-template-columns: 1fr; }
 }
 .qd-value .qd-muted { font-family: var(--font-body); font-weight: 500; font-size: 1rem; }
+
+/* In-progress rows: a slim progress bar instead of "See how it went". */
+.qd-row-text .qd-row-bar { display: flex; align-items: center; gap: 10px; }
+.qd-row-track { flex: 0 1 160px; height: 5px; border-radius: 99px; background: var(--border); overflow: hidden; }
+.qd-row-track > span { display: block; height: 100%; border-radius: inherit; background: var(--brand-green); }
+.qd-row.is-progress .qd-row-num { background: #fff4dc; color: #93600f; }
+.qd-section-title:first-of-type { margin-top: 28px; }
