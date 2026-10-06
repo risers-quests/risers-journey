@@ -21,31 +21,9 @@
     return e;
   }
 
-  function showKidGate() {
-    app.innerHTML = '';
-    app.appendChild(el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>'));
-    var card = el('div', 'eot2-picker');
-    card.innerHTML =
-      '<h1>Self-Assessment</h1>' +
-      '<p>Enter your name to start your end-of-term self-assessment.</p>' +
-      '<div class="eot2-field"><label for="kid-name">Your name</label><input id="kid-name" type="text" autocomplete="off" /></div>' +
-      '<p class="eot2-msg" id="kid-msg"></p>' +
-      '<button class="eot2-btn" id="kid-go">Continue</button>';
-    app.appendChild(card);
-    document.getElementById('kid-go').addEventListener('click', function () {
-      var name = document.getElementById('kid-name').value.trim();
-      var kid = window.EOT2_findKidByName(name);
-      var msg = document.getElementById('kid-msg');
-      if (!name) { msg.textContent = 'Type your name to continue.'; return; }
-      if (!kid) { msg.textContent = "Couldn't find that name — check with your facilitator."; return; }
-      try { localStorage.setItem(KID_KEY, kid.name); } catch (e) {}
-      renderForm(kid);
-    });
-  }
-
   function showStaffPicker() {
     app.innerHTML = '';
-    app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/index.html">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>'));
+    app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/index.html">Home</a> &middot; <a href="../staff/index.html">Term 2 Conference</a>'));
     var card = el('div', 'eot2-picker');
     var options = window.EOT2_KIDS.map(function (k) { return '<option value="' + k.slug + '">' + k.name + '</option>'; }).join('');
     card.innerHTML =
@@ -65,7 +43,7 @@
     var weekKey = 'term2-self-assessment-' + rater;
     app.innerHTML = '';
 
-    var crumb = el('div', 'eot2-crumb', '<a href="' + (isStaff ? '../../staff/index.html' : '../../index.html') + '">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>' + (isStaff ? ' &middot; <a href="index.html?rater=' + rater + '&pick=1">switch kid</a>' : ''));
+    var crumb = el('div', 'eot2-crumb', '<a href="' + (isStaff ? '../../staff/index.html' : '../../index.html') + '">Home</a> &middot; <a href="' + (isStaff ? '../staff/index.html' : '../index.html') + '">Term 2 Conference</a>' + (isStaff ? ' &middot; <a href="index.html?rater=' + rater + '&pick=1">switch kid</a>' : ''));
     app.appendChild(crumb);
 
     var header = el('div', 'eot2-form-header');
@@ -224,9 +202,7 @@
       showStaffPicker();
     }
   } else {
-    var savedName = null;
-    try { savedName = localStorage.getItem(KID_KEY); } catch (e) {}
-    var kid = savedName ? (window.EOT2_findKid(String(savedName).toLowerCase()) || window.EOT2_findKidByName(savedName)) : null;
-    if (kid) { renderForm(kid); } else { showKidGate(); }
+    var kid = window.EOT2_signedInKid();
+    if (kid) { renderForm(kid); } else { window.EOT2_leaveWithoutKid('../staff/index.html', '../../index.html'); }
   }
 })();

@@ -17,28 +17,6 @@
     return e;
   }
 
-  function showKidGate() {
-    app.innerHTML = '';
-    app.appendChild(el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>'));
-    var card = el('div', 'eot2-picker');
-    card.innerHTML =
-      '<h1>Term Reflection</h1>' +
-      '<p>Enter your name to start your end-of-term reflection.</p>' +
-      '<div class="eot2-field"><label for="kid-name">Your name</label><input id="kid-name" type="text" autocomplete="off" /></div>' +
-      '<p class="eot2-msg" id="kid-msg"></p>' +
-      '<button class="eot2-btn" id="kid-go">Continue</button>';
-    app.appendChild(card);
-    document.getElementById('kid-go').addEventListener('click', function () {
-      var name = document.getElementById('kid-name').value.trim();
-      var kid = window.EOT2_findKidByName(name);
-      var msg = document.getElementById('kid-msg');
-      if (!name) { msg.textContent = 'Type your name to continue.'; return; }
-      if (!kid) { msg.textContent = "Couldn't find that name — check with your facilitator."; return; }
-      try { localStorage.setItem(KID_KEY, kid.name); } catch (e) {}
-      resolveAgeBand(kid);
-    });
-  }
-
   function resolveAgeBand(kid) {
     // Internal detail only — never surfaced to the kid. A kid missing from
     // the roster's age mapping silently gets the 8-10 question set rather
@@ -265,8 +243,6 @@
     else showStaffRoster();
     return;
   }
-  var savedName = null;
-  try { savedName = localStorage.getItem(KID_KEY); } catch (e) {}
-  var kid = savedName ? (window.EOT2_findKid(String(savedName).toLowerCase()) || window.EOT2_findKidByName(savedName)) : null;
-  if (kid) { resolveAgeBand(kid); } else { showKidGate(); }
+  var kid = window.EOT2_signedInKid();
+  if (kid) { resolveAgeBand(kid); } else { window.EOT2_leaveWithoutKid('index.html?view=staff', '../../index.html'); }
 })();

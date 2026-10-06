@@ -40,13 +40,13 @@
 <script src="shared/eot2-data.js"></script>
 <script src="shared/eot2-sync.js"></script>
 <script>
-/* Show "Your facilitators' assessment" only once staff have shared it
+/* This is the Riser's page. With no Riser signed in, a facilitator goes to
+   the staff Term 2 Conference page and anyone else to Home to sign in.
+   Shows "Your facilitators' assessment" only once staff have shared it
    (Consolidate page → "Share with <name>"). */
 (function () {
-  var saved = null;
-  try { saved = localStorage.getItem('imm-l3-kid'); } catch (e) {}
-  var kid = saved ? (window.EOT2_findKid(String(saved).toLowerCase()) || window.EOT2_findKidByName(saved)) : null;
-  if (!kid) return;
+  var kid = window.EOT2_signedInKid();
+  if (!kid) { window.EOT2_leaveWithoutKid('staff/index.html', '../index.html'); return; }
   window.eot2Fetch(kid.group, kid.slug, 'term2-self-assessment-consolidated').then(function (d) {
     if (d && d.state && d.state._shared) document.getElementById('hub-results').hidden = false;
   });

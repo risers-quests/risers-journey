@@ -66,8 +66,6 @@
     });
   }
 
-  var saved = null;
-  try { saved = localStorage.getItem(KID_KEY); } catch (e) {}
-  var kid = saved ? (window.EOT2_findKid(String(saved).toLowerCase()) || window.EOT2_findKidByName(saved)) : null;
-  if (kid) render(kid); else location.href = '../../index.html'; // Home is the one sign-in.
+  var kid = window.EOT2_signedInKid();
+  if (kid) render(kid); else window.EOT2_leaveWithoutKid('../consolidate/index.html', '../../index.html');
 })();

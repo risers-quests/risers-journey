@@ -244,7 +244,11 @@
     if (kid && roster[kid]) {
       renderDashboard(kid, roster[kid]);
     } else {
-      location.href = '../index.html';
+      // No Riser signed in: a facilitator goes to the staff Quests page,
+      // anyone else to Home to sign in.
+      var staff = null;
+      try { staff = localStorage.getItem('rj-staff-name'); } catch (e) {}
+      location.replace(staff ? '../staff/quests/index.html' : '../index.html');
     }
   }
 

@@ -348,7 +348,7 @@
     try { slug = (localStorage.getItem(KID_KEY) || '').toLowerCase(); } catch (e) {}
     var kidEntry = slug ? window.EOT2_findKid(slug) : null;
     if (kidEntry) renderKid(kidEntry);
-    else location.href = '../index.html'; // Home is the one sign-in.
+    else window.EOT2_leaveWithoutKid('index.html?view=staff', '../index.html');
   }
 
   document.addEventListener('DOMContentLoaded', init);

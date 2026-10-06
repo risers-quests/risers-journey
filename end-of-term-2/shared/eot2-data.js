@@ -48,3 +48,21 @@ window.EOT2_getLastStaffKid = function () {
 window.EOT2_setLastStaffKid = function (slug) {
   try { localStorage.setItem(EOT2_LAST_STAFF_KID, slug); } catch (e) {}
 };
+
+/* The Term 2 Conference pages have no kid sign-in of their own — Home is
+   the one sign-in. When nobody is signed in as a Riser, a signed-in
+   facilitator goes to the staff version of the page (staffPath, relative
+   to the page), and anyone else to Home to sign in. */
+window.EOT2_leaveWithoutKid = function (staffPath, homePath) {
+  var staff = null;
+  try { staff = localStorage.getItem('rj-staff-name'); } catch (e) {}
+  location.replace(staff ? staffPath : homePath);
+};
+/* The signed-in Riser on this device, if any (Home stores the slug; older
+   Term 2 Conference pages stored the display name — accept both). */
+window.EOT2_signedInKid = function () {
+  var saved = null;
+  try { saved = localStorage.getItem('imm-l3-kid'); } catch (e) {}
+  if (!saved) return null;
+  return window.EOT2_findKid(String(saved).toLowerCase()) || window.EOT2_findKidByName(saved);
+};
