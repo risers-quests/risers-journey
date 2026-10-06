@@ -193,3 +193,42 @@ body { background: var(--paper); color: var(--ink); font-family: var(--font-body
   .ans-matrix { grid-template-columns: 1fr; gap: 2px; }
   .ans-matrix dd { margin-bottom: 6px; }
 }
+
+/* ---- Minutes of Meeting: Part 1 (family) and Part 2 (planning together) ---- */
+.mom-eyebrow { margin: 0 0 6px; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand-slate); }
+.mom-body { max-width: 820px; }
+.mom-part { background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 22px 24px 8px; margin-bottom: 22px; box-shadow: var(--shadow-sm); }
+.mom-part-head { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.mom-part-num {
+  flex-shrink: 0; font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  background: var(--accent-soft); color: var(--accent-dark); padding: 6px 10px; border-radius: 999px; margin-top: 3px;
+}
+.mom-part-head h2 { font-family: var(--font-head); font-weight: 600; font-size: 1.2rem; margin: 0 0 2px; }
+.mom-part-head p { margin: 0; font-size: .82rem; color: var(--ink-faint); }
+.mom-field { margin-bottom: 18px; }
+.mom-field label { display: block; font-weight: 600; font-size: .95rem; margin-bottom: 2px; }
+.mom-hint { margin: 0 0 8px; font-size: .8rem; color: var(--ink-faint); }
+.mom-field .eot2-textarea { min-height: 0; }
+.mom-ideas { display: flex; flex-direction: column; gap: 14px; margin-bottom: 14px; }
+.mom-idea { border: 1px solid var(--border); border-left: 4px solid var(--brand-green); border-radius: 14px; padding: 16px 18px 2px; background: #fbfdf9; }
+.mom-idea-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.mom-idea-head strong { font-family: var(--font-head); font-weight: 600; }
+.mom-remove { font: inherit; font-size: .8rem; color: #a3432b; background: none; border: none; cursor: pointer; }
+.mom-add { width: auto; margin: 0 0 20px; padding: 9px 16px; font-size: .85rem; }
+.mom-add[hidden] { display: none; }
+.mom-wait { color: var(--ink-faint); margin: 0 0 18px; }
+.mom-read { margin-bottom: 18px; }
+.mom-read h3, .mom-read-h { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 6px; }
+.mom-read p { margin: 0; line-height: 1.6; }
+.mom-idea-read { border-left: 4px solid var(--brand-green); background: #fbfdf9; border-radius: 12px; padding: 14px 18px; margin-bottom: 14px; }
+.mom-idea-title { margin: 0 0 10px; font-weight: 600; font-size: 1.02rem; }
+.mom-idea-title span { display: block; font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 2px; }
+.mom-role { margin-top: 8px; }
+.mom-role strong { display: block; font-size: .78rem; color: var(--ink-soft); }
+.mom-role p { margin: 2px 0 0; }
+.mom-old { box-shadow: none; background: var(--paper-soft); }
+.mom-old-title { font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 14px; }
+@media (max-width: 560px) {
+  .mom-part { padding: 18px 16px 4px; }
+  .mom-part-head { flex-direction: column; gap: 8px; }
+}

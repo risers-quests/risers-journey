@@ -89,9 +89,18 @@
 
     var momTd = document.createElement('td');
     tr.appendChild(momTd);
-    fetches.push(window.eot2Fetch(kid.group, kid.slug, 'term2-mom').then(function (data) {
-      var done = hasAnyAnswer(data && data.state);
-      momTd.appendChild(badge(done, '../mom/index.html?editAs=' + encodeURIComponent(staffLabel) + '&kid=' + kid.slug, done ? 'Written' : 'Not written'));
+    fetches.push(Promise.all([
+      window.eot2Fetch(kid.group, kid.slug, 'term2-mom'),
+      window.eot2Fetch(kid.group, kid.slug, 'term2-mom-family')
+    ]).then(function (r) {
+      // Planned = Part 2 has an agreed idea; Part 1 = the family's
+      // reflection is in; Started = anything else (incl. older notes).
+      var st = Object.assign({}, (r[1] && r[1].state) || {}, (r[0] && r[0].state) || {});
+      var filled = function (v) { return v && String(v).trim(); };
+      var planned = (st.p2_ideas || []).some(function (i) { return i && filled(i.idea); });
+      var part1 = ['p1_working', 'p1_notWorking', 'p1_questions', 'p1_ideas'].some(function (k) { return filled(st[k]); });
+      var label = planned ? 'Planned' : part1 ? 'Part 1 done' : hasAnyAnswer(st) ? 'Started' : 'Not started';
+      momTd.appendChild(badge(planned, '../mom/index.html?editAs=' + encodeURIComponent(staffLabel) + '&kid=' + kid.slug, label));
     }));
 
     tbody.appendChild(tr);
