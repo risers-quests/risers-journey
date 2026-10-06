@@ -1993,7 +1993,13 @@
       if (window.QUEST_FACILITATOR_MODE || !isPending() || inFlight) return;
       inFlight = true;
       var body = { group: group, kid: pageKey, week: week, state: collectSyncState(pageKey) };
-      fetch(base + '/sync', { method: 'POST', headers: headers(), body: JSON.stringify(body) })
+      fetch(base + '/sync', (function () {
+        // keepalive lets the send finish even if the page is closing (the
+        // browser caps keepalive bodies at 64 KB, so very large states go
+        // without it and rely on the next-visit retry).
+        var payload = JSON.stringify(body);
+        return { method: 'POST', headers: headers(), body: payload, keepalive: payload.length < 60000 };
+      })())
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (res) {
           if (res && res.updatedAt) {
@@ -2032,9 +2038,19 @@
     document.addEventListener('input', schedulePush);
     document.addEventListener('change', schedulePush);
     document.addEventListener('click', function (e) {
-      if (e.target.closest && e.target.closest(CLICK_TRIGGERS)) schedulePush();
+      if (e.target.closest && e.target.closest(CLICK_TRIGGERS)) {
+        schedulePush();
+        // "Complete My Quest" is the one click that must never wait: send it
+        // now, so closing the tab or going back straight away can't strand
+        // the completion on this device.
+        if (e.target.closest('#qc-finish-btn') && !window.QUEST_FACILITATOR_MODE) { clearTimeout(pushTimer); pushNow(); }
+      }
     });
     window.addEventListener('beforeunload', pushNow);
+    // iPad/iPhone Safari often skips beforeunload; these fire reliably when
+    // the tab is closed, switched away from, or the app is backgrounded.
+    window.addEventListener('pagehide', function () { pushNow(); });
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') pushNow(); });
 
     // Keep retrying a pending push for as long as this tab stays open —
     // covers a Worker outage that recovers mid-visit.
