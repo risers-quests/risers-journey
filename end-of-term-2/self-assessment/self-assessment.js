@@ -65,15 +65,13 @@
     var weekKey = 'term2-self-assessment-' + rater;
     app.innerHTML = '';
 
-    var crumb = el('div', 'eot2-crumb', staffViewingSelf
-      ? '<a href="../../staff/index.html">Home</a> &middot; <a href="../staff/index.html">Term 2 Conference</a>'
-      : '<a href="' + (isStaff ? '../../staff/index.html' : '../../index.html') + '">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>' + (isStaff ? ' &middot; <a href="index.html?rater=' + rater + '&pick=1">switch kid</a>' : ''));
+    var crumb = el('div', 'eot2-crumb', '<a href="' + (isStaff ? '../../staff/index.html' : '../../index.html') + '">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>' + (isStaff ? ' &middot; <a href="index.html?rater=' + rater + '&pick=1">switch kid</a>' : ''));
     app.appendChild(crumb);
 
     var header = el('div', 'eot2-form-header');
     header.innerHTML =
       '<div><h1>Self-Assessment &mdash; ' + kid.name + '</h1>' +
-      '<div class="eot2-sub">Rated by ' + (isStaff ? staffRaterInfo.label : kid.name + ' (self)') + (staffViewingSelf ? ' — view only' : '') + '</div></div>' +
+      '<div class="eot2-sub">Rated by ' + (isStaff ? staffRaterInfo.label : kid.name + ' (self)') + '</div></div>' +
       '<div class="eot2-status eot2-status-offline" id="save-status">Loading&hellip;</div>';
     app.appendChild(header);
 
@@ -145,20 +143,15 @@
       form.appendChild(sEl);
     });
 
-    if (staffViewingSelf) {
-      Array.prototype.forEach.call(form.querySelectorAll('input'), function (i) { i.disabled = true; });
-      form.classList.add('eot2-readonly');
-    } else {
-      var footer = el('div', 'eot2-footer-actions');
-      var saveBtn = el('button', 'eot2-btn eot2-btn-secondary', 'Save now');
-      saveBtn.addEventListener('click', function () {
-        setStatus('saving');
-        window.eot2SaveLocal(weekKey, kid.slug, state);
-        window.eot2Save(kid.group, kid.slug, weekKey, state).then(function (res) { setStatus(res.ok ? 'saved' : 'offline'); });
-      });
-      footer.appendChild(saveBtn);
-      app.appendChild(footer);
-    }
+    var footer = el('div', 'eot2-footer-actions');
+    var saveBtn = el('button', 'eot2-btn eot2-btn-secondary', 'Save now');
+    saveBtn.addEventListener('click', function () {
+      setStatus('saving');
+      window.eot2SaveLocal(weekKey, kid.slug, state);
+      window.eot2Save(kid.group, kid.slug, weekKey, state).then(function (res) { setStatus(res.ok ? 'saved' : 'offline'); });
+    });
+    footer.appendChild(saveBtn);
+    app.appendChild(footer);
 
     function applyState(loaded) {
       if (!loaded) return;
@@ -172,14 +165,6 @@
 
     updateProgress();
     window.eot2Fetch(kid.group, kid.slug, weekKey).then(function (data) {
-      if (staffViewingSelf) {
-        // Only what the Riser actually saved — never this device's local copy.
-        applyState(data && data.state);
-        var st = document.getElementById('save-status');
-        st.className = 'eot2-status eot2-status-offline';
-        st.textContent = data ? 'View only' : 'Not started yet';
-        return;
-      }
       var local = window.eot2LoadLocal(weekKey, kid.slug);
       var remoteState = data && data.state;
       applyState(remoteState || local);
@@ -187,9 +172,46 @@
     });
   }
 
+  // Staff reading a Riser's own self-assessment: each statement with the
+  // rating they gave themselves — nothing to pick or change.
+  function renderSelfRatings(kid) {
+    app.innerHTML = '';
+    app.appendChild(el('div', 'eot2-crumb', '<a href="../staff/index.html">Term 2 Conference</a>'));
+    app.appendChild(el('div', 'eot2-head', '<h1>Self-Assessment &mdash; ' + kid.name + '</h1><p class="ans-lede">&nbsp;</p>'));
+    var body = el('div', 'ans-body', '<p class="ans-none">Loading…</p>');
+    app.appendChild(body);
+    window.eot2Fetch(kid.group, kid.slug, 'term2-self-assessment-self').then(function (data) {
+      var st = (data && data.state) || {};
+      var rated = Object.keys(st).filter(function (k) { return k.charAt(0) !== '_' && st[k]; }).length;
+      app.querySelector('.ans-lede').textContent = data
+        ? kid.name + '’s own ratings — ' + rated + ' of ' + window.EOT2_RUBRIC_ITEM_COUNT + ' rated.'
+        : kid.name + ' hasn’t started their self-assessment yet.';
+      body.innerHTML = '';
+      if (!data) return;
+      var labels = {};
+      window.EOT2_RUBRIC_SCALE.forEach(function (o) { labels[o.code] = o.label; });
+      window.EOT2_RUBRIC.forEach(function (section) {
+        var sEl = el('section', 'ans-section');
+        sEl.appendChild(el('h2', 'eot2-section-title', section.title));
+        section.subsections.forEach(function (sub) {
+          if (sub.title) sEl.appendChild(el('h3', 'eot2-sub-title', sub.title));
+          var card = el('div', 'ans-card');
+          sub.items.forEach(function (item) {
+            var v = st[item.id];
+            card.appendChild(el('div', 'ans-row ans-row-inline',
+              '<p class="ans-q">' + item.text + '</p>' +
+              '<div class="ans-a">' + (v ? '<span class="ans-rating" title="' + labels[v] + '"><strong>' + v + '</strong>' + labels[v] + '</span>' : '<span class="ans-none">Not rated</span>') + '</div>'));
+          });
+          sEl.appendChild(card);
+        });
+        body.appendChild(sEl);
+      });
+    });
+  }
+
   if (staffViewingSelf) {
     var viewKid = params.get('kid') ? window.EOT2_findKid(params.get('kid')) : null;
-    if (viewKid) renderForm(viewKid);
+    if (viewKid) renderSelfRatings(viewKid);
     else app.innerHTML = '<p class="eot2-msg">Open a Riser’s self-assessment from the Term 2 Conference status table.</p>';
   } else if (isStaff) {
     var deepLinkSlug = params.get('kid');

@@ -1,7 +1,8 @@
 /* Term Reflection. Riser view: their own form (signed in via Home).
    Staff view (?view=staff&kid=<slug>, from the Term 2 Conference status
-   table): that Riser's answers, view-only — it's the Riser's own
-   reflection, so staff can read it but not change it. */
+   table): that Riser's answers as a plain read-out — each question and
+   what they answered, nothing to pick or change. ?view=staff alone lists
+   every Riser. */
 (function () {
   var KID_KEY = 'imm-l3-kid';
   var WEEK_KEY = 'term2-term-reflection';
@@ -49,15 +50,12 @@
     app.innerHTML = '';
     var total = window.EOT2_REFLECTION_ITEM_COUNT(band);
 
-    var crumb = el('div', 'eot2-crumb', staffView
-      ? '<a href="../../staff/index.html">Home</a> &middot; <a href="../staff/index.html">Term 2 Conference</a>'
-      : '<a href="../../index.html">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>');
+    var crumb = el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>');
     app.appendChild(crumb);
 
     var header = el('div', 'eot2-form-header');
     header.innerHTML =
-      '<div><h1>Term Reflection &mdash; ' + kid.name + '</h1>' +
-        (staffView ? '<div class="eot2-sub">' + kid.name + '’s own answers — view only</div>' : '') + '</div>' +
+      '<div><h1>Term Reflection &mdash; ' + kid.name + '</h1></div>' +
       '<div class="eot2-status eot2-status-offline" id="save-status">Loading&hellip;</div>';
     app.appendChild(header);
 
@@ -149,20 +147,15 @@
       form.appendChild(sEl);
     });
 
-    if (staffView) {
-      Array.prototype.forEach.call(form.querySelectorAll('input, textarea'), function (i) { i.disabled = true; });
-      form.classList.add('eot2-readonly');
-    } else {
-      var footer = el('div', 'eot2-footer-actions');
-      var saveBtn = el('button', 'eot2-btn eot2-btn-secondary', 'Save now');
-      saveBtn.addEventListener('click', function () {
-        setStatus('saving');
-        window.eot2SaveLocal(WEEK_KEY, kid.slug, state);
-        window.eot2Save(kid.group, kid.slug, WEEK_KEY, state).then(function (res) { setStatus(res.ok ? 'saved' : 'offline'); });
-      });
-      footer.appendChild(saveBtn);
-      app.appendChild(footer);
-    }
+    var footer = el('div', 'eot2-footer-actions');
+    var saveBtn = el('button', 'eot2-btn eot2-btn-secondary', 'Save now');
+    saveBtn.addEventListener('click', function () {
+      setStatus('saving');
+      window.eot2SaveLocal(WEEK_KEY, kid.slug, state);
+      window.eot2Save(kid.group, kid.slug, WEEK_KEY, state).then(function (res) { setStatus(res.ok ? 'saved' : 'offline'); });
+    });
+    footer.appendChild(saveBtn);
+    app.appendChild(footer);
 
     function applyState(loaded) {
       if (!loaded) return;
@@ -190,39 +183,86 @@
 
     updateProgress();
     window.eot2Fetch(kid.group, kid.slug, WEEK_KEY).then(function (data) {
-      if (staffView) {
-        // Only what the Riser actually saved — never this device's local copy.
-        applyState(data && data.state);
-        var st = document.getElementById('save-status');
-        st.className = 'eot2-status eot2-status-offline';
-        st.textContent = data ? 'View only' : 'Not started yet';
-        return;
-      }
       var local = window.eot2LoadLocal(WEEK_KEY, kid.slug);
       applyState((data && data.state) || local);
       setStatus(data ? 'saved' : (local ? 'offline' : 'saved'));
     });
   }
 
-  function showStaffPicker() {
-    app.innerHTML = '';
-    app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/index.html">Home</a> &middot; <a href="../staff/index.html">Term 2 Conference</a>'));
-    var card = el('div', 'eot2-picker');
-    var options = window.EOT2_KIDS.map(function (k) { return '<option value="' + k.slug + '">' + k.name + '</option>'; }).join('');
-    card.innerHTML =
-      '<h1>Term Reflection</h1>' +
-      '<p>Choose whose reflection to read.</p>' +
-      '<div class="eot2-field"><label for="kid-select">Riser</label><select id="kid-select">' + options + '</select></div>' +
-      '<button class="eot2-btn" id="kid-go">Open</button>';
-    app.appendChild(card);
-    document.getElementById('kid-go').addEventListener('click', function () {
-      location.href = 'index.html?view=staff&kid=' + document.getElementById('kid-select').value;
+  /* ---------- staff: read the Riser's answers ---------- */
+
+  function escapeHtml(v) {
+    return String(v).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
+  }
+
+  // Each question with just the Riser's answer — no options to pick from.
+  function renderStaffAnswers(kid, band) {
+    app.innerHTML = '';
+    app.appendChild(el('div', 'eot2-crumb', '<a href="../staff/index.html">Term 2 Conference</a> &middot; <a href="index.html?view=staff">All Risers</a>'));
+    app.appendChild(el('div', 'eot2-head', '<h1>Term Reflection &mdash; ' + kid.name + '</h1><p class="ans-lede">&nbsp;</p>'));
+    var body = el('div', 'ans-body', '<p class="ans-none">Loading…</p>');
+    app.appendChild(body);
+
+    window.eot2Fetch(kid.group, kid.slug, WEEK_KEY).then(function (data) {
+      var st = (data && data.state) || {};
+      var total = window.EOT2_REFLECTION_ITEM_COUNT(band);
+      var answered = Object.keys(st).filter(function (k) {
+        var v = st[k];
+        return v && (typeof v === 'object' ? Object.keys(v).length : String(v).trim());
+      }).length;
+      app.querySelector('.ans-lede').textContent = data
+        ? kid.name + ' answered ' + answered + ' of ' + total + ' questions.'
+        : kid.name + ' hasn’t started their reflection yet.';
+      body.innerHTML = '';
+      if (!data) return;
+
+      window.EOT2_REFLECTION[band].sections.forEach(function (section) {
+        var sEl = el('section', 'ans-section');
+        sEl.appendChild(el('h2', 'eot2-section-title', section.heading));
+        var card = el('div', 'ans-card');
+        section.questions.forEach(function (q) {
+          var v = st[q.id];
+          var answer;
+          if (q.type === 'matrix') {
+            var rows = q.rows.filter(function (r) { return v && v[r]; });
+            answer = rows.length
+              ? '<dl class="ans-matrix">' + rows.map(function (r) { return '<dt>' + escapeHtml(r) + '</dt><dd>' + escapeHtml(v[r]) + '</dd>'; }).join('') + '</dl>'
+              : '<span class="ans-none">Not answered</span>';
+          } else if (v && String(v).trim()) {
+            answer = '<span class="ans-value' + (q.type === 'text' ? ' is-text' : '') + '">' + escapeHtml(v).replace(/\n/g, '<br>') + '</span>';
+          } else {
+            answer = '<span class="ans-none">Not answered</span>';
+          }
+          card.appendChild(el('div', 'ans-row', '<p class="ans-q">' + escapeHtml(q.text) + '</p><div class="ans-a">' + answer + '</div>'));
+        });
+        sEl.appendChild(card);
+        body.appendChild(sEl);
+      });
+    });
+  }
+
+  function showStaffRoster() {
+    app.innerHTML = '';
+    app.appendChild(el('div', 'eot2-crumb', '<a href="../staff/index.html">Term 2 Conference</a>'));
+    app.appendChild(el('div', 'eot2-head', '<h1>Term Reflections</h1><p>Each Riser’s own reflection on the term.</p>'));
+    var list = el('div', 'ans-list');
+    window.EOT2_KIDS.forEach(function (k) {
+      var a = el('a', 'ans-list-row', '<strong>' + k.name + '</strong><span>&nbsp;</span><em aria-hidden="true">&rarr;</em>');
+      a.href = 'index.html?view=staff&kid=' + k.slug;
+      list.appendChild(a);
+      window.eot2Fetch(k.group, k.slug, WEEK_KEY).then(function (d) {
+        a.querySelector('span').textContent = d ? 'Answered' : 'Not started';
+      });
+    });
+    app.appendChild(list);
   }
 
   if (staffView) {
     var picked = params.get('kid') ? window.EOT2_findKid(params.get('kid')) : null;
-    if (picked) resolveAgeBand(picked); else showStaffPicker();
+    if (picked) renderStaffAnswers(picked, picked.ageBand === '11-13' ? '11-13' : '8-10');
+    else showStaffRoster();
     return;
   }
   var savedName = null;
