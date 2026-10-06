@@ -60,8 +60,6 @@
     app.appendChild(el('div', 'hd-tiles', window.LH_tiles([
       { title: 'Term 1 Conference', desc: 'What we talked about at your Term 1 conference.', href: 'term-1-conference/index.html', icon: 'conf', tone: 'violet' },
       { title: 'Term 2 Conference', desc: 'Your self-assessment, reflection and conference notes.', href: 'end-of-term-2/index.html', icon: 'term', tone: 'slate' },
-      { title: 'Core Skills', desc: 'Subject-by-subject progress.', icon: 'skills', tone: 'amber', soon: true },
-      { title: 'SEL', desc: 'Social & emotional growth.', icon: 'sel', tone: 'rose', soon: true },
       { title: 'Quests', desc: 'Your self-paced quests and how each one went.', href: 'dashboard/index.html', icon: 'quests', tone: 'green' }
     ])));
   }
