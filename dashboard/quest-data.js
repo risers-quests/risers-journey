@@ -16,14 +16,31 @@
   // state:null (Worker reached fine, kid just hasn't started this quest
   // yet). Conflating the two would silently hide real, already-done work
   // behind "not started", so callers surface ok:false as a visible warning.
+  // A staff "Mark complete" (Teacher's View) is its own small record, week
+  // key "<week>-staff", that no quest page writes to — so a Riser's open
+  // tab saving its whole state can't wipe it. A week counts as completed
+  // if either the Riser's record or that staff record says so.
+  function fetchStaffComplete(group, kid, week) {
+    return fetch(workerUrl('/sync', group, kid, week + '-staff'), { headers: { 'X-Site-Key': SITE_KEY } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (res) { return !!(res && res.found && res.data.state && res.data.state.completed); })
+      .catch(function () { return false; });
+  }
+
   function fetchWeekState(group, kid, week) {
-    return fetch(workerUrl('/sync', group, kid, week), { headers: { 'X-Site-Key': SITE_KEY } })
+    var main = fetch(workerUrl('/sync', group, kid, week), { headers: { 'X-Site-Key': SITE_KEY } })
       .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('http ' + r.status)); })
       .then(function (res) {
         var found = res && res.found;
         return { ok: true, state: found ? res.data.state : null, updatedAt: found ? res.data.updatedAt : null };
       })
       .catch(function () { return { ok: false, state: null, updatedAt: null }; });
+    return Promise.all([main, fetchStaffComplete(group, kid, week)]).then(function (r) {
+      var out = r[0];
+      out.staffComplete = r[1];
+      if (out.ok && r[1]) out.state = Object.assign({}, out.state || {}, { completed: true });
+      return out;
+    });
   }
 
   function fetchRating(group, kid, week) {

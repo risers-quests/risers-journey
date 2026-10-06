@@ -129,7 +129,8 @@
       row.parentNode.insertBefore(panel, row.nextSibling);
       Promise.all([QD.fetchWeekState(w.group, kid.slug, w.key), buildStepNames(w)]).then(function (r) {
         if (!r[0].ok || !r[0].state) { panel.innerHTML = '<p class="sq-undo-msg">Couldn’t load this quest — try again.</p>'; return; }
-        var state = r[0].state;
+        var state = Object.assign({}, r[0].state);
+        if (r[0].staffComplete) delete state.completed; // merged in from the staff record
         var build = state.build || {};
         var names = r[1];
         var total = Math.max(names.length, w.buildTotal || 0);
@@ -162,6 +163,15 @@
             .then(function (res) { return res.json(); })
             .then(function (out) {
               if (!out || !out.ok) throw new Error('save failed');
+              // Also clear a staff "Mark complete" (Teacher's View), if any.
+              if (!r[0].staffComplete) return;
+              return fetch(WORKER_URL + '/sync', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Site-Key': SITE_KEY },
+                body: JSON.stringify({ group: w.group, kid: kid.slug, week: w.key + '-staff', state: { completed: false, at: new Date().toISOString() } })
+              }).then(function (res2) { return res2.json(); }).then(function (o2) { if (!o2 || !o2.ok) throw new Error('save failed'); });
+            })
+            .then(function () {
               panel.remove();
               btn.remove();
               var summary = QD.summarizeWeek(w, next);
