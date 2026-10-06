@@ -175,7 +175,9 @@
       cats.build = {
         title: 'Build', band: done ? band(done / buildTotal, [0.3, 0.6, 1]) : UNDONE,
         line: !done ? 'The build was left undone.' : done === buildTotal ? 'Every build step finished.' : done + ' of ' + buildTotal + ' build steps finished.',
-        photo: weekCfg.buildPhoto || ''
+        photo: weekCfg.buildPhoto || '',
+        // What the Riser actually built, in a few words (staff can reword it).
+        name: (report && report.buildName) || weekCfg.buildName || ''
       };
     }
 
@@ -327,7 +329,8 @@
       }).join('') + '</ol><p class="rc-line">' + esc(cat.line) + '</p>';
     } else if (key === 'build') {
       var reasons = (opts.buildNotes || []).map(buildNote).filter(Boolean);
-      body = '<p class="rc-line">' + esc(cat.line) + '</p>' +
+      body = (cat.name ? '<p class="rc-build-name">' + esc(cat.name) + '</p>' : '') +
+        '<p class="rc-line">' + esc(cat.line) + '</p>' +
         (reasons.length && cat.band < 3 ? '<ul class="rc-list rc-reasons">' + reasons.map(function (r) { return '<li>' + esc(r.line) + '</li>'; }).join('') + '</ul>' : '') +
         photosHtml((opts.photos && opts.photos.length) ? opts.photos : cat.photo ? [cat.photo] : []) +
         (opts.video ? '<video class="rc-video" src="' + esc(opts.video) + '" controls preload="metadata" playsinline></video>' : '');

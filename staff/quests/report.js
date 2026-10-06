@@ -85,7 +85,9 @@
             : '') +
         '</div>' +
         (w.buildTotal
-          ? '<div class="rv-photo"><span class="rv-photo-label">Build pictures <small>Optional, up to ' + QR.PHOTO_SLOTS + '. Shown on the Build card; leave empty if there are none.</small></span>' +
+          ? '<label class="rv-build-name"><span class="rv-photo-label">Build name</span>' +
+              '<input type="text" maxlength="80" placeholder="What did ' + kid.name + ' build?"></label>' +
+            '<div class="rv-photo"><span class="rv-photo-label">Build pictures <small>Optional, up to ' + QR.PHOTO_SLOTS + '. Shown on the Build card; leave empty if there are none.</small></span>' +
               '<div class="rv-photo-row"><span class="rv-photo-thumbs"></span><span class="rv-photo-empty">No pictures yet</span>' +
               '<label class="eot2-btn eot2-btn-secondary rv-photo-pick"><span>Add pictures</span><input type="file" accept="image/*" multiple hidden></label>' +
               '<span class="rv-photo-msg"></span></div></div>' +
@@ -260,6 +262,18 @@
             videoMsg('Removed');
             refreshVideo();
           });
+        });
+      }
+
+      // ---- build name ----
+      var nameInput = panel.querySelector('.rv-build-name input');
+      if (nameInput) {
+        nameInput.value = report.buildName || w.buildName || '';
+        nameInput.addEventListener('input', function () {
+          var v = nameInput.value.trim();
+          if (v && v !== w.buildName) report.buildName = v; else delete report.buildName;
+          model = QR.build(w, r[0].state, r[1], report);
+          paint(); save();
         });
       }
 

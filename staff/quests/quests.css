@@ -86,3 +86,6 @@
 .rv-video-pick[hidden], .rv-video-remove[hidden] { display: none; }
 .rv-video-remove { font: inherit; font-size: .85rem; color: #a3432b; background: none; border: none; cursor: pointer; padding: 4px 2px; }
 .rv-video-msg { font-size: .82rem; color: var(--ink-faint); }
+.rv-build-name { display: flex; flex-direction: column; gap: 6px; max-width: 520px; }
+.rv-build-name input { font: inherit; font-size: .92rem; color: var(--ink); border: 1px solid var(--border); border-radius: 10px; padding: 9px 12px; background: var(--paper); }
+.rv-build-name input:focus { outline: 2px solid var(--brand-green); outline-offset: 1px; background: #fff; }
