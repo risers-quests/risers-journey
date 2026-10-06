@@ -1,7 +1,13 @@
+/* Term Reflection. Riser view: their own form (signed in via Home).
+   Staff view (?view=staff&kid=<slug>, from the Term 2 Conference status
+   table): that Riser's answers, view-only — it's the Riser's own
+   reflection, so staff can read it but not change it. */
 (function () {
   var KID_KEY = 'imm-l3-kid';
   var WEEK_KEY = 'term2-term-reflection';
   var app = document.getElementById('app');
+  var params = new URLSearchParams(location.search);
+  var staffView = params.get('view') === 'staff';
 
   function el(tag, cls, html) {
     var e = document.createElement(tag);
@@ -43,12 +49,15 @@
     app.innerHTML = '';
     var total = window.EOT2_REFLECTION_ITEM_COUNT(band);
 
-    var crumb = el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>');
+    var crumb = el('div', 'eot2-crumb', staffView
+      ? '<a href="../../staff/index.html">Home</a> &middot; <a href="../staff/index.html">Term 2 Conference</a>'
+      : '<a href="../../index.html">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>');
     app.appendChild(crumb);
 
     var header = el('div', 'eot2-form-header');
     header.innerHTML =
-      '<div><h1>Term Reflection &mdash; ' + kid.name + '</h1></div>' +
+      '<div><h1>Term Reflection &mdash; ' + kid.name + '</h1>' +
+        (staffView ? '<div class="eot2-sub">' + kid.name + '’s own answers — view only</div>' : '') + '</div>' +
       '<div class="eot2-status eot2-status-offline" id="save-status">Loading&hellip;</div>';
     app.appendChild(header);
 
@@ -140,15 +149,20 @@
       form.appendChild(sEl);
     });
 
-    var footer = el('div', 'eot2-footer-actions');
-    var saveBtn = el('button', 'eot2-btn eot2-btn-secondary', 'Save now');
-    saveBtn.addEventListener('click', function () {
-      setStatus('saving');
-      window.eot2SaveLocal(WEEK_KEY, kid.slug, state);
-      window.eot2Save(kid.group, kid.slug, WEEK_KEY, state).then(function (res) { setStatus(res.ok ? 'saved' : 'offline'); });
-    });
-    footer.appendChild(saveBtn);
-    app.appendChild(footer);
+    if (staffView) {
+      Array.prototype.forEach.call(form.querySelectorAll('input, textarea'), function (i) { i.disabled = true; });
+      form.classList.add('eot2-readonly');
+    } else {
+      var footer = el('div', 'eot2-footer-actions');
+      var saveBtn = el('button', 'eot2-btn eot2-btn-secondary', 'Save now');
+      saveBtn.addEventListener('click', function () {
+        setStatus('saving');
+        window.eot2SaveLocal(WEEK_KEY, kid.slug, state);
+        window.eot2Save(kid.group, kid.slug, WEEK_KEY, state).then(function (res) { setStatus(res.ok ? 'saved' : 'offline'); });
+      });
+      footer.appendChild(saveBtn);
+      app.appendChild(footer);
+    }
 
     function applyState(loaded) {
       if (!loaded) return;
@@ -176,14 +190,43 @@
 
     updateProgress();
     window.eot2Fetch(kid.group, kid.slug, WEEK_KEY).then(function (data) {
+      if (staffView) {
+        // Only what the Riser actually saved — never this device's local copy.
+        applyState(data && data.state);
+        var st = document.getElementById('save-status');
+        st.className = 'eot2-status eot2-status-offline';
+        st.textContent = data ? 'View only' : 'Not started yet';
+        return;
+      }
       var local = window.eot2LoadLocal(WEEK_KEY, kid.slug);
       applyState((data && data.state) || local);
       setStatus(data ? 'saved' : (local ? 'offline' : 'saved'));
     });
   }
 
+  function showStaffPicker() {
+    app.innerHTML = '';
+    app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/index.html">Home</a> &middot; <a href="../staff/index.html">Term 2 Conference</a>'));
+    var card = el('div', 'eot2-picker');
+    var options = window.EOT2_KIDS.map(function (k) { return '<option value="' + k.slug + '">' + k.name + '</option>'; }).join('');
+    card.innerHTML =
+      '<h1>Term Reflection</h1>' +
+      '<p>Choose whose reflection to read.</p>' +
+      '<div class="eot2-field"><label for="kid-select">Riser</label><select id="kid-select">' + options + '</select></div>' +
+      '<button class="eot2-btn" id="kid-go">Open</button>';
+    app.appendChild(card);
+    document.getElementById('kid-go').addEventListener('click', function () {
+      location.href = 'index.html?view=staff&kid=' + document.getElementById('kid-select').value;
+    });
+  }
+
+  if (staffView) {
+    var picked = params.get('kid') ? window.EOT2_findKid(params.get('kid')) : null;
+    if (picked) resolveAgeBand(picked); else showStaffPicker();
+    return;
+  }
   var savedName = null;
   try { savedName = localStorage.getItem(KID_KEY); } catch (e) {}
-  var kid = savedName ? window.EOT2_findKidByName(savedName) : null;
+  var kid = savedName ? (window.EOT2_findKid(String(savedName).toLowerCase()) || window.EOT2_findKidByName(savedName)) : null;
   if (kid) { resolveAgeBand(kid); } else { showKidGate(); }
 })();

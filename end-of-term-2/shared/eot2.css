@@ -159,3 +159,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--font-body
 .eot2-head-action { margin: -8px 0 26px; }
 .eot2-head-action .eot2-btn { width: auto; display: inline-block; text-decoration: none; padding: 10px 20px; }
 .eot2-hub-card[hidden] { display: none; }
+/* Staff reading a Riser's own form: answers visible, nothing editable. */
+.eot2-readonly label, .eot2-readonly input, .eot2-readonly textarea { cursor: default; }
+.eot2-readonly textarea { background: var(--paper-soft); color: var(--ink); opacity: 1; }
+.eot2-readonly label:has(input:not(:checked)) { opacity: .6; }

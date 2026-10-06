@@ -3,6 +3,9 @@
   var app = document.getElementById('app');
   var params = new URLSearchParams(location.search);
   var rater = (params.get('rater') || 'self').toLowerCase();
+  // Staff reading a Riser's own self-assessment (?rater=self&view=staff&kid=)
+  // — view-only, with staff navigation.
+  var staffViewingSelf = rater === 'self' && params.get('view') === 'staff';
   var isStaff = rater !== 'self';
   var staffRaterInfo = window.EOT2_STAFF_RATERS.filter(function (r) { return r.id === rater; })[0];
 
@@ -62,13 +65,15 @@
     var weekKey = 'term2-self-assessment-' + rater;
     app.innerHTML = '';
 
-    var crumb = el('div', 'eot2-crumb', '<a href="' + (isStaff ? '../../staff/index.html' : '../../index.html') + '">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>' + (isStaff ? ' &middot; <a href="index.html?rater=' + rater + '&pick=1">switch kid</a>' : ''));
+    var crumb = el('div', 'eot2-crumb', staffViewingSelf
+      ? '<a href="../../staff/index.html">Home</a> &middot; <a href="../staff/index.html">Term 2 Conference</a>'
+      : '<a href="' + (isStaff ? '../../staff/index.html' : '../../index.html') + '">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>' + (isStaff ? ' &middot; <a href="index.html?rater=' + rater + '&pick=1">switch kid</a>' : ''));
     app.appendChild(crumb);
 
     var header = el('div', 'eot2-form-header');
     header.innerHTML =
       '<div><h1>Self-Assessment &mdash; ' + kid.name + '</h1>' +
-      '<div class="eot2-sub">Rated by ' + (isStaff ? staffRaterInfo.label : kid.name + ' (self)') + '</div></div>' +
+      '<div class="eot2-sub">Rated by ' + (isStaff ? staffRaterInfo.label : kid.name + ' (self)') + (staffViewingSelf ? ' — view only' : '') + '</div></div>' +
       '<div class="eot2-status eot2-status-offline" id="save-status">Loading&hellip;</div>';
     app.appendChild(header);
 
@@ -140,15 +145,20 @@
       form.appendChild(sEl);
     });
 
-    var footer = el('div', 'eot2-footer-actions');
-    var saveBtn = el('button', 'eot2-btn eot2-btn-secondary', 'Save now');
-    saveBtn.addEventListener('click', function () {
-      setStatus('saving');
-      window.eot2SaveLocal(weekKey, kid.slug, state);
-      window.eot2Save(kid.group, kid.slug, weekKey, state).then(function (res) { setStatus(res.ok ? 'saved' : 'offline'); });
-    });
-    footer.appendChild(saveBtn);
-    app.appendChild(footer);
+    if (staffViewingSelf) {
+      Array.prototype.forEach.call(form.querySelectorAll('input'), function (i) { i.disabled = true; });
+      form.classList.add('eot2-readonly');
+    } else {
+      var footer = el('div', 'eot2-footer-actions');
+      var saveBtn = el('button', 'eot2-btn eot2-btn-secondary', 'Save now');
+      saveBtn.addEventListener('click', function () {
+        setStatus('saving');
+        window.eot2SaveLocal(weekKey, kid.slug, state);
+        window.eot2Save(kid.group, kid.slug, weekKey, state).then(function (res) { setStatus(res.ok ? 'saved' : 'offline'); });
+      });
+      footer.appendChild(saveBtn);
+      app.appendChild(footer);
+    }
 
     function applyState(loaded) {
       if (!loaded) return;
@@ -162,6 +172,14 @@
 
     updateProgress();
     window.eot2Fetch(kid.group, kid.slug, weekKey).then(function (data) {
+      if (staffViewingSelf) {
+        // Only what the Riser actually saved — never this device's local copy.
+        applyState(data && data.state);
+        var st = document.getElementById('save-status');
+        st.className = 'eot2-status eot2-status-offline';
+        st.textContent = data ? 'View only' : 'Not started yet';
+        return;
+      }
       var local = window.eot2LoadLocal(weekKey, kid.slug);
       var remoteState = data && data.state;
       applyState(remoteState || local);
@@ -169,7 +187,11 @@
     });
   }
 
-  if (isStaff) {
+  if (staffViewingSelf) {
+    var viewKid = params.get('kid') ? window.EOT2_findKid(params.get('kid')) : null;
+    if (viewKid) renderForm(viewKid);
+    else app.innerHTML = '<p class="eot2-msg">Open a Riser’s self-assessment from the Term 2 Conference status table.</p>';
+  } else if (isStaff) {
     var deepLinkSlug = params.get('kid');
     var forcePicker = params.get('pick') === '1';
     var pickedKid = forcePicker ? null : ((deepLinkSlug ? window.EOT2_findKid(deepLinkSlug) : null) || window.EOT2_getLastStaffKid());
@@ -182,7 +204,7 @@
   } else {
     var savedName = null;
     try { savedName = localStorage.getItem(KID_KEY); } catch (e) {}
-    var kid = savedName ? window.EOT2_findKidByName(savedName) : null;
+    var kid = savedName ? (window.EOT2_findKid(String(savedName).toLowerCase()) || window.EOT2_findKidByName(savedName)) : null;
     if (kid) { renderForm(kid); } else { showKidGate(); }
   }
 })();

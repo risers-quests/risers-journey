@@ -1,5 +1,13 @@
 (function () {
   var app = document.getElementById('app');
+  // Whoever is signed in on the staff side writes the MOM (falls back to
+  // Jeran, as before, if nobody is).
+  var staffLabel = 'Jeran';
+  try {
+    var signedIn = localStorage.getItem('rj-staff-name');
+    var match = window.EOT2_STAFF_RATERS.filter(function (r) { return r.id === signedIn; })[0];
+    if (match && match.id !== 'consolidated') staffLabel = match.label;
+  } catch (e) {}
 
   var SA_RATERS = [
     { id: 'self', label: 'Self' },
@@ -64,8 +72,8 @@
       var td = document.createElement('td');
       tr.appendChild(td);
       var weekKey = 'term2-self-assessment-' + rater.id;
-      var href = rater.id === 'consolidated'
-        ? '../consolidate/index.html?kid=' + kid.slug
+      var href = rater.id === 'consolidated' ? '../consolidate/index.html?kid=' + kid.slug
+        : rater.id === 'self' ? '../self-assessment/index.html?rater=self&view=staff&kid=' + kid.slug
         : '../self-assessment/index.html?rater=' + rater.id + '&kid=' + kid.slug;
       fetches.push(window.eot2Fetch(kid.group, kid.slug, weekKey).then(function (data) {
         td.appendChild(badge(hasAnyAnswer(data && data.state), href, hasAnyAnswer(data && data.state) ? '✓' : '—'));
@@ -76,14 +84,14 @@
     tr.appendChild(reflTd);
     fetches.push(window.eot2Fetch(kid.group, kid.slug, 'term2-term-reflection').then(function (data) {
       var done = hasAnyAnswer(data && data.state);
-      reflTd.appendChild(badge(done, '../term-reflection/index.html', done ? 'Done' : 'Not started'));
+      reflTd.appendChild(badge(done, '../term-reflection/index.html?view=staff&kid=' + kid.slug, done ? 'Done' : 'Not started'));
     }));
 
     var momTd = document.createElement('td');
     tr.appendChild(momTd);
     fetches.push(window.eot2Fetch(kid.group, kid.slug, 'term2-mom').then(function (data) {
       var done = hasAnyAnswer(data && data.state);
-      momTd.appendChild(badge(done, '../mom/index.html?editAs=Jeran&kid=' + kid.slug, done ? 'Written' : 'Not written'));
+      momTd.appendChild(badge(done, '../mom/index.html?editAs=' + encodeURIComponent(staffLabel) + '&kid=' + kid.slug, done ? 'Written' : 'Not written'));
     }));
 
     tbody.appendChild(tr);
