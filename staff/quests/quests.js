@@ -97,99 +97,6 @@
       groups.map(function (g) { return ref.answerKey(g, groupLabel(g) + ' key', 'staff-ref-pill'); }).join('')));
   }
 
-  /* ---- Undo a completion ----
-     For a quest marked complete by mistake (e.g. "Complete My Quest"
-     clicked on the Riser's behalf). Staff tick the build steps the Riser
-     really finished — step names read from the quest page itself — and it
-     saves the quest as not complete with only those steps ticked. Answers,
-     time and everything else in the record stay as they are. The Riser's
-     page (and any device that has it open) picks this up on its next load,
-     because this save is newer than anything they hold. */
-  function questPageUrl(w) { return '../../' + w.path.replace(/^\.\.\//, ''); }
-
-  function buildStepNames(w) {
-    return fetch(questPageUrl(w))
-      .then(function (r) { return r.ok ? r.text() : ''; })
-      .then(function (html) {
-        var doc = new DOMParser().parseFromString(html, 'text/html');
-        return Array.prototype.map.call(doc.querySelectorAll('.build-check-item'), function (item) {
-          return (item.textContent || '').replace(/\s+/g, ' ').trim();
-        });
-      })
-      .catch(function () { return []; });
-  }
-
-  // done=false: the quest isn't complete, so this only fixes the build
-  // steps (same stamped reset, so other devices' old ticks don't return).
-  function addUndo(row, kid, w, done) {
-    var btn = el('button', 'sq-undo', done ? 'Undo completion' : 'Fix build steps');
-    btn.type = 'button';
-    row.querySelector('.sq-week-links').appendChild(btn);
-    btn.addEventListener('click', function () {
-      if (row.nextSibling && row.nextSibling.classList && row.nextSibling.classList.contains('sq-undo-panel')) return;
-      var panel = el('div', 'sq-undo-panel', '<p class="sq-undo-msg">Loading…</p>');
-      row.parentNode.insertBefore(panel, row.nextSibling);
-      Promise.all([QD.fetchWeekState(w.group, kid.slug, w.key), buildStepNames(w)]).then(function (r) {
-        if (!r[0].ok || !r[0].state) { panel.innerHTML = '<p class="sq-undo-msg">Couldn’t load this quest — try again.</p>'; return; }
-        var state = Object.assign({}, r[0].state);
-        if (r[0].staffComplete) delete state.completed; // merged in from the staff record
-        var build = state.build || {};
-        var names = r[1];
-        var total = Math.max(names.length, w.buildTotal || 0);
-        var steps = '';
-        for (var i = 0; i < total; i++) {
-          steps += '<label class="sq-undo-step"><input type="checkbox" data-i="' + i + '"' + (build[i] ? ' checked' : '') + '> ' +
-            (names[i] ? names[i].replace(/[<>&]/g, '') : 'Step ' + (i + 1)) + '</label>';
-        }
-        panel.innerHTML =
-          '<p class="sq-undo-title">' + (done ? '<strong>Undo ' + kid.name + '’s completion?</strong> The quest goes back to not complete. ' : '<strong>Fix ' + kid.name + '’s build steps.</strong> ') +
-            (total ? 'Leave ticked only the build steps ' + kid.name + ' really finished:' : '') + '</p>' +
-          (total ? '<div class="sq-undo-steps">' + steps + '</div>' : '') +
-          '<div class="sq-undo-actions"><button type="button" class="eot2-btn sq-undo-go">' + (done ? 'Undo completion' : 'Save build steps') + '</button>' +
-          '<button type="button" class="eot2-btn eot2-btn-secondary sq-undo-cancel">Cancel</button>' +
-          '<span class="sq-undo-msg"></span></div>';
-        panel.querySelector('.sq-undo-cancel').addEventListener('click', function () { panel.remove(); });
-        panel.querySelector('.sq-undo-go').addEventListener('click', function () {
-          var go = this;
-          go.disabled = true;
-          var nextBuild = {};
-          Array.prototype.forEach.call(panel.querySelectorAll('.sq-undo-step input'), function (cb) {
-            nextBuild[cb.getAttribute('data-i')] = cb.checked;
-          });
-          // resetAt tells every device's merge that this undo is newer than
-          // their copy, so their older ticks/completion don't come back.
-          var next = Object.assign({}, state, { completed: false, build: total ? nextBuild : state.build, resetAt: new Date().toISOString() });
-          fetch(WORKER_URL + '/sync', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Site-Key': SITE_KEY },
-            body: JSON.stringify({ group: w.group, kid: kid.slug, week: w.key, state: next })
-          })
-            .then(function (res) { return res.json(); })
-            .then(function (out) {
-              if (!out || !out.ok) throw new Error('save failed');
-              // Also clear a staff "Mark complete" (Teacher's View), if any.
-              if (!r[0].staffComplete) return;
-              return fetch(WORKER_URL + '/sync', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-Site-Key': SITE_KEY },
-                body: JSON.stringify({ group: w.group, kid: kid.slug, week: w.key + '-staff', state: { completed: false, at: new Date().toISOString() } })
-              }).then(function (res2) { return res2.json(); }).then(function (o2) { if (!o2 || !o2.ok) throw new Error('save failed'); });
-            })
-            .then(function () {
-              panel.remove();
-              btn.remove();
-              var summary = QD.summarizeWeek(w, next);
-              row.querySelector('.sq-week-status').innerHTML = chip(summary.status, false);
-            })
-            .catch(function () {
-              go.disabled = false;
-              panel.querySelector('.sq-undo-actions .sq-undo-msg').textContent = 'Couldn’t save — check your connection and try again.';
-            });
-        });
-      });
-    });
-  }
-
   // Completed and in-progress quests get a Report link: review the family-facing report
   // card and share it (report.html). Shows whether it's been shared yet.
   function addReportLink(row, kid, w) {
@@ -222,8 +129,7 @@
     var ref = window.STAFF_REF;
     app.appendChild(el('div', 'staff-ref-row sq-ref',
       '<span class="staff-ref-label">Reference</span>' +
-      ref.answerKey(kid.group, groupLabel(kid.group) + ' answer key', 'staff-ref-pill') +
-      ref.teachersView('Mark a week Incomplete', 'staff-ref-pill')));
+      ref.answerKey(kid.group, groupLabel(kid.group) + ' answer key', 'staff-ref-pill')));
 
     var statuses = weeks.map(function (w) {
       var row = el('div', 'sq-week');
@@ -240,8 +146,6 @@
         var status = r[0].ok ? QD.summarizeWeek(w, r[0].state).status : 'unknown';
         row.querySelector('.sq-week-status').innerHTML = chip(status, r[1]);
         if (status === 'completed' || status === 'in-progress') addReportLink(row, kid, w);
-        if (status === 'completed') addUndo(row, kid, w, true);
-        else if (status === 'in-progress' && w.buildTotal) addUndo(row, kid, w, false);
         return status;
       });
     });
