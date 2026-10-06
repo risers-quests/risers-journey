@@ -1933,6 +1933,74 @@
     window.addEventListener('beforeunload', persist);
   }
 
+  /* ---- Merging two copies of a Riser's progress ----
+     Each device keeps its own copy and syncs the whole thing. Letting the
+     newest copy simply replace the other lost real work whenever a stale
+     copy was saved last (a tab left open on another device, or a device
+     that hadn't seen the latest work). Copies are merged instead, piece by
+     piece, keeping the most progress:
+       answers  — the one that passed; otherwise the most recently changed
+       build    — ticked on either copy stays ticked
+       time     — the larger time per day
+       complete — complete on either copy stays complete
+       anything else (notes, tables, highlights, games) — the fuller one
+     The one exception is a staff "Undo completion" (it stamps resetAt):
+     when it's newer than this device's last sync, its build ticks and
+     completion win over this device's older copy. */
+  function syncIsEmpty(v) {
+    return v === undefined || v === null || v === '' || v === false ||
+      (Array.isArray(v) && !v.length) || (typeof v === 'object' && !Array.isArray(v) && !Object.keys(v).length);
+  }
+  function syncFuller(a, b) {
+    if (syncIsEmpty(a)) return syncIsEmpty(b) ? a : b;
+    if (syncIsEmpty(b)) return a;
+    return JSON.stringify(b).length > JSON.stringify(a).length ? b : a;
+  }
+  function syncEachKey(a, b, pick) {
+    var out = {};
+    var keys = Object.keys(a || {}).concat(Object.keys(b || {}));
+    keys.forEach(function (k) { if (!(k in out)) out[k] = pick((a || {})[k], (b || {})[k]); });
+    return out;
+  }
+  function syncBetterAnswer(a, b) {
+    if (!a) return b || a;
+    if (!b) return a;
+    if (!!a.success !== !!b.success) return a.success ? a : b;
+    if (a.updatedAt && b.updatedAt && a.updatedAt !== b.updatedAt) return new Date(b.updatedAt) > new Date(a.updatedAt) ? b : a;
+    return syncFuller(a, b);
+  }
+  function mergeSyncStates(local, server, serverReset) {
+    local = local || {}; server = server || {};
+    var out = {};
+    Object.keys(local).concat(Object.keys(server)).forEach(function (k) {
+      if (k in out) return;
+      var l = local[k], s = server[k];
+      if (k === 'resetAt') { out[k] = s || l; return; }
+      if (k === 'completed') { out[k] = serverReset ? !!s : (!!l || !!s); return; }
+      if (l === undefined || l === null) { out[k] = s; return; }
+      if (s === undefined || s === null) { out[k] = (k === 'build' && serverReset) ? {} : l; return; }
+      if (k === 'build') { out[k] = serverReset ? s : syncEachKey(l, s, function (x, y) { return !!(x || y); }); return; }
+      if (k === 'dayTime') { out[k] = syncEachKey(l, s, function (x, y) { return Math.max(x || 0, y || 0); }); return; }
+      if (k === 'reflect') { out[k] = syncEachKey(l, s, syncBetterAnswer); return; }
+      if (typeof l === 'object' && !Array.isArray(l) && typeof s === 'object' && !Array.isArray(s)) { out[k] = syncEachKey(l, s, syncFuller); return; }
+      out[k] = syncFuller(l, s);
+    });
+    return out;
+  }
+  // Same content ignoring empty bits and key order.
+  function syncSame(a, b) {
+    function norm(v) {
+      if (Array.isArray(v)) return v.map(norm);
+      if (v && typeof v === 'object') {
+        var o = {};
+        Object.keys(v).sort().forEach(function (k) { var n = norm(v[k]); if (!syncIsEmpty(n)) o[k] = n; });
+        return o;
+      }
+      return v;
+    }
+    return JSON.stringify(norm(a)) === JSON.stringify(norm(b));
+  }
+
   function initProgressSync(pageKey, group, week) {
     var workerUrl = window.QUEST_SYNC_URL;
     if (!workerUrl) return Promise.resolve();
@@ -1946,25 +2014,29 @@
       return h;
     }
 
-    function pull() {
+    // Merges the server's copy into this device's (see mergeSyncStates).
+    // If this device had anything the server didn't, the union is queued
+    // to send back.
+    function mergeServerCopy(data) {
+      var localSyncedAt = localStorage.getItem(syncedAtKey);
+      var server = data.state || {};
+      var serverReset = !!(server.resetAt && (!localSyncedAt || new Date(server.resetAt) > new Date(localSyncedAt)));
+      var merged = mergeSyncStates(collectSyncState(pageKey), server, serverReset);
+      applySyncState(pageKey, merged);
+      if (!localSyncedAt || new Date(data.updatedAt) > new Date(localSyncedAt)) {
+        try { localStorage.setItem(syncedAtKey, data.updatedAt); } catch (e) {}
+      }
+      if (!window.QUEST_FACILITATOR_MODE && !syncSame(merged, server)) markPending();
+    }
+
+    function fetchServerCopy() {
       var url = base + '/sync?group=' + encodeURIComponent(group) + '&kid=' + encodeURIComponent(pageKey) + '&week=' + encodeURIComponent(week);
-      return fetch(url, { headers: headers() })
-        .then(function (r) { return r.ok ? r.json() : null; })
-        .then(function (res) {
-          if (!res || !res.found) return;
-          var localSyncedAt = localStorage.getItem(syncedAtKey);
-          if (!localSyncedAt || new Date(res.data.updatedAt) > new Date(localSyncedAt)) {
-            var incoming = res.data.state;
-            // A "Complete My Quest" made on this device but not sent yet must
-            // survive pulling newer progress from another device (e.g. the
-            // Riser's own): keep it, so the pending send still carries it.
-            if (isPending() && collectSyncState(pageKey).completed && incoming && !incoming.completed) {
-              incoming = Object.assign({}, incoming, { completed: true });
-            }
-            applySyncState(pageKey, incoming);
-            try { localStorage.setItem(syncedAtKey, res.data.updatedAt); } catch (e) {}
-          }
-        })
+      return fetch(url, { headers: headers() }).then(function (r) { return r.ok ? r.json() : null; });
+    }
+
+    function pull() {
+      return fetchServerCopy()
+        .then(function (res) { if (res && res.found) mergeServerCopy(res.data); })
         .catch(function () {});
     }
 
@@ -1984,18 +2056,25 @@
     function clearPending() { try { localStorage.removeItem(pendingKey); } catch (e) {} }
 
     var inFlight = false;
-    function pushNow() {
-      if (window.QUEST_FACILITATOR_MODE || !isPending() || inFlight) return;
+    // Sends this device's copy. Normally it first merges in the server's
+    // latest copy, so a stale device can't overwrite newer work. When the
+    // page is closing there's no time for that round trip, so it sends
+    // straight away (keepalive) — the copy was merged when the page
+    // loaded and again whenever the tab came back into view.
+    function pushNow(force, closing) {
+      if ((window.QUEST_FACILITATOR_MODE && !force) || (!isPending() && !force) || inFlight) return;
       inFlight = true;
-      var body = { group: group, kid: pageKey, week: week, state: collectSyncState(pageKey) };
-      fetch(base + '/sync', (function () {
+      var ready = closing ? Promise.resolve() : fetchServerCopy()
+        .then(function (res) { if (res && res.found) mergeServerCopy(res.data); })
+        .catch(function () {});
+      ready.then(function () {
+        var payload = JSON.stringify({ group: group, kid: pageKey, week: week, state: collectSyncState(pageKey) });
         // keepalive lets the send finish even if the page is closing (the
         // browser caps keepalive bodies at 64 KB, so very large states go
         // without it and rely on the next-visit retry).
-        var payload = JSON.stringify(body);
-        return { method: 'POST', headers: headers(), body: payload, keepalive: payload.length < 60000 };
-      })())
-        .then(function (r) { return r.ok ? r.json() : null; })
+        return fetch(base + '/sync', { method: 'POST', headers: headers(), body: payload, keepalive: payload.length < 60000 });
+      })
+        .then(function (r) { return r && r.ok ? r.json() : null; })
         .then(function (res) {
           if (res && res.updatedAt) {
             clearPending();
@@ -2041,11 +2120,16 @@
         if (e.target.closest('#qc-finish-btn') && !window.QUEST_FACILITATOR_MODE) { clearTimeout(pushTimer); pushNow(); }
       }
     });
-    window.addEventListener('beforeunload', pushNow);
+    window.addEventListener('beforeunload', function () { pushNow(false, true); });
     // iPad/iPhone Safari often skips beforeunload; these fire reliably when
     // the tab is closed, switched away from, or the app is backgrounded.
-    window.addEventListener('pagehide', function () { pushNow(); });
-    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') pushNow(); });
+    window.addEventListener('pagehide', function () { pushNow(false, true); });
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') pushNow(false, true);
+      // Coming back to a tab that's been open a while: merge in any work
+      // done on another device meanwhile, before anything here is sent.
+      else pull();
+    });
 
     // Keep retrying a pending push for as long as this tab stays open —
     // covers a Worker outage that recovers mid-visit.

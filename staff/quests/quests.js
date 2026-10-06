@@ -154,7 +154,9 @@
           Array.prototype.forEach.call(panel.querySelectorAll('.sq-undo-step input'), function (cb) {
             nextBuild[cb.getAttribute('data-i')] = cb.checked;
           });
-          var next = Object.assign({}, state, { completed: false, build: total ? nextBuild : state.build });
+          // resetAt tells every device's merge that this undo is newer than
+          // their copy, so their older ticks/completion don't come back.
+          var next = Object.assign({}, state, { completed: false, build: total ? nextBuild : state.build, resetAt: new Date().toISOString() });
           fetch(WORKER_URL + '/sync', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-Site-Key': SITE_KEY },
