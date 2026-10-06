@@ -86,4 +86,5 @@
 .qd-row-track { flex: 0 1 160px; height: 5px; border-radius: 99px; background: var(--border); overflow: hidden; }
 .qd-row-track > span { display: block; height: 100%; border-radius: inherit; background: var(--brand-green); }
 .qd-row.is-progress .qd-row-num { background: #fff4dc; color: #93600f; }
-.qd-section-title:first-of-type { margin-top: 28px; }
+.qd-row-chip { flex-shrink: 0; }
+@media (max-width: 520px) { .qd-row-chip { display: none; } }

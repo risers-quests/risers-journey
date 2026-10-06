@@ -159,8 +159,9 @@
       '<span class="qd-row-num">' + escapeHtml(lbl.num.replace(/^Quest\s*/, '')) + '</span>' +
       '<span class="qd-row-text"><strong>' + escapeHtml(lbl.title) + '</strong>' +
         (done ? '<span>See how it went</span>'
-              : '<span class="qd-row-bar"><span class="qd-row-track"><span style="width:' + q.summary.pct + '%"></span></span>' + q.summary.pct + '% · Continue</span>') +
+              : '<span class="qd-row-bar"><span class="qd-row-track"><span style="width:' + q.summary.pct + '%"></span></span>' + q.summary.pct + '% done · Continue</span>') +
       '</span>' +
+      (done ? '<span class="hd-chip hd-chip-done qd-row-chip">Completed</span>' : '<span class="hd-chip hd-chip-progress qd-row-chip">In progress</span>') +
       '<span class="qd-row-go" aria-hidden="true">&rarr;</span>';
     return row;
   }
@@ -177,18 +178,15 @@
       : 'Your quests will show up here once you start one.';
     if (anyLoadError) app.appendChild(loadWarning());
 
-    if (going.length) {
-      app.appendChild(el('h2', 'qd-section-title', 'In progress'));
-      var gList = el('div', 'hd-card qd-list');
-      going.forEach(function (q) { gList.appendChild(questRow(q, false)); });
-      app.appendChild(gList);
+    // One list: completed first, then the ones still under way — each
+    // marked with a badge rather than split under headings.
+    if (done.length || going.length) {
+      var list = el('div', 'hd-card qd-list');
+      done.forEach(function (q) { list.appendChild(questRow(q, true)); });
+      going.forEach(function (q) { list.appendChild(questRow(q, false)); });
+      app.appendChild(list);
     }
     if (!done.length) return;
-
-    if (going.length) app.appendChild(el('h2', 'qd-section-title', 'Completed'));
-    var list = el('div', 'hd-card qd-list');
-    done.forEach(function (q) { list.appendChild(questRow(q, true)); });
-    app.appendChild(list);
 
     var notes = draftClosingNotes(done.map(function (q) { return { bloomInfo: q.summary.bloom }; }));
     app.appendChild(el('h2', 'qd-section-title', 'Looking back'));

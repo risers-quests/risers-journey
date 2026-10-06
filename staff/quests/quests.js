@@ -119,8 +119,10 @@
       .catch(function () { return []; });
   }
 
-  function addUndo(row, kid, w) {
-    var btn = el('button', 'sq-undo', 'Undo completion');
+  // done=false: the quest isn't complete, so this only fixes the build
+  // steps (same stamped reset, so other devices' old ticks don't return).
+  function addUndo(row, kid, w, done) {
+    var btn = el('button', 'sq-undo', done ? 'Undo completion' : 'Fix build steps');
     btn.type = 'button';
     row.querySelector('.sq-week-links').appendChild(btn);
     btn.addEventListener('click', function () {
@@ -140,10 +142,10 @@
             (names[i] ? names[i].replace(/[<>&]/g, '') : 'Step ' + (i + 1)) + '</label>';
         }
         panel.innerHTML =
-          '<p class="sq-undo-title"><strong>Undo ' + kid.name + '’s completion?</strong> The quest goes back to not complete. ' +
+          '<p class="sq-undo-title">' + (done ? '<strong>Undo ' + kid.name + '’s completion?</strong> The quest goes back to not complete. ' : '<strong>Fix ' + kid.name + '’s build steps.</strong> ') +
             (total ? 'Leave ticked only the build steps ' + kid.name + ' really finished:' : '') + '</p>' +
           (total ? '<div class="sq-undo-steps">' + steps + '</div>' : '') +
-          '<div class="sq-undo-actions"><button type="button" class="eot2-btn sq-undo-go">Undo completion</button>' +
+          '<div class="sq-undo-actions"><button type="button" class="eot2-btn sq-undo-go">' + (done ? 'Undo completion' : 'Save build steps') + '</button>' +
           '<button type="button" class="eot2-btn eot2-btn-secondary sq-undo-cancel">Cancel</button>' +
           '<span class="sq-undo-msg"></span></div>';
         panel.querySelector('.sq-undo-cancel').addEventListener('click', function () { panel.remove(); });
@@ -224,7 +226,8 @@
       return Promise.all([QD.fetchWeekState(w.group, kid.slug, w.key), fetchIncomplete(w.group, kid.slug, w.key)]).then(function (r) {
         var status = r[0].ok ? QD.summarizeWeek(w, r[0].state).status : 'unknown';
         row.querySelector('.sq-week-status').innerHTML = chip(status, r[1]);
-        if (status === 'completed') addUndo(row, kid, w);
+        if (status === 'completed') addUndo(row, kid, w, true);
+        else if (status === 'in-progress' && w.buildTotal) addUndo(row, kid, w, false);
         return status;
       });
     });
