@@ -82,3 +82,12 @@
 .rc-pill.rc-undone { background: transparent; color: #a3432b; border: 1px dashed #d9a293; padding: 2px 9px; }
 .rc-scale-sep { color: var(--border); margin: 0 2px; }
 .rc-lost { margin: 0 0 14px; padding: 12px 16px; border-radius: 12px; background: #eef1f4; color: var(--brand-slate); font-size: .9rem; line-height: 1.5; }
+.rc-photos { display: grid; gap: 8px; margin-top: 4px; }
+.rc-photos .rc-photo { margin-top: 0; }
+.rc-photos-2 { grid-template-columns: 1fr 1fr; }
+.rc-photos-3 { grid-template-columns: 1fr 1fr 1fr; }
+.rc-photos-2 .rc-photo, .rc-photos-3 .rc-photo { height: 280px; max-height: none; object-fit: cover; }
+.rc-photo { cursor: zoom-in; }
+.rc-lightbox { position: fixed; inset: 0; z-index: 1000; background: rgba(20, 28, 34, .88); display: flex; align-items: center; justify-content: center; padding: 24px; cursor: zoom-out; }
+.rc-lightbox img { max-width: 100%; max-height: 100%; border-radius: 12px; box-shadow: 0 12px 40px rgba(0, 0, 0, .4); }
+@media (max-width: 520px) { .rc-photos-3 { grid-template-columns: 1fr 1fr; } .rc-photos-2 .rc-photo, .rc-photos-3 .rc-photo { height: 180px; } }

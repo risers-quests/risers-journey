@@ -37,7 +37,7 @@
       QD.fetchWeekState(w.group, kid.slug, w.key),
       QD.fetchRating(w.group, kid.slug, w.key),
       QR.fetchReport(w.group, kid.slug, w.key),
-      QR.fetchBuildPhoto(w.group, kid.slug, w.key)
+      QR.fetchBuildPhotos(w.group, kid.slug, w.key)
     ]).then(function (r) {
       body.innerHTML = '';
       if (!r[0].ok || !r[2].ok) {
@@ -47,7 +47,7 @@
       var summary = QD.summarizeWeek(w, r[0].state);
       var started = summary.status !== 'not-started';
       var report = Object.assign({ shared: false, buildNotes: [] }, r[2].report || {});
-      var photo = r[3].img || '';
+      var slots = r[3].slots.slice(); // one entry per picture slot, '' when empty
       var model = QR.build(w, r[0].state, r[1], report);
       var rated = !!(r[1] && r[1].scores && Object.keys(r[1].scores).length);
       var draft = QR.draftNotes(model, report.buildNotes);
@@ -83,10 +83,10 @@
             : '') +
         '</div>' +
         (w.buildTotal
-          ? '<div class="rv-photo"><span class="rv-photo-label">Build picture <small>Optional. Shown on the Build card; leave empty if there’s no picture.</small></span>' +
-              '<div class="rv-photo-row"><img class="rv-photo-thumb" alt=""><span class="rv-photo-empty">No picture yet</span>' +
-              '<label class="eot2-btn eot2-btn-secondary rv-photo-pick"><span>Upload picture</span><input type="file" accept="image/*" hidden></label>' +
-              '<button type="button" class="rv-photo-remove">Remove</button><span class="rv-photo-msg"></span></div></div>'
+          ? '<div class="rv-photo"><span class="rv-photo-label">Build pictures <small>Optional, up to ' + QR.PHOTO_SLOTS + '. Shown on the Build card; leave empty if there are none.</small></span>' +
+              '<div class="rv-photo-row"><span class="rv-photo-thumbs"></span><span class="rv-photo-empty">No pictures yet</span>' +
+              '<label class="eot2-btn eot2-btn-secondary rv-photo-pick"><span>Add pictures</span><input type="file" accept="image/*" multiple hidden></label>' +
+              '<span class="rv-photo-msg"></span></div></div>'
           : '') +
         '<div class="rv-bar">' +
           '<button type="button" class="eot2-btn eot2-btn-secondary rv-redraft">Redraft from quest data</button>' +
@@ -108,7 +108,7 @@
       shareInput.checked = !!report.shared;
 
       function paint() {
-        preview.innerHTML = QR.render(model, report, { questHref: '../../' + w.path.replace(/^\.\.\//, '') + '?fac=1', photo: photo });
+        preview.innerHTML = QR.render(model, report, { questHref: '../../' + w.path.replace(/^\.\.\//, '') + '?fac=1', photos: slots.filter(Boolean) });
         paintPhoto();
         shareInput.disabled = !started && !report.shared;
         panel.querySelector('.cs-share-text span').textContent = report.shared
@@ -164,31 +164,45 @@
       var photoBox = panel.querySelector('.rv-photo');
       function paintPhoto() {
         if (!photoBox) return;
-        var thumb = photoBox.querySelector('.rv-photo-thumb');
-        thumb.hidden = !photo;
-        if (photo) thumb.src = photo;
-        photoBox.querySelector('.rv-photo-empty').hidden = !!photo;
-        photoBox.querySelector('.rv-photo-pick span').textContent = photo ? 'Replace picture' : 'Upload picture';
-        photoBox.querySelector('.rv-photo-remove').hidden = !photo;
+        var thumbs = photoBox.querySelector('.rv-photo-thumbs');
+        thumbs.innerHTML = '';
+        slots.forEach(function (img, i) {
+          if (!img) return;
+          var t = el('span', 'rv-photo-tile', '<img alt="Build picture ' + (i + 1) + '"><button type="button">Remove</button>');
+          t.querySelector('img').src = img;
+          t.querySelector('button').addEventListener('click', function () {
+            if (window.confirm('Remove this build picture?')) storeAt(i, '');
+          });
+          thumbs.appendChild(t);
+        });
+        var count = slots.filter(Boolean).length;
+        photoBox.querySelector('.rv-photo-empty').hidden = count > 0;
+        photoBox.querySelector('.rv-photo-pick').hidden = count >= slots.length;
       }
       function photoMsg(t) { photoBox.querySelector('.rv-photo-msg').textContent = t; }
-      function storePhoto(img) {
-        photoMsg('Saving…');
-        QR.saveBuildPhoto(w.group, kid.slug, w.key, img, staffName()).then(function (res) {
-          if (!res.ok) { photoMsg('Not saved — check connection and try again.'); return; }
-          photo = img; photoMsg(img ? 'Saved' : 'Removed'); paint();
+      function storeAt(i, img) {
+        photoMsg(img ? 'Saving…' : 'Removing…');
+        return QR.saveBuildPhoto(w.group, kid.slug, w.key, i, img, staffName()).then(function (res) {
+          if (!res.ok) { photoMsg('Not saved — check connection and try again.'); return false; }
+          slots[i] = img; photoMsg(img ? 'Saved' : 'Removed'); paint();
+          return true;
         });
       }
       if (photoBox) {
         photoBox.querySelector('input[type=file]').addEventListener('change', function () {
-          var file = this.files && this.files[0];
+          var files = Array.prototype.slice.call(this.files || []);
           this.value = '';
-          if (!file) return;
-          photoMsg('Preparing…');
-          shrinkImage(file).then(storePhoto, function () { photoMsg('Couldn’t read that picture. Try a JPG or PNG.'); });
-        });
-        photoBox.querySelector('.rv-photo-remove').addEventListener('click', function () {
-          if (window.confirm('Remove this build picture?')) storePhoto('');
+          var free = slots.map(function (img, i) { return img ? -1 : i; }).filter(function (i) { return i >= 0; });
+          if (files.length > free.length) photoMsg('Only ' + free.length + ' more picture' + (free.length === 1 ? '' : 's') + ' fit; adding the first ' + free.length + '.');
+          files = files.slice(0, free.length);
+          // One at a time, each into the next empty slot.
+          files.reduce(function (chain, file, n) {
+            return chain.then(function () {
+              photoMsg('Preparing ' + (n + 1) + ' of ' + files.length + '…');
+              return shrinkImage(file).then(function (img) { return storeAt(free[n], img); },
+                function () { photoMsg('Couldn’t read “' + file.name + '”. Try a JPG or PNG.'); });
+            });
+          }, Promise.resolve());
         });
       }
 

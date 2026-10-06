@@ -75,3 +75,9 @@
 .rv-photo-pick { cursor: pointer; }
 .rv-photo-remove { font: inherit; font-size: .85rem; color: #a3432b; background: none; border: none; cursor: pointer; padding: 4px 2px; }
 .rv-photo-msg { font-size: .82rem; color: var(--ink-faint); }
+.rv-photo-thumbs { display: flex; flex-wrap: wrap; gap: 10px; }
+.rv-photo-thumbs:empty { display: none; }
+.rv-photo-tile { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.rv-photo-tile img { width: 120px; height: 90px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border); }
+.rv-photo-tile button { font: inherit; font-size: .8rem; color: #a3432b; background: none; border: none; cursor: pointer; padding: 2px; }
+.rv-photo-pick[hidden] { display: none; }

@@ -137,9 +137,10 @@
     var wrap = el('div', 'qd-report');
     wrap.innerHTML = QR.render(model, q.report, { questHref: q.weekCfg.path });
     app.appendChild(wrap);
-    // The build picture, if staff uploaded one, arrives a moment later.
-    QR.fetchBuildPhoto(q.weekCfg.group, q.kidKey, q.weekCfg.key).then(function (res) {
-      if (res.img) wrap.innerHTML = QR.render(model, q.report, { questHref: q.weekCfg.path, photo: res.img });
+    // Build pictures, if staff uploaded any, arrive a moment later.
+    QR.fetchBuildPhotos(q.weekCfg.group, q.kidKey, q.weekCfg.key).then(function (res) {
+      var photos = res.slots.filter(Boolean);
+      if (photos.length) wrap.innerHTML = QR.render(model, q.report, { questHref: q.weekCfg.path, photos: photos });
     });
   }
 
