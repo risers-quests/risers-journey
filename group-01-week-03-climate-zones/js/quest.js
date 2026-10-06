@@ -161,6 +161,8 @@
     items.forEach(function (item, i) {
       var cb = item.querySelector('input[type=checkbox]');
       if (!cb) return;
+      // Facilitator View shows the Riser's ticks but can't change them.
+      if (window.QUEST_FACILITATOR_MODE) cb.disabled = true;
       if (state[i]) { cb.checked = true; item.classList.add('checked'); }
       cb.addEventListener('change', function () {
         item.classList.toggle('checked', cb.checked);
@@ -1641,6 +1643,10 @@
     // "Completed" (see collectSyncState below), same as a real classroom
     // submission — not just a silent threshold crossing.
     function render() {
+      if (!isDone() && window.QUEST_FACILITATOR_MODE) {
+        section.innerHTML = '<div class="qc-pending"><p>Facilitator View is a preview — only the Riser can complete their quest, from their own page.</p></div>';
+        return;
+      }
       if (isDone()) {
         section.innerHTML = '<div class="qc-done">✅ <strong>Quest Complete!</strong> Great work — every check passed.</div>';
         return;
@@ -1657,6 +1663,7 @@
 
     section.addEventListener('click', function (e) {
       if (!e.target || e.target.id !== 'qc-finish-btn') return;
+      if (window.QUEST_FACILITATOR_MODE) return;
       try { localStorage.setItem(doneKey, '1'); } catch (err) {}
       render();
       showCelebration();
@@ -1880,6 +1887,10 @@
 
     var pushTimer = null;
     function schedulePush() {
+      // Facilitator View is a preview: nothing done in it is queued for
+      // the Riser's real record (it used to be, and then got sent the next
+      // time the Riser's normal view opened on the same device).
+      if (window.QUEST_FACILITATOR_MODE) return;
       markPending();
       clearTimeout(pushTimer);
       pushTimer = setTimeout(pushNow, 2500);

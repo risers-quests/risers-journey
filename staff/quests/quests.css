@@ -20,3 +20,18 @@
   .sq-week-main { flex-basis: 100%; }
   .sq-week-links { margin-left: auto; }
 }
+
+/* Undo a completion (a quest marked complete by mistake). */
+.sq-undo {
+  font: inherit; font-size: .8rem; font-weight: 600; color: #a3432b; background: none; border: none;
+  padding: 0; cursor: pointer; white-space: nowrap;
+}
+.sq-undo:hover { text-decoration: underline; }
+.sq-undo-panel { margin: 0 12px 14px; padding: 14px 16px; border-radius: 14px; background: #fff8f2; border: 1px solid #f2d9c4; }
+.sq-undo-title { margin: 0 0 10px; font-size: .9rem; }
+.sq-undo-steps { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.sq-undo-step { display: flex; gap: 8px; align-items: flex-start; font-size: .88rem; cursor: pointer; }
+.sq-undo-step input { margin-top: 3px; accent-color: var(--accent); }
+.sq-undo-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.sq-undo-actions .eot2-btn { width: auto; padding: 9px 16px; font-size: .85rem; }
+.sq-undo-msg { font-size: .82rem; color: #a3432b; margin: 0; }

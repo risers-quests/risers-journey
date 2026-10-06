@@ -97,6 +97,85 @@
       groups.map(function (g) { return ref.answerKey(g, groupLabel(g) + ' key', 'staff-ref-pill'); }).join('')));
   }
 
+  /* ---- Undo a completion ----
+     For a quest marked complete by mistake (e.g. "Complete My Quest"
+     clicked on the Riser's behalf). Staff tick the build steps the Riser
+     really finished — step names read from the quest page itself — and it
+     saves the quest as not complete with only those steps ticked. Answers,
+     time and everything else in the record stay as they are. The Riser's
+     page (and any device that has it open) picks this up on its next load,
+     because this save is newer than anything they hold. */
+  function questPageUrl(w) { return '../../' + w.path.replace(/^\.\.\//, ''); }
+
+  function buildStepNames(w) {
+    return fetch(questPageUrl(w))
+      .then(function (r) { return r.ok ? r.text() : ''; })
+      .then(function (html) {
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        return Array.prototype.map.call(doc.querySelectorAll('.build-check-item'), function (item) {
+          return (item.textContent || '').replace(/\s+/g, ' ').trim();
+        });
+      })
+      .catch(function () { return []; });
+  }
+
+  function addUndo(row, kid, w) {
+    var btn = el('button', 'sq-undo', 'Undo completion');
+    btn.type = 'button';
+    row.querySelector('.sq-week-links').appendChild(btn);
+    btn.addEventListener('click', function () {
+      if (row.nextSibling && row.nextSibling.classList && row.nextSibling.classList.contains('sq-undo-panel')) return;
+      var panel = el('div', 'sq-undo-panel', '<p class="sq-undo-msg">Loading…</p>');
+      row.parentNode.insertBefore(panel, row.nextSibling);
+      Promise.all([QD.fetchWeekState(w.group, kid.slug, w.key), buildStepNames(w)]).then(function (r) {
+        if (!r[0].ok || !r[0].state) { panel.innerHTML = '<p class="sq-undo-msg">Couldn’t load this quest — try again.</p>'; return; }
+        var state = r[0].state;
+        var build = state.build || {};
+        var names = r[1];
+        var total = Math.max(names.length, w.buildTotal || 0);
+        var steps = '';
+        for (var i = 0; i < total; i++) {
+          steps += '<label class="sq-undo-step"><input type="checkbox" data-i="' + i + '"' + (build[i] ? ' checked' : '') + '> ' +
+            (names[i] ? names[i].replace(/[<>&]/g, '') : 'Step ' + (i + 1)) + '</label>';
+        }
+        panel.innerHTML =
+          '<p class="sq-undo-title"><strong>Undo ' + kid.name + '’s completion?</strong> The quest goes back to not complete. ' +
+            (total ? 'Leave ticked only the build steps ' + kid.name + ' really finished:' : '') + '</p>' +
+          (total ? '<div class="sq-undo-steps">' + steps + '</div>' : '') +
+          '<div class="sq-undo-actions"><button type="button" class="eot2-btn sq-undo-go">Undo completion</button>' +
+          '<button type="button" class="eot2-btn eot2-btn-secondary sq-undo-cancel">Cancel</button>' +
+          '<span class="sq-undo-msg"></span></div>';
+        panel.querySelector('.sq-undo-cancel').addEventListener('click', function () { panel.remove(); });
+        panel.querySelector('.sq-undo-go').addEventListener('click', function () {
+          var go = this;
+          go.disabled = true;
+          var nextBuild = {};
+          Array.prototype.forEach.call(panel.querySelectorAll('.sq-undo-step input'), function (cb) {
+            nextBuild[cb.getAttribute('data-i')] = cb.checked;
+          });
+          var next = Object.assign({}, state, { completed: false, build: total ? nextBuild : state.build });
+          fetch(WORKER_URL + '/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Site-Key': SITE_KEY },
+            body: JSON.stringify({ group: w.group, kid: kid.slug, week: w.key, state: next })
+          })
+            .then(function (res) { return res.json(); })
+            .then(function (out) {
+              if (!out || !out.ok) throw new Error('save failed');
+              panel.remove();
+              btn.remove();
+              var summary = QD.summarizeWeek(w, next);
+              row.querySelector('.sq-week-status').innerHTML = chip(summary.status, false);
+            })
+            .catch(function () {
+              go.disabled = false;
+              panel.querySelector('.sq-undo-actions .sq-undo-msg').textContent = 'Couldn’t save — check your connection and try again.';
+            });
+        });
+      });
+    });
+  }
+
   function renderKid(kid) {
     app.innerHTML = '';
     app.appendChild(el('div', 'dash-crumb', '<a href="index.html">&larr; All Risers</a>'));
@@ -133,6 +212,7 @@
       return Promise.all([QD.fetchWeekState(w.group, kid.slug, w.key), fetchIncomplete(w.group, kid.slug, w.key)]).then(function (r) {
         var status = r[0].ok ? QD.summarizeWeek(w, r[0].state).status : 'unknown';
         row.querySelector('.sq-week-status').innerHTML = chip(status, r[1]);
+        if (status === 'completed') addUndo(row, kid, w);
         return status;
       });
     });
