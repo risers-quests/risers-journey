@@ -149,6 +149,7 @@
       Array.prototype.forEach.call(form.querySelectorAll('input'), function (i) { i.disabled = true; });
       form.classList.add('eot2-locked');
       footer.remove();
+      app.insertAdjacentHTML('beforeend', window.EOT2_summarySelf(state, true));
     }
 
     updateProgress();
@@ -195,6 +196,7 @@
         });
         body.appendChild(sEl);
       });
+      body.insertAdjacentHTML('beforeend', window.EOT2_summarySelf(st, false));
     });
   }
 

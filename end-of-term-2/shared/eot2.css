@@ -240,3 +240,21 @@ body { background: var(--paper); color: var(--ink); font-family: var(--font-body
 .eot2-locked .eot2-scale label:hover, .eot2-locked .eot2-choices label:hover { border-color: var(--border); }
 .eot2-locked .eot2-matrix input:not(:checked) { opacity: .4; }
 .eot2-locked .eot2-textarea { background: var(--paper-soft); color: var(--ink-soft); resize: none; }
+
+/* Summary of a Riser's own answers (shared/eot2-summary.js). */
+.eot2-summary { margin: 36px 0 12px; padding: 22px 24px; border-radius: 20px; background: #fff; border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+.eot2-summary h2 { margin: 0 0 14px; font-family: var(--font-head); font-size: 1.15rem; font-weight: 600; }
+.eot2-sum-spread { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.eot2-sum-chip { display: inline-flex; align-items: baseline; gap: 6px; padding: 6px 12px; border-radius: 99px; background: var(--paper-soft); font-size: .84rem; color: var(--ink-soft); }
+.eot2-sum-chip strong { font-family: var(--font-head); font-size: 1rem; color: var(--ink); }
+.eot2-sum-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 28px; }
+.eot2-sum-block { margin-bottom: 14px; }
+.eot2-sum-block h3 { margin: 0 0 6px; font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+.eot2-sum-block p { margin: 0; font-size: .92rem; color: var(--ink-soft); line-height: 1.5; }
+.eot2-sum-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.eot2-sum-list li { position: relative; padding-left: 16px; font-size: .92rem; line-height: 1.45; color: var(--ink-soft); }
+.eot2-sum-list li::before { content: ''; position: absolute; left: 2px; top: .6em; width: 6px; height: 6px; border-radius: 50%; background: var(--brand-green); }
+.eot2-sum-list strong { color: var(--ink); font-weight: 600; }
+.eot2-sum-where, .eot2-sum-none { color: var(--ink-faint); font-size: .85rem; }
+.eot2-sum-q { display: block; font-size: .78rem; color: var(--ink-faint); }
+@media (max-width: 640px) { .eot2-sum-grid { grid-template-columns: 1fr; } }

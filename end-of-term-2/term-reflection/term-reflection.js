@@ -183,6 +183,7 @@
       });
       form.classList.add('eot2-locked');
       footer.remove();
+      app.insertAdjacentHTML('beforeend', window.EOT2_summaryReflection(band, state));
     }
 
     updateProgress();
@@ -245,6 +246,7 @@
         sEl.appendChild(card);
         body.appendChild(sEl);
       });
+      body.insertAdjacentHTML('beforeend', window.EOT2_summaryReflection(band, st));
     });
   }
 
