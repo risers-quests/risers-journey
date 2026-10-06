@@ -201,7 +201,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         path: '../group-00-week-01-pollination-seed-dispersal/gabby/index.html',
         buildTotal: 5,
         buildName: 'Floating seed water test',
-        bloom: { 'refl-6': 'Understand', 'refl-2': 'Apply', 'refl-7': 'Understand', 'refl-1': 'Analyze', 'refl-8': 'Understand', 'refl-9': 'Apply', 'refl-3': 'Understand', 'refl-10': 'Analyze', 'refl-4': 'Analyze', 'refl-11': 'Understand', 'refl-5': 'Evaluate' },
+        bloom: { 'refl-6': 'Understand', 'refl-2': 'Apply', 'refl-7': 'Understand', 'refl-1': 'Analyze', 'refl-8': 'Understand', 'refl-9': 'Apply', 'refl-3': 'Understand', 'refl-10': 'Analyze', 'refl-4': 'Analyze', 'refl-11': 'Understand' },
         topics: {
           'refl-1': '2. Who visits which flower, and why',
           'refl-6': '1. What pollination actually is',
@@ -282,7 +282,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         path: '../group-00-week-01-pollination-seed-dispersal/elyon/index.html',
         buildTotal: 5,
         buildName: 'River seed-dispersal model',
-        bloom: { 'refl-6': 'Understand', 'refl-2': 'Apply', 'refl-7': 'Understand', 'refl-1': 'Analyze', 'refl-8': 'Understand', 'refl-9': 'Apply', 'refl-3': 'Understand', 'refl-10': 'Analyze', 'refl-4': 'Analyze', 'refl-11': 'Understand', 'refl-5': 'Evaluate' },
+        bloom: { 'refl-6': 'Understand', 'refl-2': 'Apply', 'refl-7': 'Understand', 'refl-1': 'Analyze', 'refl-8': 'Understand', 'refl-9': 'Apply', 'refl-3': 'Understand', 'refl-10': 'Analyze', 'refl-4': 'Analyze', 'refl-11': 'Understand' },
         topics: {
           'refl-1': '2. Nature\'s targeted designs: which flower is built for which visitor',
           'refl-6': '1. What pollination actually is',
@@ -509,7 +509,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         path: '../group-02-week-01-skeletal-muscular-systems/owen/index.html',
         buildTotal: 5,
         buildName: 'Hinge-joint lever model',
-        bloom: { 'refl-1': 'Analyze', 'refl-8': 'Remember', 'refl-9': 'Understand', 'refl-10': 'Understand', 'refl-2': 'Apply', 'refl-11': 'Remember', 'refl-12': 'Analyze', 'refl-3': 'Understand', 'refl-13': 'Understand', 'refl-14': 'Remember', 'refl-15': 'Remember', 'refl-4': 'Analyze', 'refl-16': 'Apply', 'refl-17': 'Understand', 'refl-6': 'Evaluate', 'refl-7': 'Apply', 'refl-18': 'Evaluate', 'refl-5': 'Evaluate' },
+        bloom: { 'refl-1': 'Analyze', 'refl-8': 'Remember', 'refl-9': 'Understand', 'refl-10': 'Understand', 'refl-2': 'Apply', 'refl-11': 'Remember', 'refl-12': 'Analyze', 'refl-3': 'Understand', 'refl-13': 'Understand', 'refl-14': 'Remember', 'refl-15': 'Remember', 'refl-4': 'Analyze', 'refl-16': 'Apply', 'refl-17': 'Understand', 'refl-6': 'Evaluate', 'refl-7': 'Apply', 'refl-18': 'Evaluate' },
         topics: {
           'refl-1': '1. The skeletal system',
           'refl-8': '1. The skeletal system',
@@ -608,7 +608,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         path: '../group-02-week-01-skeletal-muscular-systems/pranavi/index.html',
         buildTotal: 5,
         buildName: 'Cardboard arm with a muscle pair',
-        bloom: { 'refl-1': 'Analyze', 'refl-8': 'Remember', 'refl-9': 'Understand', 'refl-10': 'Understand', 'refl-2': 'Apply', 'refl-11': 'Remember', 'refl-12': 'Analyze', 'refl-3': 'Understand', 'refl-13': 'Understand', 'refl-14': 'Remember', 'refl-19': 'Apply', 'refl-4': 'Analyze', 'refl-16': 'Apply', 'refl-17': 'Understand', 'refl-6': 'Evaluate', 'refl-7': 'Apply', 'refl-18': 'Evaluate', 'refl-5': 'Evaluate' },
+        bloom: { 'refl-1': 'Analyze', 'refl-8': 'Remember', 'refl-9': 'Understand', 'refl-10': 'Understand', 'refl-2': 'Apply', 'refl-11': 'Remember', 'refl-12': 'Analyze', 'refl-3': 'Understand', 'refl-13': 'Understand', 'refl-14': 'Remember', 'refl-19': 'Apply', 'refl-4': 'Analyze', 'refl-16': 'Apply', 'refl-17': 'Understand', 'refl-6': 'Evaluate', 'refl-7': 'Apply', 'refl-18': 'Evaluate' },
         topics: {
           'refl-1': '1. The skeletal system',
           'refl-8': '1. The skeletal system',
@@ -708,7 +708,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         path: '../group-03-week-01-immune-system/shalom/index.html',
         buildTotal: 5,
         buildName: 'Spiked virus model',
-        bloom: { 'refl-6': 'Understand', 'refl-7': 'Remember', 'refl-8': 'Remember', 'refl-9': 'Apply', 'refl-2': 'Analyze', 'refl-10': 'Remember', 'refl-11': 'Understand', 'refl-12': 'Understand', 'refl-3': 'Apply', 'refl-13': 'Remember', 'refl-14': 'Analyze', 'refl-15': 'Analyze', 'refl-4': 'Understand', 'refl-16': 'Remember', 'refl-17': 'Understand', 'refl-18': 'Remember', 'refl-1': 'Analyze', 'refl-19': 'Understand', 'refl-20': 'Analyze', 'refl-21': 'Analyze', 'refl-5': 'Evaluate' },
+        bloom: { 'refl-6': 'Understand', 'refl-7': 'Remember', 'refl-8': 'Remember', 'refl-9': 'Apply', 'refl-2': 'Analyze', 'refl-10': 'Remember', 'refl-11': 'Understand', 'refl-12': 'Understand', 'refl-3': 'Apply', 'refl-13': 'Remember', 'refl-14': 'Analyze', 'refl-15': 'Analyze', 'refl-4': 'Understand', 'refl-16': 'Remember', 'refl-17': 'Understand', 'refl-18': 'Remember', 'refl-1': 'Analyze', 'refl-19': 'Understand', 'refl-20': 'Analyze', 'refl-21': 'Analyze' },
         topics: {
           'refl-6': '1. The threat',
           'refl-7': '1. The threat',
@@ -806,7 +806,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         path: '../group-03-week-01-immune-system/michael/index.html',
         buildTotal: 5,
         buildName: 'Antibody–antigen lock-and-key model',
-        bloom: { 'refl-6': 'Understand', 'refl-7': 'Remember', 'refl-8': 'Remember', 'refl-9': 'Apply', 'refl-2': 'Analyze', 'refl-10': 'Remember', 'refl-11': 'Understand', 'refl-12': 'Understand', 'refl-3': 'Apply', 'refl-13': 'Remember', 'refl-14': 'Analyze', 'refl-15': 'Analyze', 'refl-4': 'Understand', 'refl-16': 'Remember', 'refl-17': 'Understand', 'refl-18': 'Remember', 'refl-1': 'Analyze', 'refl-19': 'Understand', 'refl-20': 'Analyze', 'refl-21': 'Analyze', 'refl-5': 'Evaluate' },
+        bloom: { 'refl-6': 'Understand', 'refl-7': 'Remember', 'refl-8': 'Remember', 'refl-9': 'Apply', 'refl-2': 'Analyze', 'refl-10': 'Remember', 'refl-11': 'Understand', 'refl-12': 'Understand', 'refl-3': 'Apply', 'refl-13': 'Remember', 'refl-14': 'Analyze', 'refl-15': 'Analyze', 'refl-4': 'Understand', 'refl-16': 'Remember', 'refl-17': 'Understand', 'refl-18': 'Remember', 'refl-1': 'Analyze', 'refl-19': 'Understand', 'refl-20': 'Analyze', 'refl-21': 'Analyze' },
         topics: {
           'refl-6': '1. The threat',
           'refl-7': '1. The threat',
@@ -929,7 +929,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         path: '../group-03-week-01-immune-system/karis/index.html',
         buildTotal: 5,
         buildName: 'Phagocyte engulfing a pathogen',
-        bloom: { 'refl-6': 'Understand', 'refl-7': 'Remember', 'refl-8': 'Remember', 'refl-9': 'Apply', 'refl-2': 'Analyze', 'refl-10': 'Remember', 'refl-11': 'Understand', 'refl-12': 'Understand', 'refl-3': 'Apply', 'refl-13': 'Remember', 'refl-14': 'Analyze', 'refl-15': 'Analyze', 'refl-4': 'Understand', 'refl-16': 'Remember', 'refl-17': 'Understand', 'refl-18': 'Remember', 'refl-1': 'Analyze', 'refl-19': 'Understand', 'refl-20': 'Analyze', 'refl-21': 'Analyze', 'refl-5': 'Evaluate' },
+        bloom: { 'refl-6': 'Understand', 'refl-7': 'Remember', 'refl-8': 'Remember', 'refl-9': 'Apply', 'refl-2': 'Analyze', 'refl-10': 'Remember', 'refl-11': 'Understand', 'refl-12': 'Understand', 'refl-3': 'Apply', 'refl-13': 'Remember', 'refl-14': 'Analyze', 'refl-15': 'Analyze', 'refl-4': 'Understand', 'refl-16': 'Remember', 'refl-17': 'Understand', 'refl-18': 'Remember', 'refl-1': 'Analyze', 'refl-19': 'Understand', 'refl-20': 'Analyze', 'refl-21': 'Analyze' },
         topics: {
           'refl-6': '1. The four kinds of patient you\'ll see',
           'refl-7': '1. The four kinds of patient you\'ll see',
@@ -1027,7 +1027,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         path: '../group-04-week-01-circulatory-system/benjamin/index.html',
         buildTotal: 6,
         buildName: 'Heart, blood and lymph route map',
-        bloom: { 'refl-1': 'Analyze', 'refl-9': 'Understand', 'refl-3': 'Understand', 'refl-10': 'Remember', 'refl-5': 'Remember', 'refl-11': 'Evaluate', 'refl-6': 'Understand', 'refl-13': 'Evaluate' },
+        bloom: { 'refl-1': 'Analyze', 'refl-9': 'Understand', 'refl-3': 'Understand', 'refl-10': 'Remember', 'refl-5': 'Remember', 'refl-6': 'Understand', 'refl-13': 'Evaluate' },
         topics: {
           'refl-1': '1. The heart\'s four rooms',
           'refl-2': '2. One-way gates: the valves',

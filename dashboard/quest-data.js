@@ -73,8 +73,11 @@
     return false;
   }
 
-  // Highest Bloom's level with solid (>=60%) genuine mastery among the
-  // quest's tagged questions, climbing the ordered list.
+  // Highest Bloom's level reached, climbing the ladder in order: a level
+  // counts only with solid (>=60%) genuine mastery AND every lower level
+  // (that has questions) already reached — so one lucky answer high up
+  // can't outrank misses on the basics. Levels with no questions are
+  // stepped over.
   function bloomCeiling(bloomMap, reflect) {
     var counts = {};
     BLOOM_LEVELS.forEach(function (l) { counts[l] = { total: 0, hit: 0 }; });
@@ -85,9 +88,12 @@
       if (isGenuinePass(reflect[id])) counts[level].hit++;
     });
     var ceiling = null;
-    BLOOM_LEVELS.forEach(function (l) {
-      if (counts[l].total && (counts[l].hit / counts[l].total) >= 0.6) ceiling = l;
-    });
+    for (var i = 0; i < BLOOM_LEVELS.length; i++) {
+      var c = counts[BLOOM_LEVELS[i]];
+      if (!c.total) continue;
+      if (c.hit / c.total < 0.6) break;
+      ceiling = BLOOM_LEVELS[i];
+    }
     return { counts: counts, ceiling: ceiling };
   }
 
