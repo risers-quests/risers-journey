@@ -48,6 +48,29 @@
     { key: 'delivery', name: 'Confidence & delivery' },
     { key: 'questions', name: 'Handling questions' }
   ];
+  // Why a build isn't finished — chosen by staff on the review page
+  // (report.buildNotes), worded for the Riser and family. Shown on the
+  // Build card, and the first one chosen shapes the Growth / Next step draft.
+  var BUILD_NOTES = [
+    { key: 'materials', label: 'Didn’t bring build materials, more than once',
+      line: 'Build materials weren’t ready on several build days, which held the build back.',
+      growth: 'The build needs more intentional preparation: on several build days your materials weren’t ready, and that held the build back.',
+      next: 'The evening before each build day, check the materials list and pack everything you’ll need.' },
+    { key: 'time', label: 'Ran short of time',
+      line: 'Time ran short before the build could be finished.',
+      growth: 'Pacing is the next step: time ran short before the build could be finished.',
+      next: 'Plan your build time at the start of the quest, and check halfway through that you’re on track.' },
+    { key: 'absent', label: 'Missed build sessions',
+      line: 'Missed build sessions left some steps unfinished.',
+      growth: 'Missed build sessions left the build unfinished, and the hands-on part is where the ideas become real.',
+      next: 'If you miss a build session, plan with your facilitator how to catch up that same week.' },
+    { key: 'focus', label: 'Needed reminders to stay on task',
+      line: 'Build time needed regular reminders to stay on task.',
+      growth: 'Build time calls for more focus: it took regular reminders to stay on task.',
+      next: 'At the start of each build session, set one clear goal and check it off before you finish.' }
+  ];
+  function buildNote(key) { return BUILD_NOTES.filter(function (n) { return n.key === key; })[0]; }
+
   var ABOUT = {
     understanding: 'Whether the core ideas really landed, judged on the thinking rather than spelling or wording.',
     depth: 'How far the thinking went, from recalling facts up to judging ideas (Bloom’s Taxonomy).',
@@ -171,7 +194,8 @@
     return ORDER.filter(function (k) { return model.cats[k] && model.cats[k].band >= 0; });
   }
 
-  function draftNotes(model) {
+  // buildNotes: the staff-chosen reasons a build isn't finished (keys).
+  function draftNotes(model, buildNotes) {
     var keys = rated(model);
     var c = model.cats;
     if (!keys.length) return { strength: '', growth: '', next: '' };
@@ -215,6 +239,8 @@
       var later = c.understanding && c.understanding.notReached[0];
       next = 'Pick the quest back up and finish it' + (later ? ', starting with “' + later.name.replace(/^\d+\.\s*/, '') + '”.' : '.');
     }
+    var bn = c.build && buildNotes && buildNotes.length && buildNote(buildNotes[0]);
+    if (bn) { growth = bn.growth; next = bn.next; }
     return { strength: strength, growth: growth, next: next };
   }
 
@@ -248,7 +274,9 @@
         return '<li class="' + (i <= cat.ceilingIdx ? 'on' : '') + '" title="' + esc(BLOOM_PLAIN[l]) + '">' + l + '</li>';
       }).join('') + '</ol><p class="rc-line">' + esc(cat.line) + '</p>';
     } else if (key === 'build') {
+      var reasons = (opts.buildNotes || []).map(buildNote).filter(Boolean);
       body = '<p class="rc-line">' + esc(cat.line) + '</p>' +
+        (reasons.length && cat.band < 3 ? '<ul class="rc-list rc-reasons">' + reasons.map(function (r) { return '<li>' + esc(r.line) + '</li>'; }).join('') + '</ul>' : '') +
         (cat.photo ? '<img class="rc-photo" src="' + esc(cat.photo) + '" alt="Build photo" loading="lazy">' : '');
     } else if (key === 'presentation') {
       body = cat.criteria
@@ -266,8 +294,8 @@
 
   // notes: { strength, growth, next } (already reviewed text).
   function render(model, notes, opts) {
-    opts = opts || {};
     var n = notes || {};
+    opts = Object.assign({ buildNotes: n.buildNotes || [] }, opts || {});
     var html = '<section class="rc">';
     if (n.strength || n.growth || n.next) {
       html += '<div class="rc-notes">' +
@@ -319,6 +347,7 @@
 
   window.QUEST_REPORT = {
     BANDS: BANDS,
+    BUILD_NOTES: BUILD_NOTES,
     build: build,
     draftNotes: draftNotes,
     render: render,

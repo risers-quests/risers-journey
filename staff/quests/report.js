@@ -46,8 +46,8 @@
       var summary = QD.summarizeWeek(w, r[0].state);
       var started = summary.status !== 'not-started';
       var model = QR.build(w, r[0].state, r[1]);
-      var draft = QR.draftNotes(model);
-      var report = Object.assign({ shared: false }, r[2].report || {});
+      var report = Object.assign({ shared: false, buildNotes: [] }, r[2].report || {});
+      var draft = QR.draftNotes(model, report.buildNotes);
       ['strength', 'growth', 'next'].forEach(function (k) { if (typeof report[k] !== 'string') report[k] = draft[k]; });
 
       if (summary.status === 'in-progress') {
@@ -61,6 +61,12 @@
         '<div class="rv-fields">' +
           field('strength', 'Strength') + field('growth', 'Growth') + field('next', 'Next step') +
         '</div>' +
+        (model.cats.build && model.cats.build.band < 3
+          ? '<fieldset class="rv-reasons"><legend>Why the build isn’t finished <small>Shown on the Build card, and updates the Growth and Next step drafts</small></legend>' +
+              QR.BUILD_NOTES.map(function (n) {
+                return '<label><input type="checkbox" value="' + n.key + '"' + (report.buildNotes.indexOf(n.key) !== -1 ? ' checked' : '') + '> ' + n.label + '</label>';
+              }).join('') + '</fieldset>'
+          : '') +
         '<div class="rv-bar">' +
           '<button type="button" class="eot2-btn eot2-btn-secondary rv-redraft">Redraft from quest data</button>' +
           '<span class="rv-status"></span>' +
@@ -73,7 +79,7 @@
       body.appendChild(preview);
 
       function field(key, label) {
-        return '<label class="rv-field"><span>' + label + '</span><textarea rows="3" data-k="' + key + '"></textarea></label>';
+        return '<label class="rv-field"><span>' + label + '</span><textarea rows="4" data-k="' + key + '"></textarea></label>';
       }
       var boxes = panel.querySelectorAll('textarea');
       Array.prototype.forEach.call(boxes, function (t) { t.value = report[t.getAttribute('data-k')]; });
@@ -108,6 +114,18 @@
       panel.querySelector('.rv-redraft').addEventListener('click', function () {
         Array.prototype.forEach.call(boxes, function (t) { t.value = draft[t.getAttribute('data-k')]; report[t.getAttribute('data-k')] = t.value; });
         paint(); save();
+      });
+      Array.prototype.forEach.call(panel.querySelectorAll('.rv-reasons input'), function (cb) {
+        cb.addEventListener('change', function () {
+          report.buildNotes = Array.prototype.filter.call(panel.querySelectorAll('.rv-reasons input'), function (x) { return x.checked; })
+            .map(function (x) { return x.value; });
+          draft = QR.draftNotes(model, report.buildNotes);
+          Array.prototype.forEach.call(boxes, function (t) {
+            var k = t.getAttribute('data-k');
+            if (k === 'growth' || k === 'next') { t.value = draft[k]; report[k] = draft[k]; }
+          });
+          paint(); save();
+        });
       });
       shareInput.addEventListener('change', function () {
         report.shared = shareInput.checked;
