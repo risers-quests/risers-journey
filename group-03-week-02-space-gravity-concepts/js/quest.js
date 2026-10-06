@@ -1898,7 +1898,14 @@
           if (!res || !res.found) return;
           var localSyncedAt = localStorage.getItem(syncedAtKey);
           if (!localSyncedAt || new Date(res.data.updatedAt) > new Date(localSyncedAt)) {
-            applySyncState(pageKey, res.data.state);
+            var incoming = res.data.state;
+            // A "Complete My Quest" made on this device but not sent yet must
+            // survive pulling newer progress from another device (e.g. the
+            // Riser's own): keep it, so the pending send still carries it.
+            if (isPending() && collectSyncState(pageKey).completed && incoming && !incoming.completed) {
+              incoming = Object.assign({}, incoming, { completed: true });
+            }
+            applySyncState(pageKey, incoming);
             try { localStorage.setItem(syncedAtKey, res.data.updatedAt); } catch (e) {}
           }
         })
