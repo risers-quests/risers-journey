@@ -141,12 +141,23 @@
       updateProgress();
     }
 
+    // A Riser's own self-assessment, once every statement is rated, is
+    // final: arriving at it again shows their answers with nothing left to
+    // change (staff rater forms stay editable).
+    function lockIfComplete() {
+      if (isStaff || answeredCount() < window.EOT2_RUBRIC_ITEM_COUNT) return;
+      Array.prototype.forEach.call(form.querySelectorAll('input'), function (i) { i.disabled = true; });
+      form.classList.add('eot2-locked');
+      footer.remove();
+    }
+
     updateProgress();
     window.eot2Fetch(kid.group, kid.slug, weekKey).then(function (data) {
       var local = window.eot2LoadLocal(weekKey, kid.slug);
       var remoteState = data && data.state;
       applyState(remoteState || local);
       setStatus(data ? 'saved' : (local ? 'offline' : 'saved'));
+      lockIfComplete();
     });
   }
 

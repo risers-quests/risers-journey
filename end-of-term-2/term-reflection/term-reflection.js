@@ -159,11 +159,38 @@
       updateProgress();
     }
 
+    // Once every question is answered (every row of a grid, every written
+    // answer filled in), the reflection is final: arriving at it again
+    // shows the answers with nothing left to change.
+    function isComplete() {
+      var all = true;
+      window.EOT2_REFLECTION[band].sections.forEach(function (section) {
+        section.questions.forEach(function (q) {
+          var v = state[q.id];
+          if (q.type === 'matrix') {
+            if (!v || q.rows.some(function (row) { return !v[row]; })) all = false;
+          } else if (!v || !String(v).trim()) {
+            all = false;
+          }
+        });
+      });
+      return all;
+    }
+    function lockIfComplete() {
+      if (!isComplete()) return;
+      Array.prototype.forEach.call(form.querySelectorAll('input, textarea'), function (i) {
+        if (i.tagName === 'TEXTAREA') i.readOnly = true; else i.disabled = true;
+      });
+      form.classList.add('eot2-locked');
+      footer.remove();
+    }
+
     updateProgress();
     window.eot2Fetch(kid.group, kid.slug, WEEK_KEY).then(function (data) {
       var local = window.eot2LoadLocal(WEEK_KEY, kid.slug);
       applyState((data && data.state) || local);
       setStatus(data ? 'saved' : (local ? 'offline' : 'saved'));
+      lockIfComplete();
     });
   }
 
