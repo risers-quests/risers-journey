@@ -51,3 +51,4 @@
 .qd-waiting { display: flex; flex-direction: column; gap: 4px; max-width: 620px; }
 .qd-waiting span { color: var(--ink-soft); font-size: .92rem; }
 .qd-report { margin-top: 8px; }
+.qd-partial { margin: 0 0 14px; padding: 12px 16px; max-width: 760px; border-radius: 12px; background: #fff4dc; color: #7a520f; font-size: .9rem; }

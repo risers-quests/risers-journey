@@ -190,7 +190,7 @@
     });
   }
 
-  // Completed quests get a Report link: review the family-facing report
+  // Completed and in-progress quests get a Report link: review the family-facing report
   // card and share it (report.html). Shows whether it's been shared yet.
   function addReportLink(row, kid, w) {
     var a = el('a', 'staff-quest-link sq-report-link', 'Report');
@@ -239,7 +239,7 @@
       return Promise.all([QD.fetchWeekState(w.group, kid.slug, w.key), fetchIncomplete(w.group, kid.slug, w.key)]).then(function (r) {
         var status = r[0].ok ? QD.summarizeWeek(w, r[0].state).status : 'unknown';
         row.querySelector('.sq-week-status').innerHTML = chip(status, r[1]);
-        if (status === 'completed') addReportLink(row, kid, w);
+        if (status === 'completed' || status === 'in-progress') addReportLink(row, kid, w);
         if (status === 'completed') addUndo(row, kid, w, true);
         else if (status === 'in-progress' && w.buildTotal) addUndo(row, kid, w, false);
         return status;

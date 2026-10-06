@@ -4,7 +4,8 @@
      ones in progress (badge + progress bar + Continue), with a short
      "across your quests" line once any feedback has been shared;
    - ?quest=<week key>: that quest's report card (dashboard/report-card.js)
-     — but only after staff have reviewed it and switched on Share.
+     — completed or not — but only after staff have reviewed it and
+     switched on Share.
 
    Never shows anything staff-private, so this page, and its link, is safe
    to share with families. */
@@ -46,7 +47,7 @@
       ]).then(function (r) {
         if (!r[0].ok) return { weekCfg: weekCfg, loadError: true };
         var q = { weekCfg: weekCfg, state: r[0].state, summary: QD.summarizeWeek(weekCfg, r[0].state), rating: r[1], report: null };
-        if (q.summary.status !== 'completed') return q;
+        if (q.summary.status === 'not-started') return q;
         return QR.fetchReport(weekCfg.group, kidKey, weekCfg.key).then(function (rep) {
           q.report = rep.report && rep.report.shared ? rep.report : null;
           return q;
@@ -65,12 +66,14 @@
   function questRow(q, done) {
     var lbl = splitLabel(q.weekCfg.label);
     var row = el('a', 'qd-row' + (done ? '' : ' is-progress'));
-    row.href = done ? '?quest=' + encodeURIComponent(q.weekCfg.key) : q.weekCfg.path;
+    // An unfinished quest can have shared feedback too; once it does, the
+    // row opens the feedback (which has its own Open quest button).
+    row.href = done || q.report ? '?quest=' + encodeURIComponent(q.weekCfg.key) : q.weekCfg.path;
     row.innerHTML =
       '<span class="qd-row-num">' + escapeHtml(lbl.num.replace(/^Quest\s*/, '')) + '</span>' +
       '<span class="qd-row-text"><strong>' + escapeHtml(lbl.title) + '</strong>' +
         (done ? '<span>' + (q.report ? 'See your feedback' : 'Feedback coming soon') + '</span>'
-              : '<span class="qd-row-bar"><span class="qd-row-track"><span style="width:' + q.summary.pct + '%"></span></span>' + q.summary.pct + '% done · Continue</span>') +
+              : '<span class="qd-row-bar"><span class="qd-row-track"><span style="width:' + q.summary.pct + '%"></span></span>' + q.summary.pct + '% done · ' + (q.report ? 'See your feedback' : 'Continue') + '</span>') +
       '</span>' +
       (done ? '<span class="hd-chip hd-chip-done qd-row-chip">Completed</span>' : '<span class="hd-chip hd-chip-progress qd-row-chip">In progress</span>') +
       '<span class="qd-row-go" aria-hidden="true">&rarr;</span>';
@@ -97,9 +100,7 @@
       going.forEach(function (q) { list.appendChild(questRow(q, false)); });
       app.appendChild(list);
     }
-    if (!done.length) return;
-
-    var shared = done.filter(function (q) { return q.report; });
+    var shared = done.concat(going).filter(function (q) { return q.report; });
     var roll = shared.length ? QR.rollup(shared.map(function (q) { return QR.build(q.weekCfg, q.state, q.rating); })) : null;
     if (roll) {
       app.insertBefore(el('div', 'qd-rollup',
@@ -119,16 +120,18 @@
 
     if (q.loadError) { app.appendChild(loadWarning()); return; }
     var s = q.summary;
-    if (s.status !== 'completed') {
-      app.appendChild(el('p', 'qd-muted qd-pending', s.status === 'in-progress'
-        ? 'In progress — ' + s.pct + '% done so far. Your feedback will show here once it’s completed.'
-        : 'Not started yet.'));
+    if (s.status === 'not-started') {
+      app.appendChild(el('p', 'qd-muted qd-pending', 'Not started yet.'));
       return;
     }
     if (!q.report) {
-      app.appendChild(el('div', 'hd-card qd-waiting',
-        '<strong>Your facilitators are reviewing this quest.</strong><span>Your feedback will appear here soon.</span>'));
+      app.appendChild(s.status === 'completed'
+        ? el('div', 'hd-card qd-waiting', '<strong>Your facilitators are reviewing this quest.</strong><span>Your feedback will appear here soon.</span>')
+        : el('p', 'qd-muted qd-pending', 'In progress — ' + s.pct + '% done so far.'));
       return;
+    }
+    if (s.status !== 'completed') {
+      app.appendChild(el('p', 'qd-partial', 'This quest isn’t finished yet (' + s.pct + '% done), so this feedback covers the parts you completed.'));
     }
     var model = QR.build(q.weekCfg, q.state, q.rating);
     var wrap = el('div', 'qd-report');

@@ -49,6 +49,8 @@
 .rc-topics li::before, .rc-list li::before { position: absolute; left: 0; top: 0; font-weight: 700; }
 .rc-topics li.ok::before { content: '✓'; color: var(--good); }
 .rc-topics li.again::before { content: '↻'; color: #b07a1c; }
+.rc-topics li.later { color: var(--ink-faint); }
+.rc-topics li.later::before { content: '–'; color: var(--ink-faint); }
 .rc-list li::before { content: '•'; color: var(--brand-green); left: 4px; }
 .rc-topics a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(63, 119, 24, .3); }
 .rc-topics a:hover { border-bottom-color: currentColor; }

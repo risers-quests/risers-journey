@@ -72,33 +72,53 @@
   function build(weekCfg, state, rating) {
     state = state || {};
     var reflect = state.reflect || {};
-    var ids = Object.keys(weekCfg.topics || {});
+    var allIds = Object.keys(weekCfg.topics || {});
+    // An unfinished quest is judged only on the questions the Riser actually
+    // reached; the rest show as "not reached yet", never as "not understood".
+    var unfinished = !state.completed;
+    var ids = unfinished ? allIds.filter(function (id) {
+      var r = reflect[id];
+      return r && (r.attempts > 0 || r.success || (r.text && String(r.text).trim()));
+    }) : allIds;
     var cats = {};
+    // Only a question or two to go on: say so, so a band isn't over-read.
+    var early = unfinished && ids.length && ids.length < 3 ? ' An early read from a small sample.' : '';
 
-    if (ids.length) {
+    if (allIds.length) {
       var genuine = ids.filter(function (id) { return QD.isGenuinePass(reflect[id]); }).length;
       var topics = [];
-      ids.forEach(function (id) {
+      allIds.forEach(function (id) {
         var t = weekCfg.topics[id];
         var entry = topics.filter(function (x) { return x.name === t; })[0];
-        if (!entry) { entry = { name: t, anchor: (weekCfg.anchors || {})[t] || '', ok: true }; topics.push(entry); }
+        if (!entry) { entry = { name: t, anchor: (weekCfg.anchors || {})[t] || '', ok: true, reached: false }; topics.push(entry); }
+        if (ids.indexOf(id) === -1) return;
+        entry.reached = true;
         if (!QD.isGenuinePass(reflect[id])) entry.ok = false;
       });
+      var reached = topics.filter(function (t) { return t.reached; });
       cats.understanding = {
-        title: 'Understanding', band: band(genuine / ids.length, [0.4, 0.65, 0.85]),
-        line: 'Got the idea right on ' + genuine + ' of ' + ids.length + ' questions.',
-        nailed: topics.filter(function (t) { return t.ok; }),
-        revisit: topics.filter(function (t) { return !t.ok; })
+        title: 'Understanding',
+        band: ids.length ? band(genuine / ids.length, [0.4, 0.65, 0.85]) : -1,
+        line: !ids.length ? 'No questions answered yet.'
+          : 'Got the idea right on ' + genuine + ' of ' + ids.length + (ids.length === 1 ? ' question' : ' questions') + (unfinished ? ' answered so far.' : '.') + early,
+        nailed: reached.filter(function (t) { return t.ok; }),
+        revisit: reached.filter(function (t) { return !t.ok; }),
+        notReached: topics.filter(function (t) { return !t.reached; })
       };
     }
 
+    var bloomMap = null;
     if (weekCfg.bloom) {
-      var ceiling = QD.bloomCeiling(weekCfg.bloom, reflect).ceiling;
+      bloomMap = {};
+      Object.keys(weekCfg.bloom).forEach(function (id) { if (!unfinished || ids.indexOf(id) !== -1) bloomMap[id] = weekCfg.bloom[id]; });
+    }
+    if (bloomMap && Object.keys(bloomMap).length) {
+      var ceiling = QD.bloomCeiling(bloomMap, reflect).ceiling;
       var ci = ceiling ? QD.BLOOM_LEVELS.indexOf(ceiling) : -1;
       cats.depth = {
         title: 'Depth of thinking', band: ci < 0 ? 0 : ci <= 1 ? 1 : ci === 2 ? 2 : 3,
         ceiling: ceiling, ceilingIdx: ci,
-        line: ceiling ? BLOOM_PLAIN[ceiling] + '.' : 'Building toward the first step.'
+        line: (ceiling ? BLOOM_PLAIN[ceiling] + '.' : 'Building toward the first step.') + early
       };
     }
 
@@ -138,10 +158,11 @@
     if (timeMs) habitLines.push('About ' + QD.fmtTime(timeMs) + ' on the quest.');
     cats.habits = {
       title: 'Work habits', band: band((persist + engage) / 2, [0.35, 0.6, 0.85]),
-      lines: habitLines.length ? habitLines : ['Worked through the quest step by step.']
+      lines: habitLines.length ? habitLines : ['Worked through the quest step by step.'],
+      recovered: recovered, readClosely: hl > 0 || notes
     };
 
-    return { weekCfg: weekCfg, cats: cats };
+    return { weekCfg: weekCfg, cats: cats, unfinished: unfinished };
   }
 
   /* ---------- auto-drafted notes ---------- */
@@ -163,7 +184,9 @@
       depth: c.depth && c.depth.ceiling ? 'Your thinking reached a strong level: you ' + BLOOM_YOU[c.depth.ceiling] + '.' : 'You built a steady foundation, step by step.',
       build: 'You saw your build through and made the ideas real.',
       presentation: c.presentation.criteria ? 'Your presentation stood out for its ' + topCriterion(c.presentation.criteria, true).toLowerCase() + '.' : '',
-      habits: 'You stuck with it: when something didn’t land the first time, you came back and got there.'
+      habits: c.habits.recovered ? 'You stuck with it: when something didn’t land the first time, you came back and got there.'
+        : c.habits.readClosely ? 'You read with care, picking out the key ideas and making notes as you went.'
+        : 'You worked through the quest steadily, step by step.'
     }[top];
 
     var revisit = c.understanding && c.understanding.revisit[0];
@@ -188,6 +211,10 @@
           presentation: 'Before your next presentation, practise it once out loud for a family member.',
           habits: 'In your next quest, highlight two key ideas in each section and write one line about each in your own words.'
         }[low];
+    if (model.unfinished) {
+      var later = c.understanding && c.understanding.notReached[0];
+      next = 'Pick the quest back up and finish it' + (later ? ', starting with “' + later.name.replace(/^\d+\.\s*/, '') + '”.' : '.');
+    }
     return { strength: strength, growth: growth, next: next };
   }
 
@@ -215,6 +242,7 @@
       if (cat.revisit.length) body += '<p class="rc-sub">Worth revisiting</p><ul class="rc-topics">' + cat.revisit.map(function (t) {
         return '<li class="again">' + (opts.questHref && t.anchor ? '<a href="' + esc(opts.questHref + '#' + t.anchor) + '">' + esc(t.name) + '</a>' : esc(t.name)) + '</li>';
       }).join('') + '</ul>';
+      if (cat.notReached.length) body += '<p class="rc-sub">Not reached yet</p><ul class="rc-topics">' + cat.notReached.map(function (t) { return '<li class="later">' + esc(t.name) + '</li>'; }).join('') + '</ul>';
     } else if (key === 'depth') {
       body = '<ol class="rc-ladder">' + QD.BLOOM_LEVELS.map(function (l, i) {
         return '<li class="' + (i <= cat.ceilingIdx ? 'on' : '') + '" title="' + esc(BLOOM_PLAIN[l]) + '">' + l + '</li>';

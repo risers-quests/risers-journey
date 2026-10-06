@@ -43,14 +43,17 @@
         body.appendChild(el('p', 'rep-load-warning', 'Couldn’t load this quest just now. Refresh to try again.'));
         return;
       }
-      var completed = QD.summarizeWeek(w, r[0].state).status === 'completed';
+      var summary = QD.summarizeWeek(w, r[0].state);
+      var started = summary.status !== 'not-started';
       var model = QR.build(w, r[0].state, r[1]);
       var draft = QR.draftNotes(model);
       var report = Object.assign({ shared: false }, r[2].report || {});
       ['strength', 'growth', 'next'].forEach(function (k) { if (typeof report[k] !== 'string') report[k] = draft[k]; });
 
-      if (!completed) {
-        body.appendChild(el('p', 'hd-card rv-note', kid.name + ' hasn’t completed this quest yet. You can prepare the report now; it can be shared once the quest is complete.'));
+      if (summary.status === 'in-progress') {
+        body.appendChild(el('p', 'hd-card rv-note', kid.name + ' didn’t finish this quest (' + summary.pct + '% done). The report covers the parts done, and tells ' + kid.name + ' it isn’t finished.'));
+      } else if (!started) {
+        body.appendChild(el('p', 'hd-card rv-note', kid.name + ' hasn’t started this quest, so there’s nothing to report yet.'));
       }
 
       var panel = el('div', 'hd-card rv-panel');
@@ -79,10 +82,10 @@
 
       function paint() {
         preview.innerHTML = QR.render(model, report, { questHref: '../../' + w.path.replace(/^\.\.\//, '') + '?fac=1' });
-        shareInput.disabled = !completed && !report.shared;
+        shareInput.disabled = !started && !report.shared;
         panel.querySelector('.cs-share-text span').textContent = report.shared
           ? 'Visible on ' + kid.name + '’s Quests page.'
-          : completed ? 'Not visible to ' + kid.name + ' yet.' : 'Available once the quest is complete.';
+          : started ? 'Not visible to ' + kid.name + ' yet.' : 'Available once the quest is started.';
       }
 
       var timer = null;
