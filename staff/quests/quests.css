@@ -65,3 +65,13 @@
 .rv-lost-build { display: flex; align-items: center; gap: 8px; font-size: .88rem; color: var(--ink-soft); }
 .rv-lost-build[hidden] { display: none; }
 .rv-lost-build select { font: inherit; font-size: .88rem; border: 1px solid var(--border); border-radius: 8px; padding: 5px 8px; background: #fff; }
+.rv-photo { display: flex; flex-direction: column; gap: 8px; }
+.rv-photo-label { font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+.rv-photo-label small { font-weight: 500; letter-spacing: 0; text-transform: none; margin-left: 6px; }
+.rv-photo-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
+.rv-photo-thumb { width: 120px; height: 84px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border); }
+.rv-photo-thumb[hidden], .rv-photo-empty[hidden], .rv-photo-remove[hidden] { display: none; }
+.rv-photo-empty { font-size: .88rem; color: var(--ink-faint); }
+.rv-photo-pick { cursor: pointer; }
+.rv-photo-remove { font: inherit; font-size: .85rem; color: #a3432b; background: none; border: none; cursor: pointer; padding: 4px 2px; }
+.rv-photo-msg { font-size: .82rem; color: var(--ink-faint); }

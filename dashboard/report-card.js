@@ -320,7 +320,7 @@
       var reasons = (opts.buildNotes || []).map(buildNote).filter(Boolean);
       body = '<p class="rc-line">' + esc(cat.line) + '</p>' +
         (reasons.length && cat.band < 3 ? '<ul class="rc-list rc-reasons">' + reasons.map(function (r) { return '<li>' + esc(r.line) + '</li>'; }).join('') + '</ul>' : '') +
-        (cat.photo ? '<img class="rc-photo" src="' + esc(cat.photo) + '" alt="Build photo" loading="lazy">' : '');
+        ((opts.photo || cat.photo) ? '<img class="rc-photo" src="' + esc(opts.photo || cat.photo) + '" alt="Build picture" loading="lazy">' : '');
     } else if (key === 'presentation') {
       body = cat.criteria
         ? '<ul class="rc-crit">' + cat.criteria.map(function (c) { return '<li><span>' + esc(c.name) + '</span>' + meter(c.band) + '<em>' + BANDS[c.band] + '</em></li>'; }).join('') + '</ul>'
@@ -392,6 +392,28 @@
       .catch(function () { return { ok: false }; });
   }
 
+  /* ---------- the build picture ----------
+     One per Riser per quest, at week key "<week>-buildphoto"
+     ({ img: <JPEG data URL>, at, by }; img '' once removed). Kept out of
+     the report record so reports stay light. Staff shrink the picture in
+     the browser before saving (see staff/quests/report.js), since a saved
+     record is capped at about 200 KB. No record or no img: no picture. */
+  function fetchBuildPhoto(group, kid, week) {
+    return fetch(reportUrl(group, kid, week).replace(/-report$/, '-buildphoto'), { headers: { 'X-Site-Key': SITE_KEY } })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('http')); })
+      .then(function (res) { return { ok: true, img: (res && res.found && res.data.state && res.data.state.img) || '' }; })
+      .catch(function () { return { ok: false, img: '' }; });
+  }
+  function saveBuildPhoto(group, kid, week, img, by) {
+    return fetch(WORKER_URL + '/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Site-Key': SITE_KEY },
+      body: JSON.stringify({ group: group, kid: kid, week: week + '-buildphoto', state: { img: img || '', at: new Date().toISOString(), by: by || '' } })
+    }).then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (out) { return { ok: !!(out && out.ok) }; })
+      .catch(function () { return { ok: false }; });
+  }
+
   window.QUEST_REPORT = {
     BANDS: BANDS,
     UNDONE: UNDONE,
@@ -401,6 +423,8 @@
     render: render,
     rollup: rollup,
     fetchReport: fetchReport,
-    saveReport: saveReport
+    saveReport: saveReport,
+    fetchBuildPhoto: fetchBuildPhoto,
+    saveBuildPhoto: saveBuildPhoto
   };
 })();

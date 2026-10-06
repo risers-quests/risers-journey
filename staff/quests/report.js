@@ -36,7 +36,8 @@
     Promise.all([
       QD.fetchWeekState(w.group, kid.slug, w.key),
       QD.fetchRating(w.group, kid.slug, w.key),
-      QR.fetchReport(w.group, kid.slug, w.key)
+      QR.fetchReport(w.group, kid.slug, w.key),
+      QR.fetchBuildPhoto(w.group, kid.slug, w.key)
     ]).then(function (r) {
       body.innerHTML = '';
       if (!r[0].ok || !r[2].ok) {
@@ -46,6 +47,7 @@
       var summary = QD.summarizeWeek(w, r[0].state);
       var started = summary.status !== 'not-started';
       var report = Object.assign({ shared: false, buildNotes: [] }, r[2].report || {});
+      var photo = r[3].img || '';
       var model = QR.build(w, r[0].state, r[1], report);
       var rated = !!(r[1] && r[1].scores && Object.keys(r[1].scores).length);
       var draft = QR.draftNotes(model, report.buildNotes);
@@ -80,6 +82,12 @@
                 }).join('') + '</select></label>'
             : '') +
         '</div>' +
+        (w.buildTotal
+          ? '<div class="rv-photo"><span class="rv-photo-label">Build picture <small>Optional. Shown on the Build card; leave empty if there’s no picture.</small></span>' +
+              '<div class="rv-photo-row"><img class="rv-photo-thumb" alt=""><span class="rv-photo-empty">No picture yet</span>' +
+              '<label class="eot2-btn eot2-btn-secondary rv-photo-pick"><span>Upload picture</span><input type="file" accept="image/*" hidden></label>' +
+              '<button type="button" class="rv-photo-remove">Remove</button><span class="rv-photo-msg"></span></div></div>'
+          : '') +
         '<div class="rv-bar">' +
           '<button type="button" class="eot2-btn eot2-btn-secondary rv-redraft">Redraft from quest data</button>' +
           '<span class="rv-status"></span>' +
@@ -100,7 +108,8 @@
       shareInput.checked = !!report.shared;
 
       function paint() {
-        preview.innerHTML = QR.render(model, report, { questHref: '../../' + w.path.replace(/^\.\.\//, '') + '?fac=1' });
+        preview.innerHTML = QR.render(model, report, { questHref: '../../' + w.path.replace(/^\.\.\//, '') + '?fac=1', photo: photo });
+        paintPhoto();
         shareInput.disabled = !started && !report.shared;
         panel.querySelector('.cs-share-text span').textContent = report.shared
           ? 'Visible on ' + kid.name + '’s Quests page.'
@@ -151,6 +160,38 @@
         });
         paint(); save();
       });
+      // ---- build picture ----
+      var photoBox = panel.querySelector('.rv-photo');
+      function paintPhoto() {
+        if (!photoBox) return;
+        var thumb = photoBox.querySelector('.rv-photo-thumb');
+        thumb.hidden = !photo;
+        if (photo) thumb.src = photo;
+        photoBox.querySelector('.rv-photo-empty').hidden = !!photo;
+        photoBox.querySelector('.rv-photo-pick span').textContent = photo ? 'Replace picture' : 'Upload picture';
+        photoBox.querySelector('.rv-photo-remove').hidden = !photo;
+      }
+      function photoMsg(t) { photoBox.querySelector('.rv-photo-msg').textContent = t; }
+      function storePhoto(img) {
+        photoMsg('Saving…');
+        QR.saveBuildPhoto(w.group, kid.slug, w.key, img, staffName()).then(function (res) {
+          if (!res.ok) { photoMsg('Not saved — check connection and try again.'); return; }
+          photo = img; photoMsg(img ? 'Saved' : 'Removed'); paint();
+        });
+      }
+      if (photoBox) {
+        photoBox.querySelector('input[type=file]').addEventListener('change', function () {
+          var file = this.files && this.files[0];
+          this.value = '';
+          if (!file) return;
+          photoMsg('Preparing…');
+          shrinkImage(file).then(storePhoto, function () { photoMsg('Couldn’t read that picture. Try a JPG or PNG.'); });
+        });
+        photoBox.querySelector('.rv-photo-remove').addEventListener('click', function () {
+          if (window.confirm('Remove this build picture?')) storePhoto('');
+        });
+      }
+
       var lostInput = panel.querySelector('.rv-lost-input');
       var buildDoneSel = panel.querySelector('.rv-build-done');
       function lostChanged() {
@@ -174,6 +215,36 @@
         paint(); save(true);
       });
       paint();
+    });
+  }
+
+  // A saved record holds about 200 KB, so a phone photo is scaled down and
+  // re-encoded as JPEG until it fits (and still looks good on a report).
+  var PHOTO_MAX_CHARS = 180000;
+  function shrinkImage(file) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        URL.revokeObjectURL(url);
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        var edge = 1400, quality = 0.85, out = '';
+        for (var i = 0; i < 12; i++) {
+          var scale = Math.min(1, edge / Math.max(img.naturalWidth, img.naturalHeight));
+          canvas.width = Math.round(img.naturalWidth * scale);
+          canvas.height = Math.round(img.naturalHeight * scale);
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          out = canvas.toDataURL('image/jpeg', quality);
+          if (out.length <= PHOTO_MAX_CHARS) return resolve(out);
+          if (quality > 0.6) quality -= 0.1; else edge = Math.round(edge * 0.8);
+        }
+        reject(new Error('too large'));
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('unreadable')); };
+      img.src = url;
     });
   }
 

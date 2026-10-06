@@ -46,7 +46,7 @@
         QD.fetchRating(weekCfg.group, kidKey, weekCfg.key)
       ]).then(function (r) {
         if (!r[0].ok) return { weekCfg: weekCfg, loadError: true };
-        var q = { weekCfg: weekCfg, state: r[0].state, summary: QD.summarizeWeek(weekCfg, r[0].state), rating: r[1], report: null };
+        var q = { weekCfg: weekCfg, kidKey: kidKey, state: r[0].state, summary: QD.summarizeWeek(weekCfg, r[0].state), rating: r[1], report: null };
         if (q.summary.status === 'not-started') return q;
         return QR.fetchReport(weekCfg.group, kidKey, weekCfg.key).then(function (rep) {
           q.report = rep.report && rep.report.shared ? rep.report : null;
@@ -137,6 +137,10 @@
     var wrap = el('div', 'qd-report');
     wrap.innerHTML = QR.render(model, q.report, { questHref: q.weekCfg.path });
     app.appendChild(wrap);
+    // The build picture, if staff uploaded one, arrives a moment later.
+    QR.fetchBuildPhoto(q.weekCfg.group, q.kidKey, q.weekCfg.key).then(function (res) {
+      if (res.img) wrap.innerHTML = QR.render(model, q.report, { questHref: q.weekCfg.path, photo: res.img });
+    });
   }
 
   function renderDashboard(kidKey, roster) {
