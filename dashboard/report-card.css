@@ -96,6 +96,3 @@
 @media (max-width: 520px) { .rc-photos-2 .rc-photo, .rc-photos-3 .rc-photo { height: 150px; } .rc-photos-3 .rc-photo:first-child { height: 240px; } }
 .rc-video { display: block; width: 100%; max-height: 420px; margin-top: 8px; border-radius: 12px; background: #111; }
 .rc-build-name { margin: 0; font-family: var(--font-head); font-weight: 600; font-size: 1rem; color: var(--ink); }
-.rc-fit { margin: 0 0 18px; padding: 16px 20px; border-radius: 18px; background: var(--brand-green-soft); border: 1px solid #dcebc6; }
-.rc-fit h3 { margin: 0 0 6px; font-family: var(--font-head); font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent-dark); }
-.rc-fit p { margin: 0; font-size: .95rem; line-height: 1.55; color: var(--ink); }

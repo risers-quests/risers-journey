@@ -227,9 +227,11 @@
   }
 
   // Written work (Understanding / Depth of thinking, the better of the two)
-  // vs. the live presentation rating. A gap of two bands or more needs a
-  // line on the report that says both are true, or families read one of
-  // them as a mistake. dir: 1 = written ahead, -1 = presentation ahead.
+  // vs. the live presentation rating. Two bands or more apart, the Growth
+  // and Next step notes name both sides (strong in one, growing in the
+  // other), so the report reads as one picture rather than two results
+  // that contradict each other. dir: 1 = written ahead, -1 = presentation
+  // ahead.
   function presentationGap(model) {
     var c = model.cats;
     var written = Math.max(c.understanding ? c.understanding.band : -1, c.depth ? c.depth.band : -1);
@@ -238,13 +240,20 @@
     var d = written - present;
     return { dir: d >= 2 ? 1 : d <= -2 ? -1 : 0, written: written, present: present };
   }
-  var FIT_NOTES = {
-    '1': 'Your written work shows you understand the ideas and can reason with them. Explaining them out loud, with evidence, is the part still growing.',
-    '-1': 'You shared your ideas with confidence on presentation day. Your written answers haven’t caught up yet; taking the same care over each one will close the gap.'
+  var GAP_NOTES = {
+    '1': {
+      growth: 'Your written answers show you understand the ideas well. The next step is explaining them just as clearly out loud, backed by evidence from your work.',
+      next: 'Before your next presentation, practise it once out loud for a family member, and use one real piece of evidence from your build or answers.'
+    },
+    '-1': {
+      growth: 'You explain your ideas well out loud. Your written answers haven’t caught up yet; give each one the same care you give your presentation.',
+      next: 'In your next quest, read your written answer back before you check it, and ask: would this make sense if I said it out loud?'
+    }
   };
 
   // buildNotes: the staff-chosen reasons a build isn't finished (keys).
-  function draftNotes(model, buildNotes) {
+  // opts.noGap: draft as if there were no written/presentation gap.
+  function draftNotes(model, buildNotes, opts) {
     var keys = rated(model);
     var c = model.cats;
     if (!keys.length && !ORDER.some(function (k) { return c[k] && c[k].band === UNDONE; })) return { strength: '', growth: '', next: '' };
@@ -291,6 +300,8 @@
       var later = c.understanding && c.understanding.undone[0];
       next = 'Pick the quest back up and finish it' + (later ? ', starting with “' + later.name.replace(/^\d+\.\s*/, '') + '”.' : '.');
     }
+    var gap = opts && opts.noGap ? 0 : presentationGap(model).dir;
+    if (gap) { growth = GAP_NOTES[gap].growth; next = GAP_NOTES[gap].next; }
     // Undone work comes before anything about how well the rest went.
     var UNDONE_NOTES = {
       understanding: { growth: 'Questions were left undone. Every question is part of the learning, so each one needs an honest answer.', next: 'Go back to the questions you left and answer each one in your own words.' },
@@ -302,8 +313,7 @@
     if (undoneKey) { growth = UNDONE_NOTES[undoneKey].growth; next = UNDONE_NOTES[undoneKey].next; }
     var bn = c.build && buildNotes && buildNotes.length && buildNote(buildNotes[0]);
     if (bn) { growth = bn.growth; next = bn.next; }
-    var gap = presentationGap(model).dir;
-    return { strength: strength, growth: growth, next: next, fit: gap ? FIT_NOTES[gap] : '' };
+    return { strength: strength, growth: growth, next: next };
   }
 
   function topCriterion(crit, best) {
@@ -384,7 +394,6 @@
         (n.next ? '<div class="rc-note rc-note-next"><h3>Next step</h3><p>' + esc(n.next) + '</p></div>' : '') +
         '</div>';
     }
-    if (n.fit) html += '<div class="rc-fit"><h3>How this fits together</h3><p>' + esc(n.fit) + '</p></div>';
     html += '<div class="rc-grid">' + ORDER.filter(function (k) { return model.cats[k]; }).map(function (k) { return catHtml(k, model.cats[k], opts); }).join('') + '</div>';
     html += '<p class="rc-scale">Scale: ' + BANDS.map(function (b, i) { return '<span class="rc-pill rc-b' + i + '">' + b + '</span>'; }).join(' ') +
       '<span class="rc-scale-sep">·</span><span class="rc-pill rc-undone">Undone</span> means it wasn’t done, so it isn’t scored.</p>';
@@ -521,7 +530,6 @@
     build: build,
     draftNotes: draftNotes,
     presentationGap: presentationGap,
-    FIT_TEXTS: [FIT_NOTES['1'], FIT_NOTES['-1']],
     render: render,
     rollup: rollup,
     fetchReport: fetchReport,

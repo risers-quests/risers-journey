@@ -91,8 +91,6 @@
 .rv-build-name input:focus { outline: 2px solid var(--brand-green); outline-offset: 1px; background: #fff; }
 .rv-lost-build { flex-wrap: wrap; }
 .rv-lost-build small { flex-basis: 100%; font-size: .78rem; color: var(--ink-faint); }
-.rv-fit[hidden], .rv-gap-flag[hidden] { display: none; }
-.rv-fit { display: flex; flex-direction: column; gap: 10px; }
-.rv-fit .rv-field small { font-weight: 500; letter-spacing: 0; text-transform: none; margin-left: 6px; }
 .rv-gap-flag { margin: 0; padding: 10px 14px; border-radius: 10px; background: #fff4dc; color: #7a520f; font-size: .86rem; line-height: 1.5; }
 .rv-gap-flag a { color: inherit; font-weight: 600; }
+.rv-gap-flag[hidden] { display: none; }
