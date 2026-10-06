@@ -226,6 +226,23 @@
     return ORDER.filter(function (k) { return model.cats[k] && model.cats[k].band >= 0; });
   }
 
+  // Written work (Understanding / Depth of thinking, the better of the two)
+  // vs. the live presentation rating. A gap of two bands or more needs a
+  // line on the report that says both are true, or families read one of
+  // them as a mistake. dir: 1 = written ahead, -1 = presentation ahead.
+  function presentationGap(model) {
+    var c = model.cats;
+    var written = Math.max(c.understanding ? c.understanding.band : -1, c.depth ? c.depth.band : -1);
+    var present = c.presentation ? c.presentation.band : -1;
+    if (written < 0 || present < 0) return { dir: 0 };
+    var d = written - present;
+    return { dir: d >= 2 ? 1 : d <= -2 ? -1 : 0, written: written, present: present };
+  }
+  var FIT_NOTES = {
+    '1': 'Your written work shows you understand the ideas and can reason with them. Explaining them out loud, with evidence, is the part still growing.',
+    '-1': 'You shared your ideas with confidence on presentation day. Your written answers haven’t caught up yet; taking the same care over each one will close the gap.'
+  };
+
   // buildNotes: the staff-chosen reasons a build isn't finished (keys).
   function draftNotes(model, buildNotes) {
     var keys = rated(model);
@@ -285,7 +302,8 @@
     if (undoneKey) { growth = UNDONE_NOTES[undoneKey].growth; next = UNDONE_NOTES[undoneKey].next; }
     var bn = c.build && buildNotes && buildNotes.length && buildNote(buildNotes[0]);
     if (bn) { growth = bn.growth; next = bn.next; }
-    return { strength: strength, growth: growth, next: next };
+    var gap = presentationGap(model).dir;
+    return { strength: strength, growth: growth, next: next, fit: gap ? FIT_NOTES[gap] : '' };
   }
 
   function topCriterion(crit, best) {
@@ -366,6 +384,7 @@
         (n.next ? '<div class="rc-note rc-note-next"><h3>Next step</h3><p>' + esc(n.next) + '</p></div>' : '') +
         '</div>';
     }
+    if (n.fit) html += '<div class="rc-fit"><h3>How this fits together</h3><p>' + esc(n.fit) + '</p></div>';
     html += '<div class="rc-grid">' + ORDER.filter(function (k) { return model.cats[k]; }).map(function (k) { return catHtml(k, model.cats[k], opts); }).join('') + '</div>';
     html += '<p class="rc-scale">Scale: ' + BANDS.map(function (b, i) { return '<span class="rc-pill rc-b' + i + '">' + b + '</span>'; }).join(' ') +
       '<span class="rc-scale-sep">·</span><span class="rc-pill rc-undone">Undone</span> means it wasn’t done, so it isn’t scored.</p>';
@@ -501,6 +520,8 @@
     BUILD_NOTES: BUILD_NOTES,
     build: build,
     draftNotes: draftNotes,
+    presentationGap: presentationGap,
+    FIT_TEXTS: [FIT_NOTES['1'], FIT_NOTES['-1']],
     render: render,
     rollup: rollup,
     fetchReport: fetchReport,

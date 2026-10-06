@@ -53,7 +53,12 @@
       var model = QR.build(w, r[0].state, r[1], report);
       var rated = !!(r[1] && r[1].scores && Object.keys(r[1].scores).length);
       var draft = QR.draftNotes(model, report.buildNotes);
-      ['strength', 'growth', 'next'].forEach(function (k) { if (typeof report[k] !== 'string') report[k] = draft[k]; });
+      // The fit note follows the data while it's still the automatic text
+      // (e.g. the presentation rating was corrected since); staff wording stays.
+      var fitWasMissing = typeof report.fit !== 'string' ||
+        (QR.FIT_TEXTS.indexOf(report.fit) !== -1 && report.fit !== (draft.fit || ''));
+      if (fitWasMissing) delete report.fit;
+      ['strength', 'growth', 'next', 'fit'].forEach(function (k) { if (typeof report[k] !== 'string') report[k] = draft[k] || ''; });
 
       if (summary.status === 'in-progress') {
         body.appendChild(el('p', 'hd-card rv-note', kid.name + ' didn’t finish this quest (' + summary.pct + '% done). The report covers the parts done, and tells ' + kid.name + ' it isn’t finished.'));
@@ -65,6 +70,10 @@
       panel.innerHTML =
         '<div class="rv-fields">' +
           field('strength', 'Strength') + field('growth', 'Growth') + field('next', 'Next step') +
+        '</div>' +
+        '<div class="rv-fit">' +
+          '<p class="rv-gap-flag"></p>' +
+          '<label class="rv-field"><span>How this fits together <small>Shown when written work and the presentation rating are two or more bands apart</small></span><textarea rows="2" data-k="fit"></textarea></label>' +
         '</div>' +
         (model.cats.build && model.cats.build.band < 3
           ? '<fieldset class="rv-reasons"><legend>Why the build isn’t finished <small>Shown on the Build card, and updates the Growth and Next step drafts</small></legend>' +
@@ -118,6 +127,7 @@
         preview.innerHTML = QR.render(model, report, { questHref: '../../' + w.path.replace(/^\.\.\//, '') + '?fac=1', photos: slots.filter(Boolean), video: video.url });
         paintPhoto();
         paintVideo();
+        paintFit();
         shareInput.disabled = !started && !report.shared;
         panel.querySelector('.cs-share-text span').textContent = report.shared
           ? 'Visible on ' + kid.name + '’s Quests page.'
@@ -141,8 +151,28 @@
       Array.prototype.forEach.call(boxes, function (t) {
         t.addEventListener('input', function () { report[t.getAttribute('data-k')] = t.value.trim(); paint(); save(); });
       });
+      // Written work and the presentation far apart: show the fit note, and
+      // ask whoever shares it to check the rating first (a rating entered on
+      // the wrong quest looks exactly like this).
+      function paintFit() {
+        var box = panel.querySelector('.rv-fit');
+        var gap = QR.presentationGap(model);
+        box.hidden = !gap.dir && !report.fit;
+        var flag = box.querySelector('.rv-gap-flag');
+        flag.hidden = !gap.dir;
+        if (gap.dir) {
+          flag.innerHTML = (gap.dir > 0
+            ? 'Written work is ' + QR.BANDS[gap.written] + ' but the presentation was rated ' + QR.BANDS[gap.present] + '.'
+            : 'The presentation was rated ' + QR.BANDS[gap.present] + ' but written work is ' + QR.BANDS[gap.written] + '.') +
+            ' Before sharing, check the rating and its notes ' +
+            (window.STAFF_REF ? window.STAFF_REF.feedback(w.group, kid.slug, w.key, 'in Feedback', 'rv-gap-link') : 'in Feedback') +
+            ' — make sure it was entered for this quest.';
+        }
+      }
+      if (fitWasMissing && (report.fit || r[2].report)) save();
+
       panel.querySelector('.rv-redraft').addEventListener('click', function () {
-        Array.prototype.forEach.call(boxes, function (t) { t.value = draft[t.getAttribute('data-k')]; report[t.getAttribute('data-k')] = t.value; });
+        Array.prototype.forEach.call(boxes, function (t) { t.value = draft[t.getAttribute('data-k')] || ''; report[t.getAttribute('data-k')] = t.value; });
         paint(); save();
       });
       Array.prototype.forEach.call(panel.querySelectorAll('.rv-reasons input'), function (cb) {
@@ -160,13 +190,7 @@
       var noPresent = panel.querySelector('.rv-no-present');
       if (noPresent) noPresent.addEventListener('change', function () {
         report.presentationUndone = noPresent.checked;
-        model = QR.build(w, r[0].state, r[1], report);
-        draft = QR.draftNotes(model, report.buildNotes);
-        Array.prototype.forEach.call(boxes, function (t) {
-          var k = t.getAttribute('data-k');
-          if (k === 'growth' || k === 'next') { t.value = draft[k]; report[k] = draft[k]; }
-        });
-        paint(); save();
+        rescore(); save();
       });
       // ---- build picture ----
       var photoBox = panel.querySelector('.rv-photo');
@@ -288,7 +312,7 @@
         draft = QR.draftNotes(model, report.buildNotes);
         Array.prototype.forEach.call(boxes, function (t) {
           var k = t.getAttribute('data-k');
-          if ((k === 'growth' || k === 'next') && report[k] === old[k]) { t.value = draft[k]; report[k] = draft[k]; }
+          if ((k === 'growth' || k === 'next' || k === 'fit') && report[k] === (old[k] || '')) { t.value = draft[k] || ''; report[k] = draft[k] || ''; }
         });
         paint();
       }
