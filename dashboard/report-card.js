@@ -170,8 +170,11 @@
     if (buildTotal) {
       var b = state.build || {};
       var done = Math.min(buildTotal, Object.keys(b).filter(function (k) { return b[k] && +k < buildTotal; }).length);
-      // With lost progress, staff can set the steps actually finished.
-      if (lost && typeof report.buildDone === 'number') done = Math.max(0, Math.min(buildTotal, report.buildDone));
+      // Go with what was actually built: staff can set the steps finished,
+      // and a build picture or video counts as a finished build even when
+      // the steps weren't ticked on the quest page.
+      if (report && typeof report.buildDone === 'number') done = Math.max(0, Math.min(buildTotal, report.buildDone));
+      else if (report && report.hasBuildMedia) done = buildTotal;
       cats.build = {
         title: 'Build', band: done ? band(done / buildTotal, [0.3, 0.6, 1]) : UNDONE,
         line: !done ? 'The build was left undone.' : done === buildTotal ? 'Every build step finished.' : done + ' of ' + buildTotal + ' build steps finished.',

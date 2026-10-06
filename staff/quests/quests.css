@@ -89,3 +89,5 @@
 .rv-build-name { display: flex; flex-direction: column; gap: 6px; max-width: 520px; }
 .rv-build-name input { font: inherit; font-size: .92rem; color: var(--ink); border: 1px solid var(--border); border-radius: 10px; padding: 9px 12px; background: var(--paper); }
 .rv-build-name input:focus { outline: 2px solid var(--brand-green); outline-offset: 1px; background: #fff; }
+.rv-lost-build { flex-wrap: wrap; }
+.rv-lost-build small { flex-basis: 100%; font-size: .78rem; color: var(--ink-faint); }

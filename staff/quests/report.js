@@ -77,15 +77,13 @@
           : '') +
         '<div class="rv-lost">' +
           '<label class="rv-check"><input type="checkbox" class="rv-lost-input"' + (report.dataLost ? ' checked' : '') + '> Some of ' + kid.name + '’s saved progress was lost <small>Tells the family; missing work shows as Not recorded, not Undone, and time on task is hidden</small></label>' +
-          (w.buildTotal
-            ? '<label class="rv-lost-build"' + (report.dataLost ? '' : ' hidden') + '>Build steps actually finished <select class="rv-build-done"><option value="">As recorded</option>' +
-                Array.apply(null, Array(w.buildTotal + 1)).map(function (_, i) {
-                  return '<option value="' + i + '"' + (report.buildDone === i ? ' selected' : '') + '>' + i + ' of ' + w.buildTotal + '</option>';
-                }).join('') + '</select></label>'
-            : '') +
         '</div>' +
         (w.buildTotal
-          ? '<label class="rv-build-name"><span class="rv-photo-label">Build name</span>' +
+          ? '<label class="rv-lost-build">Build steps finished <select class="rv-build-done"><option value="">Automatic</option>' +
+                Array.apply(null, Array(w.buildTotal + 1)).map(function (_, i) {
+                  return '<option value="' + i + '"' + (report.buildDone === i ? ' selected' : '') + '>' + i + ' of ' + w.buildTotal + '</option>';
+                }).join('') + '</select><small>Automatic: all of them when there’s a build picture or video, otherwise the steps ticked on the quest.</small></label>' +
+            '<label class="rv-build-name"><span class="rv-photo-label">Build name</span>' +
               '<input type="text" maxlength="80" placeholder="What did ' + kid.name + ' build?"></label>' +
             '<div class="rv-photo"><span class="rv-photo-label">Build pictures <small>Optional, up to ' + QR.PHOTO_SLOTS + '. Shown on the Build card; leave empty if there are none.</small></span>' +
               '<div class="rv-photo-row"><span class="rv-photo-thumbs"></span><span class="rv-photo-empty">No pictures yet</span>' +
@@ -194,7 +192,8 @@
         photoMsg(img ? 'Saving…' : 'Removing…');
         return QR.saveBuildPhoto(w.group, kid.slug, w.key, i, img, staffName()).then(function (res) {
           if (!res.ok) { photoMsg('Not saved — check connection and try again.'); return false; }
-          slots[i] = img; photoMsg(img ? 'Saved' : 'Removed'); paint();
+          slots[i] = img; photoMsg(img ? 'Saved' : 'Removed');
+          if (syncMediaFlag()) save(); else paint();
           return true;
         });
       }
@@ -235,7 +234,10 @@
         remove.hidden = !video.url;
       }
       function refreshVideo() {
-        return QR.fetchBuildVideo(w.group, kid.slug, w.key).then(function (v) { video = v; paint(); });
+        return QR.fetchBuildVideo(w.group, kid.slug, w.key).then(function (v) {
+          video = v;
+          if (syncMediaFlag()) save(); else paint();
+        });
       }
       if (videoBox) {
         videoBox.querySelector('input[type=file]').addEventListener('change', function () {
@@ -277,24 +279,41 @@
         });
       }
 
-      var lostInput = panel.querySelector('.rv-lost-input');
-      var buildDoneSel = panel.querySelector('.rv-build-done');
-      function lostChanged() {
-        report.dataLost = lostInput.checked;
-        if (buildDoneSel) {
-          buildDoneSel.parentNode.hidden = !report.dataLost;
-          if (buildDoneSel.value === '' || !report.dataLost) delete report.buildDone; else report.buildDone = parseInt(buildDoneSel.value, 10);
-        }
+      // Rebuild the card after a fact changes; Growth / Next step follow the
+      // new draft only if they still read as the old draft (never overwrite
+      // what staff wrote).
+      function rescore() {
+        var old = draft;
         model = QR.build(w, r[0].state, r[1], report);
         draft = QR.draftNotes(model, report.buildNotes);
         Array.prototype.forEach.call(boxes, function (t) {
           var k = t.getAttribute('data-k');
-          if (k === 'growth' || k === 'next') { t.value = draft[k]; report[k] = draft[k]; }
+          if ((k === 'growth' || k === 'next') && report[k] === old[k]) { t.value = draft[k]; report[k] = draft[k]; }
         });
-        paint(); save();
+        paint();
       }
-      lostInput.addEventListener('change', lostChanged);
-      if (buildDoneSel) buildDoneSel.addEventListener('change', lostChanged);
+
+      var lostInput = panel.querySelector('.rv-lost-input');
+      lostInput.addEventListener('change', function () {
+        report.dataLost = lostInput.checked;
+        rescore(); save();
+      });
+      var buildDoneSel = panel.querySelector('.rv-build-done');
+      if (buildDoneSel) buildDoneSel.addEventListener('change', function () {
+        if (buildDoneSel.value === '') delete report.buildDone; else report.buildDone = parseInt(buildDoneSel.value, 10);
+        rescore(); save();
+      });
+
+      // A build picture or video means the build was made: record that on
+      // the report (hasBuildMedia), so every page scores it the same way.
+      function syncMediaFlag() {
+        var has = slots.some(Boolean) || !!video.url;
+        if (!!report.hasBuildMedia === has) return false;
+        if (has) report.hasBuildMedia = true; else delete report.hasBuildMedia;
+        rescore();
+        return true;
+      }
+      if (syncMediaFlag()) save();
       shareInput.addEventListener('change', function () {
         report.shared = shareInput.checked;
         paint(); save(true);
