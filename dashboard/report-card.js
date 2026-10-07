@@ -291,6 +291,9 @@
     if (low === top && keys.length > 1) low = keys.filter(function (k) { return k !== top; })[0];
 
     var nailedName = c.thinking && c.thinking.nailed.length ? c.thinking.nailed[0].name.replace(/^\d+\.\s*/, '') : '';
+    // A strength has to be one: nothing rated below Secure is praised as
+    // the best part — effort is named instead.
+    if (c[top].band < 2) top = 'habits';
     strength = {
       thinking: c.thinking && c.thinking.band >= 1
         ? 'You ' + THINK[c.thinking.band].you + (nailedName ? ', especially on “' + nailedName + '”.' : '.')
@@ -404,8 +407,15 @@
         (opts.video ? '<video class="rc-video" src="' + esc(opts.video) + '" controls preload="metadata" playsinline></video>' : '');
     } else if (key === 'presentation') {
       if (cat.criteria) {
-        var best = topCriterion(cat.criteria, true), grow = topCriterion(cat.criteria, false);
-        summary = best === grow ? 'Even across every part' : 'Strongest: ' + best.toLowerCase() + ' · To grow: ' + grow.toLowerCase();
+        // Only a part rated Secure or better is called a strength; the
+        // weakest parts are what to grow.
+        var minBand = Math.min.apply(null, cat.criteria.map(function (c) { return c.band; }));
+        var strong = cat.criteria.filter(function (c) { return c.band >= 2; });
+        var weakest = cat.criteria.filter(function (c) { return c.band === minBand && c.band < 2; }).slice(0, 2);
+        var names = function (list) { return list.map(function (c) { return c.name.toLowerCase(); }).join(' and '); };
+        summary = !weakest.length ? 'Strong across every part'
+          : strong.length ? 'Strongest: ' + topCriterion(strong, true).toLowerCase() + ' · To grow: ' + names(weakest)
+          : 'To grow: ' + names(weakest);
         body = '<ul class="rc-crit">' + cat.criteria.map(function (c) { return '<li><span>' + esc(c.name) + '</span>' + meter(c.band) + '<em>' + BANDS[c.band] + '</em></li>'; }).join('') + '</ul>';
       } else {
         summary = cat.line;
@@ -491,7 +501,7 @@
       if (t && t.band >= 0 && (!top || t.band > top.band)) top = { band: t.band, quest: m.weekCfg.label };
     });
     return {
-      strongest: label(best), growing: grow === best ? '' : label(grow),
+      strongest: avg(best) >= 2 ? label(best) : '', growing: grow === best && avg(best) >= 2 ? '' : label(grow),
       thinking: top ? { label: THINK[top.band].label, quest: String(top.quest).split(' · ').slice(-1)[0] } : null
     };
   }

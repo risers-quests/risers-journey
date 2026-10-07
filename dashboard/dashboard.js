@@ -108,15 +108,14 @@
     if (roll) {
       // The term card carries the counts, so the line above stays simple.
       app.querySelector('.qd-lede').textContent = 'Your quests this term, and how each one went.';
-      var total = roster.weeks.length;
-      var text = 'You completed ' + done.length + ' of ' + total + (total === 1 ? ' quest' : ' quests') + ' this term' +
+      var text = 'You completed ' + done.length + (done.length === 1 ? ' quest' : ' quests') + ' this term' +
         (going.length ? ', with ' + going.length + ' still in progress.' : '.');
       if (roll.thinking) text += ' Your strongest thinking: <strong>' + escapeHtml(roll.thinking.label) + '</strong>, on ' + escapeHtml(roll.thinking.quest) + '.';
       app.insertBefore(el('div', 'hd-card qd-term',
         '<p class="qd-term-label">Your term so far</p>' +
         '<p class="qd-term-text">' + text + '</p>' +
         '<div class="qd-term-chips">' +
-          '<span class="qd-term-chip">Strongest <strong>' + escapeHtml(roll.strongest) + '</strong></span>' +
+          (roll.strongest ? '<span class="qd-term-chip">Strongest <strong>' + escapeHtml(roll.strongest) + '</strong></span>' : '') +
           (roll.growing ? '<span class="qd-term-chip">Growing <strong>' + escapeHtml(roll.growing) + '</strong></span>' : '') +
         '</div>'), app.querySelector('.qd-list'));
     }
