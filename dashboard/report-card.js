@@ -312,7 +312,7 @@
     var STRONG = {
       thinking: function () {
         return c.thinking.band >= 3
-          ? 'You don’t just learn facts — you ask why things work and check whether an idea really holds up.'
+          ? 'You can explain the reasons behind things — why they happen, not just what happens — and you can spot when an idea is wrong.'
           : 'You can take what you’ve learned and use it to work out something new.';
       },
       presentation: function () { return bestPres.strong; },
@@ -326,7 +326,7 @@
       }
     };
     var ALSO = {
-      thinking: function () { return c.thinking.band >= 3 ? 'ask why things work, not just what happens' : 'use what you learn to work out new things'; },
+      thinking: function () { return c.thinking.band >= 3 ? 'explain why things happen, not just what happens' : 'use what you learn to work out new things'; },
       presentation: function () { return bestPres.also; },
       build: function () { return c.build.band >= 3 ? 'finished your build, step by step' : 'got most of your build done'; },
       habits: function () { return habitsFact === 'recovered' ? 'keep trying until things make sense' : 'read carefully and take good notes'; }
@@ -400,7 +400,7 @@
   // Notes drafted by earlier versions of the wording: a report still
   // holding one (untouched by staff) gets the current draft instead.
   var LEGACY_NOTE = new RegExp('^(' + [
-    'You saw your build through', 'You reasoned with the ideas', 'You used the ideas in new situations', 'You finished every step of your',
+    'You saw your build through', 'You don’t just learn facts — you ask why', 'You reasoned with the ideas', 'You used the ideas in new situations', 'You finished every step of your',
     'You built most of your', 'Your presentation stood out', 'You know the key ideas and can explain', 'You built a steady foundation',
     'You stuck with it: when something', 'You read with care, picking', 'You worked through the quest steadily',
     'In presentations, the area to grow is', 'Before your next presentation, practise it once out loud for a family member',
@@ -418,7 +418,8 @@
     var draft = draftNotes(model, report.buildNotes);
     var out = {}, changed = false;
     ['strength', 'growth', 'next'].forEach(function (k) {
-      if (typeof report[k] === 'string' && LEGACY_NOTE.test(report[k]) && report[k] !== draft[k]) { out[k] = draft[k]; changed = true; }
+      var old = typeof report[k] === 'string' && (LEGACY_NOTE.test(report[k]) || /You also ask why things work/.test(report[k]));
+      if (old && report[k] !== draft[k]) { out[k] = draft[k]; changed = true; }
     });
     return changed ? out : null;
   }
