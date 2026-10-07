@@ -145,6 +145,10 @@
       app.appendChild(el('p', 'qd-partial', 'This quest isn’t finished yet (' + s.pct + '% done), so this feedback covers the parts you completed.'));
     }
     var model = QR.build(q.weekCfg, q.state, q.rating, q.report);
+    // Retired generic Strength wording: show the current draft instead.
+    if (QR.OLD_STRENGTHS.indexOf(q.report.strength) !== -1) {
+      q.report = Object.assign({}, q.report, { strength: QR.draftNotes(model, q.report.buildNotes).strength });
+    }
     var wrap = el('div', 'qd-report');
     wrap.innerHTML = QR.render(model, q.report, { questHref: q.weekCfg.path });
     app.appendChild(wrap);

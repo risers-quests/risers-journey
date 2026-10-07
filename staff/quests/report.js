@@ -54,6 +54,9 @@
       var rated = !!(r[1] && r[1].scores && Object.keys(r[1].scores).length);
       var draft = QR.draftNotes(model, report.buildNotes);
       ['strength', 'growth', 'next'].forEach(function (k) { if (typeof report[k] !== 'string') report[k] = draft[k]; });
+      // A Strength still holding retired generic wording gets the current draft.
+      var oldStrength = QR.OLD_STRENGTHS.indexOf(report.strength) !== -1;
+      if (oldStrength) report.strength = draft.strength;
       // Reports saved with the old separate "How this fits together" note:
       // drop it, and bring Growth / Next step up to date if they're still
       // the old automatic wording (anything staff wrote stays).
@@ -350,7 +353,7 @@
       }
       fillThink();
       fillQuotes();
-      if (quoteWasMissing && r[2].report) save();
+      if ((quoteWasMissing || oldStrength) && r[2].report) save();
 
       // Rebuild the card after a fact changes; Growth / Next step follow the
       // new draft only if they still read as the old draft (never overwrite

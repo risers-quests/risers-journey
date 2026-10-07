@@ -291,19 +291,43 @@
     if (low === top && keys.length > 1) low = keys.filter(function (k) { return k !== top; })[0];
 
     var nailedName = c.thinking && c.thinking.nailed.length ? c.thinking.nailed[0].name.replace(/^\d+\.\s*/, '') : '';
-    // A strength has to be one: nothing rated below Secure is praised as
-    // the best part — effort is named instead.
-    if (c[top].band < 2) top = 'habits';
-    strength = {
-      thinking: c.thinking && c.thinking.band >= 1
-        ? 'You ' + THINK[c.thinking.band].you + (nailedName ? ', especially on “' + nailedName + '”.' : '.')
-        : 'You built a steady foundation, step by step.',
-      build: 'You saw your build through and made the ideas real.',
-      presentation: c.presentation.criteria ? 'Your presentation stood out for its ' + topCriterion(c.presentation.criteria, true).toLowerCase() + '.' : '',
-      habits: c.habits.recovered ? 'You stuck with it: when something didn’t land the first time, you came back and got there.'
+    // Strength: the Riser's two strongest areas (only ones rated Secure or
+    // better), each said with what's specific to them — the topic they
+    // nailed, the build they made, the presentation skill rated highest —
+    // so no two reports read the same. Thinking leads a tie: it says more
+    // about the learning. Nothing at Secure: their effort is named instead.
+    var PRIORITY = ['thinking', 'presentation', 'build', 'habits'];
+    var strongKeys = PRIORITY.filter(function (k) { return c[k] && c[k].band >= 2; })
+      .sort(function (a, b) { return c[b].band - c[a].band || PRIORITY.indexOf(a) - PRIORITY.indexOf(b); })
+      .slice(0, 2);
+    var buildName = c.build && c.build.name ? c.build.name.charAt(0).toLowerCase() + c.build.name.slice(1) : 'build';
+    var clause = {
+      thinking: function () {
+        return (c.thinking.band >= 3 ? 'you reasoned with the ideas and weighed what holds up' : 'you used the ideas in new situations, not just repeated them') +
+          (nailedName ? ', especially on “' + nailedName + '”' : '');
+      },
+      presentation: function () {
+        return 'your presentation stood out for its ' + topCriterion(c.presentation.criteria, true).toLowerCase();
+      },
+      build: function () {
+        return c.build.band >= 3 ? 'you finished every step of your ' + buildName : 'you built most of your ' + buildName;
+      },
+      habits: function () {
+        return c.habits.recovered ? 'you kept going until answers that didn’t land at first came right'
+          : c.habits.readClosely ? 'you read closely, picking out key ideas and making notes' : 'you worked through the quest steadily';
+      }
+    };
+    // Only one strong area: add a true, specific habit if there is one.
+    if (strongKeys.length === 1 && strongKeys[0] !== 'habits' && (c.habits.recovered || c.habits.readClosely)) strongKeys.push('habits');
+    if (strongKeys.length) {
+      var parts = strongKeys.map(function (k) { return clause[k](); });
+      strength = parts.join(', and ');
+      strength = strength.charAt(0).toUpperCase() + strength.slice(1) + '.';
+    } else {
+      strength = c.habits.recovered ? 'You stuck with it: when something didn’t land the first time, you came back and got there.'
         : c.habits.readClosely ? 'You read with care, picking out the key ideas and making notes as you went.'
-        : 'You worked through the quest steadily, step by step.'
-    }[top];
+        : 'You worked through the quest steadily, step by step.';
+    }
 
     var revisit = c.thinking && c.thinking.revisit[0];
     var revisitName = revisit ? revisit.name.replace(/^\d+\.\s*/, '') : '';
@@ -619,6 +643,9 @@
     UNDONE: UNDONE,
     BUILD_NOTES: BUILD_NOTES,
     THINK: THINK,
+    // Strength wording used before it was made specific; a report still
+    // holding it gets the current draft instead.
+    OLD_STRENGTHS: ['You saw your build through and made the ideas real.'],
     TOO_EARLY: TOO_EARLY,
     quoteCandidates: quoteCandidates,
     build: build,
