@@ -63,7 +63,8 @@
     { label: 'Home', href: root + 'staff/index.html', icon: 'home', match: /\/staff\/(index\.html)?$/ },
     { label: 'Term 1 Conference', href: root + 'term-1-conference/index.html?view=staff', icon: 'conf', short: 'Term 1', match: /\/term-1-conference\// },
     { label: 'Term 2 Conference', href: root + 'end-of-term-2/staff/index.html', icon: 'term', short: 'Term 2', match: /\/end-of-term-2\// },
-    { label: 'Quests', href: root + 'staff/quests/index.html', icon: 'quests', match: /\/staff\/quests\// }
+    { label: 'Quests', href: root + 'staff/quests/index.html', icon: 'quests', match: /\/staff\/quests\// },
+    { label: 'Term 3 Quests', href: root + 'staff/term-3/index.html', icon: 'skills', short: 'Term 3', match: /\/staff\/term-3\// }
   ] : [
     { label: 'Home', href: root + 'index.html', icon: 'home', match: /\/(index\.html)?$/, exact: true },
     { label: 'Term 1 Conference', href: root + 'term-1-conference/index.html', icon: 'conf', short: 'Term 1', match: /\/term-1-conference\// },

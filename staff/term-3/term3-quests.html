@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Term 3 Quests</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"></head><body><div id="app"></div><script type="application/json" id="state">{}</script><script>(function main(){
+const CSS = `
+:root{--bg:#EEF2EF;--surface:#FFFFFF;--ink:#17262B;--muted:#55666B;--line:#CFD8D3;--sol:#0B7A78;--sol-t:#D8EFEC;--sci:#5A3EC2;--sci-t:#E7E1FA;--g1:#D4442A;--g2:#B57B00;--g3:#2C8549;--g4:#2A60C4;--ok:#2C8549;--help:#B57B00;--stuck:#D4442A;--field:#F6F8F6}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121A1C;--surface:#1B2629;--ink:#E9F0EE;--muted:#9AAEB0;--line:#2E3D40;--sol:#4FC7C1;--sol-t:#16393A;--sci:#A894F5;--sci-t:#2A2350;--g1:#F07A5F;--g2:#E6B63F;--g3:#5CC07D;--g4:#6E9BF0;--ok:#5CC07D;--help:#E6B63F;--stuck:#F07A5F;--field:#152023}}
+:root[data-theme="dark"]{--bg:#121A1C;--surface:#1B2629;--ink:#E9F0EE;--muted:#9AAEB0;--line:#2E3D40;--sol:#4FC7C1;--sol-t:#16393A;--sci:#A894F5;--sci-t:#2A2350;--g1:#F07A5F;--g2:#E6B63F;--g3:#5CC07D;--g4:#6E9BF0;--ok:#5CC07D;--help:#E6B63F;--stuck:#F07A5F;--field:#152023}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 "Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-text-size-adjust:100%}
+h1,h2,h3{font-family:"Bricolage Grotesque","Avenir Next","Trebuchet MS",sans-serif;line-height:1.1;margin:0}
+button,select,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--g4);outline-offset:2px}
+.wrap{max-width:980px;margin:0 auto;padding:0 18px}
+.top{padding:34px 0 22px}
+.top h1{font-size:clamp(44px,11vw,84px);font-weight:800;letter-spacing:-.03em}
+.lede{color:var(--muted);margin:8px 0 22px;max-width:52ch}
+.teams{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.team{border-left:6px solid var(--gc);background:var(--surface);border-radius:4px 12px 12px 4px;padding:10px 12px}
+.team b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:15px;color:var(--gc)}
+.team span{font-size:14px;color:var(--muted)}
+.g1{--gc:var(--g1)}.g2{--gc:var(--g2)}.g3{--gc:var(--g3)}.g4{--gc:var(--g4)}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+nav.tabs .wrap{display:flex;gap:6px;padding-top:10px;padding-bottom:10px;overflow-x:auto}
+.tab{border:2px solid var(--ink);background:transparent;border-radius:999px;padding:7px 16px;font-weight:700;white-space:nowrap;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+main{padding:22px 0 120px}
+.intro{color:var(--muted);max-width:62ch;margin:0 0 18px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:15px}
+.chip[aria-pressed="true"]{border-color:var(--ink);font-weight:700}
+.cathead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:30px 0 6px}
+.bigpill{display:inline-block;border-radius:999px;padding:7px 18px;font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:20px;color:#fff;background:var(--cc)}
+.sol{--cc:var(--sol);--ct:var(--sol-t)}.sci{--cc:var(--sci);--ct:var(--sci-t)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .bigpill{color:#0F1719}}
+:root[data-theme="dark"] .bigpill{color:#0F1719}
+.catnote{color:var(--muted);margin:0 0 14px;max-width:62ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.card{background:var(--surface);border-radius:14px;padding:16px;border-top:5px solid var(--cc);display:flex;flex-direction:column;gap:8px}
+.card h3{font-size:22px;font-weight:700}
+.card p{margin:0;font-size:15.5px}
+.card .lbl{font-weight:700;color:var(--cc)}
+.card .mat,.card .str{color:var(--muted)}
+.card .foot{margin-top:auto;padding-top:8px}
+.card.taken{opacity:.72}
+.taken-by{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:700;color:var(--gc)}
+.linkbtn{background:none;border:0;padding:4px 0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:14px}
+select.pick{width:100%;border:2px solid var(--cc);background:var(--ct);border-radius:10px;padding:9px 10px;font-weight:700;cursor:pointer}
+.card.own{border-top-style:dashed;background:transparent;border:2px dashed var(--cc)}
+.gswitch{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.gbtn{border:2px solid var(--gc);color:var(--gc);background:transparent;border-radius:999px;padding:7px 15px;font-weight:700;cursor:pointer}
+.gbtn[aria-pressed="true"]{background:var(--gc);color:var(--surface)}
+.pack{background:var(--surface);border-radius:16px;padding:22px;border-left:8px solid var(--gc)}
+.pack h2{font-size:clamp(28px,6vw,40px);font-weight:800;letter-spacing:-.02em;margin:6px 0 4px}
+.who{color:var(--muted);margin:0 0 6px}
+.sec{margin-top:24px}
+.sechead{display:inline-block;border-radius:999px;padding:5px 14px;background:var(--ct);color:var(--cc);font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:17px;margin-bottom:10px}
+.sec p{margin:0 0 8px;max-width:66ch}
+.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.role{border:1.5px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.role h3{font-size:20px}
+.role ul{margin:0;padding-left:18px;font-size:15px}
+.role .task{font-size:15px;background:var(--ct);border-radius:8px;padding:8px 10px}
+.role .holder{font-weight:700;margin-top:auto}
+.role .holder.none{color:var(--muted);font-weight:400;font-style:italic}
+.picker{display:flex;flex-direction:column;gap:10px}
+.prow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.prow .kid{min-width:86px;font-weight:700}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.segbtn{border:1.5px solid var(--line);background:var(--field);border-radius:999px;padding:6px 13px;cursor:pointer;font-size:15px}
+.segbtn[aria-pressed="true"]{background:var(--cc);border-color:var(--cc);color:var(--surface);font-weight:700}
+.warn{border-left:4px solid var(--help);background:var(--field);padding:8px 12px;border-radius:4px 8px 8px 4px;font-size:15px;margin-top:10px}
+.weeks{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;counter-reset:w}
+.week{border:1.5px solid var(--line);border-radius:12px;padding:12px}
+.week b{font-family:"Bricolage Grotesque",sans-serif;font-size:17px}
+.week ul{margin:6px 0 0;padding-left:18px;font-size:14.5px;color:var(--muted)}
+.empty{background:var(--surface);border-radius:16px;padding:28px;text-align:left}
+.empty p{color:var(--muted)}
+.btn{border:2px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:999px;padding:9px 18px;font-weight:700;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink)}
+.field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.field span{font-weight:700;font-size:15px}
+input[type=text],textarea{width:100%;border:1.5px solid var(--line);background:var(--field);border-radius:10px;padding:9px 11px}
+textarea{min-height:76px;resize:vertical}
+.board{overflow-x:auto;background:var(--surface);border-radius:14px;padding:6px}
+.board table{border-collapse:separate;border-spacing:4px;width:100%;min-width:520px}
+.board th{font-family:"Bricolage Grotesque",sans-serif;font-size:15px;text-align:left;padding:6px 8px;font-weight:700}
+.board th.gname{color:var(--gc);white-space:nowrap}
+.cell{width:100%;border:1.5px solid var(--line);background:var(--field);border-radius:10px;padding:8px;text-align:left;cursor:pointer;font-size:14px;display:flex;flex-direction:column;gap:2px}
+.cell[aria-pressed="true"]{border-color:var(--ink);border-width:2.5px}
+.cell .st{display:flex;align-items:center;gap:6px;font-weight:700}
+.dot{width:11px;height:11px;border-radius:50%;background:var(--line);flex:none}
+.dot.ok{background:var(--ok)}.dot.help{background:var(--help)}.dot.stuck{background:var(--stuck)}
+.cell .bl{color:var(--stuck);font-size:13px}
+.cell .sg{color:var(--muted);font-size:13px}
+.cp{background:var(--surface);border-radius:16px;padding:22px;margin-top:16px;border-left:8px solid var(--gc)}
+.cp h2{font-size:clamp(24px,5vw,32px);font-weight:800}
+.cp .focus{color:var(--muted);margin:4px 0 0}
+.ask{background:var(--field);border-radius:12px;padding:12px 14px;margin:16px 0}
+.ask ol{margin:6px 0 0;padding-left:20px}
+.cpsec{margin-top:20px}
+.cpsec h3{font-size:19px;margin-bottom:8px}
+.checks label{display:flex;gap:10px;align-items:flex-start;padding:6px 0;cursor:pointer}
+.checks input,.fixed input,.sign input{width:20px;height:20px;flex:none;margin-top:2px;accent-color:var(--ok)}
+.status{display:flex;gap:6px;flex-wrap:wrap}
+.sbtn{border:2px solid var(--sc);color:var(--sc);background:transparent;border-radius:999px;padding:7px 15px;font-weight:700;cursor:pointer}
+.sbtn[aria-pressed="true"]{background:var(--sc);color:var(--surface)}
+.s-ok{--sc:var(--ok)}.s-help{--sc:var(--help)}.s-stuck{--sc:var(--stuck)}
+.blocker{border:1.5px solid var(--line);border-left:5px solid var(--stuck);border-radius:6px 12px 12px 6px;padding:10px;margin-bottom:8px;display:grid;gap:8px}
+.blocker.done{border-left-color:var(--ok);opacity:.75}
+.blocker .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.blocker select{border:1.5px solid var(--line);background:var(--field);border-radius:8px;padding:6px 8px}
+.fixed,.sign{display:flex;gap:8px;align-items:center;cursor:pointer;font-size:15px}
+.savebar{position:fixed;left:0;right:0;bottom:0;z-index:10;padding:10px 18px calc(10px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap;font-size:15px}
+.savebar .btn{background:var(--bg);color:var(--ink);border-color:var(--bg)}
+.savebar[hidden]{display:none}
+@media (max-width:640px){.teams{grid-template-columns:repeat(2,1fr)}.pack,.cp{padding:16px}.top{padding-top:22px}}
+@media (prefers-reduced-motion:no-preference){.card,.pack,.cp{transition:opacity .2s}}
+`;
+const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
+
+const GROUPS = [
+  {id:'g1', name:'Group 1', kids:['Benjamin','Yokesh','Viva']},
+  {id:'g2', name:'Group 2', kids:['Michael','Chris','Taylor']},
+  {id:'g3', name:'Group 3', kids:['Shalom','Owen','Gabby']},
+  {id:'g4', name:'Group 4', kids:['Karis','Pranavi','Dak']}
+];
+const CATS = {
+  sol:{name:'Solve a LifeHub problem', short:'Solution', hookLbl:'Problem', note:'Find something at LifeHub that isn\u2019t working, and build the thing that fixes it. Real people will use what you make.'},
+  sci:{name:'Science in action', short:'Science', hookLbl:'Big idea', note:'Build a working model or experiment that shows a science concept, then test it fairly and prove what you found.'}
+};
+const ROLES = {
+  sol:[
+    {name:'Researcher', icon:'\uD83D\uDD0E', duties:['Talks to the people who have the problem (Risers, facilitators)','Writes the problem in one clear sentence','Checks the solution really works for the people using it','Leads the showcase pitch']},
+    {name:'Designer', icon:'\u270F\uFE0F', duties:['Sketches the plan with measurements','Makes the materials list','Designs labels, signs and instructions','Keeps the design log up to date']},
+    {name:'Builder', icon:'\uD83D\uDD28', duties:['Leads the build and keeps tool safety','Measures, cuts, joins and assembles','Fixes what breaks during testing','Returns tools and leftover materials']}
+  ],
+  sci:[
+    {name:'Investigator', icon:'\uD83D\uDD2C', duties:['Researches the science concept','Explains it in the group\u2019s own words','Writes the prediction before testing','Leads the showcase explanation']},
+    {name:'Engineer', icon:'\u2699\uFE0F', duties:['Leads the build and keeps tool safety','Follows the design and adjusts the model between trials','Keeps the model working for the showcase','Returns tools and leftover materials']},
+    {name:'Data keeper', icon:'\uD83D\uDCCA', duties:['Plans the fair test: what changes, what stays the same','Measures and records every trial','Turns results into a chart or table','Spots the pattern in the results']}
+  ]
+};
+const BUILDS = [
+  {id:'s1',cat:'sol',title:'Tool shadow board',hook:'Carpentry tools don\u2019t come back to the same place, so time is lost hunting for them.',outcome:'A wall board with a painted outline for every tool, each spot labelled, plus a sign-out card for tools that leave the room.',materials:'Plywood or pegboard, hooks or nails, paint or thick marker, card',tasks:['Track which tools go missing most often for a few days','Arrange the tools and trace outlines so the most-used are easiest to reach','Mount the hooks and fix the board securely to the wall'],stretch:'A \u201Cwho has it\u201D name-tag system.'},
+  {id:'s2',cat:'sol',title:'Shoe and bag station',hook:'The entrance gets crowded with shoes and bags every morning.',outcome:'A rack with a named spot for every Riser, sized to fit real shoes and bags.',materials:'Planks or crates, screws, sandpaper, labels',tasks:['Watch arrival time and map where things get dropped','Measure the entrance space and design the slots','Build, sand and assemble the rack'],stretch:'A rain-gear and umbrella section for monsoon days.'},
+  {id:'s3',cat:'sol',title:'Lost and found system',hook:'Lost things pile up and nobody knows whose they are.',outcome:'A labelled lost-and-found box, a log sheet, and a weekly \u201Cclaim it\u201D routine the class agrees to.',materials:'Wood or a sturdy box, paint, card, clipboard',tasks:['Survey what gets lost most and ask how people want to find it','Design the box, the log sheet and the routine','Build and finish the box'],stretch:'A name-label station so fewer things get lost.'},
+  {id:'s4',cat:'sol',title:'Recess equipment caddy',hook:'Riser Recess equipment gets scattered or left outside.',outcome:'A carry or wheeled caddy with a compartment for each item and a pack-up checklist on the side.',materials:'Plywood, dividers, handles or castors, screws, labels',tasks:['List all the recess equipment and what goes missing','Design compartments sized for each item','Build the caddy and attach handles or wheels'],stretch:'A sign-out system for borrowed equipment.'},
+  {id:'s5',cat:'sol',title:'Noise traffic light',hook:'The Work Cycle gets too loud, and it\u2019s hard to concentrate.',outcome:'A red-amber-green signal anyone can set, with a class agreement for what each colour means.',materials:'Cardboard or wood, paint, a sliding marker or pointer',tasks:['Observe noise at different times and ask Risers what helps','Design the signal and write the agreement','Build the signal so the marker moves easily'],stretch:'A battery LED version that lights up.'},
+  {id:'s6',cat:'sol',title:'Self-watering planters',hook:'Classroom plants get forgotten and dry out.',outcome:'Bottle planters that water themselves through a wick, plus a simple watering rota.',materials:'Plastic bottles, cotton string or cloth, soil, plants, scissors',tasks:['Find out what each plant needs and how often it\u2019s been watered','Design the wick system and the rota chart','Make the planters and set them up'],stretch:'Test which wick material keeps soil wettest.'},
+  {id:'s7',cat:'sol',title:'Waste sorting station',hook:'Snack waste ends up in the wrong bin.',outcome:'A three-bin station (compost, recycle, landfill) with picture signs anyone can follow.',materials:'Bins or boxes, a wooden stand, paint, signs',tasks:['Look at a day of snack waste and see what goes wrong','Design picture signs and the station layout','Build the stand that holds the bins'],stretch:'Track one week of waste and share the results.'},
+  {id:'s8',cat:'sol',title:'Visual daily schedule board',hook:'Risers keep asking \u201Cwhat\u2019s next?\u201D during the day.',outcome:'A board with movable cards for each part of the LifeHub day that anyone can update, readable from across the room.',materials:'Board, card, velcro or hooks, markers',tasks:['Ask Risers and facilitators what they need to know and when','Design the cards with symbols and words','Build the board and attach the card system'],stretch:'A \u201Cnow\u201D arrow and a countdown to the next block.'},
+  {id:'c1',cat:'sci',title:'Water filter',hook:'Filtration: layers of gravel, sand and charcoal trap particles of different sizes.',outcome:'A layered filter in a cut bottle and a before-and-after clarity test. Filtered water is for testing only, never drinking.',materials:'Plastic bottles, gravel, sand, charcoal, cotton, muddy water',tasks:['Explain why each layer traps different-sized particles','Build the filter and rebuild it with new layer orders','Rate clarity for each trial on a scale you design'],stretch:'Compare three layer orders and find the best one.'},
+  {id:'c2',cat:'sci',title:'Solar oven',hook:'Heat from sunlight can be reflected, absorbed and trapped.',outcome:'A box oven that melts chocolate in the sun, with temperature readings every 5 minutes.',materials:'Cardboard box, foil, black paper, cling film, thermometer',tasks:['Explain reflection, absorption and insulation','Build the oven and adjust the reflector angle','Take and chart temperature readings'],stretch:'Compare with foil and without foil.'},
+  {id:'c3',cat:'sci',title:'Balloon-powered car',hook:'Newton\u2019s third law: air pushed backwards pushes the car forwards.',outcome:'A car that travels at least 2 metres on one balloon, with distances recorded for every run.',materials:'Cardboard, straws, skewers, bottle caps, balloons, tape',tasks:['Explain action and reaction with a drawing','Build the car and reduce wobble and friction','Measure and record distance for each run'],stretch:'Compare wheel sizes or balloon sizes.'},
+  {id:'c4',cat:'sci',title:'Hydraulic arm',hook:'Liquids pass a push through a tube from one place to another.',outcome:'A cardboard arm that lifts a small object using syringes filled with water.',materials:'Syringes, tubing, cardboard, split pins, water',tasks:['Explain why the push travels through the tube','Build the arm joints and connect the syringes','Record the heaviest object lifted in each design'],stretch:'Compare water-filled and air-filled syringes.'},
+  {id:'c5',cat:'sci',title:'Electromagnet',hook:'Electric current flowing through a wire makes a magnetic field.',outcome:'A nail electromagnet and a chart of paperclips lifted against number of coil turns. Use a 1.5 V cell and disconnect between trials.',materials:'Iron nail, insulated wire, 1.5 V battery, tape, paperclips',tasks:['Explain how current makes a magnetic field','Wind the coils and keep connections safe','Count paperclips lifted for each number of turns'],stretch:'Test what happens with two batteries in a holder (with a facilitator).'},
+  {id:'c6',cat:'sci',title:'Rain gauge and weather station',hook:'We can measure weather. The northeast monsoon is coming to Chennai.',outcome:'A rain gauge and a wind vane, with a daily weather log for three weeks.',materials:'Bottles, ruler, card, straw, pin, compass',tasks:['Explain what each instrument measures and why','Build and place the instruments outdoors safely','Keep the daily log and chart the rainfall'],stretch:'Compare your readings with the official weather report.'},
+  {id:'c7',cat:'sci',title:'Periscope',hook:'Light reflects off a mirror at the same angle it hits it.',outcome:'A periscope that lets you see over a wall, with a diagram of the light\u2019s path.',materials:'Long cardboard tube or box, two small mirrors, tape, protractor',tasks:['Draw how light travels through the periscope','Build it and set both mirrors at 45 degrees','Test what you can see when mirror angles change'],stretch:'Make a longer or bendier periscope.'},
+  {id:'c8',cat:'sci',title:'Catapult',hook:'Stored elastic energy turns into movement.',outcome:'A catapult that launches a pom-pom, with launch distances recorded against arm angle.',materials:'Wooden sticks, rubber bands, spoon, tape, pom-poms',tasks:['Explain stored energy and how it changes into movement','Build the catapult and adjust the launch angle','Measure distance for at least 5 launches per setting'],stretch:'Chart angle against distance and find the best angle.'}
+];
+const WEEKS = [
+  {id:'w1',name:'Week 1',focus:'Plan it',ms:['Everyone has picked a role','We can explain the problem or big idea in our own words','Design sketch with measurements is done','Materials list is ready and materials are gathered']},
+  {id:'w2',name:'Week 2',focus:'Build it',ms:['First version is built','Everyone did their role\u2019s jobs this week','Photos or notes of the build are in our log','Tools and space were cleaned up after every session']},
+  {id:'w3',name:'Week 3',focus:'Test and improve',ms:['Tested at least 3 times','Results are recorded','Made at least one improvement because of a test','Asked someone outside our group for feedback']},
+  {id:'w4',name:'Week 4',focus:'Finish and share',ms:['Final version is finished','Showcase is planned: who says what','Each of us wrote a reflection','Materials returned and space cleaned']}
+];
+const BTYPES = ['Materials','Know-how','Teamwork','Time','Idea'];
+const STATUS = {ok:'On track',help:'Need a hand',stuck:'Stuck'};
+
+let state = {};
+try { state = JSON.parse(document.getElementById('state').textContent) || {}; } catch(e) { state = {}; }
+const localMode = !(window.claude && typeof window.claude.use === 'function');
+if (localMode) { try { const ls = localStorage.getItem('t3q-state'); if (ls) state = JSON.parse(ls) || state; } catch(e) {} }
+state.claims = state.claims || {}; state.custom = state.custom || {}; state.roles = state.roles || {}; state.checks = state.checks || {};
+
+let ui = {tab:'builds', filter:'all', pack:'g1', cpg:'g1', cpw:'w1', y:0};
+try { const s = sessionStorage.getItem('t3q-ui'); if (s) { ui = Object.assign(ui, JSON.parse(s)); sessionStorage.removeItem('t3q-ui'); } } catch(e) {}
+
+let dirty = false, api = null, apiReady = false, readOnly = false, saving = false, msg = '';
+const app = document.getElementById('app');
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const grp = id => GROUPS.find(g => g.id === id);
+const claimedBy = bid => GROUPS.find(g => state.claims[g.id] === bid);
+
+function buildFor(gid) {
+  const c = state.claims[gid];
+  if (!c) return null;
+  if (c === 'custom') {
+    const cu = state.custom[gid] || {cat:'sol'};
+    return {id:'custom', cat:cu.cat, custom:true, title:cu.title || 'Our own idea', hook:cu.hook || '', outcome:cu.outcome || '', materials:cu.materials || '', tasks:['','',''], stretch:''};
+  }
+  return BUILDS.find(b => b.id === c) || null;
+}
+function peek(g, w) { return (state.checks[g] && state.checks[g][w]) || null; }
+function cp(g, w) {
+  state.checks[g] = state.checks[g] || {};
+  return state.checks[g][w] = state.checks[g][w] || {status:'', done:'', next:'', note:'', ms:[], blockers:[], signed:false};
+}
+
+function header() {
+  return `<header class="top"><div class="wrap"><h1>Term 3 Quests</h1><p class="lede">A month-long build. Choose what to make, take a role, and check in with a facilitator every week.</p><div class="teams">${GROUPS.map(g => `<div class="team ${g.id}"><b>${g.name}</b><span>${g.kids.join(', ')}</span></div>`).join('')}</div></div></header>`;
+}
+function tabs() {
+  const t = [['builds','Build list'],['pack','Quest packs'],['cp','Checkpoints']];
+  return `<nav class="tabs"><div class="wrap" role="tablist">${t.map(([k,l]) => `<button class="tab" role="tab" aria-selected="${ui.tab===k}" data-act="tab" data-v="${k}">${l}</button>`).join('')}</div></nav>`;
+}
+
+function viewBuilds() {
+  const f = ui.filter;
+  const chips = [['all','Everything'],['sol','Solve a LifeHub problem'],['sci','Science in action']].map(([k,l]) => `<button class="chip" aria-pressed="${f===k}" data-act="filter" data-v="${k}">${l}</button>`).join('');
+  const free = GROUPS.filter(g => !state.claims[g.id]);
+  const section = cat => {
+    const c = CATS[cat];
+    const cards = BUILDS.filter(b => b.cat === cat).map(b => {
+      const by = claimedBy(b.id);
+      const foot = by
+        ? `<div class="taken-by ${by.id}"><span>Chosen by ${by.name}</span><button class="linkbtn" data-act="release" data-g="${by.id}">Undo</button></div>`
+        : `<select class="pick" data-act="claim" data-b="${b.id}" aria-label="Choose ${esc(b.title)} for a group"><option value="">Choose this for\u2026</option>${GROUPS.map(g => `<option value="${g.id}">${g.name}${state.claims[g.id] ? ' (switch build)' : ''}</option>`).join('')}</select>`;
+      return `<article class="card ${cat}${by ? ' taken' : ''}"><h3>${esc(b.title)}</h3><p><span class="lbl">${c.hookLbl}:</span> ${esc(b.hook)}</p><p><span class="lbl">You\u2019ll end up with:</span> ${esc(b.outcome)}</p><p class="mat"><b>Materials:</b> ${esc(b.materials)}</p><p class="str"><b>Stretch:</b> ${esc(b.stretch)}</p><div class="foot">${foot}</div></article>`;
+    }).join('');
+    const own = `<article class="card own ${cat}"><h3>Your own idea</h3><p>Spotted something else? Propose your own ${cat === 'sol' ? 'LifeHub problem' : 'science build'}. A facilitator approves it at the Week 1 checkpoint.</p><div class="foot"><select class="pick" data-act="custom" data-c="${cat}" aria-label="Propose own idea for a group"><option value="">Propose for\u2026</option>${GROUPS.map(g => `<option value="${g.id}">${g.name}</option>`).join('')}</select></div></article>`;
+    return `<div class="cathead"><span class="bigpill ${cat}">${c.name}</span></div><p class="catnote">${c.note}</p><div class="grid">${cards}${own}</div>`;
+  };
+  const left = free.length ? `${free.map(g => g.name).join(', ')} still ${free.length === 1 ? 'needs' : 'need'} to choose.` : 'Every group has chosen a build.';
+  return `<p class="intro">Each group chooses one build. Once a build is chosen, it\u2019s taken. ${left}</p><div class="chips">${chips}</div>${f !== 'sci' ? section('sol') : ''}${f !== 'sol' ? section('sci') : ''}`;
+}
+
+function viewPack() {
+  const g = grp(ui.pack);
+  const sw = `<div class="gswitch">${GROUPS.map(x => `<button class="gbtn ${x.id}" aria-pressed="${x.id===ui.pack}" data-act="pack" data-v="${x.id}">${x.name}</button>`).join('')}</div>`;
+  const b = buildFor(g.id);
+  if (!b) return sw + `<div class="empty"><h2>${g.name} hasn\u2019t chosen a build yet</h2><p>${g.kids.join(', ')} can pick one from the build list.</p><button class="btn" data-act="tab" data-v="builds">Open the build list</button></div>`;
+  const c = CATS[b.cat], roles = ROLES[b.cat], picks = state.roles[g.id] || {};
+  const holder = i => g.kids.filter(k => picks[k] === i);
+  const top = b.custom
+    ? `<div class="sec"><span class="sechead">Describe your idea</span>
+       <label class="field"><span>Name of our build</span><input type="text" data-act="cf" data-f="title" value="${esc(state.custom[g.id].title)}" placeholder="What are we building?"></label>
+       <label class="field"><span>${c.hookLbl === 'Problem' ? 'The problem at LifeHub' : 'The science idea'}</span><textarea data-act="cf" data-f="hook" placeholder="${b.cat==='sol' ? 'What isn\u2019t working, and who does it affect?' : 'What science concept will our build show?'}">${esc(state.custom[g.id].hook)}</textarea></label>
+       <label class="field"><span>What we\u2019ll end up with</span><textarea data-act="cf" data-f="outcome" placeholder="Describe the finished build and how we\u2019ll know it works">${esc(state.custom[g.id].outcome)}</textarea></label>
+       <label class="field"><span>Materials we think we need</span><input type="text" data-act="cf" data-f="materials" value="${esc(state.custom[g.id].materials)}"></label></div>`
+    : `<div class="sec"><span class="sechead">What we\u2019re building</span><p><b>${c.hookLbl}:</b> ${esc(b.hook)}</p></div>
+       <div class="sec"><span class="sechead">Outcome model</span><p>${esc(b.outcome)}</p><p><b>Stretch goal:</b> ${esc(b.stretch)}</p></div>
+       <div class="sec"><span class="sechead">Materials</span><p>${esc(b.materials)}</p></div>`;
+  const roleCards = roles.map((r, i) => {
+    const h = holder(i);
+    return `<div class="role"><h3>${r.icon} ${r.name}</h3><ul>${r.duties.map(d => `<li>${esc(d)}</li>`).join('')}</ul>${b.tasks[i] ? `<div class="task"><b>For this build:</b> ${esc(b.tasks[i])}</div>` : ''}<div class="holder${h.length ? '' : ' none'}">${h.length ? 'Taken by ' + h.join(' and ') : 'Not picked yet'}</div></div>`;
+  }).join('');
+  const picker = g.kids.map(k => `<div class="prow"><span class="kid">${k}</span><div class="seg">${roles.map((r, i) => `<button class="segbtn" aria-pressed="${picks[k]===i}" data-act="role" data-k="${k}" data-v="${i}">${r.name}</button>`).join('')}</div></div>`).join('');
+  const counts = roles.map((r, i) => holder(i).length);
+  const notes = [];
+  const unpicked = g.kids.filter(k => picks[k] === undefined);
+  if (unpicked.length) notes.push(`${unpicked.join(', ')} ${unpicked.length === 1 ? 'hasn\u2019t' : 'haven\u2019t'} picked a role yet.`);
+  roles.forEach((r, i) => { if (counts[i] > 1) notes.push(`Two people picked ${r.name}. Talk it through so each role has one owner.`); });
+  const weeks = WEEKS.map(w => `<div class="week"><b>${w.name}: ${w.focus}</b><ul>${w.ms.map(m => `<li>${esc(m)}</li>`).join('')}</ul></div>`).join('');
+  return sw + `<article class="pack ${g.id} ${b.cat}"><span class="sechead">${c.short} quest</span><h2>${esc(b.title)}</h2><p class="who">${g.name}: ${g.kids.join(', ')}</p>${top}
+    <div class="sec"><span class="sechead">Roles and responsibilities</span><p>Everyone builds, tests and cleans up together. Your role is the part you <b>lead</b> and answer for at checkpoints.</p><div class="roles">${roleCards}</div></div>
+    <div class="sec"><span class="sechead">Pick your role</span><div class="picker">${picker}</div>${notes.map(n => `<div class="warn">${esc(n)}</div>`).join('')}</div>
+    <div class="sec"><span class="sechead">The 4-week plan</span><p>At each weekly checkpoint, you\u2019ll tick these off with a facilitator.</p><div class="weeks">${weeks}</div></div></article>`;
+}
+
+function viewCp() {
+  const rows = GROUPS.map(g => `<tr><th class="gname ${g.id}" scope="row">${g.name}</th>${WEEKS.map(w => {
+    const d = peek(g.id, w.id);
+    const open = d ? d.blockers.filter(x => !x.fixed && x.text).length : 0;
+    const msDone = d ? d.ms.filter(Boolean).length : 0;
+    const s = d && d.status;
+    return `<td><button class="cell" aria-pressed="${ui.cpg===g.id && ui.cpw===w.id}" data-act="cpsel" data-g="${g.id}" data-w="${w.id}"><span class="st"><span class="dot ${s||''}"></span>${s ? STATUS[s] : 'Not yet'}</span><span class="sg">${msDone}/4 done${d && d.signed ? ', checked in' : ''}</span>${open ? `<span class="bl">${open} open blocker${open>1?'s':''}</span>` : ''}</button></td>`;
+  }).join('')}</tr>`).join('');
+  const board = `<div class="board"><table><thead><tr><th></th>${WEEKS.map(w => `<th scope="col">${w.name}<br><span style="font-weight:500;color:var(--muted)">${w.focus}</span></th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`;
+  const g = grp(ui.cpg), w = WEEKS.find(x => x.id === ui.cpw), d = cp(g.id, w.id), b = buildFor(g.id);
+  const ms = w.ms.map((m, i) => `<label><input type="checkbox" data-act="ms" data-i="${i}" ${d.ms[i] ? 'checked' : ''}><span>${esc(m)}</span></label>`).join('');
+  const status = Object.keys(STATUS).map(k => `<button class="sbtn s-${k}" aria-pressed="${d.status===k}" data-act="status" data-v="${k}">${STATUS[k]}</button>`).join('');
+  const blockers = d.blockers.map((x, i) => `<div class="blocker${x.fixed ? ' done' : ''}"><input type="text" data-act="btext" data-i="${i}" value="${esc(x.text)}" placeholder="What\u2019s in the way?"><div class="row"><select data-act="btype" data-i="${i}" aria-label="Kind of blocker">${BTYPES.map(t => `<option ${x.type===t?'selected':''}>${t}</option>`).join('')}</select><input type="text" data-act="bwho" data-i="${i}" value="${esc(x.who)}" placeholder="Who can help?" style="flex:1;min-width:140px"><label class="fixed"><input type="checkbox" data-act="bfix" data-i="${i}" ${x.fixed?'checked':''}>Sorted</label><button class="linkbtn" data-act="bdel" data-i="${i}">Remove</button></div></div>`).join('');
+  return `<p class="intro">Every week, each group sits with a facilitator for a 10-minute checkpoint. Tap a square to open that group\u2019s checkpoint.</p>${board}
+  <section class="cp ${g.id}"><h2>${g.name}, ${w.name}: ${w.focus}</h2><p class="focus">${b ? esc(b.title) : 'No build chosen yet'}. ${g.kids.join(', ')}.</p>
+  <div class="ask"><b>Checkpoint questions</b><ol><li>What did we finish this week? Each person shares their role\u2019s part.</li><li>What\u2019s blocking us?</li><li>What\u2019s our goal for next week, and who\u2019s doing what?</li></ol></div>
+  <div class="cpsec"><h3>This week\u2019s milestones</h3><div class="checks">${ms}</div></div>
+  <div class="cpsec"><h3>How is it going?</h3><div class="status">${status}</div></div>
+  <div class="cpsec"><label class="field"><span>What we finished</span><textarea data-act="cpf" data-f="done">${esc(d.done)}</textarea></label></div>
+  <div class="cpsec"><h3>Blockers</h3>${blockers || '<p style="color:var(--muted);margin:0 0 8px">No blockers logged.</p>'}<button class="btn ghost" data-act="badd">Add a blocker</button></div>
+  <div class="cpsec"><label class="field"><span>Goal for next week, and who\u2019s doing what</span><textarea data-act="cpf" data-f="next">${esc(d.next)}</textarea></label></div>
+  <div class="cpsec"><label class="field"><span>Facilitator note</span><textarea data-act="cpf" data-f="note" placeholder="What you noticed, what support was promised">${esc(d.note)}</textarea></label><label class="sign"><input type="checkbox" data-act="signed" ${d.signed?'checked':''}>Facilitator checked in with this group</label></div></section>`;
+}
+
+function saveBar() {
+  if (!dirty && !msg) return '<div class="savebar" hidden></div>';
+  let inner;
+  if (msg) inner = `<span>${esc(msg)}</span>`;
+  else if (saving) inner = '<span>Saving\u2026</span>';
+  else if (readOnly) inner = '<span>You can view this page but not save changes.</span>';
+  else if (localMode) inner = '<span>You have unsaved changes.</span><button class="btn" data-act="save">Save on this device</button>';
+  else if (!api) inner = apiReady ? '<span>Saving isn\u2019t available in this view.</span>' : '<span>Connecting\u2026</span>';
+  else inner = '<span>You have unsaved changes.</span><button class="btn" data-act="save">Save changes</button>';
+  return `<div class="savebar" role="status">${inner}</div>`;
+}
+function refreshBar() { const el = app.querySelector('.savebar'); if (el) el.outerHTML = saveBar(); }
+
+function render() {
+  const v = ui.tab === 'builds' ? viewBuilds() : ui.tab === 'pack' ? viewPack() : viewCp();
+  app.innerHTML = header() + tabs() + `<main><div class="wrap">${v}</div></main>` + saveBar();
+}
+function touch(rerender) { dirty = true; msg = ''; if (rerender) { const y = window.scrollY; render(); window.scrollTo(0, y); } else refreshBar(); }
+
+app.addEventListener('click', e => {
+  const t = e.target.closest('[data-act]'); if (!t) return;
+  const a = t.dataset.act, v = t.dataset.v, i = +t.dataset.i;
+  if (t.tagName === 'SELECT' || (t.tagName === 'INPUT' && t.type !== 'button')) return;
+  if (a === 'tab') { ui.tab = v; render(); window.scrollTo(0, 0); }
+  else if (a === 'filter') { ui.filter = v; touchUI(); }
+  else if (a === 'pack') { ui.pack = v; touchUI(); }
+  else if (a === 'release') { delete state.claims[t.dataset.g]; delete state.roles[t.dataset.g]; touch(true); }
+  else if (a === 'role') { const r = state.roles[ui.pack] = state.roles[ui.pack] || {}; const n = +v; if (r[t.dataset.k] === n) delete r[t.dataset.k]; else r[t.dataset.k] = n; touch(true); }
+  else if (a === 'cpsel') { ui.cpg = t.dataset.g; ui.cpw = t.dataset.w; touchUI(); const s = app.querySelector('.cp'); if (s) s.scrollIntoView({block:'start'}); }
+  else if (a === 'status') { const d = cp(ui.cpg, ui.cpw); d.status = d.status === v ? '' : v; touch(true); }
+  else if (a === 'badd') { cp(ui.cpg, ui.cpw).blockers.push({text:'', type:'Materials', who:'', fixed:false}); touch(true); const ins = app.querySelectorAll('.blocker input[data-act="btext"]'); if (ins.length) ins[ins.length-1].focus(); }
+  else if (a === 'bdel') { cp(ui.cpg, ui.cpw).blockers.splice(i, 1); touch(true); }
+  else if (a === 'save') save();
+});
+function touchUI() { const y = window.scrollY; render(); window.scrollTo(0, y); }
+
+app.addEventListener('change', e => {
+  const t = e.target, a = t.dataset.act, i = +t.dataset.i; if (!a) return;
+  if (a === 'claim' && t.value) {
+    const gid = t.value; state.claims[gid] = t.dataset.b; delete state.roles[gid]; touch(true);
+  } else if (a === 'custom' && t.value) {
+    const gid = t.value; state.claims[gid] = 'custom'; state.custom[gid] = Object.assign({title:'', hook:'', outcome:'', materials:''}, state.custom[gid], {cat:t.dataset.c}); delete state.roles[gid];
+    ui.tab = 'pack'; ui.pack = gid; dirty = true; msg = ''; render(); window.scrollTo(0, 0);
+  } else if (a === 'ms') { cp(ui.cpg, ui.cpw).ms[i] = t.checked; touch(true); }
+  else if (a === 'bfix') { cp(ui.cpg, ui.cpw).blockers[i].fixed = t.checked; touch(true); }
+  else if (a === 'btype') { cp(ui.cpg, ui.cpw).blockers[i].type = t.value; touch(false); }
+  else if (a === 'signed') { cp(ui.cpg, ui.cpw).signed = t.checked; touch(true); }
+});
+app.addEventListener('input', e => {
+  const t = e.target, a = t.dataset.act, i = +t.dataset.i; if (!a) return;
+  if (a === 'cf') { state.custom[ui.pack][t.dataset.f] = t.value; touch(false); }
+  else if (a === 'cpf') { cp(ui.cpg, ui.cpw)[t.dataset.f] = t.value; touch(false); }
+  else if (a === 'btext') { cp(ui.cpg, ui.cpw).blockers[i].text = t.value; touch(false); }
+  else if (a === 'bwho') { cp(ui.cpg, ui.cpw).blockers[i].who = t.value; touch(false); }
+});
+
+function buildDoc() {
+  const json = JSON.stringify(state).replace(/</g, '\\u003c');
+  return '<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Term 3 Quests</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"></head><body><div id="app"></div><script type="application/json" id="state">' + json + '<\/script><script>(' + main.toString() + ')();<\/script></body></html>';
+}
+async function save() {
+  if (localMode) { try { localStorage.setItem('t3q-state', JSON.stringify(state)); dirty = false; msg = 'Saved on this device.'; } catch(e) { msg = 'This browser blocked saving.'; } refreshBar(); setTimeout(() => { msg = ''; refreshBar(); }, 2500); return; }
+  if (!api || saving || readOnly) return;
+  saving = true; refreshBar();
+  try { ui.y = window.scrollY; sessionStorage.setItem('t3q-ui', JSON.stringify(ui)); } catch(e) {}
+  try { await api.publish(buildDoc()); dirty = false; }
+  catch (err) {
+    const c = err && err.code;
+    if (c === 'not_writer' || c === 'not_granted' || c === 'not_declared' || c === 'consent_required' || c === 'capability_disabled' || c === 'capability_removed') readOnly = true;
+    else if (c === 'conflict') msg = 'Someone else saved first. Loading their version; re-enter your last change.';
+    else if (c === 'rate_limited') msg = 'Saving too often. Wait a moment, then save again.';
+    else msg = 'Couldn\u2019t save just now. Try again in a moment.';
+    if (msg && c !== 'conflict') setTimeout(() => { msg = ''; refreshBar(); }, 4000);
+  }
+  saving = false; refreshBar();
+}
+
+render();
+if (ui.y) setTimeout(() => window.scrollTo(0, ui.y), 30);
+if (window.claude && typeof window.claude.use === 'function') {
+  window.claude.use('artifact').then(a => { api = a; apiReady = true; refreshBar(); }).catch(() => { apiReady = true; refreshBar(); });
+} else { apiReady = true; }
+})();</script></body></html>

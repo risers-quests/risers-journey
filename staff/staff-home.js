@@ -44,7 +44,8 @@
     app.appendChild(el('div', 'hd-tiles', window.LH_tiles([
       { title: 'Term 1 Conference', desc: 'Each Riser’s Term 1 conference feedback.', href: '../term-1-conference/index.html?view=staff', icon: 'conf', tone: 'violet' },
       { title: 'Term 2 Conference', desc: 'Self-assessments, reflections and MOMs.', href: '../end-of-term-2/staff/index.html', icon: 'term', tone: 'slate' },
-      { title: 'Quests', desc: 'Every Riser’s self-paced quests, with feedback.', href: 'quests/index.html', icon: 'quests', tone: 'green' }
+      { title: 'Quests', desc: 'Every Riser’s self-paced quests, with feedback.', href: 'quests/index.html', icon: 'quests', tone: 'green' },
+      { title: 'Term 3 Quests', desc: 'Group builds, quest packs and weekly checkpoints.', href: 'term-3/index.html', icon: 'skills', tone: 'amber' }
     ])));
   }
 

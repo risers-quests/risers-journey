@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Term 3 Quests — Risers Journey — Staff</title>
+<link rel="stylesheet" href="../../dashboard/dashboard.css" />
+<link rel="stylesheet" href="../../home.css" />
+<link rel="stylesheet" href="../staff-home.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/lifehub.css" />
+<script src="../../assets/brand.js" data-area="staff"></script>
+<style>
+  .t3-frame { display: block; width: 100%; min-height: 80vh; border: 0; border-radius: 18px; background: #fff; }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- The Term 3 Quests planner, kept as its own page (its own styles and
+       saving) and shown here inside the staff shell. Staff side only. -->
+  <iframe class="t3-frame" id="t3-frame" src="term3-quests.html" title="Term 3 Quests"></iframe>
+</div>
+<script>
+(function () {
+  var frame = document.getElementById('t3-frame');
+  frame.addEventListener('load', function () {
+    var doc = frame.contentDocument;
+    if (!doc) return;
+    // Match the light staff shell rather than following the device's dark mode.
+    doc.documentElement.setAttribute('data-theme', 'light');
+    function fit() { frame.style.height = doc.documentElement.scrollHeight + 'px'; }
+    fit();
+    if (window.ResizeObserver) new ResizeObserver(fit).observe(doc.body);
+  });
+})();
+</script>
+</body>
+</html>
