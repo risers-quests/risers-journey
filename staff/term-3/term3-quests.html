@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Term 3 Quests</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"></head><body><div id="app"></div><script type="application/json" id="state">{}</script><script>(function main(){
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Term 3 Quests</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"></head><body><div id="app"></div><script src="outline-drawings.js"></script><script src="outlines.js"></script><script type="application/json" id="state">{}</script><script>(function main(){
 const CSS = `
 :root{--bg:#EEF2EF;--surface:#FFFFFF;--ink:#17262B;--muted:#55666B;--line:#CFD8D3;--sol:#0B7A78;--sol-t:#D8EFEC;--sci:#5A3EC2;--sci-t:#E7E1FA;--g1:#D4442A;--g2:#B57B00;--g3:#2C8549;--g4:#2A60C4;--ok:#2C8549;--help:#B57B00;--stuck:#D4442A;--field:#F6F8F6}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121A1C;--surface:#1B2629;--ink:#E9F0EE;--muted:#9AAEB0;--line:#2E3D40;--sol:#4FC7C1;--sol-t:#16393A;--sci:#A894F5;--sci-t:#2A2350;--g1:#F07A5F;--g2:#E6B63F;--g3:#5CC07D;--g4:#6E9BF0;--ok:#5CC07D;--help:#E6B63F;--stuck:#F07A5F;--field:#152023}}
@@ -74,6 +74,13 @@ select.pick{width:100%;border:2px solid var(--cc);background:var(--ct);border-ra
 .week{border:1.5px solid var(--line);border-radius:12px;padding:12px}
 .week b{font-family:"Bricolage Grotesque",sans-serif;font-size:17px}
 .week ul{margin:6px 0 0;padding-left:18px;font-size:14.5px;color:var(--muted)}
+.olink{color:var(--cc);font-weight:700;text-decoration:none;border-bottom:1.5px solid currentColor}
+.gates{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
+.gates li{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font-size:15.5px}
+.gates li>span{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid var(--cc);color:var(--cc);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.gates li.got{border-color:var(--cc);background:var(--ct)}
+.gates li.got>span{background:var(--cc);color:var(--surface)}
+.gates em,.checks em.when{color:var(--muted);font-style:normal;font-size:14px}
 .empty{background:var(--surface);border-radius:16px;padding:28px;text-align:left}
 .empty p{color:var(--muted)}
 .btn{border:2px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:999px;padding:9px 18px;font-weight:700;cursor:pointer}
@@ -141,30 +148,11 @@ const ROLES = {
     {name:'Data keeper', icon:'\uD83D\uDCCA', duties:['Plans the fair test: what changes, what stays the same','Measures and records every trial','Turns results into a chart or table','Spots the pattern in the results']}
   ]
 };
-const BUILDS = [
-  {id:'s1',cat:'sol',title:'Tool shadow board',hook:'Carpentry tools don\u2019t come back to the same place, so time is lost hunting for them.',outcome:'A wall board with a painted outline for every tool, each spot labelled, plus a sign-out card for tools that leave the room.',materials:'Plywood or pegboard, hooks or nails, paint or thick marker, card',tasks:['Track which tools go missing most often for a few days','Arrange the tools and trace outlines so the most-used are easiest to reach','Mount the hooks and fix the board securely to the wall'],stretch:'A \u201Cwho has it\u201D name-tag system.'},
-  {id:'s2',cat:'sol',title:'Shoe and bag station',hook:'The entrance gets crowded with shoes and bags every morning.',outcome:'A rack with a named spot for every Riser, sized to fit real shoes and bags.',materials:'Planks or crates, screws, sandpaper, labels',tasks:['Watch arrival time and map where things get dropped','Measure the entrance space and design the slots','Build, sand and assemble the rack'],stretch:'A rain-gear and umbrella section for monsoon days.'},
-  {id:'s3',cat:'sol',title:'Lost and found system',hook:'Lost things pile up and nobody knows whose they are.',outcome:'A labelled lost-and-found box, a log sheet, and a weekly \u201Cclaim it\u201D routine the class agrees to.',materials:'Wood or a sturdy box, paint, card, clipboard',tasks:['Survey what gets lost most and ask how people want to find it','Design the box, the log sheet and the routine','Build and finish the box'],stretch:'A name-label station so fewer things get lost.'},
-  {id:'s4',cat:'sol',title:'Recess equipment caddy',hook:'Riser Recess equipment gets scattered or left outside.',outcome:'A carry or wheeled caddy with a compartment for each item and a pack-up checklist on the side.',materials:'Plywood, dividers, handles or castors, screws, labels',tasks:['List all the recess equipment and what goes missing','Design compartments sized for each item','Build the caddy and attach handles or wheels'],stretch:'A sign-out system for borrowed equipment.'},
-  {id:'s5',cat:'sol',title:'Noise traffic light',hook:'The Work Cycle gets too loud, and it\u2019s hard to concentrate.',outcome:'A red-amber-green signal anyone can set, with a class agreement for what each colour means.',materials:'Cardboard or wood, paint, a sliding marker or pointer',tasks:['Observe noise at different times and ask Risers what helps','Design the signal and write the agreement','Build the signal so the marker moves easily'],stretch:'A battery LED version that lights up.'},
-  {id:'s6',cat:'sol',title:'Self-watering planters',hook:'Classroom plants get forgotten and dry out.',outcome:'Bottle planters that water themselves through a wick, plus a simple watering rota.',materials:'Plastic bottles, cotton string or cloth, soil, plants, scissors',tasks:['Find out what each plant needs and how often it\u2019s been watered','Design the wick system and the rota chart','Make the planters and set them up'],stretch:'Test which wick material keeps soil wettest.'},
-  {id:'s7',cat:'sol',title:'Waste sorting station',hook:'Snack waste ends up in the wrong bin.',outcome:'A three-bin station (compost, recycle, landfill) with picture signs anyone can follow.',materials:'Bins or boxes, a wooden stand, paint, signs',tasks:['Look at a day of snack waste and see what goes wrong','Design picture signs and the station layout','Build the stand that holds the bins'],stretch:'Track one week of waste and share the results.'},
-  {id:'s8',cat:'sol',title:'Visual daily schedule board',hook:'Risers keep asking \u201Cwhat\u2019s next?\u201D during the day.',outcome:'A board with movable cards for each part of the LifeHub day that anyone can update, readable from across the room.',materials:'Board, card, velcro or hooks, markers',tasks:['Ask Risers and facilitators what they need to know and when','Design the cards with symbols and words','Build the board and attach the card system'],stretch:'A \u201Cnow\u201D arrow and a countdown to the next block.'},
-  {id:'c1',cat:'sci',title:'Water filter',hook:'Filtration: layers of gravel, sand and charcoal trap particles of different sizes.',outcome:'A layered filter in a cut bottle and a before-and-after clarity test. Filtered water is for testing only, never drinking.',materials:'Plastic bottles, gravel, sand, charcoal, cotton, muddy water',tasks:['Explain why each layer traps different-sized particles','Build the filter and rebuild it with new layer orders','Rate clarity for each trial on a scale you design'],stretch:'Compare three layer orders and find the best one.'},
-  {id:'c2',cat:'sci',title:'Solar oven',hook:'Heat from sunlight can be reflected, absorbed and trapped.',outcome:'A box oven that melts chocolate in the sun, with temperature readings every 5 minutes.',materials:'Cardboard box, foil, black paper, cling film, thermometer',tasks:['Explain reflection, absorption and insulation','Build the oven and adjust the reflector angle','Take and chart temperature readings'],stretch:'Compare with foil and without foil.'},
-  {id:'c3',cat:'sci',title:'Balloon-powered car',hook:'Newton\u2019s third law: air pushed backwards pushes the car forwards.',outcome:'A car that travels at least 2 metres on one balloon, with distances recorded for every run.',materials:'Cardboard, straws, skewers, bottle caps, balloons, tape',tasks:['Explain action and reaction with a drawing','Build the car and reduce wobble and friction','Measure and record distance for each run'],stretch:'Compare wheel sizes or balloon sizes.'},
-  {id:'c4',cat:'sci',title:'Hydraulic arm',hook:'Liquids pass a push through a tube from one place to another.',outcome:'A cardboard arm that lifts a small object using syringes filled with water.',materials:'Syringes, tubing, cardboard, split pins, water',tasks:['Explain why the push travels through the tube','Build the arm joints and connect the syringes','Record the heaviest object lifted in each design'],stretch:'Compare water-filled and air-filled syringes.'},
-  {id:'c5',cat:'sci',title:'Electromagnet',hook:'Electric current flowing through a wire makes a magnetic field.',outcome:'A nail electromagnet and a chart of paperclips lifted against number of coil turns. Use a 1.5 V cell and disconnect between trials.',materials:'Iron nail, insulated wire, 1.5 V battery, tape, paperclips',tasks:['Explain how current makes a magnetic field','Wind the coils and keep connections safe','Count paperclips lifted for each number of turns'],stretch:'Test what happens with two batteries in a holder (with a facilitator).'},
-  {id:'c6',cat:'sci',title:'Rain gauge and weather station',hook:'We can measure weather. The northeast monsoon is coming to Chennai.',outcome:'A rain gauge and a wind vane, with a daily weather log for three weeks.',materials:'Bottles, ruler, card, straw, pin, compass',tasks:['Explain what each instrument measures and why','Build and place the instruments outdoors safely','Keep the daily log and chart the rainfall'],stretch:'Compare your readings with the official weather report.'},
-  {id:'c7',cat:'sci',title:'Periscope',hook:'Light reflects off a mirror at the same angle it hits it.',outcome:'A periscope that lets you see over a wall, with a diagram of the light\u2019s path.',materials:'Long cardboard tube or box, two small mirrors, tape, protractor',tasks:['Draw how light travels through the periscope','Build it and set both mirrors at 45 degrees','Test what you can see when mirror angles change'],stretch:'Make a longer or bendier periscope.'},
-  {id:'c8',cat:'sci',title:'Catapult',hook:'Stored elastic energy turns into movement.',outcome:'A catapult that launches a pom-pom, with launch distances recorded against arm angle.',materials:'Wooden sticks, rubber bands, spoon, tape, pom-poms',tasks:['Explain stored energy and how it changes into movement','Build the catapult and adjust the launch angle','Measure distance for at least 5 launches per setting'],stretch:'Chart angle against distance and find the best angle.'}
-];
-const WEEKS = [
-  {id:'w1',name:'Week 1',focus:'Plan it',ms:['Everyone has picked a role','We can explain the problem or big idea in our own words','Design sketch with measurements is done','Materials list is ready and materials are gathered']},
-  {id:'w2',name:'Week 2',focus:'Build it',ms:['First version is built','Everyone did their role\u2019s jobs this week','Photos or notes of the build are in our log','Tools and space were cleaned up after every session']},
-  {id:'w3',name:'Week 3',focus:'Test and improve',ms:['Tested at least 3 times','Results are recorded','Made at least one improvement because of a test','Asked someone outside our group for feedback']},
-  {id:'w4',name:'Week 4',focus:'Finish and share',ms:['Final version is finished','Showcase is planned: who says what','Each of us wrote a reflection','Materials returned and space cleaned']}
-];
+const OUTLINES = window.T3_OUTLINES || {};
+const BUILDS = Object.keys(OUTLINES).map(k => { const o = OUTLINES[k]; return {id:k, cat:o.cat, title:o.title, hook:o.hook, tagline:o.tagline, outcome:o.outcome, tasks:o.roles.map(r => r[1]), stretch:o.stretch}; });
+const outlineLink = (id, text) => OUTLINES[id] ? `<a class="olink" href="outline.html?b=${id}" target="_top">${text || 'Read the build outline'} \u203A</a>` : '';
+const WEEKS = [{id:'w1',name:'Week 1'},{id:'w2',name:'Week 2'},{id:'w3',name:'Week 3'},{id:'w4',name:'Week 4'}];
+const GATES = ['Plan approved: sketch, materials list, and a success test with a number in it','First version works','Tested at least 3 times, with results recorded','Improved because of what a test showed','Ready to show: final version, showcase label, space cleaned'];
 const BTYPES = ['Materials','Know-how','Teamwork','Time','Idea'];
 const STATUS = {ok:'On track',help:'Need a hand',stuck:'Stuck'};
 
@@ -172,7 +160,9 @@ let state = {};
 try { state = JSON.parse(document.getElementById('state').textContent) || {}; } catch(e) { state = {}; }
 const localMode = !(window.claude && typeof window.claude.use === 'function');
 if (localMode) { try { const ls = localStorage.getItem('t3q-state'); if (ls) state = JSON.parse(ls) || state; } catch(e) {} }
-state.claims = state.claims || {}; state.custom = state.custom || {}; state.roles = state.roles || {}; state.checks = state.checks || {};
+state.claims = state.claims || {}; state.custom = state.custom || {}; state.roles = state.roles || {}; state.checks = state.checks || {}; state.gates = state.gates || {};
+const gatesFor = g => state.gates[g] = state.gates[g] || {};
+const gatesBy = (g, w) => { const r = state.gates[g] || {}, upto = WEEKS.findIndex(x => x.id === w); return Object.keys(r).filter(i => WEEKS.findIndex(x => x.id === r[i]) <= upto).length; };
 
 let ui = {tab:'builds', filter:'all', pack:'g1', cpg:'g1', cpw:'w1', y:0};
 try { const s = sessionStorage.getItem('t3q-ui'); if (s) { ui = Object.assign(ui, JSON.parse(s)); sessionStorage.removeItem('t3q-ui'); } } catch(e) {}
@@ -217,13 +207,13 @@ function viewBuilds() {
       const foot = by
         ? `<div class="taken-by ${by.id}"><span>Chosen by ${by.name}</span><button class="linkbtn" data-act="release" data-g="${by.id}">Undo</button></div>`
         : `<select class="pick" data-act="claim" data-b="${b.id}" aria-label="Choose ${esc(b.title)} for a group"><option value="">Choose this for\u2026</option>${GROUPS.map(g => `<option value="${g.id}">${g.name}${state.claims[g.id] ? ' (switch build)' : ''}</option>`).join('')}</select>`;
-      return `<article class="card ${cat}${by ? ' taken' : ''}"><h3>${esc(b.title)}</h3><p><span class="lbl">${c.hookLbl}:</span> ${esc(b.hook)}</p><p><span class="lbl">You\u2019ll end up with:</span> ${esc(b.outcome)}</p><p class="mat"><b>Materials:</b> ${esc(b.materials)}</p><p class="str"><b>Stretch:</b> ${esc(b.stretch)}</p><div class="foot">${foot}</div></article>`;
+      return `<article class="card ${cat}${by ? ' taken' : ''}"><h3>${esc(b.title)}</h3><p><span class="lbl">${c.hookLbl}:</span> ${esc(b.hook)}</p><p><span class="lbl">You\u2019ll end up with:</span> ${esc(b.tagline)}</p><p class="str"><b>Stretch:</b> ${esc(b.stretch)}</p><p>${outlineLink(b.id)}</p><div class="foot">${foot}</div></article>`;
     }).join('');
     const own = `<article class="card own ${cat}"><h3>Your own idea</h3><p>Spotted something else? Propose your own ${cat === 'sol' ? 'LifeHub problem' : 'science build'}. A facilitator approves it at the Week 1 checkpoint.</p><div class="foot"><select class="pick" data-act="custom" data-c="${cat}" aria-label="Propose own idea for a group"><option value="">Propose for\u2026</option>${GROUPS.map(g => `<option value="${g.id}">${g.name}</option>`).join('')}</select></div></article>`;
     return `<div class="cathead"><span class="bigpill ${cat}">${c.name}</span></div><p class="catnote">${c.note}</p><div class="grid">${cards}${own}</div>`;
   };
   const left = free.length ? `${free.map(g => g.name).join(', ')} still ${free.length === 1 ? 'needs' : 'need'} to choose.` : 'Every group has chosen a build.';
-  return `<p class="intro">Each group chooses one build. Once a build is chosen, it\u2019s taken. ${left}</p><div class="chips">${chips}</div>${f !== 'sci' ? section('sol') : ''}${f !== 'sol' ? section('sci') : ''}`;
+  return `<p class="intro">Each group chooses one build. Once a build is chosen, it\u2019s taken. ${left} Every build has a full outline: the finished model, a dimensioned drawing, parts, order of work and the test that proves it works.</p><div class="chips">${chips}</div>${f !== 'sci' ? section('sol') : ''}${f !== 'sol' ? section('sci') : ''}`;
 }
 
 function viewPack() {
@@ -241,7 +231,7 @@ function viewPack() {
        <label class="field"><span>Materials we think we need</span><input type="text" data-act="cf" data-f="materials" value="${esc(state.custom[g.id].materials)}"></label></div>`
     : `<div class="sec"><span class="sechead">What we\u2019re building</span><p><b>${c.hookLbl}:</b> ${esc(b.hook)}</p></div>
        <div class="sec"><span class="sechead">Outcome model</span><p>${esc(b.outcome)}</p><p><b>Stretch goal:</b> ${esc(b.stretch)}</p></div>
-       <div class="sec"><span class="sechead">Materials</span><p>${esc(b.materials)}</p></div>`;
+       <div class="sec"><span class="sechead">Build outline</span><p>The drawing, parts list, tools, safety rules and test plan for this build.</p><p>${outlineLink(b.id, 'Open the build outline')}</p></div>`;
   const roleCards = roles.map((r, i) => {
     const h = holder(i);
     return `<div class="role"><h3>${r.icon} ${r.name}</h3><ul>${r.duties.map(d => `<li>${esc(d)}</li>`).join('')}</ul>${b.tasks[i] ? `<div class="task"><b>For this build:</b> ${esc(b.tasks[i])}</div>` : ''}<div class="holder${h.length ? '' : ' none'}">${h.length ? 'Taken by ' + h.join(' and ') : 'Not picked yet'}</div></div>`;
@@ -252,30 +242,32 @@ function viewPack() {
   const unpicked = g.kids.filter(k => picks[k] === undefined);
   if (unpicked.length) notes.push(`${unpicked.join(', ')} ${unpicked.length === 1 ? 'hasn\u2019t' : 'haven\u2019t'} picked a role yet.`);
   roles.forEach((r, i) => { if (counts[i] > 1) notes.push(`Two people picked ${r.name}. Talk it through so each role has one owner.`); });
-  const weeks = WEEKS.map(w => `<div class="week"><b>${w.name}: ${w.focus}</b><ul>${w.ms.map(m => `<li>${esc(m)}</li>`).join('')}</ul></div>`).join('');
+  const reached = state.gates[g.id] || {};
+  const gates = GATES.map((m, i) => `<li class="${reached[i] ? 'got' : ''}"><span>${reached[i] ? '\u2713' : i + 1}</span>${esc(m)}${reached[i] ? ` <em>(${WEEKS.find(w => w.id === reached[i]).name})</em>` : ''}</li>`).join('');
   return sw + `<article class="pack ${g.id} ${b.cat}"><span class="sechead">${c.short} quest</span><h2>${esc(b.title)}</h2><p class="who">${g.name}: ${g.kids.join(', ')}</p>${top}
     <div class="sec"><span class="sechead">Roles and responsibilities</span><p>Everyone builds, tests and cleans up together. Your role is the part you <b>lead</b> and answer for at checkpoints.</p><div class="roles">${roleCards}</div></div>
     <div class="sec"><span class="sechead">Pick your role</span><div class="picker">${picker}</div>${notes.map(n => `<div class="warn">${esc(n)}</div>`).join('')}</div>
-    <div class="sec"><span class="sechead">The 4-week plan</span><p>At each weekly checkpoint, you\u2019ll tick these off with a facilitator.</p><div class="weeks">${weeks}</div></div></article>`;
+    <div class="sec"><span class="sechead">How the month works</span><p>There\u2019s no set week for each stage. Plan in the first few days and get a first version working by the end of Week 1. After that, build, test and improve in loops for as many versions as you can. The showcase is one session at the end.</p><p>Each week you meet a facilitator for a checkpoint, and they tick off any milestones you\u2019ve reached:</p><ol class="gates">${gates}</ol></div></article>`;
 }
 
 function viewCp() {
   const rows = GROUPS.map(g => `<tr><th class="gname ${g.id}" scope="row">${g.name}</th>${WEEKS.map(w => {
     const d = peek(g.id, w.id);
     const open = d ? d.blockers.filter(x => !x.fixed && x.text).length : 0;
-    const msDone = d ? d.ms.filter(Boolean).length : 0;
+    const msDone = gatesBy(g.id, w.id);
     const s = d && d.status;
-    return `<td><button class="cell" aria-pressed="${ui.cpg===g.id && ui.cpw===w.id}" data-act="cpsel" data-g="${g.id}" data-w="${w.id}"><span class="st"><span class="dot ${s||''}"></span>${s ? STATUS[s] : 'Not yet'}</span><span class="sg">${msDone}/4 done${d && d.signed ? ', checked in' : ''}</span>${open ? `<span class="bl">${open} open blocker${open>1?'s':''}</span>` : ''}</button></td>`;
+    return `<td><button class="cell" aria-pressed="${ui.cpg===g.id && ui.cpw===w.id}" data-act="cpsel" data-g="${g.id}" data-w="${w.id}"><span class="st"><span class="dot ${s||''}"></span>${s ? STATUS[s] : 'Not yet'}</span><span class="sg">${msDone}/${GATES.length} milestones${d && d.signed ? ', checked in' : ''}</span>${open ? `<span class="bl">${open} open blocker${open>1?'s':''}</span>` : ''}</button></td>`;
   }).join('')}</tr>`).join('');
-  const board = `<div class="board"><table><thead><tr><th></th>${WEEKS.map(w => `<th scope="col">${w.name}<br><span style="font-weight:500;color:var(--muted)">${w.focus}</span></th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`;
+  const board = `<div class="board"><table><thead><tr><th></th>${WEEKS.map(w => `<th scope="col">${w.name}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`;
   const g = grp(ui.cpg), w = WEEKS.find(x => x.id === ui.cpw), d = cp(g.id, w.id), b = buildFor(g.id);
-  const ms = w.ms.map((m, i) => `<label><input type="checkbox" data-act="ms" data-i="${i}" ${d.ms[i] ? 'checked' : ''}><span>${esc(m)}</span></label>`).join('');
+  const gr = state.gates[g.id] || {};
+  const ms = GATES.map((m, i) => `<label><input type="checkbox" data-act="ms" data-i="${i}" ${gr[i] ? 'checked' : ''} ${gr[i] && gr[i] !== w.id ? 'disabled' : ''}><span>${esc(m)}${gr[i] ? ` <em class="when">(${WEEKS.find(x => x.id === gr[i]).name})</em>` : ''}</span></label>`).join('');
   const status = Object.keys(STATUS).map(k => `<button class="sbtn s-${k}" aria-pressed="${d.status===k}" data-act="status" data-v="${k}">${STATUS[k]}</button>`).join('');
   const blockers = d.blockers.map((x, i) => `<div class="blocker${x.fixed ? ' done' : ''}"><input type="text" data-act="btext" data-i="${i}" value="${esc(x.text)}" placeholder="What\u2019s in the way?"><div class="row"><select data-act="btype" data-i="${i}" aria-label="Kind of blocker">${BTYPES.map(t => `<option ${x.type===t?'selected':''}>${t}</option>`).join('')}</select><input type="text" data-act="bwho" data-i="${i}" value="${esc(x.who)}" placeholder="Who can help?" style="flex:1;min-width:140px"><label class="fixed"><input type="checkbox" data-act="bfix" data-i="${i}" ${x.fixed?'checked':''}>Sorted</label><button class="linkbtn" data-act="bdel" data-i="${i}">Remove</button></div></div>`).join('');
   return `<p class="intro">Every week, each group sits with a facilitator for a 10-minute checkpoint. Tap a square to open that group\u2019s checkpoint.</p>${board}
-  <section class="cp ${g.id}"><h2>${g.name}, ${w.name}: ${w.focus}</h2><p class="focus">${b ? esc(b.title) : 'No build chosen yet'}. ${g.kids.join(', ')}.</p>
-  <div class="ask"><b>Checkpoint questions</b><ol><li>What did we finish this week? Each person shares their role\u2019s part.</li><li>What\u2019s blocking us?</li><li>What\u2019s our goal for next week, and who\u2019s doing what?</li></ol></div>
-  <div class="cpsec"><h3>This week\u2019s milestones</h3><div class="checks">${ms}</div></div>
+  <section class="cp ${g.id}"><h2>${g.name}, ${w.name}</h2><p class="focus">${b ? esc(b.title) : 'No build chosen yet'}. ${g.kids.join(', ')}.</p>
+  <div class="ask"><b>Checkpoint questions</b><ol><li>Which version are we on, and what did our last test show? Each person shares their role\u2019s part.</li><li>What\u2019s blocking us?</li><li>What will we change or build next, and who\u2019s doing what?</li></ol></div>
+  <div class="cpsec"><h3>Milestones reached</h3><p style="color:var(--muted);margin:0 0 6px;font-size:15px">Tick any milestone the group reached this week. Milestones ticked in an earlier week are shown with that week.</p><div class="checks">${ms}</div></div>
   <div class="cpsec"><h3>How is it going?</h3><div class="status">${status}</div></div>
   <div class="cpsec"><label class="field"><span>What we finished</span><textarea data-act="cpf" data-f="done">${esc(d.done)}</textarea></label></div>
   <div class="cpsec"><h3>Blockers</h3>${blockers || '<p style="color:var(--muted);margin:0 0 8px">No blockers logged.</p>'}<button class="btn ghost" data-act="badd">Add a blocker</button></div>
@@ -309,7 +301,7 @@ app.addEventListener('click', e => {
   if (a === 'tab') { ui.tab = v; render(); window.scrollTo(0, 0); }
   else if (a === 'filter') { ui.filter = v; touchUI(); }
   else if (a === 'pack') { ui.pack = v; touchUI(); }
-  else if (a === 'release') { delete state.claims[t.dataset.g]; delete state.roles[t.dataset.g]; touch(true); }
+  else if (a === 'release') { delete state.claims[t.dataset.g]; delete state.roles[t.dataset.g]; delete state.gates[t.dataset.g]; touch(true); }
   else if (a === 'role') { const r = state.roles[ui.pack] = state.roles[ui.pack] || {}; const n = +v; if (r[t.dataset.k] === n) delete r[t.dataset.k]; else r[t.dataset.k] = n; touch(true); }
   else if (a === 'cpsel') { ui.cpg = t.dataset.g; ui.cpw = t.dataset.w; touchUI(); const s = app.querySelector('.cp'); if (s) s.scrollIntoView({block:'start'}); }
   else if (a === 'status') { const d = cp(ui.cpg, ui.cpw); d.status = d.status === v ? '' : v; touch(true); }
@@ -326,7 +318,7 @@ app.addEventListener('change', e => {
   } else if (a === 'custom' && t.value) {
     const gid = t.value; state.claims[gid] = 'custom'; state.custom[gid] = Object.assign({title:'', hook:'', outcome:'', materials:''}, state.custom[gid], {cat:t.dataset.c}); delete state.roles[gid];
     ui.tab = 'pack'; ui.pack = gid; dirty = true; msg = ''; render(); window.scrollTo(0, 0);
-  } else if (a === 'ms') { cp(ui.cpg, ui.cpw).ms[i] = t.checked; touch(true); }
+  } else if (a === 'ms') { const r = gatesFor(ui.cpg); if (t.checked) r[i] = ui.cpw; else delete r[i]; touch(true); }
   else if (a === 'bfix') { cp(ui.cpg, ui.cpw).blockers[i].fixed = t.checked; touch(true); }
   else if (a === 'btype') { cp(ui.cpg, ui.cpw).blockers[i].type = t.value; touch(false); }
   else if (a === 'signed') { cp(ui.cpg, ui.cpw).signed = t.checked; touch(true); }

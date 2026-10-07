@@ -60,7 +60,7 @@
 .ol-draw .h { fill: none; stroke: var(--ink); stroke-width: 1.2; stroke-dasharray: 5 4; }
 .ol-draw .cl { stroke: var(--soft); stroke-width: .8; stroke-dasharray: 14 4 3 4; }
 .ol-draw .ext { stroke: var(--soft); stroke-width: .7; }
-.ol-draw .d-l { stroke: var(--ink); stroke-width: .9; }
+.ol-draw .d-l { fill: none; stroke: var(--ink); stroke-width: .9; }
 .ol-draw .d-t { font: 600 11px Inter, sans-serif; fill: var(--ink); }
 .ol-draw .c-l { stroke: var(--ink); stroke-width: .8; }
 .ol-draw .c-c { fill: #fff; stroke: var(--ink); stroke-width: 1.2; }
@@ -133,3 +133,27 @@
 }
 .ol-tools .btn { flex: none; width: auto; }
 .ol-back { white-space: nowrap; }
+.ol-draw .fill-board { fill: #f4ead8; }
+.ol-draw .fill-dark { fill: #3b4b59; }
+.ol-draw .fill-flag { fill: #f6c8b8; }
+.ol-draw .fill-syr { fill: #e9f2fb; }
+.ol-draw .fill-pipe { fill: #e6ebef; }
+.ol-draw .fill-pvc { fill: #f2f5f7; }
+.ol-draw .fill-led { fill: #f05a4a; }
+.ol-draw .fill-paper { fill: #fff; }
+.ol-draw .fill-bottle { fill: rgba(170, 215, 235, .35); }
+.ol-draw .ramp { stroke-width: 4; stroke-linecap: round; }
+.ol-draw .rope { fill: none; stroke: #8a6a3a; stroke-width: 1.4; }
+.ol-draw .tube { fill: none; stroke: #2f8fd0; stroke-width: 2.2; opacity: .8; }
+.ol-draw .wire { fill: none; stroke: #c0392b; stroke-width: 1.2; }
+.ol-draw .pole { fill: none; stroke: #b08a4a; stroke-width: 7; stroke-linecap: round; }
+.ol-draw .net { fill: none; stroke: #4a8a3a; stroke-width: 2; stroke-dasharray: 6 4; }
+.ol-draw .glaze { fill: none; stroke: #6fb8e8; stroke-width: 2.5; }
+.ol-draw .absorb { fill: none; stroke: #111; stroke-width: 4; }
+.ol-draw .tray { stroke: var(--ink); stroke-width: 2; stroke-dasharray: 3 2; }
+.ol-draw .leaf { fill: #bfe3a0; stroke: #4a8a3a; stroke-width: 1.2; }
+.ol-draw .lbl-w { fill: #fff; font-style: normal; font-weight: 700; }
+.ol-ages th { width: 26%; background: #f3f6f8; color: #1f3a5a; font-weight: 600; }
+.ol-adult { display: inline-block; margin-left: 6px; font-size: .68rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #a3432b; border: 1px solid #e3b4a6; border-radius: 99px; padding: 0 7px; }
+.ol-rules { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; font-size: .9rem; }
+.ol-cat-h { font-family: var(--font-head); font-size: 1.05rem; margin: 22px 0 0; }

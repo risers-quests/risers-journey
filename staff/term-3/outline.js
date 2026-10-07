@@ -15,10 +15,13 @@
   if (!o) {
     app.innerHTML = '<div class="ol-index"><a class="ol-back" href="index.html">‹ Term 3 Quests</a>' +
       '<h1>Build outlines</h1><p>The official plan for each build: what it is for, the finished model, a dimensioned drawing, parts, order of work, and the test that proves it works.</p>' +
-      '<div class="ol-cards">' + Object.keys(ALL).map(function (k) {
-        var x = ALL[k];
-        return '<a class="ol-card ol-' + x.cat + '" href="outline.html?b=' + k + '"><span>' + esc(x.docNo) + ' · ' + esc(CAT[x.cat]) + '</span><strong>' + esc(x.title) + '</strong><em>' + esc(x.tagline) + '</em></a>';
-      }).join('') + '</div></div>';
+      '<p class="ol-rules">Every build suits a mixed group aged 8–13: materials from an ordinary hardware, stationery or electrical shop, tools children can use with supervision, and the few adult-only steps marked.</p>' +
+      ['sci', 'sol'].map(function (cat) {
+        return '<h2 class="ol-cat-h">' + CAT[cat] + '</h2><div class="ol-cards">' + Object.keys(ALL).filter(function (k) { return ALL[k].cat === cat; }).map(function (k) {
+          var x = ALL[k];
+          return '<a class="ol-card ol-' + x.cat + '" href="outline.html?b=' + k + '"><span>' + esc(x.docNo) + '</span><strong>' + esc(x.title) + '</strong><em>' + esc(x.tagline) + '</em></a>';
+        }).join('') + '</div>';
+      }).join('') + '</div>';
     return;
   }
 
@@ -29,7 +32,9 @@
     return '<table class="ol-table ' + (cls || '') + '"><thead><tr>' + head.map(function (h) { return '<th>' + h + '</th>'; }).join('') + '</tr></thead><tbody>' +
       rows.map(function (r) { return '<tr>' + r.map(function (c) { return '<td>' + esc(c) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table>';
   }
-  function ul(items, cls) { return '<ul class="' + (cls || 'ol-list') + '">' + items.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>'; }
+  function ul(items, cls) { return '<ul class="' + (cls || 'ol-list') + '">' + items.map(function (t) { return '<li>' + tag(t) + '</li>'; }).join('') + '</ul>'; }
+  // "[adult]" in a tool line becomes an "Adult only" tag.
+  function tag(t) { return esc(t).replace(/\s*\[adult\]/, '<span class="ol-adult">Adult only</span>'); }
 
   var html = '';
   html += '<div class="ol-tools"><a class="ol-back" href="outline.html">‹ All outlines</a><button type="button" class="btn btn-primary" id="ol-print">Print or save as PDF</button></div>';
@@ -42,9 +47,9 @@
       '<div><dt>Document</dt><dd>' + esc(o.docNo) + '</dd></div>' +
       '<div><dt>Revision</dt><dd>' + esc(o.rev) + '</dd></div>' +
       '<div><dt>Category</dt><dd>' + esc(CAT[o.cat]) + '</dd></div>' +
-      '<div><dt>Group</dt><dd class="ol-blank"></dd></div>' +
+      '<div><dt>Ages</dt><dd>8–13, mixed group</dd></div>' +
       '<div><dt>Units</dt><dd>Millimetres</dd></div>' +
-      '<div><dt>Prepared by</dt><dd>LifeHub facilitators</dd></div>' +
+      '<div><dt>Group</dt><dd class="ol-blank"></dd></div>' +
     '</dl></header>';
 
   html += sec(esc(o.purposeLabel), '<p>' + esc(o.purpose) + '</p>');
@@ -63,7 +68,9 @@
     '<h3>Test record</h3><table class="ol-table ol-record"><thead><tr>' + o.test.cols.map(function (c) { return '<th>' + esc(c) + '</th>'; }).join('') + '</tr></thead><tbody>' +
     [1, 2, 3, 4].map(function () { return '<tr>' + o.test.cols.map(function () { return '<td></td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table>');
   html += sec('What to try changing', '<p>Change one thing at a time, then test again the same way.</p>' + ul(o.improve, 'ol-chips'));
-  html += sec('Who leads what', table(['Role', 'Leads on this build'], o.roles, 'ol-roles'));
+  html += sec('Who leads what', table(['Role', 'Leads on this build'], o.roles, 'ol-roles') +
+    '<h3>Jobs by age</h3><table class="ol-table ol-ages"><tbody>' + o.ages.map(function (r) { return '<tr><th>' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td></tr>'; }).join('') + '</tbody></table>');
+  html += sec('Stretch goal', '<p>' + esc(o.stretch) + '</p>');
   html += sec('Showcase label', '<div class="ol-label"><h3>' + esc(o.label.title) + '</h3><p>' + esc(o.label.text) + '</p><p class="ol-try"><strong>Try it:</strong> ' + esc(o.label.tryit) + '</p></div>');
   html += '<footer class="ol-sign"><div><span>Plan approved by (facilitator)</span></div><div><span>Date</span></div><div><span>Group members</span></div></footer>';
   html += '<p class="ol-foot">' + esc(o.docNo) + ' Rev ' + esc(o.rev) + ' · ' + esc(o.title) + ' · LifeHub Risers, Term 3</p>';
