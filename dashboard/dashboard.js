@@ -100,13 +100,25 @@
       going.forEach(function (q) { list.appendChild(questRow(q, false)); });
       app.appendChild(list);
     }
+    // The term at a glance, from the reports staff have shared: the
+    // furthest the Riser's thinking went, and the strongest and growing
+    // parts across their quests. Each quest is one tap away below.
     var shared = done.concat(going).filter(function (q) { return q.report; });
     var roll = shared.length ? QR.rollup(shared.map(function (q) { return QR.build(q.weekCfg, q.state, q.rating, q.report); })) : null;
     if (roll) {
-      app.insertBefore(el('div', 'qd-rollup',
-        '<span class="qd-rollup-label">Across your quests</span>' +
-        '<span>Strongest: <strong>' + roll.strongest + '</strong></span>' +
-        (roll.growing ? '<span>Growing: <strong>' + roll.growing + '</strong></span>' : '')), app.querySelector('.qd-list'));
+      // The term card carries the counts, so the line above stays simple.
+      app.querySelector('.qd-lede').textContent = 'Your quests this term, and how each one went.';
+      var total = roster.weeks.length;
+      var text = 'You completed ' + done.length + ' of ' + total + (total === 1 ? ' quest' : ' quests') + ' this term' +
+        (going.length ? ', with ' + going.length + ' still in progress.' : '.');
+      if (roll.thinking) text += ' Your strongest thinking: <strong>' + escapeHtml(roll.thinking.label) + '</strong>, on ' + escapeHtml(roll.thinking.quest) + '.';
+      app.insertBefore(el('div', 'hd-card qd-term',
+        '<p class="qd-term-label">Your term so far</p>' +
+        '<p class="qd-term-text">' + text + '</p>' +
+        '<div class="qd-term-chips">' +
+          '<span class="qd-term-chip">Strongest <strong>' + escapeHtml(roll.strongest) + '</strong></span>' +
+          (roll.growing ? '<span class="qd-term-chip">Growing <strong>' + escapeHtml(roll.growing) + '</strong></span>' : '') +
+        '</div>'), app.querySelector('.qd-list'));
     }
   }
 

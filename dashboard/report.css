@@ -44,11 +44,17 @@
 .qd-row-chip { flex-shrink: 0; }
 @media (max-width: 520px) { .qd-row-chip { display: none; } }
 
-/* "Across your quests" — from shared reports only. */
-.qd-rollup { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 22px; margin: 0 0 14px; font-size: .92rem; color: var(--ink-soft); }
-.qd-rollup strong { color: var(--ink); font-weight: 600; }
-.qd-rollup-label { font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
 .qd-waiting { display: flex; flex-direction: column; gap: 4px; max-width: 620px; }
 .qd-waiting span { color: var(--ink-soft); font-size: .92rem; }
 .qd-report { margin-top: 8px; }
 .qd-partial { margin: 0 0 14px; padding: 12px 16px; max-width: 760px; border-radius: 12px; background: #fff4dc; color: #7a520f; font-size: .9rem; }
+
+
+/* The term at a glance (from shared reports). */
+.qd-term { max-width: 760px; margin: 0 0 16px; display: flex; flex-direction: column; gap: 10px; }
+.qd-term-label { margin: 0; font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+.qd-term-text { margin: 0; font-size: 1rem; line-height: 1.6; color: var(--ink-soft); }
+.qd-term-text strong { color: var(--ink); font-weight: 600; }
+.qd-term-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.qd-term-chip { display: inline-flex; gap: 6px; align-items: baseline; padding: 6px 12px; border-radius: 99px; background: var(--paper-soft); font-size: .8rem; color: var(--ink-faint); }
+.qd-term-chip strong { color: var(--ink); font-size: .88rem; font-weight: 600; }

@@ -57,6 +57,12 @@
       // Reports saved with the old separate "How this fits together" note:
       // drop it, and bring Growth / Next step up to date if they're still
       // the old automatic wording (anything staff wrote stays).
+      // The evidence quote: the Riser's best answer, until staff pick
+      // another (or none — saved as null).
+      var quotes = QR.quoteCandidates(w, r[0].state);
+      var quoteWasMissing = report.quote === undefined;
+      if (quoteWasMissing) report.quote = quotes[0] ? { id: quotes[0].id, text: quotes[0].text, topic: quotes[0].topic } : null;
+
       var hadFit = typeof report.fit === 'string';
       if (hadFit) {
         delete report.fit;
@@ -76,6 +82,11 @@
           field('strength', 'Strength') + field('growth', 'Growth') + field('next', 'Next step') +
         '</div>' +
         '<p class="rv-gap-flag" hidden></p>' +
+        '<div class="rv-think">' +
+          '<label class="rv-think-level"><span class="rv-photo-label">Thinking level</span><select class="rv-think-select"></select>' +
+            '<small>Suggested from the answers; confirm it or choose the level ' + kid.name + '’s work really shows.</small></label>' +
+          '<div class="rv-quote"><span class="rv-photo-label">In ' + kid.name + '’s own words <small>The answer that best shows their thinking — families see it on the report</small></span><div class="rv-quote-list"></div></div>' +
+        '</div>' +
         (model.cats.build && model.cats.build.band < 3
           ? '<fieldset class="rv-reasons"><legend>Why the build isn’t finished <small>Shown on the Build card, and updates the Growth and Next step drafts</small></legend>' +
               QR.BUILD_NOTES.map(function (n) {
@@ -125,7 +136,7 @@
       shareInput.checked = !!report.shared;
 
       function paint() {
-        preview.innerHTML = QR.render(model, report, { questHref: '../../' + w.path.replace(/^\.\.\//, '') + '?fac=1', photos: slots.filter(Boolean), video: video.url });
+        preview.innerHTML = QR.render(model, report, { questHref: '../../' + w.path.replace(/^\.\.\//, '') + '?fac=1', photos: slots.filter(Boolean), video: video.url, staff: true, open: true });
         paintPhoto();
         paintVideo();
         paintFit();
@@ -302,6 +313,45 @@
         });
       }
 
+      // ---- thinking level + quote ----
+      var thinkSel = panel.querySelector('.rv-think-select');
+      function fillThink() {
+        var t = model.cats.thinking;
+        if (!t) { panel.querySelector('.rv-think').hidden = true; return; }
+        var sugg = t.suggested >= 0 ? QR.THINK[t.suggested].label : t.suggested === QR.TOO_EARLY ? 'Too early to tell' : 'No answers';
+        thinkSel.innerHTML = '<option value="">Suggested: ' + sugg + '</option>' +
+          QR.THINK.map(function (l, i) { return '<option value="' + i + '">' + l.label + '</option>'; }).join('') +
+          '<option value="' + QR.TOO_EARLY + '">Too early to tell</option>';
+        thinkSel.value = typeof report.thinking === 'number' ? String(report.thinking) : '';
+        thinkSel.disabled = t.suggested < 0 && t.suggested !== QR.TOO_EARLY;
+      }
+      thinkSel.addEventListener('change', function () {
+        if (thinkSel.value === '') delete report.thinking; else report.thinking = parseInt(thinkSel.value, 10);
+        rescore(); save();
+      });
+      var quoteList = panel.querySelector('.rv-quote-list');
+      function fillQuotes() {
+        var current = report.quote && report.quote.id;
+        quoteList.innerHTML = '';
+        quotes.slice(0, 6).forEach(function (q) {
+          var lab = el('label', 'rv-quote-opt');
+          lab.innerHTML = '<input type="radio" name="rv-quote"><span><small></small><em></em></span>';
+          lab.querySelector('small').textContent = (q.topic || '').replace(/^\d+\.\s*/, '');
+          lab.querySelector('em').textContent = q.text;
+          var input = lab.querySelector('input');
+          input.checked = q.id === current;
+          input.addEventListener('change', function () { report.quote = { id: q.id, text: q.text, topic: q.topic }; paint(); save(); });
+          quoteList.appendChild(lab);
+        });
+        var none = el('label', 'rv-quote-opt rv-quote-none', '<input type="radio" name="rv-quote"><span>' + (quotes.length ? 'No quote' : 'No answer to quote yet') + '</span>');
+        none.querySelector('input').checked = !current;
+        none.querySelector('input').addEventListener('change', function () { report.quote = null; paint(); save(); });
+        quoteList.appendChild(none);
+      }
+      fillThink();
+      fillQuotes();
+      if (quoteWasMissing && r[2].report) save();
+
       // Rebuild the card after a fact changes; Growth / Next step follow the
       // new draft only if they still read as the old draft (never overwrite
       // what staff wrote).
@@ -311,7 +361,7 @@
         draft = QR.draftNotes(model, report.buildNotes);
         Array.prototype.forEach.call(boxes, function (t) {
           var k = t.getAttribute('data-k');
-          if ((k === 'growth' || k === 'next') && report[k] === old[k]) { t.value = draft[k]; report[k] = draft[k]; }
+          if ((k === 'strength' || k === 'growth' || k === 'next') && report[k] === old[k]) { t.value = draft[k]; report[k] = draft[k]; }
         });
         paint();
       }
