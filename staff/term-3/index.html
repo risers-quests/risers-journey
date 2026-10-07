@@ -13,6 +13,9 @@
 <link rel="stylesheet" href="../../assets/lifehub.css" />
 <script src="../../assets/brand.js" data-area="staff"></script>
 <style>
+  .t3-bar { display: flex; justify-content: flex-end; margin: 0 0 12px; }
+  .t3-bar a { font-weight: 600; color: var(--accent); text-decoration: none; border: 1.5px solid var(--border); background: #fff; border-radius: 99px; padding: 8px 16px; }
+  .t3-bar a:hover { border-color: var(--accent); }
   .t3-frame { display: block; width: 100%; min-height: 80vh; border: 0; border-radius: 18px; background: #fff; }
 </style>
 </head>
@@ -20,6 +23,7 @@
 <div id="app">
   <!-- The Term 3 Quests planner, kept as its own page (its own styles and
        saving) and shown here inside the staff shell. Staff side only. -->
+  <div class="t3-bar"><a href="outline.html">Build outlines ›</a></div>
   <iframe class="t3-frame" id="t3-frame" src="term3-quests.html" title="Term 3 Quests"></iframe>
 </div>
 <script>
