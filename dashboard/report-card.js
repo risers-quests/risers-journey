@@ -267,100 +267,127 @@
     var d = written - present;
     return { dir: d >= 2 ? 1 : d <= -2 ? -1 : 0, written: written, present: present };
   }
-  var GAP_NOTES = {
-    '1': {
-      growth: 'Your written answers show you understand the ideas well. The next step is explaining them just as clearly out loud, backed by evidence from your work.',
-      next: 'Before your next presentation, practise it once out loud for a family member, and use one real piece of evidence from your build or answers.'
-    },
-    '-1': {
-      growth: 'You explain your ideas well out loud. Your written answers haven’t caught up yet; give each one the same care you give your presentation.',
-      next: 'In your next quest, read your written answer back before you check it, and ask: would this make sense if I said it out loud?'
-    }
+  /* ---------- the three notes ----------
+     Written for a 10-year-old and their parent reading together: about
+     the kind of learner the Riser is becoming, never about a topic or a
+     score. Strength names what's going well; Growth names one habit to
+     build and why it matters; Next step is something small to try at home
+     together. (The specifics — topics, the build, their own words — live
+     in the cards and the quote below the notes.) */
+
+  // Presentation parts, in everyday words.
+  var PRES_WORDS = {
+    content:   { strong: 'When you present, you get your facts right.', also: 'get your facts right when you present',
+                 grow: 'Getting your facts exactly right when you present.',
+                 next: 'Before your next presentation, check your facts against the quest once more, then tell them to someone at home.' },
+    evidence:  { strong: 'When you explain something, you back it up with proof from your own work.', also: 'back up what you say with proof',
+                 grow: 'Backing up what you say with proof — showing how you know, not just what you know.',
+                 next: 'Practise explaining one idea at home and show one piece of proof with it: a picture, a number, or something from your build. Family: ask “how do you know?”' },
+    clarity:   { strong: 'You explain things in an order that’s easy to follow.', also: 'explain things in an order that’s easy to follow',
+                 grow: 'Putting your ideas in an order that’s easy for others to follow.',
+                 next: 'Practise telling what you learned in three steps — first, then, finally — to someone at home.' },
+    delivery:  { strong: 'You speak with confidence when you share your work.', also: 'speak with confidence when you share',
+                 grow: 'Speaking up with confidence when you share your work.',
+                 next: 'Practise your presentation once in front of family, looking up from your notes as often as you can.' },
+    questions: { strong: 'You handle questions well and think on your feet.', also: 'handle questions well',
+                 grow: 'Answering questions on the spot — it’s fine to pause and think first.',
+                 next: 'After you practise at home, ask your family for two questions, and take a breath before you answer each one.' }
   };
+  function presKey(name) { return RUBRIC.filter(function (r) { return r.name === name; })[0].key; }
 
   // buildNotes: the staff-chosen reasons a build isn't finished (keys).
   // opts.noGap: draft as if there were no written/presentation gap.
   function draftNotes(model, buildNotes, opts) {
-    var keys = rated(model);
     var c = model.cats;
+    var keys = rated(model);
     if (!keys.length && !ORDER.some(function (k) { return c[k] && c[k].band === UNDONE; })) return { strength: '', growth: '', next: '' };
-    var strength = '', growth = '', next = '';
-    if (keys.length) {
-    var top = keys.slice().sort(function (a, b) { return c[b].band - c[a].band || ORDER.indexOf(a) - ORDER.indexOf(b); })[0];
-    var low = keys.slice().sort(function (a, b) { return c[a].band - c[b].band || ORDER.indexOf(a) - ORDER.indexOf(b); })[0];
-    if (low === top && keys.length > 1) low = keys.filter(function (k) { return k !== top; })[0];
+    var habitsFact = c.habits.recovered ? 'recovered' : c.habits.readClosely ? 'read' : '';
 
-    var nailedName = c.thinking && c.thinking.nailed.length ? c.thinking.nailed[0].name.replace(/^\d+\.\s*/, '') : '';
-    // Strength: the Riser's two strongest areas (only ones rated Secure or
-    // better), each said with what's specific to them — the topic they
-    // nailed, the build they made, the presentation skill rated highest —
-    // so no two reports read the same. Thinking leads a tie: it says more
-    // about the learning. Nothing at Secure: their effort is named instead.
+    /* Strength: the strongest area (Secure or better), plus a second one
+       if there is one — or a true habit if not. Thinking leads a tie. */
     var PRIORITY = ['thinking', 'presentation', 'build', 'habits'];
-    var strongKeys = PRIORITY.filter(function (k) { return c[k] && c[k].band >= 2; })
-      .sort(function (a, b) { return c[b].band - c[a].band || PRIORITY.indexOf(a) - PRIORITY.indexOf(b); })
-      .slice(0, 2);
-    var buildName = c.build && c.build.name ? c.build.name.charAt(0).toLowerCase() + c.build.name.slice(1) : 'build';
-    var clause = {
+    var strong = PRIORITY.filter(function (k) { return c[k] && c[k].band >= 2; })
+      .sort(function (a, b) { return c[b].band - c[a].band || PRIORITY.indexOf(a) - PRIORITY.indexOf(b); });
+    var bestPres = c.presentation && c.presentation.criteria ? PRES_WORDS[presKey(topCriterion(c.presentation.criteria, true))] : null;
+    var STRONG = {
       thinking: function () {
-        return (c.thinking.band >= 3 ? 'you reasoned with the ideas and weighed what holds up' : 'you used the ideas in new situations, not just repeated them') +
-          (nailedName ? ', especially on “' + nailedName + '”' : '');
+        return c.thinking.band >= 3
+          ? 'You don’t just learn facts — you ask why things work and check whether an idea really holds up.'
+          : 'You can take what you’ve learned and use it to work out something new.';
       },
-      presentation: function () {
-        return 'your presentation stood out for its ' + topCriterion(c.presentation.criteria, true).toLowerCase();
-      },
+      presentation: function () { return bestPres.strong; },
       build: function () {
-        return c.build.band >= 3 ? 'you finished every step of your ' + buildName : 'you built most of your ' + buildName;
+        return c.build.band >= 3 ? 'You finish what you start: your build was completed step by step.' : 'You stuck with your build and got most of it done.';
       },
       habits: function () {
-        return c.habits.recovered ? 'you kept going until answers that didn’t land at first came right'
-          : c.habits.readClosely ? 'you read closely, picking out key ideas and making notes' : 'you worked through the quest steadily';
+        return habitsFact === 'recovered' ? 'When something doesn’t work the first time, you don’t give up — you try again until it makes sense.'
+          : habitsFact === 'read' ? 'You read carefully and pick out what’s important.'
+          : 'You work through things steadily, one step at a time.';
       }
     };
-    // Only one strong area: add a true, specific habit if there is one.
-    if (strongKeys.length === 1 && strongKeys[0] !== 'habits' && (c.habits.recovered || c.habits.readClosely)) strongKeys.push('habits');
-    if (strongKeys.length) {
-      var parts = strongKeys.map(function (k) { return clause[k](); });
-      strength = parts.join(', and ');
-      strength = strength.charAt(0).toUpperCase() + strength.slice(1) + '.';
+    var ALSO = {
+      thinking: function () { return c.thinking.band >= 3 ? 'ask why things work, not just what happens' : 'use what you learn to work out new things'; },
+      presentation: function () { return bestPres.also; },
+      build: function () { return c.build.band >= 3 ? 'finished your build, step by step' : 'got most of your build done'; },
+      habits: function () { return habitsFact === 'recovered' ? 'keep trying until things make sense' : 'read carefully and take good notes'; }
+    };
+    var strength;
+    if (strong.length) {
+      strength = STRONG[strong[0]]();
+      var second = strong[1] || (strong[0] !== 'habits' && habitsFact ? 'habits' : null);
+      if (second) strength += ' You also ' + ALSO[second]() + '.';
     } else {
-      strength = c.habits.recovered ? 'You stuck with it: when something didn’t land the first time, you came back and got there.'
-        : c.habits.readClosely ? 'You read with care, picking out the key ideas and making notes as you went.'
-        : 'You worked through the quest steadily, step by step.';
+      strength = STRONG.habits();
     }
 
-    var revisit = c.thinking && c.thinking.revisit[0];
-    var revisitName = revisit ? revisit.name.replace(/^\d+\.\s*/, '') : '';
-    var nextThink = c.thinking ? THINK[Math.min(THINK.length - 1, c.thinking.band + 1)] : null;
-    var all = c[low].band === 3;
-    growth = all
-      ? 'Everything here is strong. The stretch now is depth: explaining why something works, not just what happens.'
-      : {
-          thinking: revisitName ? 'A few ideas haven’t fully landed yet, especially “' + revisitName + '”.' : 'The next step up in your thinking is ' + (nextThink ? nextThink.ing : 'reasoning with the ideas') + '.',
-          build: 'The build is the part to finish: it’s where the ideas become something real.',
-          presentation: c.presentation.criteria ? 'In presentations, the area to grow is ' + topCriterion(c.presentation.criteria, false).toLowerCase() + '.' : '',
-          habits: 'Slowing down will help: reread the tricky part before answering, and jot your own notes as you go.'
-        }[low];
-    next = all
-      ? 'After your next quest, explain one idea out loud to someone at home, and say why it works.'
-      : {
-          thinking: revisitName ? 'Go back to “' + revisitName + '” in the quest and explain it out loud to someone at home.' : 'When you learn something new, ask “where else would this work?” and try it on one new example.',
-          build: 'Pick up the build where you left off and finish the remaining steps.',
-          presentation: 'Before your next presentation, practise it once out loud for a family member.',
-          habits: 'In your next quest, highlight two key ideas in each section and write one line about each in your own words.'
-        }[low];
+    /* Growth + Next step: the area that most needs work. */
+    // Work habits rests on thin signals (highlights, notes), so it's the
+    // focus only when thinking, presentation and build are all Excelling.
+    var learning = keys.filter(function (k) { return k !== 'habits' && c[k].band < 3; });
+    var pool = learning.length ? learning : keys;
+    var low = pool.slice().sort(function (a, b) { return c[a].band - c[b].band || ORDER.indexOf(a) - ORDER.indexOf(b); })[0];
+    var growth = '', next = '';
+    if (low && c[low].band >= 3) {
+      growth = 'Everything here is strong. The next stretch is going deeper — explaining why something works, not just what happens.';
+      next = 'Teach one idea from this quest to someone at home, and let them ask you questions about it.';
+    } else if (low === 'thinking') {
+      var tb = c.thinking.band;
+      growth = tb <= 0 ? 'Some of the big ideas haven’t fully clicked yet. Understanding why something works — not just remembering it — is what makes learning stick.'
+        : tb === 1 ? 'You know the key ideas. The next step is using them in new situations, not just explaining them back.'
+        : 'The next step is asking “why?” and checking whether an idea really holds up.';
+      next = tb <= 0 ? 'At dinner, share one thing you learned in this quest and why it’s true. Family: ask “how do you know?”'
+        : tb === 1 ? 'When you learn something new, ask together: “Where else does this happen?” and find one real example around you.'
+        : 'Pick one idea from the quest and talk it through at home: “Is that always true? What would change it?”';
+    } else if (low === 'presentation') {
+      var weakPres = PRES_WORDS[presKey(topCriterion(c.presentation.criteria, false))];
+      growth = 'Sharing your learning is the part to grow: ' + weakPres.grow.charAt(0).toLowerCase() + weakPres.grow.slice(1);
+      next = weakPres.next;
+    } else if (low === 'build') {
+      growth = 'Finishing the build is the part to grow — it’s where ideas turn into something you can see and hold.';
+      next = 'Set one small goal for each build day, and check it off together at the end of the day.';
+    } else if (low === 'habits') {
+      growth = 'Slowing down will help: reading the tricky parts twice and checking an answer before moving on.';
+      next = 'Try “read, pause, say it back”: after each section, say in one sentence what it was about.';
     }
-    if (model.unfinished) {
-      var later = c.thinking && c.thinking.undone[0];
-      next = 'Pick the quest back up and finish it' + (later ? ', starting with “' + later.name.replace(/^\d+\.\s*/, '') + '”.' : '.');
-    }
+    if (model.unfinished) next = 'Pick the quest back up and finish it, one section at a time — a little each day adds up.';
+
+    // Written work and presentation far apart: name both sides.
     var gap = opts && opts.noGap ? 0 : presentationGap(model).dir;
-    if (gap) { growth = GAP_NOTES[gap].growth; next = GAP_NOTES[gap].next; }
-    // Undone work comes before anything about how well the rest went.
+    if (gap === 1) {
+      growth = 'You clearly understand the ideas — the next step is explaining them just as clearly out loud.';
+      next = 'Before your next presentation, practise once at home and use one piece of proof from your work. Family: ask one “how do you know?” question.';
+    } else if (gap === -1) {
+      growth = 'You explain your ideas well out loud. Now let your written answers show the same thinking.';
+      next = 'Before you check a written answer, read it out loud. If it sounds right said aloud, it will read right too.';
+    }
+    // Work left undone comes first.
     var UNDONE_NOTES = {
-      thinking: { growth: 'Questions were left undone. Every question is part of the learning, so each one needs an honest answer.', next: 'Go back to the questions you left and answer each one in your own words.' },
-      build: { growth: 'The build was left undone, and the build is where the ideas become something real.', next: 'Gather your materials and work through the build steps, one at a time.' },
-      presentation: { growth: 'The presentation was left undone. Sharing what you learned is part of finishing a quest.', next: 'For your next quest, plan your presentation early and practise it once out loud.' }
+      thinking: { growth: 'Some questions were left unanswered. Every question is a chance to show what you know — even your best guess helps you learn.',
+                  next: 'Sit together for fifteen minutes and answer one of the unanswered questions in your own words.' },
+      build: { growth: 'The build was left unfinished — building is where ideas turn into something real.',
+               next: 'Gather the materials together and work through the build one step at a time.' },
+      presentation: { growth: 'Sharing what you learned out loud is part of finishing a quest, and this one wasn’t shared yet.',
+                      next: 'For the next quest, plan your presentation early and practise it once at home.' }
     };
     var undoneKey = ['thinking', 'build', 'presentation'].filter(function (k) { return c[k] && c[k].band === UNDONE; })[0];
     if (!undoneKey && c.thinking && c.thinking.undoneQs && !model.unfinished) undoneKey = 'thinking';
@@ -368,6 +395,32 @@
     var bn = c.build && buildNotes && buildNotes.length && buildNote(buildNotes[0]);
     if (bn) { growth = bn.growth; next = bn.next; }
     return { strength: strength, growth: growth, next: next };
+  }
+
+  // Notes drafted by earlier versions of the wording: a report still
+  // holding one (untouched by staff) gets the current draft instead.
+  var LEGACY_NOTE = new RegExp('^(' + [
+    'You saw your build through', 'You reasoned with the ideas', 'You used the ideas in new situations', 'You finished every step of your',
+    'You built most of your', 'Your presentation stood out', 'You know the key ideas and can explain', 'You built a steady foundation',
+    'You stuck with it: when something', 'You read with care, picking', 'You worked through the quest steadily',
+    'In presentations, the area to grow is', 'Before your next presentation, practise it once out loud for a family member',
+    'A few ideas haven’t fully landed yet', 'Go back to “', 'The next step up in your thinking', 'Slowing down will help: reread',
+    'In your next quest, highlight two key ideas', 'The build is the part to finish', 'Pick up the build where you left off',
+    'Questions were left undone', 'Go back to the questions you left', 'Everything here is strong. The stretch now',
+    'After your next quest, explain one idea', 'Your written answers show you understand', 'You explain your ideas well out loud. Your written answers haven’t',
+    'In your next quest, read your written answer back', 'When you learn something new, ask “where else would this work',
+    'The build was left undone', 'Gather your materials and work through', 'The presentation was left undone',
+    'For your next quest, plan your presentation early', 'Pick the quest back up and finish it, starting with', 'Pick the quest back up and finish it.'
+  ].map(function (t) { return t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')');
+  // Returns the notes with any legacy auto-drafted text replaced by the
+  // current draft (staff-written text is left alone).
+  function refreshNotes(model, report) {
+    var draft = draftNotes(model, report.buildNotes);
+    var out = {}, changed = false;
+    ['strength', 'growth', 'next'].forEach(function (k) {
+      if (typeof report[k] === 'string' && LEGACY_NOTE.test(report[k]) && report[k] !== draft[k]) { out[k] = draft[k]; changed = true; }
+    });
+    return changed ? out : null;
   }
 
   function topCriterion(crit, best) {
@@ -516,7 +569,9 @@
     if (!keys.length) return null;
     function avg(k) { return sum[k] / cnt[k]; }
     var best = keys.slice().sort(function (a, b) { return avg(b) - avg(a) || ORDER.indexOf(a) - ORDER.indexOf(b); })[0];
-    var grow = keys.slice().sort(function (a, b) { return avg(a) - avg(b) || ORDER.indexOf(a) - ORDER.indexOf(b); })[0];
+    // As in the notes, work habits is the growing area only if nothing else is.
+    var growPool = keys.filter(function (k) { return k !== 'habits' && avg(k) < 3; });
+    var grow = (growPool.length ? growPool : keys).slice().sort(function (a, b) { return avg(a) - avg(b) || ORDER.indexOf(a) - ORDER.indexOf(b); })[0];
     var label = function (k) { return { thinking: 'Thinking', presentation: 'Presentation', build: 'Build', habits: 'Work habits' }[k] || k; };
     // The highest Thinking level reached, and on which quest.
     var top = null;
@@ -643,9 +698,7 @@
     UNDONE: UNDONE,
     BUILD_NOTES: BUILD_NOTES,
     THINK: THINK,
-    // Strength wording used before it was made specific; a report still
-    // holding it gets the current draft instead.
-    OLD_STRENGTHS: ['You saw your build through and made the ideas real.'],
+    refreshNotes: refreshNotes,
     TOO_EARLY: TOO_EARLY,
     quoteCandidates: quoteCandidates,
     build: build,

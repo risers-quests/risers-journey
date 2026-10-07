@@ -54,9 +54,11 @@
       var rated = !!(r[1] && r[1].scores && Object.keys(r[1].scores).length);
       var draft = QR.draftNotes(model, report.buildNotes);
       ['strength', 'growth', 'next'].forEach(function (k) { if (typeof report[k] !== 'string') report[k] = draft[k]; });
-      // A Strength still holding retired generic wording gets the current draft.
-      var oldStrength = QR.OLD_STRENGTHS.indexOf(report.strength) !== -1;
-      if (oldStrength) report.strength = draft.strength;
+      // Notes still holding wording from earlier drafts get the current
+      // draft (anything staff wrote stays).
+      var fresh = QR.refreshNotes(model, report);
+      var oldStrength = !!fresh;
+      if (fresh) Object.assign(report, fresh);
       // Reports saved with the old separate "How this fits together" note:
       // drop it, and bring Growth / Next step up to date if they're still
       // the old automatic wording (anything staff wrote stays).
