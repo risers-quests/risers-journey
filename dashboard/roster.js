@@ -575,10 +575,8 @@ Object.assign(window.DASHBOARD_ROSTER, {
         bloom: { 'refl-1': 'Analyze', 'refl-3': 'Remember', 'refl-4': 'Understand', 'refl-6': 'Understand', 'refl-7': 'Apply', 'refl-8': 'Analyze', 'refl-9': 'Understand', 'refl-10': 'Understand', 'refl-11': 'Analyze', 'refl-13': 'Analyze', 'refl-12': 'Evaluate', 'refl-14': 'Understand', 'refl-16': 'Analyze', 'refl-b1': 'Understand' },
         topics: {
           'refl-1': '1. The path',
-          'refl-2': '1. The path',
           'refl-3': '1. The path',
           'refl-4': '2. Mechanical vs. chemical digestion',
-          'refl-5': '2. Mechanical vs. chemical digestion',
           'refl-6': '2. Mechanical vs. chemical digestion',
           'refl-7': '2. Mechanical vs. chemical digestion',
           'refl-8': '3. Absorption',
@@ -588,7 +586,6 @@ Object.assign(window.DASHBOARD_ROSTER, {
           'refl-12': '4. Put together',
           'refl-13': '4. Put together',
           'refl-14': '4. Put together',
-          'refl-15': '4. Put together',
           'refl-16': '2. Mechanical vs. chemical digestion'
         },
         anchors: {
@@ -774,7 +771,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         path: '../group-03-week-03-hydrocarbons-plastics-fossils/shalom/index.html',
         buildTotal: 5,
         buildName: 'Fossil-fuel burial layers in a jar',
-        bloom: { 'refl-1': 'Analyze', 'refl-2': 'Remember', 'refl-4': 'Remember', 'refl-6': 'Understand', 'refl-8': 'Understand', 'refl-9': 'Understand', 'refl-10': 'Evaluate', 'refl-b1': 'Understand' },
+        bloom: { 'refl-1': 'Analyze', 'refl-2': 'Remember', 'refl-4': 'Remember', 'refl-6': 'Understand', 'refl-8': 'Understand', 'refl-9': 'Understand', 'refl-10': 'Evaluate', 'refl-b1': 'Understand', 'refl-3': 'Analyze', 'refl-7': 'Analyze', 'refl-11': 'Evaluate' },
         topics: {
           'refl-1': '1. Hydrocarbons',
           'refl-2': '1. Hydrocarbons',
@@ -872,7 +869,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         path: '../group-03-week-03-hydrocarbons-plastics-fossils/michael/index.html',
         buildTotal: 5,
         buildName: 'Hydrocarbon molecule models',
-        bloom: { 'refl-1': 'Analyze', 'refl-2': 'Remember', 'refl-4': 'Remember', 'refl-6': 'Understand', 'refl-8': 'Understand', 'refl-9': 'Understand', 'refl-10': 'Evaluate', 'refl-mission': 'Apply', 'refl-b1': 'Understand' },
+        bloom: { 'refl-1': 'Analyze', 'refl-2': 'Remember', 'refl-4': 'Remember', 'refl-6': 'Understand', 'refl-8': 'Understand', 'refl-9': 'Understand', 'refl-10': 'Evaluate', 'refl-mission': 'Apply', 'refl-b1': 'Understand', 'refl-3': 'Analyze', 'refl-7': 'Analyze', 'refl-11': 'Evaluate' },
         topics: {
           'refl-1': '1. Hydrocarbons',
           'refl-2': '1. Hydrocarbons',
@@ -995,7 +992,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         path: '../group-03-week-03-hydrocarbons-plastics-fossils/karis/index.html',
         buildTotal: 5,
         buildName: 'Plastic resin-code sort',
-        bloom: { 'refl-1': 'Analyze', 'refl-2': 'Remember', 'refl-4': 'Remember', 'refl-6': 'Understand', 'refl-8': 'Understand', 'refl-9': 'Understand', 'refl-10': 'Evaluate', 'refl-mission': 'Apply', 'refl-b1': 'Understand' },
+        bloom: { 'refl-1': 'Analyze', 'refl-2': 'Remember', 'refl-4': 'Remember', 'refl-6': 'Understand', 'refl-8': 'Understand', 'refl-9': 'Understand', 'refl-10': 'Evaluate', 'refl-mission': 'Apply', 'refl-b1': 'Understand', 'refl-3': 'Analyze', 'refl-7': 'Analyze', 'refl-11': 'Evaluate' },
         topics: {
           'refl-1': '1. Hydrocarbons',
           'refl-2': '1. Hydrocarbons',
@@ -1027,7 +1024,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         path: '../group-04-week-01-circulatory-system/benjamin/index.html',
         buildTotal: 6,
         buildName: 'Heart, blood and lymph route map',
-        bloom: { 'refl-1': 'Analyze', 'refl-9': 'Understand', 'refl-3': 'Understand', 'refl-10': 'Remember', 'refl-5': 'Remember', 'refl-6': 'Understand', 'refl-13': 'Evaluate' },
+        bloom: { 'refl-1': 'Analyze', 'refl-9': 'Understand', 'refl-3': 'Understand', 'refl-10': 'Remember', 'refl-5': 'Remember', 'refl-6': 'Understand', 'refl-13': 'Evaluate', 'refl-2': 'Understand', 'refl-4': 'Understand', 'refl-7': 'Apply', 'refl-8': 'Analyze', 'refl-12': 'Understand' },
         topics: {
           'refl-1': '1. The heart\'s four rooms',
           'refl-2': '2. One-way gates: the valves',
@@ -1096,7 +1093,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
         path: '../group-04-week-03-advanced-weather-systems/benjamin/index.html',
         buildTotal: 5,
         buildName: 'Cloud in a jar',
-        bloom: { 'refl-1': 'Analyze', 'refl-2': 'Understand', 'refl-4': 'Analyze', 'refl-6': 'Analyze', 'refl-7': 'Understand', 'refl-9': 'Analyze', 'refl-10': 'Apply', 'refl-12': 'Understand', 'refl-14': 'Remember', 'refl-15': 'Understand', 'refl-16': 'Analyze', 'refl-mission': 'Apply', 'refl-b1': 'Understand' },
+        bloom: { 'refl-1': 'Analyze', 'refl-2': 'Understand', 'refl-4': 'Analyze', 'refl-6': 'Analyze', 'refl-7': 'Understand', 'refl-9': 'Analyze', 'refl-10': 'Apply', 'refl-12': 'Understand', 'refl-14': 'Remember', 'refl-15': 'Understand', 'refl-16': 'Analyze', 'refl-mission': 'Apply', 'refl-b1': 'Understand', 'refl-3': 'Understand', 'refl-8': 'Analyze', 'refl-11': 'Understand', 'refl-17': 'Analyze' },
         topics: {
           'refl-1': '1. Air masses and the four fronts',
           'refl-2': '1. Air masses and the four fronts',

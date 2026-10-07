@@ -5,7 +5,7 @@
    Four categories, all on one four-step scale (Beginning, Developing,
    Secure, Excelling) — words, not percentages:
      Thinking      one plain-language level ("Knows and explains the key
-                   ideas" … "Reasons and weighs ideas"), suggested from how
+                   ideas" … "Reasons about why things happen"), suggested from how
                    many core ideas landed (isGenuinePass) and how far up
                    Bloom's Taxonomy the answers reached — then confirmed or
                    changed by staff, so it's a facilitator's judgment backed
@@ -48,7 +48,7 @@
     { label: 'Building the key facts', ing: 'getting the key facts secure', you: 'are building the key facts' },
     { label: 'Knows and explains the key ideas', ing: 'explaining the key ideas in your own words', you: 'know the key ideas and can explain them in your own words' },
     { label: 'Uses ideas in new situations', ing: 'using the ideas in new situations', you: 'used the ideas in new situations, not just repeated them' },
-    { label: 'Reasons and weighs ideas', ing: 'reasoning with the ideas and weighing what holds up', you: 'reasoned with the ideas and weighed what holds up' }
+    { label: 'Reasons about why things happen', ing: 'reasoning about why things happen', you: 'reasoned about why things happen' }
   ];
   var TOO_EARLY = -4;
   var RUBRIC = [
@@ -241,7 +241,7 @@
       title: 'Work habits', band: lost ? NOT_RECORDED : anyWork ? band((persist + engage) / 2, [0.35, 0.6, 0.85]) : UNDONE,
       lines: lost ? (habitLines.length ? habitLines : ['Not fully recorded for this quest.'])
         : habitLines.length ? habitLines : [anyWork ? 'Worked through the quest step by step.' : 'No work was recorded on this quest.'],
-      recovered: recovered, readClosely: hl > 0 || notes
+      recovered: recovered, readClosely: hl > 0 || notes, readWell: hl >= 3 || notes
     };
 
     return { weekCfg: weekCfg, cats: cats, unfinished: unfinished && !lost, lost: lost };
@@ -301,7 +301,9 @@
     var c = model.cats;
     var keys = rated(model);
     if (!keys.length && !ORDER.some(function (k) { return c[k] && c[k].band === UNDONE; })) return { strength: '', growth: '', next: '' };
-    var habitsFact = c.habits.recovered ? 'recovered' : c.habits.readClosely ? 'read' : '';
+    // Habits are only named when there's a real pattern: two or more
+    // answers come right after a miss, or several highlights / own notes.
+    var habitsFact = c.habits.recovered >= 2 ? 'recovered' : c.habits.readWell ? 'read' : '';
 
     /* Strength: the strongest area (Secure or better), plus a second one
        if there is one — or a true habit if not. Thinking leads a tie. */
@@ -317,18 +319,18 @@
       },
       presentation: function () { return bestPres.strong; },
       build: function () {
-        return c.build.band >= 3 ? 'You finish what you start: your build was completed step by step.' : 'You stuck with your build and got most of it done.';
+        return c.build.band >= 3 ? 'You saw your build through to the end.' : 'You stuck with your build and got most of it done.';
       },
       habits: function () {
         return habitsFact === 'recovered' ? 'When something doesn’t work the first time, you don’t give up — you try again until it makes sense.'
           : habitsFact === 'read' ? 'You read carefully and pick out what’s important.'
-          : 'You work through things steadily, one step at a time.';
+          : model.unfinished ? 'You’ve made a start on this quest.' : 'You saw this quest through to the end.';
       }
     };
     var ALSO = {
       thinking: function () { return c.thinking.band >= 3 ? 'explain why things happen, not just what happens' : 'use what you learn to work out new things'; },
       presentation: function () { return bestPres.also; },
-      build: function () { return c.build.band >= 3 ? 'finished your build, step by step' : 'got most of your build done'; },
+      build: function () { return c.build.band >= 3 ? 'saw your build through to the end' : 'got most of your build done'; },
       habits: function () { return habitsFact === 'recovered' ? 'keep trying until things make sense' : 'read carefully and take good notes'; }
     };
     var strength;
@@ -400,7 +402,7 @@
   // Notes drafted by earlier versions of the wording: a report still
   // holding one (untouched by staff) gets the current draft instead.
   var LEGACY_NOTE = new RegExp('^(' + [
-    'You saw your build through', 'You don’t just learn facts — you ask why', 'You reasoned with the ideas', 'You used the ideas in new situations', 'You finished every step of your',
+    'You saw your build through and made', 'You don’t just learn facts — you ask why', 'You finish what you start', 'You work through things steadily', 'You reasoned with the ideas', 'You used the ideas in new situations', 'You finished every step of your',
     'You built most of your', 'Your presentation stood out', 'You know the key ideas and can explain', 'You built a steady foundation',
     'You stuck with it: when something', 'You read with care, picking', 'You worked through the quest steadily',
     'In presentations, the area to grow is', 'Before your next presentation, practise it once out loud for a family member',
@@ -418,7 +420,7 @@
     var draft = draftNotes(model, report.buildNotes);
     var out = {}, changed = false;
     ['strength', 'growth', 'next'].forEach(function (k) {
-      var old = typeof report[k] === 'string' && (LEGACY_NOTE.test(report[k]) || /You also ask why things work/.test(report[k]));
+      var old = typeof report[k] === 'string' && (LEGACY_NOTE.test(report[k]) || /You also (ask why things work|finished your build, step by step)/.test(report[k]));
       if (old && report[k] !== draft[k]) { out[k] = draft[k]; changed = true; }
     });
     return changed ? out : null;
