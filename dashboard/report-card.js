@@ -225,7 +225,8 @@
     }
 
     var retried = ids.filter(function (id) { return reflect[id] && reflect[id].attempts > 1; });
-    var recovered = retried.filter(function (id) { return reflect[id].success; }).length;
+    // Came right after a miss on their own — a facilitator pass doesn't count.
+    var recovered = retried.filter(function (id) { return reflect[id].success && !reflect[id].contentFlagged; }).length;
     var hl = (state.hl || []).length;
     var notes = !!(state.notes && String(state.notes).trim());
     var persist = retried.length ? recovered / retried.length : 1;

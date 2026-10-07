@@ -50,27 +50,20 @@
       .catch(function () { return null; });
   }
 
-  // A question counts as genuinely understood if it passed on the kid's own
-  // merit, or a facilitator granted a pass specifically because the
-  // reasoning was right (not just "close enough, move on") — and either way
-  // within MAX_MISSES wrong tries. Getting there after more misses than that
-  // still needs work. attempts counts every check, including the one that
-  // passed; a facilitator pass comes after misses only.
+  // A question counts as genuinely understood only if the Riser got it
+  // right themselves, within MAX_MISSES wrong tries (attempts counts every
+  // check, including the one that passed).
   var MAX_MISSES = 3;
   function misses(r) {
     return Math.max(0, (r.attempts || 0) - (r.success && !r.contentFlagged ? 1 : 0));
   }
+  // A facilitator pass (contentFlagged) is never a correct answer: it
+  // moves the Riser on, but the idea didn't land on their own. It still
+  // counts as answered, so it isn't shown as undone.
   function isGenuinePass(r) {
     if (!r) return false;
     if (misses(r) > MAX_MISSES) return false;
-    if (r.success && !r.contentFlagged) return true;
-    if (r.contentFlagged && r.passReasons && r.passReasons.length) {
-      var reasons = r.passReasons;
-      var logicRight = reasons.indexOf('Logic right') !== -1 || reasons.indexOf('Full pass — everything right') !== -1;
-      var logicShaky = reasons.indexOf('Partially right') !== -1 || reasons.indexOf('Logic wrong') !== -1;
-      return logicRight && !logicShaky;
-    }
-    return false;
+    return !!(r.success && !r.contentFlagged);
   }
 
   // Highest Bloom's level reached, climbing the ladder in order: a level
