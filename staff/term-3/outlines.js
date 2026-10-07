@@ -5,8 +5,9 @@
    Boundaries for every build (groups mix ages 8–13):
    - Materials come from an ordinary hardware, stationery, electrical or
      medical shop (or a timber shop that cuts to size). Nothing rare.
-   - Tools are ones 8–13 year olds can use with supervision. The few steps
-     that need an adult are marked [adult] and kept to a minimum.
+   - Every step is one 8–13 year olds can do themselves, with adults
+     supervising. Nothing needs sawing pipes, drilling tanks, plumbing,
+     ladders or power tools; anything cut from wood is cut by the shop.
    - Electricity only from small batteries or a motor run as a generator.
 
    Rendered by outline.js; drawings live in outline-drawings.js. */
@@ -108,7 +109,7 @@
         [9, 'Pivot pins', 10, 'Wooden skewers, cut to length, with bead or tape stops', ''],
         ['', 'Fixings', '', 'Lolly sticks, cable ties, binder clips, low-temperature hot glue, food colouring', '']
       ],
-      tools: ['Scissors', 'Low-temperature hot glue gun', 'Awl or compass point for pivot holes (adult helps under-10s)', 'Junior hacksaw or strong scissors for skewers', 'Ruler and pencil', 'Kitchen scale (for the test)'],
+      tools: ['Scissors', 'Low-temperature hot glue gun', 'Awl or compass point for pivot holes (adult helps under-10s)', 'Strong scissors for trimming skewers', 'Ruler and pencil', 'Kitchen scale (for the test)'],
       safety: [
         'Syringes without needles only.',
         'Make holes by pushing the awl into a block of eraser or cork, never towards a hand.',
@@ -150,7 +151,7 @@
       purpose: 'Moving air has energy. Blades set at an angle turn that push into spinning. A small motor, turned by something else instead of by a battery, works backwards as a generator: spinning its shaft makes electricity. The shape, number and angle of the blades decide how much energy you catch — and that is something you can measure.',
       outcome: 'A wind turbine on a 1 m tower with a rotor about 500 mm across, driving a small motor as a generator. In front of a fan it lights an LED and shows its voltage on a multimeter. The group finds, by fair testing, the blade design that makes the most voltage.',
       spec: [
-        ['Tower', '25 mm PVC pipe about 1000 mm, standing in a bucket of sand'],
+        ['Tower', 'A broom handle or 1 m wooden pole, standing in a bucket of sand'],
         ['Rotor', 'About 500 mm across; blades cut from plastic file covers or thin card on skewers, in a cork or bottle-cap hub'],
         ['Generator', 'Small 3–6 V DC hobby motor, used backwards'],
         ['Wind', 'A pedestal fan at 1500 mm, same speed setting every test'],
@@ -161,14 +162,14 @@
         [1, 'Blades', 6, 'Plastic file covers or thin card, cut from a template; skewers as spars', 'Make spares to test'],
         [2, 'Hub', 2, 'Cork or bottle cap, pushed onto the motor shaft', 'Holes at even spacing'],
         [3, 'Generator', 1, '3–6 V DC hobby motor, in a small box on top of the tower', 'Electronics shop'],
-        [4, 'Tower', 1, '25 mm PVC pipe, about 1 m', 'Hardware shop'],
+        [4, 'Tower', 1, 'Broom handle or wooden pole, about 1 m', 'Cable-tied in the bucket'],
         [5, 'Base', 1, 'Bucket filled with sand', ''],
         [6, 'LED and wires', 1, 'Red LED, 1 m of thin wire, crocodile clips', ''],
         [7, 'Multimeter', 1, 'Basic digital multimeter', 'Electronics shop'],
         [8, 'Fan', 1, 'Pedestal or table fan with a guard', 'The wind source'],
         ['', 'Fixings', '', 'Low-temperature hot glue, tape, cable ties, protractor', '']
       ],
-      tools: ['Scissors', 'Low-temperature hot glue gun', 'Protractor and ruler', 'Junior hacksaw for the PVC pipe (11+, pipe held in a clamp)', 'Multimeter'],
+      tools: ['Scissors', 'Low-temperature hot glue gun', 'Protractor and ruler', 'Cable ties', 'Multimeter'],
       safety: [
         'The fan keeps its guard on.',
         'Stand beside the rotor, never in front of it, while it spins.',
@@ -177,7 +178,7 @@
       ],
       stages: [
         { name: 'Test the generator', steps: ['Connect the motor to the multimeter.', 'Spin the shaft with your fingers and watch the voltage.'], done: 'You can make a voltage by hand.' },
-        { name: 'Tower and nacelle', steps: ['Stand the pipe in the sand bucket.', 'Fix the motor in a small box on top, shaft pointing at the fan.'], done: 'Tower stands straight and steady.' },
+        { name: 'Tower and nacelle', steps: ['Stand the pole in the sand bucket.', 'Fix the motor in a small box on top, shaft pointing at the fan.'], done: 'Tower stands straight and steady.' },
         { name: 'First rotor', steps: ['Cut 3 blades from the template.', 'Set them in the hub at 20°.'], done: 'Rotor spins in front of the fan.' },
         { name: 'Fair tests', steps: ['Change one thing at a time: number of blades, angle, length or shape.', 'Record the voltage for each.'], done: 'At least 3 rounds of testing.' },
         { name: 'Best design', steps: ['Build the best rotor carefully.', 'Light the LED.'], done: 'Ready for the success test.' }
@@ -202,60 +203,66 @@
       label: { title: 'Catch the wind', text: 'The blades turn the push of the wind into spinning. The motor, turned backwards, becomes a generator and makes electricity. We tested blade designs to find the one that catches the most energy.', tryit: 'Switch on the fan and watch the voltage climb.' }
     },
 
-    pipes: {
-      docNo: 'T3-SCI-04', rev: 'B', cat: 'sci', title: 'Tuned pipe instrument',
-      tagline: 'Eight PVC pipes, cut to play a real scale with a flip-flop paddle.',
-      hook: 'Sound is vibration; the length of a pipe decides its note, and half the length plays one octave higher.',
+    bridge: {
+      docNo: 'T3-SCI-04', rev: 'A', cat: 'sci', title: 'Lolly-stick truss bridge',
+      tagline: 'A bridge of craft sticks and glue that holds a bucket of water many times its own weight.',
+      hook: 'Triangles can’t change shape, so a frame of triangles turns a heavy load into pushes and pulls along each stick.',
       purposeLabel: 'The big idea',
-      purpose: 'Sound is vibration. When you slap the open top of a pipe, the air inside vibrates, and the length of that air column decides the note: longer pipes play lower, shorter pipes higher. Halve the length and the note goes up exactly one octave. Because the rule works with numbers, you can calculate each pipe’s length before cutting — then tune it like a real instrument maker.',
-      outcome: 'A free-standing instrument of eight tuned PVC pipes playing one octave of the C major scale, from C3 to C4, played by slapping the open tops with a foam paddle. Every pipe is in tune, checked with a tuner app, and the group plays a song at the showcase.',
+      purpose: 'A square frame of sticks folds flat when you press it; a triangle can’t change shape without a stick breaking. That is why real bridges, cranes and towers are built from triangles, called a truss. When a load presses down, some sticks are squeezed (compression) and some are stretched (tension). A good design shares the load so no single stick or joint takes too much — and the best bridge is not the heaviest one, but the one that holds the most for its own weight.',
+      outcome: 'A truss bridge made only of craft sticks and white glue, spanning a 500 mm gap between two tables, weighing no more than 250 g, that holds a bucket loaded with at least 10 kg hung from its middle. The group tests early versions until they break, learns where they fail, and builds a final bridge that beats them.',
       spec: [
-        ['Pipes', '40 mm PVC pipe, 8 lengths from 645 mm down to 317 mm'],
-        ['Length rule', 'Length (mm) ≈ 85 750 ÷ frequency (Hz) − 11. Cut 20 mm long, then trim to tune.'],
-        ['Notes and lengths', 'C3 645 · D3 573 · E3 509 · F3 480 · G3 427 · A3 379 · B3 336 · C4 317'],
-        ['Frame', 'About 1300 × 750 mm, 25 mm PVC pipe and push-fit joints, or a wooden frame'],
-        ['Success test', 'Every pipe within 10 cents of its note on a tuner app; plays a recognisable tune']
+        ['Length', '600 mm, resting 50 mm on each table'],
+        ['Clear span', '500 mm'],
+        ['Width and height', 'About 90 mm wide and 120 mm high'],
+        ['Materials', 'Jumbo craft sticks (about 150 × 18 mm) and white PVA glue only, no more than 200 sticks'],
+        ['Weight', 'No more than 250 g'],
+        ['Success test', 'Holds at least 10 kg hung from the middle for 1 minute; strength ratio (load ÷ bridge weight) of 40 or more']
       ],
-      drawings: D.pipes,
+      drawings: D.bridge,
       parts: [
-        [1, 'Sound pipes', 2, '40 mm PVC pipe, 3 m lengths, cut to the table above', 'Hardware shop'],
-        [2, 'Frame', 1, '25 mm PVC pipe about 6 m, with elbows and tees (push-fit), or wooden battens', ''],
-        [3, 'Straps', 8, 'Velcro straps or cable ties with foam padding', 'Pipes must hang free'],
-        [4, 'Paddles', 2, 'Old flip-flops (rubber chappals) screwed to a wooden spoon or stick', ''],
-        [5, 'Note labels', 8, 'Coloured tape and stickers', 'One colour per note'],
-        ['', 'Finishing', '', 'Sandpaper and a file for the cut ends', '']
+        [1, 'Top chords', 2, 'Craft sticks glued end to end in two overlapping layers', 'Squeezed under load'],
+        [2, 'Bottom chords', 2, 'Craft sticks glued end to end in two overlapping layers', 'Stretched under load'],
+        [3, 'Diagonals', 24, 'Single craft sticks, trimmed to fit the drawing', 'Make the triangles'],
+        [4, 'Deck', 30, 'Craft sticks laid across the two bottom chords', ''],
+        [5, 'Load hook', 1, 'String loop or a wire S-hook round the middle of the deck', ''],
+        [6, 'Load bucket', 1, '10–15 L bucket, filled with water a litre at a time', 'Kept just above the floor'],
+        [7, 'Cross-braces', 8, 'Craft sticks in an X between the two trusses', 'Stop it twisting'],
+        [8, 'Top ties', 6, 'Craft sticks across the two top chords', ''],
+        ['', 'Also', '', 'White PVA glue, clothes pegs as clamps, baking paper, a kitchen scale, a 1 L jug', '']
       ],
-      tools: ['Junior hacksaw and a mitre box or clamp (11+; younger Risers measure and mark)', 'File and sandpaper', 'Measuring tape and marker', 'Phone with a free tuner app', 'Screwdriver'],
+      tools: ['Strong scissors or garden snips for trimming sticks (older Risers)', 'Sandpaper', 'Ruler, pencil and set square', 'Clothes pegs (as clamps)', 'Kitchen scale and a 1 L jug'],
       safety: [
-        'Pipes are always clamped before sawing, never held in a hand.',
-        'Sand the cut ends smooth.',
-        'Slap the pipes, never blow into them after someone else.'
+        'Wear safety glasses when testing to breaking point: sticks can snap and fly.',
+        'Keep the bucket hanging only a few centimetres above a cushion or mat, and keep feet clear.',
+        'Snips only for Risers 11 and over; younger Risers glue and clamp.',
+        'Wipe up glue and water spills straight away.'
       ],
       stages: [
-        { name: 'Calculate', steps: ['Work out each pipe’s length from the rule.', 'Add 20 mm to each for tuning.'], done: 'A cutting list for all 8 pipes.' },
-        { name: 'Cut and smooth', steps: ['Measure, mark and cut each pipe.', 'File and sand the ends.'], done: 'Eight pipes, labelled.' },
-        { name: 'Tune', steps: ['Slap each pipe next to the tuner app.', 'Trim 2–3 mm at a time until it’s in tune.'], done: 'All 8 pipes within 10 cents.' },
-        { name: 'Frame', steps: ['Build the frame.', 'Hang the pipes with the tops level and the bottoms clear of the floor.'], done: 'Stands firm; pipes ring freely.' },
-        { name: 'Play', steps: ['Learn a tune together.', 'Practise for the showcase.'], done: 'Ready for the success test.' }
+        { name: 'Why triangles?', steps: ['Make a square and a triangle from sticks and paper fasteners.', 'Press on each and compare.'], done: 'Everyone can explain why the triangle holds its shape.' },
+        { name: 'Draw it full size', steps: ['Draw one truss full size on paper: chords, diagonals and every joint.', 'Lay baking paper over it so the glue won’t stick.'], done: 'A full-size drawing to build on.' },
+        { name: 'Build two trusses', steps: ['Glue the sticks straight onto the drawing, clamping each joint with pegs.', 'Let them dry overnight; build the second on the same drawing.'], done: 'Two matching trusses.' },
+        { name: 'Join them', steps: ['Stand the trusses up 90 mm apart.', 'Glue on the deck, top ties and cross-braces; dry overnight.'], done: 'Bridge stands square and doesn’t twist.' },
+        { name: 'Test to breaking', steps: ['Weigh the bridge, then load it a litre at a time until it fails.', 'Film it and find which stick or joint went first.'], done: 'We know where version 1 failed.' },
+        { name: 'Build it better', steps: ['Strengthen only where it failed.', 'Build the final bridge and test it to 10 kg.'], done: 'Ready for the success test.' }
       ],
       test: {
-        goal: 'Prove the length rule works, and get every pipe in tune.',
-        method: ['Slap the pipe the same way each time, next to the tuner app.', 'Record the frequency (Hz) and how many cents sharp or flat.', 'Trim, test again, and record each trim.', 'At the end, plot length against frequency.'],
-        cols: ['Pipe', 'Length (mm)', 'Target (Hz)', 'Measured (Hz)', 'Cents off', 'What we changed']
+        goal: 'Make the strongest bridge for its weight, and know why it breaks where it does.',
+        method: ['Weigh the bridge on the kitchen scale.', 'Hang the bucket from the middle and add water one litre at a time (1 L = 1 kg), waiting 10 seconds each time.', 'Record the last load it held and where it broke.', 'Work out the strength ratio: load held ÷ bridge weight.'],
+        cols: ['Version', 'Bridge weight (g)', 'Load held (kg)', 'Strength ratio', 'Where it broke', 'What we changed']
       },
-      improve: ['Pipe width (32 mm vs 50 mm)', 'Capping the bottom end', 'Paddle material', 'How pipes are held', 'Adding a second octave'],
+      improve: ['Truss pattern (Warren, Pratt, Howe)', 'Doubling the chords', 'Joint overlap and glue', 'Cross-bracing', 'Fewer sticks for the same strength'],
       roles: [
-        ['Investigator', 'Explains vibration, pitch and octaves, and checks the length rule.'],
-        ['Engineer', 'Leads cutting, trimming and the frame.'],
-        ['Data keeper', 'Records lengths and frequencies and draws the length–frequency graph.']
+        ['Investigator', 'Explains compression and tension and predicts where each version will break.'],
+        ['Engineer', 'Leads the full-size drawing, gluing and joining; plans each improvement.'],
+        ['Data keeper', 'Weighs bridges, runs the load test, works out the strength ratio and charts the versions.']
       ],
       ages: [
-        ['Everyone', 'Measures, tunes with the app, and plays.'],
-        ['Younger (8–10)', 'Measuring and marking, sanding, colour labels, testing each pipe.'],
-        ['Older (11–13)', 'Sawing, the length calculation, tuning in cents, the graph.']
+        ['Everyone', 'Glues and clamps, loads the bucket, spots where it broke.'],
+        ['Younger (8–10)', 'Gluing on the drawing, clamping with pegs, the deck, pouring water a litre at a time.'],
+        ['Older (11–13)', 'The full-size drawing, trimming sticks, the strength ratio and the explanation.']
       ],
-      stretch: 'Add the sharps and flats so you can play any tune.',
-      label: { title: 'Pipe music', text: 'Each pipe is cut to play one note. Longer pipes vibrate more slowly and sound lower; halve the length and the note goes up one octave.', tryit: 'Pick up a paddle and play the scale from left to right.' }
+      stretch: 'Make a bridge that is lighter but still holds 10 kg.',
+      label: { title: 'Triangles are strong', text: 'This bridge is only craft sticks and glue. Every space is a triangle, which can’t change shape, so the load is shared out as pushes and pulls along the sticks.', tryit: 'Guess how many litres it can hold, then check our test record.' }
     },
 
     rocket: {
@@ -268,7 +275,7 @@
       spec: [
         ['Body', '2-litre fizzy-drink bottle (made to take pressure). Never a water bottle.'],
         ['Length', 'About 450 mm with nose cone'],
-        ['Launch', 'Rubber cork with a tyre valve, bike foot pump with a pressure gauge'],
+        ['Launch', 'Rubber cork with the pump’s ball-inflating needle pushed through it, and a bike foot pump with a pressure gauge'],
         ['Pressure', 'No more than 60 psi (4 bar)'],
         ['Launch angle', '45°, fixed by the pad'],
         ['Success test', 'Flies straight and lands at least 30 m away; three launches with the same settings land within 5 m of each other']
@@ -279,22 +286,22 @@
         [2, 'Nose cone', 1, 'Top of a second bottle or a card cone', ''],
         [3, 'Nose weight', 1, 'About 50 g of modelling clay in the tip', 'Keeps it flying straight'],
         [4, 'Fins', 3, 'Corrugated plastic sheet or laminated card, cut from a template', 'Evenly spaced'],
-        [5, 'Cork and valve', 1, 'Rubber cork to fit the bottle neck, with a tyre valve from an old bike tube pushed through', 'Cycle shop'],
+        [5, 'Cork and needle', 1, 'Rubber cork to fit the bottle neck, with a ball-inflating needle pushed through it', 'Sports or cycle shop'],
         [6, 'Launch pad', 1, 'Plank about 600 × 150 mm with two supports holding the rocket at 45°', ''],
         [7, 'Pump', 1, 'Bike foot pump with a pressure gauge', ''],
         [8, 'Water', '', 'Start at 650 ml (a third of the bottle)', 'Measured each time'],
         ['', 'Also', '', 'Strong tape, measuring tape (30 m), marker flags, safety glasses', '']
       ],
-      tools: ['Scissors', 'Strong tape and low-temperature hot glue', 'Protractor', 'Hand drill to make the hole in the cork [adult]', '30 m measuring tape'],
+      tools: ['Scissors', 'Strong tape and low-temperature hot glue', 'Protractor', '30 m measuring tape', 'Safety glasses for everyone'],
       safety: [
         'Launch only in an open field with 50 m clear in front and nobody within 5 m of the pad.',
         'Everyone wears safety glasses.',
-        'An adult does the pumping and stops at 60 psi.',
-        'Nobody stands over or in front of the rocket. If it doesn’t launch, the adult lets the air out from the side.',
+        'Risers pump from the side with an adult watching the gauge; stop at 60 psi.',
+        'Nobody stands over or in front of the rocket. If it doesn’t launch, pull the needle out from the side to let the air out.',
         'Retire any bottle that is dented or has done 10 launches.'
       ],
       stages: [
-        { name: 'Launcher', steps: ['Fit the tyre valve through the cork.', 'Build the pad at 45°.'], done: 'Pad holds an empty bottle firmly at 45°.' },
+        { name: 'Launcher', steps: ['Twist the inflating needle carefully through the cork.', 'Build the pad at 45°.'], done: 'Pad holds an empty bottle firmly at 45°.' },
         { name: 'First rocket', steps: ['Fix the fins, nose cone and clay.', 'Swing test: tie a string at the balance point and swing — it should fly nose-first.'], done: 'Passes the swing test.' },
         { name: 'First launches', steps: ['650 ml of water, launch at about 40 psi.', 'Measure where it lands.'], done: 'Three launches recorded.' },
         { name: 'Fair tests', steps: ['Change one thing at a time — water amount first.', 'Three launches for each setting.'], done: 'Best water amount found.' },
@@ -322,72 +329,65 @@
 
     /* ================= Solve a LifeHub problem ================= */
 
-    rainwater: {
-      docNo: 'T3-SOL-01', rev: 'B', cat: 'sol', title: 'Rainwater harvester for the garden',
-      tagline: 'Catch the monsoon from a LifeHub downpipe and water the garden with it.',
-      hook: 'The garden is watered from the tap while rain off the roof drains away unused.',
+    weather: {
+      docNo: 'T3-SOL-01', rev: 'A', cat: 'sol', title: 'LifeHub weather station',
+      tagline: 'Home-made instruments and a daily weather board the garden and facilitators use.',
+      hook: 'Decisions about watering the garden and going outdoors are made by guessing the weather.',
       purposeLabel: 'The problem',
-      purpose: 'The LifeHub garden is watered from the tap, while the rain that falls on our roof goes down the drain. Chennai gets most of its year’s rain in the northeast monsoon, from October to December. Every 1 mm of rain on 1 m² of roof is 1 litre of water. Catching it means free water for the garden all season.',
-      outcome: 'A working system fitted to an existing downpipe — no roof work: a first-flush diverter that throws away the dirty first rain, and a 200 L drum on a raised stand with a tap and an overflow, so anyone can fill a watering can. The group measures the litres collected after real rain and compares them with its prediction.',
+      purpose: 'Every day someone at LifeHub decides whether the garden needs watering, whether to work outside, and what to do if it rains — mostly by guessing. In the northeast monsoon, October to December, the weather changes quickly. A weather station that measures rain, temperature and wind every day, and a board that turns the readings into simple advice, lets people decide with real information.',
+      outcome: 'A working weather station in the LifeHub garden — a rain gauge, a wind vane, a cup anemometer and a thermometer in a shaded box — all made by the group, plus a weather board by the garden where the group posts each day’s readings and a “Water the garden today?” answer. It runs every LifeHub day for at least three weeks.',
       spec: [
-        ['Water source', 'An existing roof downpipe, cut by an adult at about 1600 mm (with LifeHub’s permission)'],
-        ['Catchment', 'The roof area that drains to that downpipe — measure it from the ground, or from a plan'],
-        ['Pipes', '75 mm PVC with ring-fit joints, so no glue is needed'],
-        ['First-flush chamber', '75 mm pipe; length L = roof area (m²) × 1 litre ÷ 3.8 litres per metre'],
-        ['Storage', '200 L drum on a 450 mm stand, tap about 500 mm above the ground'],
-        ['Prediction', 'Litres = roof area (m²) × rain (mm) × 0.8'],
-        ['Success test', 'After real rain: clean water in the drum, dirty water in the first flush, no leaks, and litres within 20% of the prediction']
+        ['Rain gauge', 'Straight-sided clear bottle with a funnel, scale in mm, on a short stand in the open'],
+        ['Wind vane', 'Card arrow on a straw that turns freely on a pin, with N, E, S, W set using a compass'],
+        ['Anemometer', 'Four paper cups on crossed sticks that spin on a pin; speed counted as turns in 30 seconds'],
+        ['Thermometer screen', 'White slatted or holed box in the shade at about 1.2 m, holding a digital min/max thermometer'],
+        ['Mounting', 'A wooden pole or broom handle cable-tied to an existing fence post, about 1.8 m high'],
+        ['Success test', 'Readings posted every LifeHub day for 3 weeks; two identical rain gauges agree within 2 mm; the garden team uses the board to decide on watering']
       ],
-      drawings: D.rainwater,
+      drawings: D.weather,
       parts: [
-        [1, 'Existing downpipe', '', 'Cut by an adult at about 1600 mm', 'Ask permission first'],
-        [2, 'Coupler', 1, '75 mm ring-fit coupler', 'Joins the old pipe to the new'],
-        [3, 'Tee', 1, '75 mm tee', ''],
-        [4, 'Branch to drum', 1, '75 mm PVC pipe, about 1 m, sloping down to the drum', 'At least 10 mm fall'],
-        [5, 'Reducer', 1, '75 × 50 mm reducer at the top of the chamber', 'The ball seals against it'],
-        [6, 'Floating ball', 1, 'Hollow plastic ball about 65 mm', 'Must float and fit the pipe'],
-        [7, 'First-flush chamber', 1, '75 mm PVC pipe, length L, with 2 wall clamps', ''],
-        [8, 'Chamber cap', 1, '75 mm end cap with a 3 mm drip hole, removable', 'Drains slowly between rains'],
-        [9, 'Inlet screen', 1, 'Mosquito mesh over the drum inlet', 'Every opening is meshed'],
-        [10, 'Drum', 1, '200 L plastic drum with lid, clean, never used for chemicals', 'Marked every 10 L'],
-        [11, 'Tap', 1, '15 mm tap with tank connector and rubber washers', ''],
-        [12, 'Overflow', 1, '40 mm pipe with tank connector, back into the old drain', 'So nothing floods'],
-        [13, 'Stand', 1, '12 concrete blocks (400 × 200 × 200 mm) and a paving slab', 'Level and solid'],
-        ['', 'Also', '', 'A straight-sided jar and ruler for a home-made rain gauge', '']
+        [1, 'Anemometer', 1, '4 small paper cups, 2 wooden sticks crossed, a pin and a bead through a pencil eraser', 'Mark one cup to count turns'],
+        [2, 'Wind vane', 1, 'Card arrow and tail on a straw, a pin through it into a pencil eraser', 'Turns freely'],
+        [3, 'Pole', 1, 'Wooden pole or broom handle about 2 m', ''],
+        [4, 'Thermometer screen', 1, 'White plastic tub or card box, holes or slats cut for air, painted white', 'Shade and air, no sun'],
+        [5, 'Thermometer', 1, 'Digital min/max thermometer', 'Shows the day’s highest and lowest'],
+        [6, 'Rain gauges', 2, '2 L clear bottles with straight sides, top cut and turned upside down as a funnel, ruler scale taped on', 'Two, to check each other'],
+        [7, 'Weather board', 1, 'Whiteboard or laminated chart with markers', 'By the garden'],
+        [8, 'Cable ties', 20, 'Strong cable ties', 'Fix the pole and screen'],
+        ['', 'Also', '', 'Phone compass, stopwatch, notebook for the log, low-temperature hot glue, white paint', '']
       ],
-      tools: ['Hacksaw to cut the downpipe [adult]', 'Drill with hole saw for 3 holes in the drum [adult]', 'Spirit level', 'Measuring tape and marker', 'Spanner', 'Buckets and a 10 L jug (to mark the drum)'],
+      tools: ['Scissors', 'Low-temperature hot glue gun', 'Ruler and marker', 'Phone compass and stopwatch', 'Paintbrush'],
       safety: [
-        'Nobody goes on the roof or up a ladder.',
-        'Every opening has mosquito mesh and the lid stays on. No open standing water.',
-        'Drum water is for plants only. Never drink it.',
-        'A full drum weighs over 200 kg. Build the stand level and solid, and never move the drum when it’s full.'
+        'Use pins carefully; push them into erasers, never towards fingers.',
+        'Mount everything from the ground: no climbing on fences or ladders.',
+        'Empty the rain gauges after each reading so mosquitoes can’t breed.',
+        'Bring the instruments in if a storm is forecast.'
       ],
       stages: [
-        { name: 'Survey', steps: ['Find the downpipes: where does each one’s water go now?', 'Measure the roof area that drains to the one you choose.', 'Ask the garden team how much water they use in a week.'], done: 'We know our roof area and the garden’s needs.' },
-        { name: 'Calculate and design', steps: ['Work out L and a prediction for 50 mm of rain.', 'Draw your own version of the elevation with your measurements.', 'Facilitator approves the plan.'], done: 'Signed-off drawing and materials list.' },
-        { name: 'Stand and drum', steps: ['Level the ground and build the stand.', 'Fit the tap and overflow after the adult drills the holes.', 'Mark the drum every 10 L by pouring in a measured jug.'], done: 'Drum holds water with no leaks.' },
-        { name: 'Pipework', steps: ['Adult cuts the downpipe.', 'Fit the coupler, tee, chamber (with the ball inside) and the branch to the drum.'], done: 'Every joint is pushed fully home and clamped.' },
-        { name: 'Rain gauge', steps: ['Make a rain gauge from a straight-sided jar and a ruler.', 'Set it in the open, away from roofs and trees.'], done: 'Reads rainfall in mm.' },
-        { name: 'Hose test, then rain', steps: ['Pour buckets into the downpipe from a window or run a hose: does the chamber fill first, then the drum?', 'Fix any leaks, then wait for real rain.'], done: 'Ready for the success test.' }
+        { name: 'Survey', steps: ['Ask the garden team and facilitators which weather decisions they make each day.', 'Choose a spot: open for the rain gauge, a fence post for the pole.'], done: 'We know what the board must answer.' },
+        { name: 'Make the instruments', steps: ['Build the rain gauges, wind vane, anemometer and screen.', 'Test each one indoors: does the vane turn, do the cups spin with a fan?'], done: 'Every instrument works on the bench.' },
+        { name: 'Mount them', steps: ['Cable-tie the pole to the fence post with the anemometer and vane on top.', 'Set N on the vane card using the compass.', 'Fix the screen in the shade and stand the rain gauges in the open.'], done: 'Station up and level.' },
+        { name: 'Design the board', steps: ['Decide what goes on the board and the rule for “Water the garden today?”', 'Agree the rule with the garden team.'], done: 'Board and rule agreed.' },
+        { name: 'Run it daily', steps: ['Take readings at the same time every day, log them, post the board and empty the gauges.', 'Compare with the official forecast once a week.'], done: 'Ready for the success test.' }
       ],
       test: {
-        goal: 'Prove it catches clean water, and get the real litres close to the prediction.',
-        method: ['After each rain, read your rain gauge.', 'Predict: roof area × rain (mm) × 0.8.', 'Read the litres from the drum marks.', 'Compare a jar of first-flush water with a jar from the drum.', 'Check every joint for drips, then open the chamber cap to empty it.'],
-        cols: ['Date', 'Rain (mm)', 'Predicted (L)', 'Collected (L)', 'First flush dirty, drum clean?', 'Leaks / what we changed']
+        goal: 'Prove the station gives reliable readings every day, and that people use it.',
+        method: ['Read everything at the same time every day.', 'Read both rain gauges; they should agree within 2 mm.', 'Count anemometer turns in 30 seconds, three times, and take the middle one.', 'Note what the garden team decided after reading the board.'],
+        cols: ['Date', 'Rain (mm)', 'Min / max (°C)', 'Wind (direction, turns)', 'Board advice', 'Used by the garden team?']
       },
-      improve: ['First-flush length', 'Mesh size', 'Branch slope', 'Overflow route', 'A second drum'],
+      improve: ['Where the rain gauge stands', 'How freely the vane and cups turn', 'Screen shade and airflow', 'The watering rule', 'How clear the board is'],
       roles: [
-        ['Researcher', 'Surveys the downpipes and the garden’s water use, runs the rain gauge, and checks the tap is easy for everyone.'],
-        ['Designer', 'Measures, does the calculations, draws the plan and keeps the materials list.'],
-        ['Builder', 'Leads the stand, drum fittings and pipework; fixes leaks after each test.']
+        ['Researcher', 'Finds out what decisions people make, compares readings with the official forecast, and checks the board is used.'],
+        ['Designer', 'Designs the instruments and the board, and the watering rule with the garden team.'],
+        ['Builder', 'Leads making and mounting the instruments and fixes them when they stick or break.']
       ],
       ages: [
-        ['Everyone', 'Helps build the stand, mark the drum and check for leaks.'],
-        ['Younger (8–10)', 'The rain gauge and daily readings, marking the drum, the garden survey.'],
-        ['Older (11–13)', 'Roof-area and first-flush calculations, pipe fitting, the prediction check.']
+        ['Everyone', 'Makes an instrument, takes turns at the daily reading.'],
+        ['Younger (8–10)', 'The rain gauges and wind vane, reading the scales, writing up the board.'],
+        ['Older (11–13)', 'The anemometer and screen, the watering rule, comparing with the forecast and charting the three weeks.']
       ],
-      stretch: 'Add a second drum linked at the bottom to double the storage.',
-      label: { title: 'Every drop counts', text: 'Each millimetre of rain on one square metre of roof is one litre of water. The first flush throws away the dirty first rain, and the drum stores the clean water for the garden.', tryit: 'Fill a watering can from the tap and read the drum marks.' }
+      stretch: 'Turn the anemometer turns into km/h by testing it on a moving bicycle at a known speed.',
+      label: { title: 'Our weather, every day', text: 'We built every instrument here ourselves. Each morning we read the rain, temperature and wind, and our board tells the garden team whether to water today.', tryit: 'Count the cup turns in 30 seconds and find today’s wind on our chart.' }
     },
 
     den: {
@@ -407,7 +407,7 @@
       ],
       drawings: D.den,
       parts: [
-        [1, 'Legs', 4, 'Bamboo poles about 2200 mm, 40–50 mm thick', 'Bamboo or pandal supplier'],
+        [1, 'Legs', 4, 'Bamboo poles 2200 mm, 40–50 mm thick', 'The supplier cuts all poles to length'],
         [2, 'Ridge pole', 1, 'Bamboo about 2600 mm', ''],
         [3, 'A-frame crossbars', 2, 'Bamboo about 1800 mm', 'Tied 400 mm above the ground'],
         [4, 'Side poles', 2, 'Bamboo about 2600 mm, along the ground', ''],
@@ -418,7 +418,7 @@
         [9, 'Guy ropes and pegs', 2, '6 mm rope, 3 m each, and wooden or steel pegs', 'One at each end'],
         ['', 'Also', '', 'Floor mat, cloth tape to cover pole ends, sandpaper', '']
       ],
-      tools: ['Junior hacksaw for bamboo (11+, pole held by a partner or clamp)', 'Sandpaper', 'Measuring tape and chalk', 'Scissors for rope', 'Mallet for pegs'],
+      tools: ['Sandpaper', 'Measuring tape and chalk', 'Scissors for rope', 'Mallet for pegs'],
       safety: [
         'Sand every pole end and cover it with tape: bamboo splinters are sharp.',
         'No climbing on the frame, ever.',
@@ -429,7 +429,7 @@
       stages: [
         { name: 'Survey and site', steps: ['Ask Risers and facilitators where a den would be used most.', 'Choose a flat spot and check shade and wind at different times.'], done: 'Site chosen and agreed.' },
         { name: 'Learn the knots', steps: ['Practise the clove hitch, square lashing and shear lashing on short sticks.', 'Everyone ties each lashing at least once.'], done: 'Every member can tie a firm square lashing.' },
-        { name: 'Cut and prepare', steps: ['Measure and cut the poles.', 'Sand and tape all the ends.'], done: 'All poles ready and labelled.' },
+        { name: 'Prepare the poles', steps: ['Check each pole against the parts list (the supplier cuts them to length).', 'Sand and tape all the ends.'], done: 'All poles ready and labelled.' },
         { name: 'A-frames', steps: ['Lash the two legs with a shear lashing.', 'Spread them to 1600 mm and lash on the crossbar.'], done: 'Two identical A-frames.' },
         { name: 'Raise and brace', steps: ['Stand the A-frames up and lash on the ridge pole.', 'Lash on the side poles and the diagonal brace; add guy ropes.'], done: 'Frame stands alone and doesn’t wobble.' },
         { name: 'Roof and finish', steps: ['Tie on the shade net.', 'Lay the floor mat; do the load test.'], done: 'Ready for the success test.' }
@@ -448,7 +448,7 @@
       ages: [
         ['Everyone', 'Learns the lashings and helps raise the frame.'],
         ['Younger (8–10)', 'Sanding and taping pole ends, simple lashings, sewing or decorating the cloth, the use survey.'],
-        ['Older (11–13)', 'Measuring and cutting, the shear lashings, the load and sway tests.']
+        ['Older (11–13)', 'Measuring and marking, the shear lashings, the load and sway tests.']
       ],
       stretch: 'Add a low bamboo bench inside, or a rolled-up side wall for rain.',
       label: { title: 'Tied together', text: 'No nails, no screws: just bamboo and rope. Triangles make the frame strong, and every joint is lashed the way builders have done it for thousands of years.', tryit: 'Find the shear lashing, the square lashing and the diagonal brace.' }
@@ -465,7 +465,7 @@
         ['Collector', '1000 × 500 mm, black absorber under a clear UV-stabilised cover, sloping at about 20°, facing south'],
         ['Cabinet', '500 × 500 × 600 mm on 450 mm legs, door at the back, two mesh trays'],
         ['Airflow', 'In at the low end of the collector, out through a vent in the top; all openings meshed'],
-        ['Material', '9 mm plywood panels, cut to size by the timber shop from the cutting list'],
+        ['Material', '9 mm plywood panels and battens, all cut to size by the timber shop from the cutting list'],
         ['Success test', 'Cabinet at least 15 °C hotter than outside at midday on a sunny day; fruit slices reach a steady weight sooner than the open-air plate']
       ],
       drawings: D.dryer,
@@ -483,9 +483,9 @@
         [11, 'Fixings', '', '25 mm screws, wood glue, staples, hinges', ''],
         [12, 'Thermometers', 2, 'Digital probe thermometers', 'One inside, one outside']
       ],
-      tools: ['Screwdriver (or a cordless screwdriver with an adult)', 'Hand drill for pilot holes', 'Staple gun', 'Junior hacksaw for battens (11+)', 'Paintbrush', 'Measuring tape and try square', 'Kitchen scale (for the test)'],
+      tools: ['Screwdrivers', 'Bradawl to start screw holes', 'Hand stapler or staple gun', 'Paintbrush', 'Measuring tape and try square', 'Kitchen scale (for the test)'],
       safety: [
-        'The timber shop does all the panel cutting.',
+        'The timber shop cuts all the panels and battens to the cutting list; nothing is sawn at LifeHub.',
         'Paint outdoors with lead-free paint, and let it dry fully before food goes in.',
         'Wash hands and trays before handling food.',
         'A facilitator decides whether dried food is safe to eat, and it is labelled with the date.',
@@ -493,7 +493,7 @@
       ],
       stages: [
         { name: 'Survey', steps: ['Ask the kitchen and garden what goes to waste and what they would like dried.', 'Find a sunny spot facing south.'], done: 'We know what to dry and where.' },
-        { name: 'Order panels', steps: ['Check the cutting list and take it to the timber shop.'], done: 'All panels cut and labelled.' },
+        { name: 'Order panels', steps: ['Check the cutting list and take it to the timber shop.'], done: 'All panels and battens cut and labelled.' },
         { name: 'Build the cabinet', steps: ['Screw and glue the cabinet together.', 'Fit the runners, trays and door.'], done: 'Cabinet is square and the trays slide.' },
         { name: 'Build the collector', steps: ['Build the box, paint it black inside.', 'Staple on the clear cover and mesh the inlet.'], done: 'Collector sealed except at the two ends.' },
         { name: 'Join and test', steps: ['Join the collector to the cabinet at about 20°.', 'Measure the temperatures on a sunny day.'], done: 'Warm air comes out of the top vent.' },
@@ -521,41 +521,41 @@
 
     vgarden: {
       docNo: 'T3-SOL-04', rev: 'A', cat: 'sol', title: 'Vertical garden with drip feed',
-      tagline: 'Nine planters on a frame, watered by gravity from one bucket.',
+      tagline: 'Nine bottle planters on a grille, watered by gravity from one bucket.',
       hook: 'There is little ground space for growing, and plants get watered unevenly or forgotten.',
       purposeLabel: 'The problem',
       purpose: 'LifeHub has little open ground for growing food, and pots get forgotten or watered unevenly. Growing upwards saves space, and a drip system fed by gravity from one bucket waters every plant the same amount without anyone remembering each pot. Water that drains from one planter waters the next one down, so very little is wasted.',
-      outcome: 'A free-standing frame 1.2 m wide and 1.5 m tall holding nine bottle planters in three columns, watered by drip lines from a 10 L bucket at the top. Each planter drains into the one below, and a tray catches the rest. It grows fast herbs and greens that are ready to pick within the month.',
+      outcome: 'Nine bottle planters tied in three columns to an existing grille or fence, over an area 1.2 m wide and 1.5 m tall, watered by drip lines from a 10 L bucket at the top. Each planter drains into the one below, and a tray catches the rest. It grows fast herbs and greens that are ready to pick within the month.',
       spec: [
-        ['Frame', '1200 × 1500 mm, 25 mm PVC pipe with tees and elbows, on two wide feet'],
+        ['Support', 'An existing window grille, fence or railing, about 1200 × 1500 mm; nothing to build'],
         ['Planters', '9 two-litre bottles on their sides, a 200 × 70 mm window cut on top, drain holes underneath'],
         ['Rows', '3 rows, 400 mm apart'],
-        ['Watering', '10 L bucket with a tap, drip line to the top planter of each column; gravity only'],
+        ['Watering', '10 L water container with a built-in tap, hung at the top; drip line to the top planter of each column; gravity only'],
         ['Plants', 'Fast growers: methi, coriander, spinach (keerai), mint, basil'],
-        ['Success test', 'One bucket fill keeps all nine planters moist for at least 2 days; at least 8 of 9 planters have healthy plants after 3 weeks; the frame doesn’t tip when pushed at the top']
+        ['Success test', 'One bucket fill keeps all nine planters moist for at least 2 days; at least 8 of 9 planters have healthy plants after 3 weeks; every planter stays firmly tied in wind']
       ],
       drawings: D.vgarden,
       parts: [
-        [1, 'Frame', 1, '25 mm PVC pipe, about 12 m in total, with 8 tees, 2 elbows and 4 end caps', 'Cutting list in the stages'],
+        [1, 'Grille or fence', '', 'An existing one, strong enough for nine planters and a full container', 'Nothing to buy'],
         [2, 'Bottle planters', 9, '2-litre bottles with a window cut on top and three 3 mm drain holes underneath', 'Collect them early'],
         [3, 'Hanging wire', 1, 'GI binding wire or strong cable ties', 'Two per bottle'],
-        [4, 'Reservoir', 1, '10 L bucket with lid and a small tap or drip connector in the bottom', ''],
-        [5, 'Drip line', 1, 'Balcony drip kit: 4 mm tube, 3 drippers, a control valve', 'Garden or hardware shop'],
+        [4, 'Reservoir', 1, '10 L plastic water container with a tap (the kind sold for drinking water), and an S-hook', 'No drilling needed'],
+        [5, 'Drip line', 1, 'Balcony drip kit: 4 mm tube, a tap connector, 3 drippers and a control valve', 'Garden or hardware shop'],
         [6, 'Drip tray', 1, 'Long plastic planter tray, about 1000 × 200 mm', 'Catches the run-off'],
         ['', 'Growing', '', 'About 25 L potting mix (coco peat and compost), seeds or seedlings', '']
       ],
-      tools: ['Scissors', 'Craft knife for the windows (11+, with a facilitator)', 'Hand drill for drain and bucket holes [adult for the bucket]', 'Junior hacksaw for PVC (11+, pipe in a clamp)', 'Measuring tape and marker', 'Screwdriver'],
+      tools: ['Scissors', 'Compass point or bradawl to start the cuts and make drain holes', 'Measuring tape and marker', 'Pliers for the wire'],
       safety: [
-        'Craft knives only for Risers 11 and over, cutting away from the body, with a facilitator.',
+        'Start each cut with a compass point pushed into the bottle on a table, never towards a hand; then use scissors.',
         'Cut bottle edges can be sharp: cover them with tape.',
-        'The frame must not tip: test it with a push before hanging the planters, and add weight to the feet if needed.',
+        'Check the grille is firm before hanging anything, and tie every planter at both ends.',
         'Wash hands after handling soil and compost.'
       ],
       stages: [
         { name: 'Survey', steps: ['Ask the kitchen which herbs and greens they would use.', 'Find a spot with 4–6 hours of sun.'], done: 'Plants and spot chosen.' },
-        { name: 'Frame', steps: ['Cut the pipe: 2 uprights 1450, 4 rails 1150, 4 feet 300 mm.', 'Dry-fit the frame, then fix each joint with a small screw.'], done: 'Frame stands square and passes the push test.' },
-        { name: 'Planters', steps: ['Cut the windows and drill the drain holes.', 'Hang the bottles so each drains into the window of the one below.'], done: 'Nine planters hung and lined up.' },
-        { name: 'Drip system', steps: ['Fit the connector to the bucket.', 'Run the drip line to the top planter of each column.', 'Test with plain water and adjust the drippers.'], done: 'Water reaches every planter and the tray.' },
+        { name: 'Lay it out', steps: ['Check the grille is firm and gets 4–6 hours of sun.', 'Mark the three columns and three rows (400 mm apart) with chalk or tape.'], done: 'Layout marked and agreed.' },
+        { name: 'Planters', steps: ['Cut the windows and poke the drain holes.', 'Hang the bottles so each drains into the window of the one below.'], done: 'Nine planters hung and lined up.' },
+        { name: 'Drip system', steps: ['Hang the container and fit the drip connector to its tap.', 'Run the drip line to the top planter of each column.', 'Test with plain water and adjust the drippers.'], done: 'Water reaches every planter and the tray.' },
         { name: 'Plant', steps: ['Fill with potting mix and sow or plant.', 'Label each planter.'], done: 'Every planter is sown and labelled.' },
         { name: 'Grow and adjust', steps: ['Check moisture every day.', 'Adjust the drip rate and record growth.'], done: 'Ready for the success test.' }
       ],
@@ -567,13 +567,13 @@
       improve: ['Drip rate', 'Number and size of drain holes', 'Potting mix', 'Which plant goes where (top dries fastest)', 'Shade for the top row'],
       roles: [
         ['Researcher', 'Asks the kitchen what to grow, looks after the plants, and checks who uses the harvest.'],
-        ['Designer', 'Draws the plan and the cutting list, and plans the drip system.'],
-        ['Builder', 'Leads the frame, planters and drip fitting.']
+        ['Designer', 'Draws the layout and plans the drip system.'],
+        ['Builder', 'Leads cutting and hanging the planters and fitting the drip line.']
       ],
       ages: [
         ['Everyone', 'Plants, waters and checks moisture.'],
         ['Younger (8–10)', 'Filling and sowing, labels, the daily moisture check, counting drips.'],
-        ['Older (11–13)', 'Cutting pipe and windows, the drip system, the growth graph.']
+        ['Older (11–13)', 'Cutting windows, the drip system, the growth graph.']
       ],
       stretch: 'Connect it to the rainwater drum, or add a fourth row.',
       label: { title: 'Grow up', text: 'One bucket at the top waters nine planters. Gravity carries the water down, and each planter passes what it doesn’t need to the one below.', tryit: 'Count the drips, then pick a leaf of mint.' }

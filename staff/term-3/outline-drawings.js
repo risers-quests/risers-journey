@@ -150,24 +150,34 @@
     return { title: 'Side view, with the test fan', svg: svg(id, 520, 400, s), note: 'The motor runs backwards as a generator: the rotor turns its shaft and it makes a small voltage, read on the multimeter and used to light the LED.' };
   })()];
 
-  /* ---------- Pipe instrument: front elevation ---------- */
-  D.pipes = [(function () {
-    var id = 'pp', s = '';
-    var notes = [['C', 645], ['D', 573], ['E', 509], ['F', 480], ['G', 427], ['A', 379], ['B', 336], ['C', 317]];
-    s += ground(420, 10, 650);
-    s += rect(36, 40, 10, 380, 'o fill-pipe') + rect(574, 40, 10, 380, 'o fill-pipe') + rect(36, 34, 548, 10, 'o fill-pipe');
-    s += rect(36, 92, 548, 8, 'o-thin fill-pipe');
-    s += line(16, 420, 66, 420, 'o') + line(554, 420, 604, 420, 'o');
-    notes.forEach(function (n, i) {
-      var x = 70 + i * 62, h = n[1] * 0.45;
-      s += rect(x, 70, 30, h, 'o fill-pvc', 3) + line(x - 2, 96, x + 32, 96, 'rope');
-      s += '<text x="' + (x + 15) + '" y="' + (70 + h + 14) + '" text-anchor="middle" class="d-t">' + n[0] + (i === 7 ? '4' : '3') + '</text>';
-      s += '<text x="' + (x + 15) + '" y="' + (70 + h + 26) + '" text-anchor="middle" class="lbl">' + n[1] + '</text>';
-    });
-    s += dim(id, 58, 70, 58, 70 + 645 * 0.45, '645', true);
-    s += '<g transform="translate(622 170) rotate(-20)">' + rect(-6, 0, 12, 70, 'o-thin fill-wood', 3) + rect(-18, -40, 36, 44, 'o fill-dark', 8) + '</g>';
-    s += ball(1, 120, 60, 110, 140) + ball(2, 22, 20, 41, 40) + ball(3, 330, 60, 300, 96) + ball(4, 640, 90, 622, 132) + ball(5, 610, 260, 530, 224);
-    return { title: 'Front elevation', svg: svg(id, 660, 440, s), note: 'Eight 40 mm PVC pipes, one octave from C3 to C4, hung from the frame with the open tops level. Numbers under each pipe are the starting length in mm: cut each 20 mm longer, then trim to tune.' };
+  /* ---------- Lolly-stick truss bridge: side elevation and end section ---------- */
+  D.bridge = [(function () {
+    var id = 'br', s = '';
+    // Tables either side of the gap
+    s += rect(10, 180, 100, 10, 'o fill-wood') + line(30, 190, 30, 300, 'o') + line(96, 190, 96, 300, 'o');
+    s += rect(490, 180, 100, 10, 'o fill-wood') + line(504, 190, 504, 300, 'o') + line(570, 190, 570, 300, 'o');
+    s += ground(300, 0, 600);
+    // Warren truss: bottom chord on the tables, top chord between, diagonals making triangles
+    var bot = [], top = [], i;
+    for (i = 0; i <= 6; i++) bot.push(72 + i * 76);
+    for (i = 0; i < 6; i++) top.push(110 + i * 76);
+    s += rect(72, 174, 456, 6, 'o fill-board') + rect(110, 86, 380, 6, 'o fill-board');
+    for (i = 0; i < 6; i++) s += line(bot[i], 174, top[i], 92, 'stick') + line(top[i], 92, bot[i + 1], 174, 'stick');
+    // Load: a bucket hung from the middle of the bottom chord
+    s += path('M300 180 L300 236', 'rope') + path('M276 236 L324 236 L318 286 L282 286 Z', 'o fill-syr') + rect(281, 252, 38, 33, 'water');
+    s += dim(id, 72, 60, 528, 60, '600') + line(72, 64, 72, 172, 'ext') + line(528, 64, 528, 172, 'ext');
+    s += dim(id, 110, 318, 490, 318, '500 clear span') + line(110, 192, 110, 324, 'ext') + line(490, 192, 490, 324, 'ext');
+    s += dim(id, 560, 180, 560, 86, '≈ 120', true) + line(494, 86, 566, 86, 'ext');
+    s += ball(1, 200, 36, 200, 89) + ball(2, 420, 214, 420, 177) + ball(3, 140, 150, 160, 128) + ball(5, 360, 214, 302, 190) + ball(6, 360, 270, 324, 262);
+    return { title: 'Side elevation, under test', svg: svg(id, 600, 335, s), note: 'Two of these trusses stand side by side. Every space is a triangle, so the shape can’t squash. The bucket hangs from the middle and is filled a litre at a time.' };
+  })(), (function () {
+    var id = 'be', s = '';
+    s += rect(40, 40, 10, 120, 'o fill-board') + rect(150, 40, 10, 120, 'o fill-board');
+    s += rect(30, 160, 140, 8, 'o fill-board') + rect(30, 32, 140, 8, 'o fill-board');
+    s += line(50, 46, 150, 154, 'stick') + line(150, 46, 50, 154, 'stick');
+    s += dim(id, 45, 196, 155, 196, '≈ 90') + line(45, 170, 45, 200, 'ext') + line(155, 170, 155, 200, 'ext');
+    s += ball(4, 210, 164, 170, 164) + ball(7, 210, 100, 130, 100) + ball(8, 210, 36, 170, 36);
+    return { title: 'End section', svg: svg(id, 240, 215, s), note: 'The two trusses are joined by deck sticks across the bottom and braces across the top and in an X, so the bridge can’t twist sideways.' };
   })()];
 
   /* ---------- Water rocket: on the launch pad ---------- */
@@ -193,42 +203,50 @@
     s += circ(52, 262, 9, 'o-thin fill-paper');
     s += label(180, 340, 'The pad holds the rocket at 45°', 'start');
     // Valve detail
-    s += rect(420, 200, 160, 110, 'o-thin fill-paper', 4) + label(500, 216, 'Detail: cork with tyre valve');
-    s += path('M478 236 L522 236 L516 280 L484 280 Z', 'o fill-dark') + rect(495, 226, 10, 74, 'o fill-pipe') + rect(492, 296, 16, 8, 'o fill-pipe');
-    s += label(540, 260, 'valve from an', 'start') + label(540, 272, 'old bike tube', 'start');
+    s += rect(420, 200, 170, 110, 'o-thin fill-paper', 4) + label(505, 216, 'Detail: cork with inflating needle');
+    s += path('M448 236 L492 236 L486 280 L454 280 Z', 'o fill-dark') + rect(468, 224, 4, 72, 'o fill-pipe') + rect(462, 290, 16, 14, 'o fill-pipe', 2);
+    s += label(500, 254, 'ball needle from', 'start') + label(500, 266, 'the pump, pushed', 'start') + label(500, 278, 'through the cork', 'start');
     s += ball(1, 330, 230, 300, 172) + ball(2, 440, 130, 352, 84) + ball(3, 470, 70, 386, 50) + ball(4, 110, 160, 164, 200);
     s += ball(5, 110, 220, 146, 286) + ball(6, 280, 290, 260, 312) + ball(7, 80, 210, 44, 236) + ball(8, 240, 290, 214, 240);
     return { title: 'Side elevation on the launch pad', svg: svg(id, 600, 345, s), note: 'Rocket shown at 45°. The blue band is the water, about a third of the bottle. The cork holds until the pressure pushes it out, then the water rushes out backwards and the rocket goes forwards.' };
   })()];
 
-  /* ---------- Rainwater harvester: side elevation ---------- */
-  D.rainwater = [(function () {
-    var id = 'rs', s = '';
-    s += ground(400, 10, 550);
-    s += rect(156, 10, 10, 390, 'o-thin fill-wall') + '<text x="150" y="380" class="lbl" transform="rotate(-90 150 380)" text-anchor="middle">wall</text>';
-    // Existing downpipe from the roof, with break
-    s += path('M184 10 L184 50 M196 10 L196 50', 'o') + label(214, 24, 'existing downpipe from the roof', 'start');
-    s += path('M178 50 L188 46 L192 54 L202 50', 'o-thin') + path('M178 60 L188 56 L192 64 L202 60', 'o-thin');
-    s += path('M184 60 L184 86 M196 60 L196 86', 'o') + rect(180, 86, 20, 12, 'o-thin');
-    s += line(166, 30, 184, 30, 'o-thin') + line(166, 72, 184, 72, 'o-thin');
-    // Tee: straight down into the first flush, branch to the drum
-    s += path('M184 98 L184 116 M196 98 L196 98 L360 112', 'o') + path('M196 110 L348 122', 'o') + path('M348 122 L348 132 M360 112 L360 132', 'o');
-    s += path('M184 116 L180 124 L180 340 L200 340 L200 124 L196 116', 'o');
-    s += rect(177, 340, 26, 8, 'o-thin', 2) + circ(190, 168, 8, 'o fill-ball') + rect(181, 180, 18, 160, 'water');
-    s += path('M190 348 L190 360', 'w-l') + rect(166, 200, 38, 5, 'o-thin') + rect(166, 300, 38, 5, 'o-thin');
-    // Drum and stand
-    s += rect(302, 130, 116, 180, 'o', 6) + rect(304, 210, 112, 98, 'water') + line(300, 138, 420, 138, 'o-thin') + line(338, 130, 370, 130, 'mesh');
-    for (var r = 0; r < 3; r++) for (var c = 0; c < 4; c++) s += rect(296 + c * 32 + (r % 2 ? 16 : 0) - (r % 2 && c === 3 ? 16 : 0), 310 + r * 30, (r % 2 && c === 3) ? 16 : 32, 30, 'o-thin fill-block');
-    s += rect(292, 310, 136, 90, 'o') ;
-    s += path('M418 296 L432 296 L432 306', 'o') + rect(424, 288, 10, 6, 'o-thin') + path('M432 308 L432 330', 'w-l');
-    s += path('M418 146 L520 146 L520 392 M418 154 L512 154 L512 392', 'o-thin') + label(516, 414, 'to the old drain or recharge pit');
-    s += dim(id, 270, 400, 270, 310, '450', true) + dim(id, 270, 310, 270, 130, '≈ 900', true);
-    s += dim(id, 232, 340, 232, 124, 'L (see calc.)', true) + dim(id, 452, 400, 452, 300, '≈ 500', true);
-    s += dim(id, 120, 400, 120, 92, '≈ 1600 (cut here)', true);
-    s += ball(1, 136, 40, 184, 40) + ball(2, 136, 92, 180, 92) + ball(3, 230, 82, 196, 104) + ball(4, 290, 90, 280, 110);
-    s += ball(5, 136, 128, 181, 124) + ball(6, 136, 168, 182, 168) + ball(7, 136, 240, 181, 250) + ball(8, 136, 340, 178, 344);
-    s += ball(9, 360, 90, 354, 128) + ball(10, 456, 96, 414, 176) + ball(11, 480, 268, 430, 294) + ball(12, 540, 120, 516, 170) + ball(13, 340, 420, 340, 390);
-    return { title: 'Side elevation', svg: svg(id, 560, 430, s), note: 'No roof work: an adult cuts an existing downpipe at about 1600 mm and the system fits on below. The first rain fills the chamber and lifts the ball, which seals it; after that, clean water runs across to the drum.' };
+  /* ---------- Weather station: elevation ---------- */
+  D.weather = [(function () {
+    var id = 'we', s = '';
+    s += ground(350, 0, 600);
+    // Existing fence or railing
+    s += rect(30, 170, 230, 6, 'o-thin fill-pipe') + rect(30, 260, 230, 6, 'o-thin fill-pipe');
+    [40, 140].forEach(function (x) { s += rect(x, 160, 8, 190, 'o-thin fill-pipe'); });
+    s += label(94, 300, 'existing fence');
+    // Pole cable-tied to a fence post
+    s += rect(240, 52, 8, 298, 'o fill-wood');
+    [180, 220, 268].forEach(function (y) { s += rect(236, y, 16, 4, 'o-thin fill-dark'); });
+    // Cup anemometer
+    s += line(204, 56, 284, 56, 'o') + line(244, 50, 244, 62, 'o');
+    s += path('M196 48 Q190 56 196 64 L206 64 L206 48 Z', 'o fill-paper') + path('M292 48 Q298 56 292 64 L282 64 L282 48 Z', 'o fill-paper');
+    s += '<ellipse cx="244" cy="56" rx="7" ry="4" class="o-thin fill-paper"/>';
+    // Wind vane
+    s += line(244, 96, 244, 112, 'o') + line(214, 104, 280, 104, 'o') + path('M280 98 L292 104 L280 110 Z', 'o fill-dark') + path('M206 94 L222 104 L206 114 Z', 'o fill-flag');
+    s += label(300, 108, 'N, E, S, W card fixed below it', 'start');
+    // Thermometer screen: white slatted box in the shade
+    s += rect(150, 186, 64, 54, 'o fill-paper', 2);
+    for (var y = 194; y < 236; y += 8) s += line(154, y, 210, y + 4, 'o-thin');
+    s += line(214, 212, 240, 212, 'o-thin');
+    // Rain gauge in the open
+    s += rect(430, 306, 10, 44, 'o fill-wood') + rect(418, 302, 34, 6, 'o fill-wood');
+    s += path('M420 250 L450 250 L450 300 L420 300 Z', 'o fill-bottle') + path('M414 238 L456 238 L444 252 L426 252 Z', 'o fill-bottle');
+    s += rect(421, 284, 28, 15, 'water');
+    for (var t = 258; t < 300; t += 8) s += line(450, t, 456, t, 'o-thin');
+    // Weather board
+    s += rect(500, 160, 90, 110, 'o fill-paper', 3) + line(545, 270, 545, 350, 'o');
+    ['Rain', 'Temp', 'Wind', 'Water?'].forEach(function (w, i) { s += label(506, 184 + i * 22, w, 'start') + line(540, 186 + i * 22, 582, 186 + i * 22, 'o-thin'); });
+    s += dim(id, 320, 350, 320, 56, '≈ 1800', true) + line(290, 56, 326, 56, 'ext');
+    s += dim(id, 112, 350, 112, 213, '≈ 1200', true) + line(112, 213, 150, 213, 'ext');
+    s += dim(id, 248, 372, 420, 372, 'at least 2 m into the open') + line(420, 310, 420, 378, 'ext');
+    s += ball(1, 170, 30, 198, 54) + ball(2, 180, 90, 210, 104) + ball(3, 280, 160, 248, 160) + ball(4, 90, 140, 150, 200);
+    s += ball(5, 90, 236, 170, 230) + ball(6, 390, 220, 420, 260) + ball(7, 560, 140, 545, 160) + ball(8, 284, 236, 252, 222);
+    return { title: 'Elevation', svg: svg(id, 600, 385, s), note: 'The wind instruments sit on a pole cable-tied to a fence post, high and clear. The thermometer hangs in a white slatted box in the shade. The rain gauge stands in the open, well away from roofs and trees.' };
   })()];
 
   /* ---------- Bamboo reading den: front and side ---------- */
@@ -287,10 +305,11 @@
   D.vgarden = [(function () {
     var id = 'vg', s = '';
     s += ground(372, 10, 510);
-    s += rect(132, 52, 8, 320, 'o fill-pipe') + rect(380, 52, 8, 320, 'o fill-pipe') + rect(132, 48, 256, 8, 'o fill-pipe');
-    s += line(100, 372, 172, 372, 'o') + line(348, 372, 420, 372, 'o');
-    [130, 215, 300].forEach(function (y) { s += rect(140, y - 26, 240, 5, 'o-thin fill-pipe'); });
-    s += path('M232 6 L288 6 L284 46 L236 46 Z', 'o fill-board') + label(260, 30, '10 L');
+    // Existing grille or fence: nothing to build
+    s += rect(132, 48, 256, 324, 'o-thin');
+    for (var gx = 152; gx < 388; gx += 20) s += line(gx, 48, gx, 372, 'grille');
+    [104, 190, 276].forEach(function (gy) { s += line(132, gy, 388, gy, 'grille'); });
+    s += path('M232 6 L288 6 L284 46 L236 46 Z', 'o fill-board') + label(260, 30, '10 L') + rect(255, 46, 10, 6, 'o fill-dark');
     [170, 260, 350].forEach(function (x) {
       s += path('M260 46 Q' + x + ' 60 ' + x + ' 104', 'tube');
       [130, 215, 300].forEach(function (y, row) {
@@ -304,8 +323,8 @@
     s += dim(id, 132, 392, 388, 392, '1200');
     s += dim(id, 450, 372, 450, 48, '1500', true) + line(388, 48, 456, 48, 'ext');
     s += dim(id, 100, 130, 100, 215, '400', true);
-    s += ball(1, 80, 70, 134, 80) + ball(2, 470, 150, 384, 130) + ball(3, 470, 210, 372, 197) + ball(4, 320, 20, 286, 26) + ball(5, 470, 80, 352, 80) + ball(6, 470, 340, 370, 356);
-    return { title: 'Front elevation', svg: svg(id, 520, 405, s), note: 'Nine bottle planters in three columns. The drip line waters the top bottle of each column; each bottle drains through small holes in its underside into the open top of the one below, and the tray catches the rest to pour back in.' };
+    s += ball(1, 80, 70, 152, 80) + ball(2, 470, 150, 384, 130) + ball(3, 470, 210, 372, 197) + ball(4, 320, 20, 286, 26) + ball(5, 470, 80, 352, 80) + ball(6, 470, 340, 370, 356);
+    return { title: 'Front elevation', svg: svg(id, 520, 405, s), note: 'Nine bottle planters tied to an existing grille or fence in three columns. The drip line from the tap waters the top bottle of each column; each bottle drains through small holes in its underside into the open top of the one below, and the tray catches the rest to pour back in.' };
   })()];
 
   window.T3_DRAW = D;

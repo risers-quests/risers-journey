@@ -15,7 +15,7 @@
   if (!o) {
     app.innerHTML = '<div class="ol-index"><a class="ol-back" href="index.html">‹ Term 3 Quests</a>' +
       '<h1>Build outlines</h1><p>The official plan for each build: what it is for, the finished model, a dimensioned drawing, parts, order of work, and the test that proves it works.</p>' +
-      '<p class="ol-rules">Every build suits a mixed group aged 8–13: materials from an ordinary hardware, stationery or electrical shop, tools children can use with supervision, and the few adult-only steps marked.</p>' +
+      '<p class="ol-rules">Every build suits a mixed group aged 8–13 and every step is one the Risers do themselves, with adults supervising: materials from an ordinary hardware, stationery or electrical shop, simple hand tools, and no sawing pipes, drilling, plumbing, ladders or power tools.</p>' +
       ['sci', 'sol'].map(function (cat) {
         return '<h2 class="ol-cat-h">' + CAT[cat] + '</h2><div class="ol-cards">' + Object.keys(ALL).filter(function (k) { return ALL[k].cat === cat; }).map(function (k) {
           var x = ALL[k];
