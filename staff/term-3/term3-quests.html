@@ -27,6 +27,7 @@ nav.tabs .wrap{display:flex;gap:6px;padding-top:10px;padding-bottom:10px;overflo
 main{padding:22px 0 120px}
 .intro{color:var(--muted);max-width:62ch;margin:0 0 18px}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
+.chips+.chips{margin-top:-12px}
 .chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:15px}
 .chip[aria-pressed="true"]{border-color:var(--ink);font-weight:700}
 .cathead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:30px 0 6px}
@@ -74,6 +75,9 @@ select.pick{width:100%;border:2px solid var(--cc);background:var(--ct);border-ra
 .week{border:1.5px solid var(--line);border-radius:12px;padding:12px}
 .week b{font-family:"Bricolage Grotesque",sans-serif;font-size:17px}
 .week ul{margin:6px 0 0;padding-left:18px;font-size:14.5px;color:var(--muted)}
+.lvpill{align-self:flex-start;font-size:12.5px;font-weight:700;letter-spacing:.04em;border-radius:999px;padding:2px 10px;border:1.5px solid var(--lc);color:var(--lc)}
+.lv1{--lc:var(--g3)}.lv2{--lc:var(--g2)}.lv3{--lc:var(--g1)}
+.chip.lv[aria-pressed="true"]{border-color:var(--lc);color:var(--lc)}
 .olink{color:var(--cc);font-weight:700;text-decoration:none;border-bottom:1.5px solid currentColor}
 .gates{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
 .gates li{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font-size:15.5px}
@@ -162,7 +166,7 @@ state.claims = state.claims || {}; state.custom = state.custom || {}; state.role
 const gatesFor = g => state.gates[g] = state.gates[g] || {};
 const gatesBy = (g, w) => { const r = state.gates[g] || {}, upto = WEEKS.findIndex(x => x.id === w); return Object.keys(r).filter(i => WEEKS.findIndex(x => x.id === r[i]) <= upto).length; };
 
-let ui = {tab:'builds', filter:'all', pack:'g1', cpg:'g1', cpw:'w1', y:0};
+let ui = {tab:'builds', filter:'all', level:0, pack:'g1', cpg:'g1', cpw:'w1', y:0};
 try { const s = sessionStorage.getItem('t3q-ui'); if (s) { ui = Object.assign(ui, JSON.parse(s)); sessionStorage.removeItem('t3q-ui'); } } catch(e) {}
 
 let dirty = false, api = null, apiReady = false, readOnly = false, saving = false, msg = '';
@@ -197,21 +201,22 @@ function tabs() {
 function viewBuilds() {
   const f = ui.filter;
   const chips = [['all','Everything'],['sol','Solve a LifeHub problem'],['sci','Science in action']].map(([k,l]) => `<button class="chip" aria-pressed="${f===k}" data-act="filter" data-v="${k}">${l}</button>`).join('');
+  const lchips = [[0,'All levels'],[1,'Level 1'],[2,'Level 2'],[3,'Level 3']].map(([k,l]) => `<button class="chip${k ? ' lv lv' + k : ''}" aria-pressed="${ui.level===k}" data-act="level" data-v="${k}">${l}</button>`).join('');
   const free = GROUPS.filter(g => !state.claims[g.id]);
   const section = cat => {
     const c = CATS[cat];
-    const cards = BUILDS.filter(b => b.cat === cat).map(b => {
+    const cards = BUILDS.filter(b => b.cat === cat && (!ui.level || b.level === ui.level)).sort((x, y) => x.level - y.level).map(b => {
       const by = claimedBy(b.id);
       const foot = by
         ? `<div class="taken-by ${by.id}"><span>Chosen by ${by.name}</span><button class="linkbtn" data-act="release" data-g="${by.id}">Undo</button></div>`
         : `<select class="pick" data-act="claim" data-b="${b.id}" aria-label="Choose ${esc(b.title)} for a group"><option value="">Choose this for\u2026</option>${GROUPS.map(g => `<option value="${g.id}">${g.name}${state.claims[g.id] ? ' (switch build)' : ''}</option>`).join('')}</select>`;
-      return `<article class="card ${cat}${by ? ' taken' : ''}"><h3>${esc(b.title)}</h3><p><span class="lbl">${c.hookLbl}:</span> ${esc(b.hook)}</p><p><span class="lbl">You\u2019ll make:</span> ${esc(b.make)}</p><div class="foot">${foot}</div></article>`;
+      return `<article class="card ${cat}${by ? ' taken' : ''}"><span class="lvpill lv${b.level}">Level ${b.level}</span><h3>${esc(b.title)}</h3><p><span class="lbl">${c.hookLbl}:</span> ${esc(b.hook)}</p><p><span class="lbl">You\u2019ll make:</span> ${esc(b.make)}</p><div class="foot">${foot}</div></article>`;
     }).join('');
     const own = `<article class="card own ${cat}"><h3>Your own idea</h3><p>Spotted something else? Propose your own ${cat === 'sol' ? 'LifeHub problem' : 'science build'}. A facilitator approves it at the Week 1 checkpoint.</p><div class="foot"><select class="pick" data-act="custom" data-c="${cat}" aria-label="Propose own idea for a group"><option value="">Propose for\u2026</option>${GROUPS.map(g => `<option value="${g.id}">${g.name}</option>`).join('')}</select></div></article>`;
     return `<div class="cathead"><span class="bigpill ${cat}">${c.name}</span></div><p class="catnote">${c.note}</p><div class="grid">${cards}${own}</div>`;
   };
   const left = free.length ? `${free.map(g => g.name).join(', ')} still ${free.length === 1 ? 'needs' : 'need'} to choose.` : 'Every group has chosen a build.';
-  return `<p class="intro">Each group chooses one build. Once a build is chosen, it\u2019s taken. ${left}</p><div class="chips">${chips}</div>${f !== 'sci' ? section('sol') : ''}${f !== 'sol' ? section('sci') : ''}`;
+  return `<p class="intro">Each group chooses one build. Once a build is chosen, it\u2019s taken. ${left}</p><div class="chips">${chips}</div><div class="chips">${lchips}</div>${f !== 'sci' ? section('sol') : ''}${f !== 'sol' ? section('sci') : ''}`;
 }
 
 function viewPack() {
@@ -241,7 +246,7 @@ function viewPack() {
   roles.forEach((r, i) => { if (counts[i] > 1) notes.push(`Two people picked ${r.name}. Talk it through so each role has one owner.`); });
   const reached = state.gates[g.id] || {};
   const gates = GATES.map((m, i) => `<li class="${reached[i] ? 'got' : ''}"><span>${reached[i] ? '\u2713' : i + 1}</span>${esc(m)}${reached[i] ? ` <em>(${WEEKS.find(w => w.id === reached[i]).name})</em>` : ''}</li>`).join('');
-  return sw + `<article class="pack ${g.id} ${b.cat}"><span class="sechead">${c.short} quest</span><h2>${esc(b.title)}</h2><p class="who">${g.name}: ${g.kids.join(', ')}</p>${top}
+  return sw + `<article class="pack ${g.id} ${b.cat}"><span class="sechead">${c.short} quest${b.level ? ' \u00B7 Level ' + b.level : ''}</span><h2>${esc(b.title)}</h2><p class="who">${g.name}: ${g.kids.join(', ')}</p>${top}
     <div class="sec"><span class="sechead">Roles and responsibilities</span><p>Everyone builds, tests and cleans up together. Your role is the part you <b>lead</b> and answer for at checkpoints.</p><div class="roles">${roleCards}</div></div>
     <div class="sec"><span class="sechead">Pick your role</span><div class="picker">${picker}</div>${notes.map(n => `<div class="warn">${esc(n)}</div>`).join('')}</div>
     <div class="sec"><span class="sechead">How the month works</span><p>There\u2019s no set week for each stage. Plan in the first few days and get a first version working by the end of Week 1. After that, build, test and improve in loops for as many versions as you can. The showcase is one session at the end.</p><p>Each week you meet a facilitator for a checkpoint, and they tick off any milestones you\u2019ve reached:</p><ol class="gates">${gates}</ol></div></article>`;
@@ -297,6 +302,7 @@ app.addEventListener('click', e => {
   if (t.tagName === 'SELECT' || (t.tagName === 'INPUT' && t.type !== 'button')) return;
   if (a === 'tab') { ui.tab = v; render(); window.scrollTo(0, 0); }
   else if (a === 'filter') { ui.filter = v; touchUI(); }
+  else if (a === 'level') { ui.level = +v; touchUI(); }
   else if (a === 'pack') { ui.pack = v; touchUI(); }
   else if (a === 'release') { delete state.claims[t.dataset.g]; delete state.roles[t.dataset.g]; delete state.gates[t.dataset.g]; touch(true); }
   else if (a === 'role') { const r = state.roles[ui.pack] = state.roles[ui.pack] || {}; const n = +v; if (r[t.dataset.k] === n) delete r[t.dataset.k]; else r[t.dataset.k] = n; touch(true); }
