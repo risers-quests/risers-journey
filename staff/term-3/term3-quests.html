@@ -75,6 +75,7 @@ select.pick{width:100%;border:2px solid var(--cc);background:var(--ct);border-ra
 .week{border:1.5px solid var(--line);border-radius:12px;padding:12px}
 .week b{font-family:"Bricolage Grotesque",sans-serif;font-size:17px}
 .week ul{margin:6px 0 0;padding-left:18px;font-size:14.5px;color:var(--muted)}
+.card .what{color:var(--ink);background:var(--field);border-radius:10px;padding:10px 12px}
 .lvpill{align-self:flex-start;font-size:12.5px;font-weight:700;letter-spacing:.04em;border-radius:999px;padding:2px 10px;border:1.5px solid var(--lc);color:var(--lc)}
 .lv1{--lc:var(--g3)}.lv2{--lc:var(--g2)}.lv3{--lc:var(--g1)}
 .chip.lv[aria-pressed="true"]{border-color:var(--lc);color:var(--lc)}
@@ -210,7 +211,7 @@ function viewBuilds() {
       const foot = by
         ? `<div class="taken-by ${by.id}"><span>Chosen by ${by.name}</span><button class="linkbtn" data-act="release" data-g="${by.id}">Undo</button></div>`
         : `<select class="pick" data-act="claim" data-b="${b.id}" aria-label="Choose ${esc(b.title)} for a group"><option value="">Choose this for\u2026</option>${GROUPS.map(g => `<option value="${g.id}">${g.name}${state.claims[g.id] ? ' (switch build)' : ''}</option>`).join('')}</select>`;
-      return `<article class="card ${cat}${by ? ' taken' : ''}"><span class="lvpill lv${b.level}">Level ${b.level}</span><h3>${esc(b.title)}</h3><p><span class="lbl">${c.hookLbl}:</span> ${esc(b.hook)}</p><p><span class="lbl">You\u2019ll make:</span> ${esc(b.make)}</p><div class="foot">${foot}</div></article>`;
+      return `<article class="card ${cat}${by ? ' taken' : ''}"><span class="lvpill lv${b.level}">Level ${b.level}</span><h3>${esc(b.title)}</h3><p class="what">${esc(b.what)}</p><p><span class="lbl">${c.hookLbl}:</span> ${esc(b.hook)}</p><p><span class="lbl">You\u2019ll make:</span> ${esc(b.make)}</p><div class="foot">${foot}</div></article>`;
     }).join('');
     const own = `<article class="card own ${cat}"><h3>Your own idea</h3><p>Spotted something else? Propose your own ${cat === 'sol' ? 'LifeHub problem' : 'science build'}. A facilitator approves it at the Week 1 checkpoint.</p><div class="foot"><select class="pick" data-act="custom" data-c="${cat}" aria-label="Propose own idea for a group"><option value="">Propose for\u2026</option>${GROUPS.map(g => `<option value="${g.id}">${g.name}</option>`).join('')}</select></div></article>`;
     return `<div class="cathead"><span class="bigpill ${cat}">${c.name}</span></div><p class="catnote">${c.note}</p><div class="grid">${cards}${own}</div>`;
@@ -232,7 +233,7 @@ function viewPack() {
        <label class="field"><span>${c.hookLbl === 'Problem' ? 'The problem at LifeHub' : 'The science idea'}</span><textarea data-act="cf" data-f="hook" placeholder="${b.cat==='sol' ? 'What isn\u2019t working, and who does it affect?' : 'What science concept will our build show?'}">${esc(state.custom[g.id].hook)}</textarea></label>
        <label class="field"><span>What we\u2019ll end up with</span><textarea data-act="cf" data-f="outcome" placeholder="Describe the finished build and how we\u2019ll know it works">${esc(state.custom[g.id].outcome)}</textarea></label>
        <label class="field"><span>Materials we think we need</span><input type="text" data-act="cf" data-f="materials" value="${esc(state.custom[g.id].materials)}"></label></div>`
-    : `<div class="sec"><span class="sechead">What we\u2019re building</span><p><b>${c.hookLbl}:</b> ${esc(b.hook)}</p></div>
+    : `<div class="sec"><span class="sechead">What we\u2019re building</span><p>${esc(b.what)}</p><p><b>${c.hookLbl}:</b> ${esc(b.hook)}</p></div>
        <div class="sec"><span class="sechead">What we\u2019ll make</span><p>${esc(b.make)}</p></div>`;
   const roleCards = roles.map((r, i) => {
     const h = holder(i);
