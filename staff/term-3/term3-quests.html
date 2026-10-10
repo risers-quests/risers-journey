@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Term 3 Quests</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"></head><body><div id="app"></div><script src="outline-drawings.js"></script><script src="outlines.js"></script><script type="application/json" id="state">{}</script><script>(function main(){
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Term 3 Quests</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"></head><body><div id="app"></div><script src="build-pool.js"></script><script type="application/json" id="state">{}</script><script>(function main(){
 const CSS = `
 :root{--bg:#EEF2EF;--surface:#FFFFFF;--ink:#17262B;--muted:#55666B;--line:#CFD8D3;--sol:#0B7A78;--sol-t:#D8EFEC;--sci:#5A3EC2;--sci-t:#E7E1FA;--g1:#D4442A;--g2:#B57B00;--g3:#2C8549;--g4:#2A60C4;--ok:#2C8549;--help:#B57B00;--stuck:#D4442A;--field:#F6F8F6}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121A1C;--surface:#1B2629;--ink:#E9F0EE;--muted:#9AAEB0;--line:#2E3D40;--sol:#4FC7C1;--sol-t:#16393A;--sci:#A894F5;--sci-t:#2A2350;--g1:#F07A5F;--g2:#E6B63F;--g3:#5CC07D;--g4:#6E9BF0;--ok:#5CC07D;--help:#E6B63F;--stuck:#F07A5F;--field:#152023}}
@@ -148,9 +148,7 @@ const ROLES = {
     {name:'Data keeper', icon:'\uD83D\uDCCA', duties:['Plans the fair test: what changes, what stays the same','Measures and records every trial','Turns results into a chart or table','Spots the pattern in the results']}
   ]
 };
-const OUTLINES = window.T3_OUTLINES || {};
-const BUILDS = Object.keys(OUTLINES).map(k => { const o = OUTLINES[k]; return {id:k, cat:o.cat, title:o.title, hook:o.hook, tagline:o.tagline, outcome:o.outcome, tasks:o.roles.map(r => r[1]), stretch:o.stretch}; });
-const outlineLink = (id, text) => OUTLINES[id] ? `<a class="olink" href="outline.html?b=${id}" target="_top">${text || 'Read the build outline'} \u203A</a>` : '';
+const BUILDS = (window.T3_POOL || []).map(b => Object.assign({tasks:[]}, b));
 const WEEKS = [{id:'w1',name:'Week 1'},{id:'w2',name:'Week 2'},{id:'w3',name:'Week 3'},{id:'w4',name:'Week 4'}];
 const GATES = ['Plan approved: sketch, materials list, and a success test with a number in it','First version works','Tested at least 3 times, with results recorded','Improved because of what a test showed','Ready to show: final version, showcase label, space cleaned'];
 const BTYPES = ['Materials','Know-how','Teamwork','Time','Idea'];
@@ -207,13 +205,13 @@ function viewBuilds() {
       const foot = by
         ? `<div class="taken-by ${by.id}"><span>Chosen by ${by.name}</span><button class="linkbtn" data-act="release" data-g="${by.id}">Undo</button></div>`
         : `<select class="pick" data-act="claim" data-b="${b.id}" aria-label="Choose ${esc(b.title)} for a group"><option value="">Choose this for\u2026</option>${GROUPS.map(g => `<option value="${g.id}">${g.name}${state.claims[g.id] ? ' (switch build)' : ''}</option>`).join('')}</select>`;
-      return `<article class="card ${cat}${by ? ' taken' : ''}"><h3>${esc(b.title)}</h3><p><span class="lbl">${c.hookLbl}:</span> ${esc(b.hook)}</p><p><span class="lbl">You\u2019ll end up with:</span> ${esc(b.tagline)}</p><p class="str"><b>Stretch:</b> ${esc(b.stretch)}</p><p>${outlineLink(b.id)}</p><div class="foot">${foot}</div></article>`;
+      return `<article class="card ${cat}${by ? ' taken' : ''}"><h3>${esc(b.title)}</h3><p><span class="lbl">${c.hookLbl}:</span> ${esc(b.hook)}</p><p><span class="lbl">You\u2019ll make:</span> ${esc(b.make)}</p><div class="foot">${foot}</div></article>`;
     }).join('');
     const own = `<article class="card own ${cat}"><h3>Your own idea</h3><p>Spotted something else? Propose your own ${cat === 'sol' ? 'LifeHub problem' : 'science build'}. A facilitator approves it at the Week 1 checkpoint.</p><div class="foot"><select class="pick" data-act="custom" data-c="${cat}" aria-label="Propose own idea for a group"><option value="">Propose for\u2026</option>${GROUPS.map(g => `<option value="${g.id}">${g.name}</option>`).join('')}</select></div></article>`;
     return `<div class="cathead"><span class="bigpill ${cat}">${c.name}</span></div><p class="catnote">${c.note}</p><div class="grid">${cards}${own}</div>`;
   };
   const left = free.length ? `${free.map(g => g.name).join(', ')} still ${free.length === 1 ? 'needs' : 'need'} to choose.` : 'Every group has chosen a build.';
-  return `<p class="intro">Each group chooses one build. Once a build is chosen, it\u2019s taken. ${left} Every build has a full outline: the finished model, a dimensioned drawing, parts, order of work and the test that proves it works.</p><div class="chips">${chips}</div>${f !== 'sci' ? section('sol') : ''}${f !== 'sol' ? section('sci') : ''}`;
+  return `<p class="intro">Each group chooses one build. Once a build is chosen, it\u2019s taken. ${left}</p><div class="chips">${chips}</div>${f !== 'sci' ? section('sol') : ''}${f !== 'sol' ? section('sci') : ''}`;
 }
 
 function viewPack() {
@@ -230,8 +228,7 @@ function viewPack() {
        <label class="field"><span>What we\u2019ll end up with</span><textarea data-act="cf" data-f="outcome" placeholder="Describe the finished build and how we\u2019ll know it works">${esc(state.custom[g.id].outcome)}</textarea></label>
        <label class="field"><span>Materials we think we need</span><input type="text" data-act="cf" data-f="materials" value="${esc(state.custom[g.id].materials)}"></label></div>`
     : `<div class="sec"><span class="sechead">What we\u2019re building</span><p><b>${c.hookLbl}:</b> ${esc(b.hook)}</p></div>
-       <div class="sec"><span class="sechead">Outcome model</span><p>${esc(b.outcome)}</p><p><b>Stretch goal:</b> ${esc(b.stretch)}</p></div>
-       <div class="sec"><span class="sechead">Build outline</span><p>The drawing, parts list, tools, safety rules and test plan for this build.</p><p>${outlineLink(b.id, 'Open the build outline')}</p></div>`;
+       <div class="sec"><span class="sechead">What we\u2019ll make</span><p>${esc(b.make)}</p></div>`;
   const roleCards = roles.map((r, i) => {
     const h = holder(i);
     return `<div class="role"><h3>${r.icon} ${r.name}</h3><ul>${r.duties.map(d => `<li>${esc(d)}</li>`).join('')}</ul>${b.tasks[i] ? `<div class="task"><b>For this build:</b> ${esc(b.tasks[i])}</div>` : ''}<div class="holder${h.length ? '' : ' none'}">${h.length ? 'Taken by ' + h.join(' and ') : 'Not picked yet'}</div></div>`;
