@@ -1,4 +1,4 @@
-/* Quests — the kid-facing quest page. Two views:
+/* Term 2 Quests — the kid-facing quest page. Two views:
 
    - overview: one list of the Riser's quests, completed first, then the
      ones in progress (badge + progress bar + Continue), with a short
@@ -110,9 +110,8 @@
       app.querySelector('.qd-lede').textContent = 'Your quests this term, and how each one went.';
       var text = 'You completed ' + done.length + (done.length === 1 ? ' quest' : ' quests') + ' this term' +
         (going.length ? ', with ' + going.length + ' still in progress.' : '.');
-      if (roll.thinking) text += ' Your strongest thinking: <strong>' + escapeHtml(roll.thinking.label) + '</strong>, on ' + escapeHtml(roll.thinking.quest) + '.';
       app.insertBefore(el('div', 'hd-card qd-term',
-        '<p class="qd-term-label">Your term so far</p>' +
+        '<p class="qd-term-label">Your Term 2 so far</p>' +
         '<p class="qd-term-text">' + text + '</p>' +
         '<div class="qd-term-chips">' +
           (roll.strongest ? '<span class="qd-term-chip">Strongest <strong>' + escapeHtml(roll.strongest) + '</strong></span>' : '') +
@@ -149,7 +148,7 @@
     var fresh = QR.refreshNotes(model, q.report);
     if (fresh) q.report = Object.assign({}, q.report, fresh);
     var wrap = el('div', 'qd-report');
-    wrap.innerHTML = QR.render(model, q.report, { questHref: q.weekCfg.path });
+    wrap.innerHTML = QR.renderSimple(model, q.report, { questHref: q.weekCfg.path });
     app.appendChild(wrap);
     // Build pictures and video, if staff uploaded any, arrive a moment later.
     Promise.all([
@@ -157,7 +156,7 @@
       QR.fetchBuildVideo(q.weekCfg.group, q.kidKey, q.weekCfg.key)
     ]).then(function (r) {
       var photos = r[0].slots.filter(Boolean);
-      if (photos.length || r[1].url) wrap.innerHTML = QR.render(model, q.report, { questHref: q.weekCfg.path, photos: photos, video: r[1].url });
+      if (photos.length || r[1].url) wrap.innerHTML = QR.renderSimple(model, q.report, { questHref: q.weekCfg.path, photos: photos, video: r[1].url });
     });
   }
 
@@ -167,10 +166,10 @@
     var weekCfg = questKey ? roster.weeks.filter(function (w) { return w.key === questKey; })[0] : null;
     app.innerHTML = '';
 
-    if (weekCfg) app.appendChild(el('div', 'dash-crumb', '<a href="index.html">&larr; All quests</a>'));
+    if (weekCfg) app.appendChild(el('div', 'dash-crumb', '<a href="index.html">&larr; Term 2 Quests</a>'));
     app.appendChild(el('header', 'hd-page-head',
-      '<p class="hd-eyebrow">Term 2 &middot; Self-paced &middot; ' + TERM_START + ' – ' + TERM_END + '</p>' +
-      '<h1>Quests</h1><p class="qd-lede">Loading your quests…</p>'));
+      '<p class="hd-eyebrow">Self-paced &middot; ' + TERM_START + ' – ' + TERM_END + '</p>' +
+      '<h1>Term 2 Quests</h1><p class="qd-lede">Loading your quests…</p>'));
 
     loadQuests(kidKey, roster).then(function (results) {
       if (weekCfg) {

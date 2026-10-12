@@ -541,6 +541,70 @@
     return html + '</section>';
   }
 
+  // The Riser's and family's view: what went well, what to work on (with
+  // one thing to try), one line per part that has something to say, the
+  // build pictures, and the Riser's own words. No scale key, no ladders,
+  // nothing to expand; parts not rated yet are left out.
+  function renderSimple(model, notes, opts) {
+    var n = notes || {};
+    opts = opts || {};
+    var c = model.cats;
+    var html = '<section class="rs2">';
+    if (n.dataLost) {
+      html += '<p class="rc-lost">Part of this quest’s saved progress was lost to a technical issue on our side. Where the record is incomplete, this report draws on facilitator observation.</p>';
+    }
+    if (n.strength || n.growth || n.next) {
+      html += '<div class="rs2-notes">' +
+        (n.strength ? '<div class="rs2-note rs2-good"><h2>What went well</h2><p>' + esc(n.strength) + '</p></div>' : '') +
+        (n.growth || n.next ? '<div class="rs2-note rs2-next"><h2>To work on</h2>' +
+          (n.growth ? '<p>' + esc(n.growth) + '</p>' : '') +
+          (n.next ? '<p class="rs2-try"><strong>Try this:</strong> ' + esc(n.next) + '</p>' : '') + '</div>' : '') +
+        '</div>';
+    }
+
+    // One line per part, only where there's something to say.
+    var rows = [];
+    function row(title, b, text, extra) {
+      rows.push('<div class="rs2-row"><div class="rs2-row-head"><h3>' + title + '</h3>' + pill(b) + '</div>' +
+        '<p>' + esc(text) + '</p>' + (extra || '') + '</div>');
+    }
+    if (c.thinking && (c.thinking.band >= 0 || c.thinking.band === UNDONE)) {
+      var again = (c.thinking.revisit || []).slice(0, 3);
+      row('Thinking', c.thinking.band, c.thinking.band >= 0 ? THINK[c.thinking.band].label + '.' : c.thinking.line,
+        again.length ? '<p class="rs2-again">Worth another look: ' + again.map(function (t) {
+          return opts.questHref && t.anchor ? '<a href="' + esc(opts.questHref + '#' + t.anchor) + '">' + esc(t.name) + '</a>' : esc(t.name);
+        }).join(', ') + '</p>' : '');
+    }
+    if (c.presentation && (c.presentation.band >= 0 || c.presentation.band === UNDONE)) {
+      var p = c.presentation, text = p.line;
+      if (p.criteria) {
+        var strong = p.criteria.filter(function (x) { return x.band >= 2; }).sort(function (a, b) { return b.band - a.band; });
+        var low = p.criteria.filter(function (x) { return x.band < 2; }).sort(function (a, b) { return a.band - b.band; }).slice(0, 2);
+        text = !low.length ? 'Strong in every part.'
+          : (strong.length ? 'Strongest in ' + strong[0].name.toLowerCase() + '; ' : '') + 'keep working on ' + low.map(function (x) { return x.name.toLowerCase(); }).join(' and ') + '.';
+        text = text.charAt(0).toUpperCase() + text.slice(1);
+      }
+      row('Presentation', p.band, text);
+    }
+    if (c.build && (c.build.band >= 0 || c.build.band === UNDONE)) {
+      row('Build', c.build.band, (c.build.name ? c.build.name + ': ' : '') + c.build.line.charAt(0).toLowerCase() + c.build.line.slice(1));
+    }
+    if (c.habits && (c.habits.band >= 0 || c.habits.band === UNDONE)) {
+      row('Work habits', c.habits.band, c.habits.lines[0]);
+    }
+    if (rows.length) html += '<div class="rs2-parts"><h2>How each part went</h2>' + rows.join('') + '</div>';
+
+    var photos = (opts.photos && opts.photos.length) ? opts.photos : (c.build && c.build.photo ? [c.build.photo] : []);
+    if (photos.length || opts.video) {
+      html += '<div class="rs2-media"><h2>' + (c.build && c.build.name ? esc(c.build.name) : 'The build') + '</h2>' + photosHtml(photos) +
+        (opts.video ? '<video class="rc-video" src="' + esc(opts.video) + '" controls preload="metadata" playsinline></video>' : '') + '</div>';
+    }
+    if (n.quote && n.quote.text) {
+      html += '<figure class="rc-quote"><figcaption>In your own words</figcaption><blockquote>' + esc(n.quote.text) + '</blockquote></figure>';
+    }
+    return html + '</section>';
+  }
+
   /* ---------- the evidence quote ---------- */
 
   // Answers worth quoting: the Riser's own words on a question they got
@@ -709,6 +773,7 @@
     draftNotes: draftNotes,
     presentationGap: presentationGap,
     render: render,
+    renderSimple: renderSimple,
     rollup: rollup,
     fetchReport: fetchReport,
     saveReport: saveReport,

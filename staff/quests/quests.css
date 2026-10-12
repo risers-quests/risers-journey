@@ -93,3 +93,6 @@
 .rv-quote-opt small { display: block; font-size: .72rem; font-weight: 700; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .06em; }
 .rv-quote-opt em { font-style: normal; line-height: 1.45; }
 @media (max-width: 860px) { .rv-think { grid-template-columns: 1fr; } }
+.rv-detail { margin-top: 18px; }
+.rv-detail > summary { cursor: pointer; font-weight: 600; font-size: .9rem; color: var(--ink-soft); padding: 8px 0; }
+.rv-detail[open] > summary { margin-bottom: 10px; }

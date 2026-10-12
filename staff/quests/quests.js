@@ -53,7 +53,7 @@
   function renderRoster() {
     app.innerHTML = '';
     app.appendChild(el('header', 'hd-page-head',
-      '<p class="hd-eyebrow">Term 2 &middot; Self-paced quests</p><h1>Quests</h1>' +
+      '<p class="hd-eyebrow">Self-paced quests</p><h1>Term 2 Quests</h1>' +
       '<p>Choose a Riser to see their quests and feedback.</p>'));
 
     var groups = [];

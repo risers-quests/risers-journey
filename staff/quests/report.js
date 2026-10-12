@@ -141,7 +141,12 @@
       shareInput.checked = !!report.shared;
 
       function paint() {
-        preview.innerHTML = QR.render(model, report, { questHref: '../../' + w.path.replace(/^\.\.\//, '') + '?fac=1', photos: slots.filter(Boolean), video: video.url, staff: true, open: true });
+        var mediaOpts = { questHref: '../../' + w.path.replace(/^\.\.\//, '') + '?fac=1', photos: slots.filter(Boolean), video: video.url };
+        // Exactly what the Riser and family see, then the full detail
+        // behind it (evidence, Bloom's, every part) for staff only.
+        preview.innerHTML = QR.renderSimple(model, report, mediaOpts) +
+          '<details class="rv-detail"><summary>Full detail (staff only)</summary>' +
+          QR.render(model, report, Object.assign({ staff: true, open: true }, mediaOpts)) + '</details>';
         paintPhoto();
         paintVideo();
         paintFit();

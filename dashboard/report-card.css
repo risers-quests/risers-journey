@@ -126,3 +126,26 @@
 @media (max-width: 520px) { .rc-photos-2 .rc-photo, .rc-photos-3 .rc-photo { height: 150px; } .rc-photos-3 .rc-photo:first-child { height: 240px; } }
 .rc-video { display: block; width: 100%; max-height: 420px; margin-top: 8px; border-radius: 12px; background: #111; }
 .rc-build-name { margin: 0; font-family: var(--font-head); font-weight: 600; font-size: 1rem; color: var(--ink); }
+
+/* The Riser's and family's quest page (renderSimple): what went well,
+   what to work on, one line per part, the build, their own words. */
+.rs2 { max-width: 820px; display: flex; flex-direction: column; gap: 18px; }
+.rs2 h2 { margin: 0 0 8px; font-family: var(--font-head); font-size: 1.02rem; font-weight: 600; color: var(--ink); }
+.rs2-notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.rs2-note { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 18px 20px; box-shadow: var(--shadow-sm); border-top: 3px solid var(--note); }
+.rs2-good { --note: var(--brand-green); }
+.rs2-next { --note: #d39b3a; }
+.rs2-note p { margin: 0; font-size: .96rem; line-height: 1.6; color: var(--ink); }
+.rs2-note p + p { margin-top: 10px; }
+.rs2-try { padding: 10px 12px; border-radius: 10px; background: var(--paper-soft); }
+.rs2-parts { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 18px 20px 6px; box-shadow: var(--shadow-sm); }
+.rs2-row { padding: 12px 0; border-top: 1px solid var(--border); }
+.rs2-parts h2 + .rs2-row { border-top: 0; padding-top: 4px; }
+.rs2-row-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.rs2-row-head h3 { margin: 0; font-family: var(--font-head); font-size: .95rem; font-weight: 600; }
+.rs2-row p { margin: 0; font-size: .93rem; line-height: 1.5; color: var(--ink-soft); }
+.rs2-again { margin-top: 6px !important; font-size: .86rem !important; }
+.rs2-again a { color: var(--accent); }
+.rs2-media { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 18px 20px; box-shadow: var(--shadow-sm); }
+.rs2 .rc-quote { margin: 0; }
+@media (max-width: 700px) { .rs2-notes { grid-template-columns: 1fr; } }
