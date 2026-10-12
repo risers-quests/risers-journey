@@ -298,7 +298,7 @@
     var header = el('div', 'eot2-form-header');
     header.innerHTML =
       '<div><p class="mom-eyebrow">Term 2 Conference &middot; ' + CONFERENCE_DATE + '</p><h1>Minutes of Meeting &mdash; ' + kid.name + '</h1>' +
-      '<div class="eot2-sub">Part 2 written by ' + escapeHtml(editAs) + '</div></div>' +
+      '</div>' +
       '<div class="eot2-status eot2-status-offline" id="save-status">Loading&hellip;</div>';
     app.appendChild(header);
     var body = el('div', 'mom-body mom-body-wide');
