@@ -93,13 +93,11 @@
       window.eot2Fetch(kid.group, kid.slug, 'term2-mom'),
       window.eot2Fetch(kid.group, kid.slug, 'term2-mom-family')
     ]).then(function (r) {
-      // Planned = Part 2 has an agreed idea; Part 1 = the family's
-      // reflection is in; Started = anything else (incl. older notes).
-      var st = Object.assign({}, (r[1] && r[1].state) || {}, (r[0] && r[0].state) || {});
-      var filled = function (v) { return v && String(v).trim(); };
-      var planned = (st.p2_ideas || []).some(function (i) { return i && filled(i.idea); });
-      var part1 = ['p1_working', 'p1_notWorking', 'p1_questions', 'p1_ideas'].some(function (k) { return filled(st[k]); });
-      var label = planned ? 'Planned' : part1 ? 'Part 1 done' : hasAnyAnswer(st) ? 'Started' : 'Not started';
+      // Part 2 submitted = the plan is agreed; Part 1 submitted = the
+      // family's reflection is in; Started = drafts or older notes only.
+      var mom = (r[0] && r[0].state) || {}, fam = (r[1] && r[1].state) || {};
+      var planned = !!mom.p2_sub, part1 = !!fam.p1_sub;
+      var label = planned ? 'Part 2 submitted' : part1 ? 'Part 1 submitted' : (hasAnyAnswer(mom) || hasAnyAnswer(fam)) ? 'Started' : 'Not started';
       momTd.appendChild(badge(planned, '../mom/index.html?editAs=' + encodeURIComponent(staffLabel) + '&kid=' + kid.slug, label));
     }));
 

@@ -138,7 +138,8 @@
         '<div class="cs-share">' +
           '<label class="cs-switch"><input type="checkbox" class="cs-share-input"><span class="cs-switch-ui" aria-hidden="true"></span>' +
           '<span class="cs-share-text"><strong>Share with ' + kid.name + '</strong><span></span></span></label>' +
-        '</div>';
+        '</div>' +
+        '<a class="cs-compare" href="../results/index.html?view=staff&kid=' + kid.slug + '" hidden>Self and staff side by side &rarr;</a>';
       body.appendChild(bar);
       var shareInput = bar.querySelector('.cs-share-input');
       shareInput.checked = !!state._shared;
@@ -159,6 +160,7 @@
         bar.querySelector('.cs-count').textContent = n + ' of ' + ITEMS.length + ' decided';
         bar.querySelector('.cs-fill').style.width = Math.round((n / ITEMS.length) * 100) + '%';
         var complete = n === ITEMS.length;
+        bar.querySelector('.cs-compare').hidden = !complete;
         shareInput.disabled = !complete && !state._shared;
         bar.querySelector('.cs-share-text span').textContent = state._shared
           ? kid.name + ' can see this on their Term 2 Conference page.'

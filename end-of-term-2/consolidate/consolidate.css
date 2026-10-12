@@ -68,3 +68,6 @@
   .cs-pick { width: 100%; }
   .cs-opt { flex: 1; min-width: 0; }
 }
+.cs-compare { grid-column: 1 / -1; justify-self: start; font-weight: 600; color: var(--accent); text-decoration: none; font-size: .9rem; }
+.cs-compare:hover { text-decoration: underline; }
+.cs-compare[hidden] { display: none; }
