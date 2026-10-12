@@ -13,9 +13,9 @@
    - Saves into the same record the old "Consolidated (final)" rater form
      used (week key term2-self-assessment-consolidated), so the Term 2
      Conference status table keeps tracking it.
-   - Once every statement has a final rating, the Riser sees their own
-     ratings next to these on their Self-Assessment page (and on "Your
-     facilitators' assessment"); until then, nothing reaches them.
+   - Nothing reaches the Riser until "Share with <name>" is switched on
+     (stored as _shared in that record); then their Self-Assessment page
+     shows their ratings next to these.
 
    No ?kid=: every Riser, with how far their consolidation has got. */
 (function () {
@@ -104,7 +104,7 @@
         var rated = STAFF.filter(function (s) { return Object.keys(d.staff[s.id]).length; }).length;
         var decided = decidedCount(d.consolidated);
         var meta = row.querySelector('.sq-meta');
-        if (decided === ITEMS.length) { meta.textContent = 'Done · ' + kid.name + ' can see it'; meta.classList.add('is-done'); }
+        if (d.consolidated._shared) { meta.textContent = 'Shared with ' + kid.name; meta.classList.add('is-done'); }
         else if (decided) meta.textContent = decided + ' of ' + ITEMS.length + ' decided';
         else meta.textContent = rated + ' of ' + STAFF.length + ' staff have rated';
       });
@@ -135,9 +135,14 @@
           '<button type="button" class="eot2-btn eot2-btn-secondary cs-accept-all">Accept all suggestions</button>' +
           '<label class="cs-toggle"><input type="checkbox" class="cs-filter"> Only where staff disagree</label>' +
         '</div>' +
-        '<div class="cs-share"><span class="cs-share-text"><strong></strong><span></span></span></div>' +
+        '<div class="cs-share">' +
+          '<label class="cs-switch"><input type="checkbox" class="cs-share-input"><span class="cs-switch-ui" aria-hidden="true"></span>' +
+          '<span class="cs-share-text"><strong>Share with ' + kid.name + '</strong><span></span></span></label>' +
+        '</div>' +
         '<a class="cs-compare" href="../results/index.html?view=staff&kid=' + kid.slug + '" hidden>Self and staff side by side &rarr;</a>';
       body.appendChild(bar);
+      var shareInput = bar.querySelector('.cs-share-input');
+      shareInput.checked = !!state._shared;
 
       var saveTimer = null;
       function save() {
@@ -156,10 +161,10 @@
         bar.querySelector('.cs-fill').style.width = Math.round((n / ITEMS.length) * 100) + '%';
         var complete = n === ITEMS.length;
         bar.querySelector('.cs-compare').hidden = !complete;
-        bar.querySelector('.cs-share-text strong').textContent = complete ? kid.name + ' can see this' : 'Not visible to ' + kid.name + ' yet';
-        bar.querySelector('.cs-share-text span').textContent = complete
-          ? 'On their Self-Assessment page, next to their own ratings.'
-          : kid.name + ' sees it once every statement has a final rating.';
+        shareInput.disabled = !complete && !state._shared;
+        bar.querySelector('.cs-share-text span').textContent = state._shared
+          ? kid.name + ' can see this on their Self-Assessment page, next to their own ratings.'
+          : complete ? 'Not visible to ' + kid.name + ' yet.' : 'Decide every item first.';
       }
 
       // ---- the items ----
@@ -230,6 +235,11 @@
       bar.querySelector('.cs-filter').addEventListener('change', function () {
         onlyDisagreements = this.checked;
         applyFilter();
+      });
+      shareInput.addEventListener('change', function () {
+        state._shared = shareInput.checked;
+        refreshBar();
+        save();
       });
 
       refreshBar();

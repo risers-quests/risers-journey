@@ -45,12 +45,13 @@
 /* This is the Riser's page. With no Riser signed in, a facilitator goes to
    the staff Term 2 Conference page and anyone else to Home to sign in.
    Shows "Your facilitators' assessment" once every statement has a final
-   staff rating (Consolidate page). */
+   staff rating and staff have switched on "Share with <name>"
+   (Consolidate page). */
 (function () {
   var kid = window.EOT2_signedInKid();
   if (!kid) { window.EOT2_leaveWithoutKid('staff/index.html', '../index.html'); return; }
   window.eot2Fetch(kid.group, kid.slug, 'term2-self-assessment-consolidated').then(function (d) {
-    if (d && d.state && window.EOT2_compareData({}, d.state).complete) document.getElementById('hub-results').hidden = false;
+    if (d && d.state && d.state._shared && window.EOT2_compareData({}, d.state).complete) document.getElementById('hub-results').hidden = false;
   });
 })();
 </script>

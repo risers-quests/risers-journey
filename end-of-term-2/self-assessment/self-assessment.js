@@ -152,7 +152,8 @@
       app.insertAdjacentHTML('beforeend', window.EOT2_summarySelf(state, true));
     }
 
-    // Once staff have a final rating for every statement, the Riser sees
+    // Once staff have a final rating for every statement and have switched
+    // on "Share with <name>" (Consolidate page), the Riser sees
     // their own ratings next to the staff's, with a summary of what's
     // similar and different (shared/eot2-compare.js), instead of the form.
     function showComparison(staff) {
@@ -174,7 +175,7 @@
       applyState(remoteState || local);
       setStatus(data ? 'saved' : (local ? 'offline' : 'saved'));
       var staff = r[1] && r[1].state;
-      if (staff && window.EOT2_compareData(state, staff).complete) showComparison(staff);
+      if (staff && staff._shared && window.EOT2_compareData(state, staff).complete) showComparison(staff);
       else lockIfComplete();
     });
   }
