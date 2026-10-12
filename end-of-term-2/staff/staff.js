@@ -108,17 +108,14 @@
   tableWrap.innerHTML = '';
   tableWrap.appendChild(table);
 
-  // Each Riser's own link (assets/brand.js): opens their Home already
-  // signed in, so a parent can go straight in on any device.
-  var codes = window.LH_RISER_LINKS || {};
+  // Each Riser's own link (/<slug>/index.html at the site root): opens
+  // their Home already signed in, so a parent can go straight in.
   var home = new URL('../../', location.href).href;
   var links = el('section', 'eot2-links');
   links.appendChild(el('h2', null, 'Risers’ own links'));
   links.appendChild(el('p', null, 'Each link opens that Riser’s Home, already signed in. Send it to the family.'));
   window.EOT2_KIDS.forEach(function (kid) {
-    var code = Object.keys(codes).filter(function (c) { return codes[c] === kid.slug; })[0];
-    if (!code) return;
-    var url = home + '?r=' + code;
+    var url = home + kid.slug;
     var row = el('div', 'eot2-link-row', '<strong>' + kid.name + '</strong><a href="' + url + '" target="_blank" rel="noopener">' + url + '</a>');
     var btn = el('button', 'eot2-btn eot2-btn-secondary', 'Copy');
     btn.type = 'button';
