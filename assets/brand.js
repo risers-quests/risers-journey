@@ -20,6 +20,23 @@
 
   var KID_KEY = 'imm-l3-kid';
   var STAFF_KEY = 'rj-staff-name';
+
+  // Each Riser's own link: any page opened with ?r=<code> signs that Riser
+  // in on this device (no name to type), then drops the code from the
+  // address bar. The staff Term 2 Conference page lists every link.
+  var RISER_LINKS = {
+    'x8kw7a99': 'eva', 'jh7er7zo': 'gabby', 'wfp6cu2x': 'elyon',
+    's2ig4qj9': 'chris', 'ddoqp4ux': 'yokesh', '3gut3hnt': 'zach',
+    'mlz6nsvs': 'owen', 'ox3f9dgj': 'pranavi', '1eoytpuc': 'shalom',
+    '1voxiwjw': 'michael', 'rl46aj8s': 'karis', '8q1yfhmm': 'benjamin'
+  };
+  window.LH_RISER_LINKS = RISER_LINKS;
+  var linkKid = RISER_LINKS[params.get('r')];
+  if (linkKid) {
+    try { localStorage.setItem(KID_KEY, linkKid); } catch (e) {}
+    params.delete('r');
+    try { history.replaceState(null, '', location.pathname + (params.toString() ? '?' + params : '') + location.hash); } catch (e) {}
+  }
   // The private staff reference site (risers-term2-digital-quests-staff-data).
   // staff/staff-links.js reads this too, so it's set in this one place.
   window.LH_STAFF_SITE = 'https://risers-term2-digital-quests-staff-d.vercel.app/';

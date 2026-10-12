@@ -322,3 +322,12 @@ body { background: var(--paper); color: var(--ink); font-family: var(--font-body
 .mom-pick-item.is-on { background: var(--accent-soft); border-color: transparent; color: var(--ink-soft); }
 .mom-pick-item.is-on em { color: var(--good); }
 @media (max-width: 760px) { .mom-shared-grid { grid-template-columns: 1fr; } }
+
+/* Staff: each Riser's own link (staff/staff.js). */
+.eot2-links { margin-top: 32px; padding: 22px 24px; background: #fff; border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow-sm); }
+.eot2-links h2 { margin: 0 0 4px; font-family: var(--font-head); font-size: 1.1rem; font-weight: 600; }
+.eot2-links > p { margin: 0 0 14px; font-size: .88rem; color: var(--ink-soft); }
+.eot2-link-row { display: grid; grid-template-columns: 90px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 8px 0; border-top: 1px solid var(--border); }
+.eot2-link-row a { font-size: .85rem; color: var(--accent); word-break: break-all; }
+.eot2-link-row .eot2-btn { padding: 6px 14px; font-size: .82rem; }
+@media (max-width: 560px) { .eot2-link-row { grid-template-columns: 1fr auto; } .eot2-link-row strong { grid-column: 1 / -1; } }

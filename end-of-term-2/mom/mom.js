@@ -204,19 +204,26 @@
 
   // Lines staff can move into "What we shared": the self vs staff
   // comparison (once consolidation is done) and the family's Part 1.
+  // How each rating reads as an observation.
+  var SEEN = { NE: 'as not seen yet', E: 'as just starting', D: 'as happening some of the time', CD: 'as happening every time' };
+  function stmt(r) { return r.item.text.replace(/[.\s]+$/, ''); }
+  function listNames(n) { return n.length > 1 ? n.slice(0, -1).join(', ') + ' and ' + n[n.length - 1] : n[0]; }
+
   function pickItems(kid, compare, part1) {
     var groups = [];
     if (compare) {
       var d = window.EOT2_compareData(compare.self, compare.staff);
       if (d.complete && d.compared) {
         var lines = [];
-        if (d.agreeAreas.length) lines.push(kid.name + ' and staff agree most on ' + d.agreeAreas.slice(0, 3).map(function (a) { return a.name; }).join(', ') + '.');
-        d.strengths.slice(0, 4).forEach(function (r) { lines.push('Both see as a strength: ' + r.item.text + '.'); });
-        d.growing.slice(0, 4).forEach(function (r) { lines.push('Both see room to grow: ' + r.item.text + '.'); });
+        if (d.agreeAreas.length) lines.push(kid.name + ' and staff see ' + listNames(d.agreeAreas.slice(0, 3).map(function (a) { return a.name; })) + ' in much the same way.');
+        d.strengths.slice(0, 4).forEach(function (r) { lines.push(stmt(r) + ': ' + kid.name + ' and staff both see this ' + SEEN[r.self] + '.'); });
+        d.growing.slice(0, 4).forEach(function (r) {
+          lines.push(stmt(r) + ': ' + kid.name + ' and staff both see this ' + (r.self === r.staff ? SEEN[r.self] : 'as still early on') + '.');
+        });
         groups.push({ title: 'Similarities', lines: lines });
         var diff = [];
-        d.selfHigher.slice(0, 4).forEach(function (r) { diff.push(kid.name + ' rated higher (' + r.self + ' vs ' + r.staff + '): ' + r.item.text + '.'); });
-        d.staffHigher.slice(0, 4).forEach(function (r) { diff.push('Staff rated higher (' + r.staff + ' vs ' + r.self + '): ' + r.item.text + '.'); });
+        d.selfHigher.slice(0, 4).forEach(function (r) { diff.push(stmt(r) + ': ' + kid.name + ' sees this ' + SEEN[r.self] + ', while staff see it ' + SEEN[r.staff] + '.'); });
+        d.staffHigher.slice(0, 4).forEach(function (r) { diff.push(stmt(r) + ': staff see this ' + SEEN[r.staff] + ', while ' + kid.name + ' sees it ' + SEEN[r.self] + '.'); });
         groups.push({ title: 'Differences', lines: diff });
       }
     }
