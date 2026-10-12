@@ -6,7 +6,7 @@
    "you"), the staff copy of that page, and the MOM's Part 2 pick list.
 
    EOT2_compareData(self, staff)       -> rows, counts, areas and highlights
-   EOT2_compareHtml(self, staff, opts) -> summary + side-by-side table
+   EOT2_compareHtml(self, staff, opts) -> side-by-side table, then summary
      opts: { kidView: true|false, name: 'Benjamin' } */
 (function () {
   var SCALE = window.EOT2_RUBRIC_SCALE;
@@ -73,8 +73,8 @@
     var kidView = !!opts.kidView, name = opts.name || 'The Riser';
     var d = window.EOT2_compareData(self, staff);
     var who = kidView
-      ? { me: 'You', them: 'Facilitators', agree: 'You and your facilitators', meHigher: 'You rated yourself higher', themHigher: 'Your facilitators rated you higher' }
-      : { me: name, them: 'Staff', agree: name + ' and staff', meHigher: name + ' rated higher', themHigher: 'Staff rated higher' };
+      ? { me: 'You', them: 'Facilitators', meCol: 'My rating', themCol: 'Facilitators’ rating', agree: 'You and your facilitators', meHigher: 'You rated yourself higher', themHigher: 'Your facilitators rated you higher' }
+      : { me: name, them: 'Staff', meCol: name + '’s rating', themCol: 'Staff rating', agree: name + ' and staff', meHigher: name + ' rated higher', themHigher: 'Staff rated higher' };
     var codes = function (r) { return who.me + ': ' + r.self + ' &middot; ' + who.them + ': ' + r.staff; };
 
     // ---- summary ----
@@ -87,7 +87,7 @@
     if (d.staffHigher.length) diff += block(who.themHigher, list(d.staffHigher, kidView, codes));
     if (!diff) diff = '<p class="cmp-none">' + (kidView ? 'You and your facilitators gave the same rating on every statement.' : 'Every rating matches.') + '</p>';
 
-    var html = '<section class="cmp-summary"><h2>' + (kidView ? 'How your ratings compare' : 'How the ratings compare') + '</h2>' +
+    var summary = '<section class="cmp-summary"><h2>' + (kidView ? 'How your ratings compare' : 'How the ratings compare') + '</h2>' +
       '<div class="cmp-counts">' +
         '<span><strong>' + d.same.length + '</strong> same rating</span>' +
         '<span><strong>' + d.selfHigher.length + '</strong> ' + (kidView ? 'you rated higher' : name + ' rated higher') + '</span>' +
@@ -96,24 +96,24 @@
       '<div class="cmp-grid"><div class="cmp-col cmp-sim"><h3 class="cmp-col-h">Similarities</h3>' + sim + '</div>' +
       '<div class="cmp-col cmp-diff"><h3 class="cmp-col-h">Differences</h3>' + diff + '</div></div></section>';
 
-    // ---- side-by-side table ----
+    // ---- side-by-side table: statement | self rating | staff rating ----
     var lastSection = null, lastSub = null;
-    html += '<div class="cmp-table" role="table">';
+    var html = '<div class="cmp-table" role="table">';
     d.rows.forEach(function (r) {
       if (r.section !== lastSection) {
         html += '<h2 class="eot2-section-title cmp-section">' + esc(r.section) + '</h2>' +
-          '<div class="cmp-head" role="row"><span>Statement</span><span>' + who.me + '</span><span>' + who.them + '</span></div>';
+          '<div class="cmp-head" role="row"><span>Statement</span><span>' + who.meCol + '</span><span>' + who.themCol + '</span></div>';
         lastSection = r.section; lastSub = null;
       }
       if (r.sub && r.sub !== lastSub) { html += '<h3 class="eot2-sub-title cmp-sub">' + esc(r.sub) + '</h3>'; lastSub = r.sub; }
       var mark = r.same === true ? 'is-same' : r.gap > 0 ? 'is-self-higher' : r.gap < 0 ? 'is-staff-higher' : '';
       html += '<div class="cmp-row ' + mark + '" role="row">' +
         '<p>' + esc(kidView ? r.item.kidText : r.item.text) + '</p>' +
-        '<span class="cmp-cell is-self" title="' + esc(labelOf(r.self)) + '"><small>' + who.me + '</small>' + (r.self || '—') + '</span>' +
-        '<span class="cmp-cell is-staff" title="' + esc(labelOf(r.staff)) + '"><small>' + who.them + '</small>' + (r.staff || '—') + '</span>' +
+        '<span class="cmp-cell is-self"><small>' + who.meCol + '</small>' + (r.self || '—') + '<em>' + esc(labelOf(r.self)) + '</em></span>' +
+        '<span class="cmp-cell is-staff"><small>' + who.themCol + '</small>' + (r.staff || '—') + '<em>' + esc(labelOf(r.staff)) + '</em></span>' +
       '</div>';
     });
     html += '</div>';
-    return html;
+    return html + summary;
   };
 })();
