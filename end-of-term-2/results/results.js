@@ -2,10 +2,9 @@
    assessment, in two columns, with a summary of similarities and
    differences (shared/eot2-compare.js).
 
-   - Riser: their own page. Shows once staff have switched on "Share with
-     <name>" on the Consolidate page (_shared in the
-     term2-self-assessment-consolidated record); before that, a short
-     "after your conference" note.
+   - Riser: their own page. Shows once every statement has a final rating
+     on the Consolidate page; before that, a short "after your conference"
+     note.
    - Staff: ?view=staff&kid=<slug> (linked from Consolidate). Shows as soon
      as every statement has a final rating. */
 (function () {
@@ -46,7 +45,7 @@
     var body = el('div', 'rs-body', '<p class="rs-muted">Loading…</p>');
     app.appendChild(body);
     load(kid).then(function (d) {
-      if (!d.staff._shared) {
+      if (!window.EOT2_compareData(d.self, d.staff).complete) {
         body.innerHTML = '<p class="rs-muted">Your facilitators’ assessment will appear here after your conference.</p>';
         return;
       }
@@ -71,8 +70,6 @@
         return;
       }
       body.innerHTML = '';
-      body.appendChild(el('p', 'rs-shared ' + (d.staff._shared ? 'is-on' : ''),
-        d.staff._shared ? 'Shared with ' + kid.name + '.' : 'Not shared with ' + kid.name + ' yet.'));
       body.appendChild(legend());
       body.appendChild(el('div', null, window.EOT2_compareHtml(d.self, d.staff, { kidView: false, name: kid.name })));
     });

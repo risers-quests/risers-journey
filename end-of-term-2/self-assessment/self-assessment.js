@@ -152,13 +152,30 @@
       app.insertAdjacentHTML('beforeend', window.EOT2_summarySelf(state, true));
     }
 
+    // Once staff have a final rating for every statement, the Riser sees
+    // their own ratings next to the staff's, with a summary of what's
+    // similar and different (shared/eot2-compare.js), instead of the form.
+    function showComparison(staff) {
+      progressLine.remove();
+      form.remove();
+      footer.remove();
+      header.querySelector('.eot2-sub').textContent = 'Your ratings, next to your facilitators’';
+      app.appendChild(el('div', null, window.EOT2_compareHtml(state, staff, { kidView: true })));
+    }
+
     updateProgress();
-    window.eot2Fetch(kid.group, kid.slug, weekKey).then(function (data) {
+    Promise.all([
+      window.eot2Fetch(kid.group, kid.slug, weekKey),
+      isStaff ? null : window.eot2Fetch(kid.group, kid.slug, 'term2-self-assessment-consolidated')
+    ]).then(function (r) {
+      var data = r[0];
       var local = window.eot2LoadLocal(weekKey, kid.slug);
       var remoteState = data && data.state;
       applyState(remoteState || local);
       setStatus(data ? 'saved' : (local ? 'offline' : 'saved'));
-      lockIfComplete();
+      var staff = r[1] && r[1].state;
+      if (staff && window.EOT2_compareData(state, staff).complete) showComparison(staff);
+      else lockIfComplete();
     });
   }
 
