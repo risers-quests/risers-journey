@@ -1,8 +1,7 @@
-/* Risers Journey home — the one name-gate login for the whole portal
-   (same KID_KEY dashboard/dashboard.js uses, so signing in here also signs
-   in on My Quests and Term 2 Conference), then a calm launchpad: a greeting
-   and one tile per category. Each category's details — progress,
-   metrics, forms — live only on that category's own page. */
+/* Risers Journey home. A Riser signs in by opening their own link (their
+   name plus two words, a folder at the site root), which remembers them on
+   this device; there's no name to type, so nobody can open someone else's
+   work. Then a calm launchpad: a greeting and one tile per category. */
 (function () {
   var KID_KEY = 'imm-l3-kid';
 
@@ -18,34 +17,15 @@
     });
   }
 
-  function showGate(roster) {
+  // No typing a name: each Riser signs in by opening their own link, so
+  // nobody can open someone else's work.
+  function showGate() {
     var app = document.getElementById('app');
     app.innerHTML = '';
-    var gate = el('div', 'name-gate');
-    gate.innerHTML =
+    app.appendChild(el('div', 'name-gate',
       '<h1>Risers Journey</h1>' +
-      '<p>Type your name to see your quests and your term.</p>' +
-      '<input type="text" id="gate-name-input" placeholder="Your name" autocomplete="off">' +
-      '<button type="button" class="btn btn-primary" id="gate-go-btn">Go &rarr;</button>' +
-      '<div class="gate-msg" id="gate-msg"></div>';
-    app.appendChild(gate);
-
-    var input = document.getElementById('gate-name-input');
-    var msg = document.getElementById('gate-msg');
-    function tryEnter() {
-      var name = (input.value || '').trim().toLowerCase();
-      if (!name) return;
-      if (!roster[name]) {
-        msg.textContent = 'Hmm, that name isn’t set up yet — check with your facilitator.';
-        return;
-      }
-      try { localStorage.setItem(KID_KEY, name); } catch (e) {}
-      // Reload so the app shell (navigation, profile) picks up the sign-in.
-      location.reload();
-    }
-    document.getElementById('gate-go-btn').addEventListener('click', tryEnter);
-    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') tryEnter(); });
-    input.focus();
+      '<p>Open your own Risers Journey link to see your quests and your term.</p>' +
+      '<p class="gate-msg">Don’t have it? Ask your facilitator.</p>'));
   }
 
   function renderHome(kidEntry) {
@@ -71,7 +51,7 @@
     if (kid && roster[kid]) {
       renderHome(roster[kid]);
     } else {
-      showGate(roster);
+      showGate();
     }
   }
 

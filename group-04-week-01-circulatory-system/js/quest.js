@@ -640,8 +640,11 @@
   // type or validate. One tap confirms it; a "not you?" link on the page
   // sends anyone else back to the hub to find their own link instead.
   function initKidGate(expectedName) {
-    var current = null;
-    try { current = localStorage.getItem(KID_KEY); } catch (e) {}
+    // Only this page's own Riser (signed in on this device through their
+    // own link) or a facilitator signed in on the staff side can open it.
+    // Anyone else sees a locked screen with no way to switch to this Riser.
+    var current = null, staff = null;
+    try { current = localStorage.getItem(KID_KEY); staff = localStorage.getItem('rj-staff-name'); } catch (e) {}
 
     function unlock() {
       document.documentElement.classList.remove('gate-locked');
@@ -652,18 +655,17 @@
     function showBlocked() {
       var block = document.getElementById('quest-gate-block');
       if (!block) return;
+      var h = block.querySelector('h2'), p = block.querySelector('p');
+      if (h) h.textContent = 'This quest belongs to another Riser';
+      if (p) p.textContent = 'Open your own Risers Journey link to see your quests.';
+      var card = block.querySelector('.name-gate-card');
+      if (card) card.style.display = 'none';
+      var back = block.querySelector('.gate-not-you');
+      if (back) { back.href = '/'; back.textContent = 'Go to Home →'; }
       block.classList.add('show');
-      var confirmBtn = document.getElementById('gate-confirm-btn');
-      if (confirmBtn && !confirmBtn.dataset.wired) {
-        confirmBtn.dataset.wired = '1';
-        confirmBtn.addEventListener('click', function () {
-          try { localStorage.setItem(KID_KEY, expectedName); } catch (err) {}
-          unlock();
-        });
-      }
     }
 
-    if (current && current.toLowerCase() === expectedName.toLowerCase()) {
+    if ((current && current.toLowerCase() === expectedName.toLowerCase()) || (!current && staff) || (staff && window.QUEST_FACILITATOR_MODE)) {
       unlock();
     } else {
       showBlocked();
