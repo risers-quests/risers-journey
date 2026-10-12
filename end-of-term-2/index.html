@@ -21,7 +21,7 @@
   <div class="eot2-hub-grid">
     <a class="eot2-hub-card" href="self-assessment/index.html">
       <h3>Self-Assessment</h3>
-      <p>Rate yourself across planning, ownership, time, problem solving, discussion, and SEL.</p>
+      <p>Rate yourself across planning, ownership, time, problem solving, discussion, and SEL. After your conference, see your facilitators’ ratings next to yours.</p>
     </a>
     <a class="eot2-hub-card" href="term-reflection/index.html">
       <h3>Term Reflection</h3>
@@ -31,28 +31,16 @@
       <h3>Minutes of Meeting</h3>
       <p>Reflect with your parents, then plan Term 3 together at your conference.</p>
     </a>
-    <a class="eot2-hub-card" href="results/index.html" id="hub-results" hidden>
-      <h3>Your facilitators’ assessment</h3>
-      <p>How your facilitators see you, next to how you rated yourself.</p>
-    </a>
   </div>
 </div>
 <script src="shared/eot2-data.js"></script>
 <script src="shared/eot2-sync.js"></script>
-<script src="self-assessment/rubric-data.js"></script>
-<script src="shared/eot2-compare.js"></script>
 <script>
 /* This is the Riser's page. With no Riser signed in, a facilitator goes to
-   the staff Term 2 Conference page and anyone else to Home to sign in.
-   Shows "Your facilitators' assessment" once every statement has a final
-   staff rating and staff have switched on "Share with <name>"
-   (Consolidate page). */
+   the staff Term 2 Conference page and anyone else to Home to sign in. */
 (function () {
   var kid = window.EOT2_signedInKid();
-  if (!kid) { window.EOT2_leaveWithoutKid('staff/index.html', '../index.html'); return; }
-  window.eot2Fetch(kid.group, kid.slug, 'term2-self-assessment-consolidated').then(function (d) {
-    if (d && d.state && d.state._shared && window.EOT2_compareData({}, d.state).complete) document.getElementById('hub-results').hidden = false;
-  });
+  if (!kid) { window.EOT2_leaveWithoutKid('staff/index.html', '../index.html'); }
 })();
 </script>
 </body>

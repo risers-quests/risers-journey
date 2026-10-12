@@ -1,13 +1,10 @@
-/* Term 2 Conference — self-assessment next to the staff's consolidated
-   assessment, in two columns, with a summary of similarities and
-   differences (shared/eot2-compare.js).
-
-   - Riser: their own page. Shows once every statement has a final rating
-     and staff have switched on "Share with <name>" on the Consolidate page
-     (_shared in the term2-self-assessment-consolidated record); before
-     that, a short "after your conference" note.
-   - Staff: ?view=staff&kid=<slug> (linked from Consolidate). Shows as soon
-     as every statement has a final rating. */
+/* Term 2 Conference — staff copy of a Riser's self-assessment next to the
+   staff's consolidated assessment (?view=staff&kid=<slug>, linked from
+   Consolidate): statement, the Riser's rating, the staff rating, then a
+   summary of similarities and differences (shared/eot2-compare.js).
+   Shows once every statement has a final rating. Risers see the same
+   thing on their own Self-Assessment page once it's shared, so a Riser
+   arriving here is sent there. */
 (function () {
   var app = document.getElementById('app');
   var params = new URLSearchParams(location.search);
@@ -33,26 +30,6 @@
         staff: (r[0] && r[0].state) || {},
         self: (r[1] && r[1].state) || window.eot2LoadLocal('term2-self-assessment-self', kid.slug) || {}
       };
-    });
-  }
-
-  function renderKid(kid) {
-    app.innerHTML = '';
-    app.appendChild(el('div', 'dash-crumb', '<a href="../index.html">&larr; Term 2 Conference</a>'));
-    app.appendChild(el('header', 'hd-page-head',
-      '<p class="hd-eyebrow">Term 2 Conference &middot; Self-assessment</p>' +
-      '<h1>Your facilitators’ assessment</h1>' +
-      '<p>How you rated yourself, next to how your facilitators see you.</p>'));
-    var body = el('div', 'rs-body', '<p class="rs-muted">Loading…</p>');
-    app.appendChild(body);
-    load(kid).then(function (d) {
-      if (!d.staff._shared || !window.EOT2_compareData(d.self, d.staff).complete) {
-        body.innerHTML = '<p class="rs-muted">Your facilitators’ assessment will appear here after your conference.</p>';
-        return;
-      }
-      body.innerHTML = '';
-      body.appendChild(legend());
-      body.appendChild(el('div', null, window.EOT2_compareHtml(d.self, d.staff, { kidView: true })));
     });
   }
 
@@ -83,6 +60,7 @@
     if (staffKid) renderStaff(staffKid); else location.replace('../consolidate/index.html');
     return;
   }
-  var kid = window.EOT2_signedInKid();
-  if (kid) renderKid(kid); else window.EOT2_leaveWithoutKid('../consolidate/index.html', '../../index.html');
+  // Risers see this on their own Self-Assessment page.
+  if (window.EOT2_signedInKid()) location.replace('../self-assessment/index.html');
+  else window.EOT2_leaveWithoutKid('../consolidate/index.html', '../../index.html');
 })();
