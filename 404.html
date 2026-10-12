@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Risers Journey</title>
+<script>
+/* Shown for any address the site has no page for. A Riser's own link is
+   the site address plus their name (/eva, /Eva, /eva/ all work): sign them
+   in on this device and open their Home. Anything else goes to Home too. */
+(function () {
+  var RISERS = ['eva', 'gabby', 'elyon', 'chris', 'yokesh', 'zach', 'owen', 'pranavi', 'shalom', 'michael', 'karis', 'benjamin'];
+  var name = decodeURIComponent(location.pathname).replace(/^\/+|\/+$/g, '').split('/').pop().toLowerCase();
+  if (RISERS.indexOf(name) !== -1) {
+    try { localStorage.setItem('imm-l3-kid', name); } catch (e) {}
+  }
+  location.replace('/');
+})();
+</script>
+</head>
+<body></body>
+</html>
