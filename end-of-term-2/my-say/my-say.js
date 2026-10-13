@@ -1,8 +1,8 @@
 /* Term 2 Conference — "Risers’ Feedback" (questions in my-say-data.js).
 
-   - Riser: fills it in on their own page. Answers save as they go (week
-     key term2-my-say); Submit sends it, after which it shows their answers
-     with nothing left to change.
+   - Riser: fills it in at /feedback (window.MYSAY_STANDALONE), not from
+     their dashboard. Answers save as they go (week key term2-my-say);
+     Submit sends it, after which nothing can be changed.
    - Staff, ?view=staff&kid=<slug>: one Riser's answers, read only.
    - Staff, ?view=staff: every Riser's status, and for each part of the
      week how many voted Keep / Tweak / Rethink, from submitted answers. */
@@ -144,10 +144,8 @@
 
   function renderKid(kid) {
     app.innerHTML = '';
-    if (STANDALONE) app.appendChild(el('div', 'eot2-crumb', 'Hi ' + esc(kid.name) + '! &middot; <a href="#" id="ms-switch">Not ' + esc(kid.name) + '?</a>'));
-    else app.appendChild(el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>'));
-    var sw = document.getElementById('ms-switch');
-    if (sw) sw.addEventListener('click', function (e) { e.preventDefault(); signOutStandalone(); });
+    app.appendChild(el('div', 'eot2-crumb', 'Hi ' + esc(kid.name) + '! &middot; <a href="#" id="ms-switch">Not ' + esc(kid.name) + '?</a>'));
+    document.getElementById('ms-switch').addEventListener('click', function (e) { e.preventDefault(); signOutStandalone(); });
     var head = el('div', 'eot2-form-header',
       '<div><h1>Risers’ Feedback</h1><div class="eot2-sub">Tell us how each part of your week feels for you. There are no wrong answers. Honest answers help most, even “this isn’t working for me.”</div></div>' +
       '<div class="eot2-status eot2-status-offline" id="save-status">Loading&hellip;</div>');
@@ -175,7 +173,7 @@
           }, now ? 0 : 900);
         });
       }
-      if (locked && STANDALONE) {
+      if (locked) {
         body.appendChild(el('p', 'ms-done', 'Thank you, ' + esc(kid.name) + '! Your answers have been sent.'));
         var again = el('button', 'eot2-btn eot2-btn-secondary', 'Done');
         again.type = 'button';
@@ -183,10 +181,8 @@
         body.appendChild(again);
         return;
       }
-      if (locked) body.appendChild(el('p', 'ms-done', 'Thank you! You’ve sent your answers. Here’s what you said.'));
       body.insertAdjacentHTML('beforeend', voteKey());
-      sectionsInto(body, state, locked, function () { save(); });
-      if (locked) return;
+      sectionsInto(body, state, false, function () { save(); });
 
       var foot = el('div', 'ms-foot', '<p class="ms-thanks">Thank you! Your answers help us plan Term 3.</p>');
       var btn = el('button', 'eot2-btn ms-submit', 'Submit');
@@ -307,6 +303,6 @@
     if (k) renderStaffKid(k); else renderStaffAll();
     return;
   }
-  var kid = window.EOT2_signedInKid();
-  if (kid) renderKid(kid); else window.EOT2_leaveWithoutKid('index.html?view=staff', '../../index.html');
+  // Not on the Riser's dashboard: Risers fill it in at /feedback.
+  window.EOT2_leaveWithoutKid('index.html?view=staff', '../index.html');
 })();
