@@ -45,7 +45,8 @@
 
   var head = el('div', 'eot2-head');
   head.innerHTML = '<h1>Term 2 Conference — Staff View</h1><p>Completion across every kid and every form. Click a badge to open that record.</p>' +
-    '<p class="eot2-head-action"><a class="eot2-btn" href="../consolidate/index.html">Consolidate self-assessments &rarr;</a></p>';
+    '<p class="eot2-head-action"><a class="eot2-btn" href="../consolidate/index.html">Consolidate self-assessments &rarr;</a> ' +
+    '<a class="eot2-btn eot2-btn-secondary" href="../my-say/index.html?view=staff">My Week, My Say: every Riser &rarr;</a></p>';
   app.appendChild(head);
 
   var tableWrap = el('div', null, '<p class="eot2-msg">Loading…</p>');
@@ -53,8 +54,8 @@
 
   var table = document.createElement('table');
   table.className = 'eot2-roster-table';
-  var theadHtml = '<thead><tr><th>Kid</th><th colspan="5">Self-Assessment</th><th>Term Reflection</th><th>MOM</th></tr>' +
-    '<tr><th></th>' + SA_RATERS.map(function (r) { return '<th>' + r.label + '</th>'; }).join('') + '<th></th><th></th></tr></thead>';
+  var theadHtml = '<thead><tr><th>Kid</th><th colspan="5">Self-Assessment</th><th>Term Reflection</th><th>My Say</th><th>MOM</th></tr>' +
+    '<tr><th></th>' + SA_RATERS.map(function (r) { return '<th>' + r.label + '</th>'; }).join('') + '<th></th><th></th><th></th></tr></thead>';
   var tbody = document.createElement('tbody');
   table.innerHTML = theadHtml;
   table.appendChild(tbody);
@@ -85,6 +86,14 @@
     fetches.push(window.eot2Fetch(kid.group, kid.slug, 'term2-term-reflection').then(function (data) {
       var done = hasAnyAnswer(data && data.state);
       reflTd.appendChild(badge(done, '../term-reflection/index.html?view=staff&kid=' + kid.slug, done ? 'Done' : 'Not started'));
+    }));
+
+    var sayTd = document.createElement('td');
+    tr.appendChild(sayTd);
+    fetches.push(window.eot2Fetch(kid.group, kid.slug, 'term2-my-say').then(function (data) {
+      var st = data && data.state;
+      var done = !!(st && st._submitted);
+      sayTd.appendChild(badge(done, '../my-say/index.html?view=staff&kid=' + kid.slug, done ? 'Submitted' : st ? 'Started' : 'Not started'));
     }));
 
     var momTd = document.createElement('td');

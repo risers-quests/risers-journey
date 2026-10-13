@@ -1,0 +1,79 @@
+/* "My Week, My Say" (my-say.js). */
+.ms-body { max-width: 820px; }
+.ms-lede { color: var(--ink-soft); margin: 0 0 14px; }
+.ms-done { background: var(--good-soft); color: var(--good); font-weight: 600; padding: 12px 16px; border-radius: 12px; margin: 0 0 16px; }
+.ms-key { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; font-size: .82rem; }
+.ms-key span { padding: 6px 12px; border-radius: 99px; color: var(--ink-soft); }
+.ms-key-keep { --v: #3f7718; --vs: #e3f0d3; }
+.ms-key-tweak { --v: #9a6a1c; --vs: #fbf1df; }
+.ms-key-rethink { --v: #a3432b; --vs: #f8e3dc; }
+.ms-key span { background: var(--vs); }
+.ms-key strong { color: var(--v); }
+
+.ms-sec { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 18px 20px 6px; margin-bottom: 16px; box-shadow: var(--shadow-sm); border-top: 4px solid var(--sec); }
+.ms-sec-title { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 12px; padding: 5px 14px 5px 6px; border-radius: 99px; background: var(--sec); color: #fff; font-family: var(--font-head); font-size: 1rem; font-weight: 600; }
+.ms-sec-title span { display: inline-flex; width: 24px; height: 24px; border-radius: 50%; background: #fff; color: var(--sec); align-items: center; justify-content: center; font-size: .8rem; }
+.ms-sec-staff .ms-sec-title, .ms-sec:not(:has(.ms-sec-title span)) .ms-sec-title { padding-left: 14px; }
+.ms-q { margin: 0 0 8px; font-weight: 600; font-size: .95rem; }
+.ms-q em { font-weight: 400; font-style: normal; font-size: .8rem; color: var(--ink-faint); }
+.ms-qwrap { margin: 16px 0 14px; }
+.ms-votes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.ms-vote { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px; border-radius: 12px; border: 2px solid transparent; font: inherit; cursor: pointer; }
+.ms-vote strong { font-size: .95rem; }
+.ms-vote em { font-style: normal; font-size: .75rem; opacity: .8; }
+.ms-vote-keep { background: #eef6e4; color: #3f7718; }
+.ms-vote-tweak { background: #fcf5e6; color: #9a6a1c; }
+.ms-vote-rethink { background: #fbece7; color: #a3432b; }
+.ms-vote.is-on { border-color: currentColor; box-shadow: 0 0 0 3px rgba(0, 0, 0, .04); }
+.ms-vote.is-on strong::before { content: '✓ '; }
+.ms-opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.ms-scale { flex-direction: column; }
+.ms-opt { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: .9rem; text-align: left; padding: 8px 14px; border-radius: 99px; border: 1.5px solid var(--border); background: #fff; color: var(--ink); cursor: pointer; }
+.ms-scale .ms-opt { border-radius: 10px; }
+.ms-opt b { display: inline-flex; width: 22px; height: 22px; border-radius: 50%; background: var(--paper-soft); align-items: center; justify-content: center; font-size: .78rem; }
+.ms-opt.is-on { border-color: var(--sec); background: color-mix(in srgb, var(--sec) 12%, #fff); font-weight: 600; }
+.ms-opt.is-on b { background: var(--sec); color: #fff; }
+.ms-other, .ms-text { display: block; width: 100%; margin-top: 8px; font: inherit; font-size: .92rem; padding: 9px 11px; border: 1.5px solid var(--border); border-radius: 10px; background: var(--paper); }
+.ms-other[hidden] { display: none; }
+.ms-text { resize: vertical; }
+.ms-grid { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.ms-grid-row { display: grid; grid-template-columns: minmax(0, 1fr) repeat(3, 72px); align-items: center; border-top: 1px solid var(--border); }
+.ms-grid-row:first-child { border-top: 0; }
+.ms-grid-row > span:first-child { padding: 9px 12px; font-size: .88rem; }
+.ms-grid-head { background: var(--sec); color: #fff; font-size: .75rem; font-weight: 700; }
+.ms-grid-head span { text-align: center; padding: 8px 4px; }
+.ms-dot { display: flex; align-items: center; justify-content: center; height: 100%; min-height: 40px; background: none; border: 0; cursor: pointer; }
+.ms-dot span { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); }
+.ms-dot.is-on span { border-color: var(--sec); background: var(--sec); box-shadow: inset 0 0 0 3px #fff; }
+button:disabled { cursor: default; }
+.ms-opt:disabled:not(.is-on), .ms-vote:disabled:not(.is-on) { opacity: .45; }
+.ms-divider { margin: 28px 0 14px; }
+.ms-divider h2 { margin: 0 0 4px; font-family: var(--font-head); font-size: 1.2rem; }
+.ms-divider p { margin: 0; color: var(--ink-soft); font-size: .9rem; }
+.ms-foot { text-align: center; margin: 24px 0 10px; }
+.ms-thanks { font-weight: 600; margin: 0 0 12px; }
+.ms-submit { width: auto; padding: 12px 34px; }
+.ms-msg { display: block; margin-top: 8px; font-size: .85rem; color: #a3432b; }
+
+/* Staff summary */
+.ms-tally { background: #fff; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 22px; }
+.ms-tally-row { display: grid; grid-template-columns: minmax(0, 1fr) repeat(3, 90px); align-items: center; border-top: 1px solid var(--border); }
+.ms-tally-row:first-child { border-top: 0; }
+.ms-tally-row > span { padding: 10px 14px; font-size: .9rem; }
+.ms-tally-head { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); }
+.ms-tally-head span:not(:first-child) { text-align: center; color: var(--v); }
+.ms-count { text-align: center; font-weight: 700; font-size: 1rem !important; color: var(--v); background: var(--vs); margin: 4px; border-radius: 10px; padding: 8px 4px !important; }
+.ms-count.is-zero { background: none; color: var(--border); }
+.ms-kids h2 { font-family: var(--font-head); font-size: 1.05rem; margin: 0 0 8px; }
+.ms-kid { display: grid; grid-template-columns: 1fr auto 20px; gap: 10px; align-items: center; padding: 12px 16px; background: #fff; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 6px; text-decoration: none; color: var(--ink); }
+.ms-kid span { font-size: .82rem; color: var(--ink-faint); }
+.ms-kid.is-done span { color: var(--good); font-weight: 600; }
+.ms-kid em { font-style: normal; color: var(--ink-faint); }
+
+@media (max-width: 560px) {
+  .ms-sec { padding: 16px 14px 4px; }
+  .ms-votes { gap: 6px; }
+  .ms-vote em { display: none; }
+  .ms-grid-row { grid-template-columns: minmax(0, 1fr) repeat(3, 52px); }
+  .ms-tally-row { grid-template-columns: minmax(0, 1fr) repeat(3, 60px); }
+}
