@@ -144,7 +144,10 @@
 
   function renderKid(kid) {
     app.innerHTML = '';
-    app.appendChild(el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>'));
+    if (STANDALONE) app.appendChild(el('div', 'eot2-crumb', 'Hi ' + esc(kid.name) + '! &middot; <a href="#" id="ms-switch">Not ' + esc(kid.name) + '?</a>'));
+    else app.appendChild(el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>'));
+    var sw = document.getElementById('ms-switch');
+    if (sw) sw.addEventListener('click', function (e) { e.preventDefault(); signOutStandalone(); });
     var head = el('div', 'eot2-form-header',
       '<div><h1>Risers’ Feedback</h1><div class="eot2-sub">Tell us how each part of your week feels for you. There are no wrong answers. Honest answers help most, even “this isn’t working for me.”</div></div>' +
       '<div class="eot2-status eot2-status-offline" id="save-status">Loading&hellip;</div>');
@@ -171,6 +174,14 @@
             });
           }, now ? 0 : 900);
         });
+      }
+      if (locked && STANDALONE) {
+        body.appendChild(el('p', 'ms-done', 'Thank you, ' + esc(kid.name) + '! Your answers have been sent.'));
+        var again = el('button', 'eot2-btn eot2-btn-secondary', 'Done');
+        again.type = 'button';
+        again.addEventListener('click', signOutStandalone);
+        body.appendChild(again);
+        return;
       }
       if (locked) body.appendChild(el('p', 'ms-done', 'Thank you! You’ve sent your answers. Here’s what you said.'));
       body.insertAdjacentHTML('beforeend', voteKey());
@@ -248,6 +259,47 @@
       });
       body.appendChild(list);
     });
+  }
+
+  /* ---------- standalone sign-in (/feedback) ---------- */
+
+  var STANDALONE = !!window.MYSAY_STANDALONE;
+  var SA_KEY = 'rj-feedback-kid';
+
+  function signOutStandalone() {
+    try { sessionStorage.removeItem(SA_KEY); } catch (e) {}
+    renderNameGate();
+  }
+
+  function renderNameGate() {
+    app.innerHTML = '';
+    var card = el('div', 'eot2-picker',
+      '<h1>Risers’ Feedback</h1><p>Type your first name to start.</p>' +
+      '<div class="eot2-field"><label for="ms-name">Your name</label><input id="ms-name" autocomplete="off" autocapitalize="words"></div>' +
+      '<p class="eot2-msg" id="ms-gate-msg"></p>');
+    var go = el('button', 'eot2-btn', 'Start');
+    go.type = 'button';
+    card.appendChild(go);
+    app.appendChild(card);
+    var input = card.querySelector('#ms-name');
+    function start() {
+      var k = window.EOT2_findKidByName(input.value);
+      if (!k) { card.querySelector('#ms-gate-msg').textContent = 'We couldn’t find that name. Try again.'; return; }
+      try { sessionStorage.setItem(SA_KEY, k.slug); } catch (e) {}
+      renderKid(k);
+      window.scrollTo(0, 0);
+    }
+    go.addEventListener('click', start);
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') start(); });
+    input.focus();
+  }
+
+  if (STANDALONE) {
+    var saved = null;
+    try { saved = sessionStorage.getItem(SA_KEY); } catch (e) {}
+    var sk = saved && window.EOT2_findKid(saved);
+    if (sk) renderKid(sk); else renderNameGate();
+    return;
   }
 
   if (params.get('view') === 'staff') {
