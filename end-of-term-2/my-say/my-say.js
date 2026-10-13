@@ -1,4 +1,4 @@
-/* Term 2 Conference — "My Week, My Say" (questions in my-say-data.js).
+/* Term 2 Conference — "Risers’ Feedback" (questions in my-say-data.js).
 
    - Riser: fills it in on their own page. Answers save as they go (week
      key term2-my-say); Submit sends it, after which it shows their answers
@@ -146,7 +146,7 @@
     app.innerHTML = '';
     app.appendChild(el('div', 'eot2-crumb', '<a href="../../index.html">Home</a> &middot; <a href="../index.html">Term 2 Conference</a>'));
     var head = el('div', 'eot2-form-header',
-      '<div><h1>My Week, My Say</h1><div class="eot2-sub">Tell us how each part of your week feels for you. There are no wrong answers. Honest answers help most, even “this isn’t working for me.”</div></div>' +
+      '<div><h1>Risers’ Feedback</h1><div class="eot2-sub">Tell us how each part of your week feels for you. There are no wrong answers. Honest answers help most, even “this isn’t working for me.”</div></div>' +
       '<div class="eot2-status eot2-status-offline" id="save-status">Loading&hellip;</div>');
     app.appendChild(head);
     var status = document.getElementById('save-status');
@@ -203,8 +203,8 @@
 
   function renderStaffKid(kid) {
     app.innerHTML = '';
-    app.appendChild(el('div', 'eot2-crumb', '<a href="index.html?view=staff">&larr; My Week, My Say · every Riser</a>'));
-    app.appendChild(el('div', 'eot2-head', '<h1>My Week, My Say &mdash; ' + kid.name + '</h1><p class="ms-lede">Loading…</p>'));
+    app.appendChild(el('div', 'eot2-crumb', '<a href="index.html?view=staff">&larr; Risers’ Feedback · all Risers</a>'));
+    app.appendChild(el('div', 'eot2-head', '<h1>Risers’ Feedback &mdash; ' + kid.name + '</h1><p class="ms-lede">Loading…</p>'));
     var body = el('div', 'ms-body');
     app.appendChild(body);
     window.eot2Fetch(kid.group, kid.slug, KEY).then(function (d) {
@@ -220,7 +220,7 @@
   function renderStaffAll() {
     app.innerHTML = '';
     app.appendChild(el('div', 'eot2-crumb', '<a href="../staff/index.html">&larr; Term 2 Conference</a>'));
-    app.appendChild(el('div', 'eot2-head', '<h1>My Week, My Say</h1><p>How each part of the week feels to the Risers, from their submitted answers.</p>'));
+    app.appendChild(el('div', 'eot2-head', '<h1>Risers’ Feedback</h1><p>How each part of the week feels to the Risers, from their submitted answers.</p>'));
     var body = el('div', 'ms-body ms-staff', '<p class="ms-lede">Loading…</p>');
     app.appendChild(body);
     Promise.all(window.EOT2_KIDS.map(function (k) {

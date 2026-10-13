@@ -1,4 +1,4 @@
-/* Term 2 Conference — "My Week, My Say": how each part of a Riser's week
+/* Term 2 Conference — "Risers’ Feedback": how each part of a Riser's week
    feels to them. Questions from the End of Term 2 feedback survey.
 
    Question types: vote (keep / tweak / rethink), scale (one of four, best
