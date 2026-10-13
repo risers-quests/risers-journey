@@ -43,7 +43,19 @@
   var WEEKS = [1, 2, 3, 4];
   var MAPS = ['meta', 'cards', 'standups', 'checkins'];
 
-  var group = GROUPS.filter(function (g) { return g.id === params.get('group'); })[0] || GROUPS[0];
+  // A Riser (term-3/index.html sets PB_KID_MODE) sees only their own
+  // group's board, from the group list in assets/brand.js; staff pick any.
+  var KID = !!window.PB_KID_MODE;
+  var group;
+  if (KID) {
+    var me = null;
+    try { me = (localStorage.getItem('imm-l3-kid') || '').toLowerCase(); } catch (e) {}
+    var gid = (window.LH_T3_GROUPS || {})[me];
+    group = GROUPS.filter(function (g) { return g.id === gid; })[0];
+    if (!group) { location.replace('../index.html'); return; }
+  } else {
+    group = GROUPS.filter(function (g) { return g.id === params.get('group'); })[0] || GROUPS[0];
+  }
   var tab = params.get('tab') || 'board';
   var state = blank();
   var loaded = false, saving = false, dirty = false, saveTimer = null;
@@ -157,18 +169,19 @@
 
   function render() {
     app.innerHTML = '';
-    app.appendChild(el('div', 'dash-crumb', '<a href="index.html">&larr; Term 3 Quests</a>'));
+    app.appendChild(el('div', 'dash-crumb', KID ? '<a href="../index.html">&larr; Home</a>' : '<a href="index.html">&larr; Term 3 Quests</a>'));
     app.appendChild(el('header', 'hd-page-head pb-head',
-      '<div><p class="hd-eyebrow">Term 3 Quests</p><h1>Project board</h1>' +
+      '<div><p class="hd-eyebrow">Term 3 Quest' + (KID ? ' &middot; ' + group.kids.join(', ') : 's') + '</p><h1>' + (KID ? 'Our project board' : 'Project board') + '</h1>' +
       '<p>Plan the build, work on it in weekly sprints, and check in every week.</p></div>' +
       '<span class="pb-status">Loading…</span>'));
     var picker = el('div', 'pb-groups');
+
     GROUPS.forEach(function (g) {
       var a = el('a', 'pb-group' + (g.id === group.id ? ' is-on' : ''), '<strong>' + g.name + '</strong><span>' + g.kids.join(', ') + '</span>');
       a.href = '?group=' + g.id + '&tab=' + tab;
       picker.appendChild(a);
     });
-    app.appendChild(picker);
+    if (!KID) app.appendChild(picker);
     var main = el('div', 'pb-main');
     app.appendChild(main);
     load().then(function () { setStatus(dirty ? 'Saving…' : 'Saved', dirty ? '' : 'is-ok'); draw(); });
@@ -186,7 +199,7 @@
       b.type = 'button';
       b.addEventListener('click', function () {
         tab = t[0];
-        history.replaceState(null, '', '?group=' + group.id + '&tab=' + tab);
+        history.replaceState(null, '', KID ? '?tab=' + tab : '?group=' + group.id + '&tab=' + tab);
         draw();
       });
       tabs.appendChild(b);
@@ -428,8 +441,10 @@
       '<div><h3>Still stuck</h3>' + (stuck.length ? '<ul>' + stuck.map(function (c) { return '<li>🚩 ' + esc(c.title) + (c.stuckNote ? ' — ' + esc(c.stuckNote) : '') + '</li>'; }).join('') + '</ul>' : '<p class="pb-empty">No one is stuck.</p>') + '</div>'));
     var form = el('div', 'pb-retro');
     CHECKIN_QS.forEach(function (q) {
-      var f = el('label', 'pb-field' + (q.id === 'note' ? ' pb-note' : ''), '<span>' + q.label + '</span><em>' + q.hint + '</em><textarea rows="2">' + esc(rec[q.id] || '') + '</textarea>');
-      f.querySelector('textarea').addEventListener('input', function () {
+      var ro = KID && q.id === 'note';
+      if (ro && !rec.note) return;
+      var f = el('label', 'pb-field' + (q.id === 'note' ? ' pb-note' : ''), '<span>' + q.label + '</span><em>' + (ro ? 'From your facilitator.' : q.hint) + '</em><textarea rows="2"' + (ro ? ' readonly' : '') + '>' + esc(rec[q.id] || '') + '</textarea>');
+      if (!ro) f.querySelector('textarea').addEventListener('input', function () {
         var r = Object.assign({}, state.checkins[id] || {});
         r[q.id] = this.value; r.u = now();
         state.checkins[id] = r;
@@ -437,7 +452,7 @@
       });
       form.appendChild(f);
     });
-    var sign = el('label', 'pb-sign', '<input type="checkbox"' + (rec.signed ? ' checked' : '') + '> Facilitator checked in with this group');
+    var sign = el('label', 'pb-sign', '<input type="checkbox"' + (rec.signed ? ' checked' : '') + (KID ? ' disabled' : '') + '> Facilitator checked in with this group');
     sign.querySelector('input').addEventListener('change', function () {
       var r = Object.assign({}, state.checkins[id] || {});
       r.signed = this.checked; r.u = now();

@@ -28,7 +28,7 @@
       '<p class="gate-msg">Don’t have it? Ask your facilitator.</p>'));
   }
 
-  function renderHome(kidEntry) {
+  function renderHome(kidEntry, kidKey) {
     var app = document.getElementById('app');
     var h = new Date().getHours();
     var hello = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
@@ -41,7 +41,9 @@
       { title: 'Term 1 Conference', desc: 'What we talked about at your Term 1 conference.', href: 'term-1-conference/index.html', icon: 'conf', tone: 'violet' },
       { title: 'Term 2 Conference', desc: 'Your self-assessment, reflection and conference notes.', href: 'end-of-term-2/index.html', icon: 'term', tone: 'slate' },
       { title: 'Term 2 Quests', desc: 'Your self-paced quests and how each one went.', href: 'dashboard/index.html', icon: 'quests', tone: 'green' }
-    ])));
+    ].concat((window.LH_T3_GROUPS || {})[kidKey] ? [
+      { title: 'Term 3 Quest', desc: 'Your group’s build: plan it, track it, and check in every week.', href: 'term-3/index.html', icon: 'skills', tone: 'amber' }
+    ] : []))));
   }
 
   function init() {
@@ -49,7 +51,7 @@
     var kid = null;
     try { kid = (localStorage.getItem(KID_KEY) || '').toLowerCase(); } catch (e) {}
     if (kid && roster[kid]) {
-      renderHome(roster[kid]);
+      renderHome(roster[kid], kid);
     } else {
       showGate();
     }

@@ -73,6 +73,17 @@
     { label: 'Term 2 Quests', href: root + 'dashboard/index.html', icon: 'quests', short: 'Quests', match: /\/dashboard\// }
   ];
 
+  // Risers whose group is using the Term 3 project board (group id on the
+  // staff board). Add a group's Risers here to switch it on for them.
+  window.LH_T3_GROUPS = { benjamin: 'g1', yokesh: 'g1', eva: 'g1' };
+  if (!isStaff) {
+    var t3kid = null;
+    try { t3kid = (localStorage.getItem(KID_KEY) || '').toLowerCase(); } catch (e) {}
+    if (window.LH_T3_GROUPS[t3kid]) {
+      NAV.push({ label: 'Term 3 Quest', href: root + 'term-3/index.html', icon: 'skills', short: 'Term 3', match: /^\/term-3\// });
+    }
+  }
+
   function isActive(item) {
     if (!item.match) return false;
     var path = location.pathname;
