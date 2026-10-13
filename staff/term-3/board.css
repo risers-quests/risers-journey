@@ -101,3 +101,33 @@
   .pb-head { flex-direction: column; }
 }
 .pb-by { align-self: flex-start; display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .03em; color: var(--ink-soft); background: var(--paper-soft); border: 1px solid var(--border); border-radius: 6px; padding: 1px 7px; margin: 0; }
+
+/* Staff overview: every group at a glance. */
+.pb-groups { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.pb-group-all strong { color: var(--accent); }
+.pb-ov-lede { margin: 0 0 10px; font-size: .9rem; color: var(--ink-soft); }
+.pb-ov { display: flex; flex-direction: column; gap: 8px; }
+.pb-ov-row {
+  display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 2fr) minmax(0, 1.4fr) minmax(0, .9fr) minmax(0, .6fr) minmax(0, .9fr) minmax(0, .9fr);
+  gap: 14px; align-items: center; padding: 14px 16px; background: #fff; border: 1px solid var(--border); border-radius: 16px;
+  text-decoration: none; color: var(--ink); box-shadow: var(--shadow-sm);
+}
+a.pb-ov-row:hover { border-color: var(--accent); }
+.pb-ov-headrow { background: none; border: 0; box-shadow: none; padding: 0 16px; font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); }
+.pb-ov-row > span { display: flex; flex-direction: column; gap: 2px; min-width: 0; font-size: .85rem; }
+.pb-ov-group strong { font-size: .98rem; }
+.pb-ov-group em, .pb-ov-week em { font-style: normal; color: var(--ink-soft); }
+.pb-ov-group small, .pb-ov-week small { font-size: .72rem; color: var(--ink-faint); }
+.pb-ov-week strong { font-size: 1.05rem; }
+.pb-ov-prog em { font-style: normal; font-size: .78rem; color: var(--ink-soft); }
+.pb-ov-doing { flex-direction: row !important; flex-wrap: wrap; gap: 3px !important; }
+.pb-ov-none { font-style: normal; color: var(--ink-faint); font-size: .8rem; }
+.pb-ov-flag { color: #a3432b; }
+.pb-ov-row .is-ok { color: var(--good); }
+@media (max-width: 1000px) {
+  .pb-groups { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .pb-ov-headrow { display: none !important; }
+  .pb-ov-row { grid-template-columns: 1fr 1fr; }
+  .pb-ov-group, .pb-ov-week { grid-column: 1 / -1; }
+}
+.pb-ov-prog .pb-track { flex: none; width: 100%; }

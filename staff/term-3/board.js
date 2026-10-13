@@ -56,6 +56,8 @@
     var ME = group.kids.filter(function (k) { return k.toLowerCase() === me; })[0] || '';
   } else {
     group = GROUPS.filter(function (g) { return g.id === params.get('group'); })[0] || GROUPS[0];
+    // Staff land on the overview of every group unless a group is chosen.
+    var OVERVIEW = !params.get('group');
   }
   var tab = params.get('tab') || 'board';
   var state = blank();
@@ -155,7 +157,7 @@
   }
   // Pick up other devices' changes, unless someone here is mid-typing.
   setInterval(function () {
-    if (!loaded || dirty || saving || document.hidden) return;
+    if (!loaded || dirty || saving || document.hidden || (!KID && OVERVIEW)) return;
     var a = document.activeElement;
     if (a && /INPUT|TEXTAREA|SELECT/.test(a.tagName)) return;
     window.eot2Fetch('term-3', group.id, 'board').then(function (d) {
@@ -176,15 +178,18 @@
       '<p>Plan the build, work on it in weekly sprints, and check in every week.</p></div>' +
       '<span class="pb-status">Loading…</span>'));
     var picker = el('div', 'pb-groups');
-
+    var all = el('a', 'pb-group pb-group-all' + (!KID && OVERVIEW ? ' is-on' : ''), '<strong>All groups</strong><span>Overview</span>');
+    all.href = '?';
+    picker.appendChild(all);
     GROUPS.forEach(function (g) {
-      var a = el('a', 'pb-group' + (g.id === group.id ? ' is-on' : ''), '<strong>' + g.name + '</strong><span>' + g.kids.join(', ') + '</span>');
+      var a = el('a', 'pb-group' + (!OVERVIEW && g.id === group.id ? ' is-on' : ''), '<strong>' + g.name + '</strong><span>' + g.kids.join(', ') + '</span>');
       a.href = '?group=' + g.id + '&tab=' + tab;
       picker.appendChild(a);
     });
     if (!KID) app.appendChild(picker);
     var main = el('div', 'pb-main');
     app.appendChild(main);
+    if (!KID && OVERVIEW) { overview(main); return; }
     load().then(function () { setStatus(dirty ? 'Saving…' : 'Saved', dirty ? '' : 'is-ok'); draw(); });
   }
 
@@ -468,6 +473,67 @@
     form.appendChild(sign);
     wrap.appendChild(form);
     return wrap;
+  }
+
+  /* ---------- staff overview: every group at a glance ---------- */
+
+  // One group's board, boiled down to what a facilitator scans for.
+  function glance(s, g) {
+    s = s || blank();
+    var m = function (k, f) { var x = s.meta[k]; return x && x.v !== undefined ? x.v : f; };
+    var w = m('sprint', 1);
+    var all = Object.keys(s.cards).map(function (id) { return s.cards[id]; }).filter(function (c) { return c && !c.deleted; });
+    var pts = function (l) { return l.reduce(function (n, c) { return n + (c.size || 1); }, 0); };
+    var open = all.filter(function (c) { return c.col === 'todo' || c.col === 'doing'; });
+    var done = all.filter(function (c) { return c.col === 'done' && c.doneWeek === w; });
+    var doing = {};
+    all.filter(function (c) { return c.col === 'doing'; }).forEach(function (c) { (c.who || []).forEach(function (k) { doing[k] = 1; }); });
+    var day = today();
+    var stood = g.kids.filter(function (k) {
+      var r = s.standups[day + '_' + k.toLowerCase()];
+      return r && (r.did || r.will || r.stuck);
+    }).length;
+    var ci = s.checkins['w' + w] || {};
+    return {
+      build: m('build', ''), leader: m('leader', ''), week: w, goal: m('goal' + w, ''),
+      got: pts(done), total: pts(done) + pts(open), cards: all.length,
+      doing: Object.keys(doing), stuck: all.filter(function (c) { return c.stuck && c.col !== 'done'; }),
+      stood: stood, signed: !!ci.signed
+    };
+  }
+
+  function overview(main) {
+    var groups = GROUPS.filter(function (g) { return g.id !== 'sample'; });
+    function paint(boards) {
+      setStatus('Updated', 'is-ok');
+      main.innerHTML = '<p class="pb-ov-lede">Every group’s board at a glance. Tap a group to open its board.</p>';
+      var list = el('div', 'pb-ov');
+      list.appendChild(el('div', 'pb-ov-row pb-ov-headrow',
+        '<span>Group</span><span>This week</span><span>Progress</span><span>Doing now</span><span>Stuck</span><span>Stand-up today</span><span>Check-in</span>'));
+      groups.forEach(function (g, i) {
+        var a = glance(boards[i], g);
+        var pct = a.total ? Math.round(a.got / a.total * 100) : 0;
+        var row = el('a', 'pb-ov-row');
+        row.href = '?group=' + g.id;
+        row.innerHTML =
+          '<span class="pb-ov-group"><strong>' + g.name + '</strong><em>' + esc(a.build || 'No build named yet') + '</em><small>' + g.kids.join(', ') + (a.leader ? ' · Leader: ' + esc(a.leader) : '') + '</small></span>' +
+          '<span class="pb-ov-week"><small>Week</small><strong>' + a.week + '</strong>' + (a.goal ? '<em>' + esc(a.goal) + '</em>' : '<em class="pb-ov-none">No goal set</em>') + '</span>' +
+          '<span class="pb-ov-prog">' + (a.total ? '<span class="pb-track"><span style="width:' + pct + '%"></span></span><em>' + a.got + ' of ' + a.total + ' points</em>' : '<em class="pb-ov-none">' + (a.cards ? 'Nothing picked for this week' : 'Board not started') + '</em>') + '</span>' +
+          '<span class="pb-ov-doing">' + (a.doing.length ? a.doing.map(function (k) { return '<span class="pb-av pb-av-' + g.kids.indexOf(k) + '" title="' + esc(k) + '">' + esc(initial(k)) + '</span>'; }).join('') : '<em class="pb-ov-none">No one</em>') + '</span>' +
+          '<span class="pb-ov-stuck">' + (a.stuck.length ? '<strong class="pb-ov-flag" title="' + esc(a.stuck.map(function (c) { return c.title; }).join(', ')) + '">🚩 ' + a.stuck.length + '</strong>' : '<em class="pb-ov-none">—</em>') + '</span>' +
+          '<span class="pb-ov-stand">' + (a.stood ? '<strong class="' + (a.stood === g.kids.length ? 'is-ok' : '') + '">' + a.stood + ' of ' + g.kids.length + '</strong>' : '<em class="pb-ov-none">Not yet</em>') + '</span>' +
+          '<span class="pb-ov-check">' + (a.signed ? '<strong class="is-ok">✓ Week ' + a.week + '</strong>' : '<em class="pb-ov-none">Not yet</em>') + '</span>';
+        list.appendChild(row);
+      });
+      main.appendChild(list);
+    }
+    function fetchAll() {
+      return Promise.all(groups.map(function (g) {
+        return window.eot2Fetch('term-3', g.id, 'board').then(function (d) { return d && d.state; });
+      })).then(paint);
+    }
+    fetchAll();
+    setInterval(function () { if (!document.hidden) fetchAll(); }, 30000);
   }
 
   /* ---------- the Sample group ---------- */
