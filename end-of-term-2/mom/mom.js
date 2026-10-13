@@ -242,7 +242,7 @@
       }
     }
     if (part1) {
-      groups.push({ title: 'From Part 1', lines: PART1.filter(function (f) { return filled(part1[f.id]); }).map(function (f) {
+      groups.push({ title: 'From Part 1', lines: PART1.filter(function (f) { return f.id !== 'p1_ideas' && filled(part1[f.id]); }).map(function (f) {
         return { text: f.label + ': ' + String(part1[f.id]).trim().replace(/\s*\n+\s*/g, ' ') };
       }) });
     }
@@ -309,6 +309,50 @@
     };
   }
 
+  /* ---------- Part 2 idea pick list ---------- */
+
+  // The family's Part 1 idea, split at commas (and new lines) into separate
+  // options. Picking one puts it in the first idea with an empty "The idea"
+  // (adding a new idea if all are used); picking it again takes it out.
+  function splitIdeas(text) {
+    return String(text || '').split(/[,\n]+/).map(function (t) {
+      t = t.replace(/^[\s•\-–]+|[\s.;]+$/g, '');
+      return t ? t.charAt(0).toUpperCase() + t.slice(1) : '';
+    }).filter(Boolean);
+  }
+
+  function ideaPickList(getIdeas, onPick) {
+    var box = el('div', 'mom-pick mom-pick-ideas');
+    var part1 = null;
+    function where(opt) {
+      var ideas = getIdeas();
+      for (var i = 0; i < ideas.length; i++) {
+        var lines = String(ideas[i].idea || '').split('\n').map(function (l) { return l.replace(/^•\s*/, '').trim(); });
+        if (lines.indexOf(opt) !== -1) return i;
+      }
+      return -1;
+    }
+    function draw() {
+      var opts = splitIdeas(part1 && part1.p1_ideas);
+      box.innerHTML = '<p class="mom-pick-title">Ideas from Part 1</p>';
+      if (!opts.length) {
+        box.appendChild(el('p', 'mom-pick-empty', part1 ? 'The family didn’t add an idea in Part 1.' : 'The family’s ideas show here once Part 1 is submitted.'));
+        return;
+      }
+      box.appendChild(el('p', 'mom-pick-empty', 'Pick the ones to plan for Term 3.'));
+      opts.forEach(function (opt) {
+        var at = where(opt);
+        var b = el('button', 'mom-pick-item' + (at !== -1 ? ' is-on' : ''),
+          '<span>' + escapeHtml(opt) + '</span><em>' + (at !== -1 ? '✓ Idea ' + (at + 1) : '+ Add') + '</em>');
+        b.type = 'button';
+        b.addEventListener('click', function () { onPick(opt, at); });
+        box.appendChild(b);
+      });
+    }
+    draw();
+    return { el: box, draw: draw, setPart1: function (p) { part1 = p; draw(); } };
+  }
+
   /* ---------- staff ---------- */
 
   function showStaffPicker() {
@@ -355,7 +399,7 @@
       var p1Body = el('div');
       p1.appendChild(p1Body);
       body.appendChild(p1);
-      var picker = null;
+      var picker = null, ideaPicker = null;
       var lastP1 = null;
       function drawPart1(fam) {
         var sub = fam.p1_sub || null;
@@ -366,6 +410,7 @@
           ? part1ReadHtml(sub) + '<p class="mom-when mom-when-block">Submitted ' + when(sub.at) + '</p>'
           : '<p class="mom-wait">Waiting for ' + kid.name + ' and their parents to submit Part 1.</p>';
         if (picker) picker.setPart1(sub);
+        if (ideaPicker) ideaPicker.setPart1(sub);
       }
       drawPart1(family);
 
@@ -385,11 +430,12 @@
       var editing = !state.p2_sub;
 
       function set(key, value) { draft[key] = value; saver.set(key, value); saver.set('p2_author', editAs); }
-      function saveIdeas() { set('p2_ideas', draft.p2_ideas.map(function (i) { return Object.assign({}, i); })); }
+      // Saves a copy; draft.p2_ideas stays the same array the idea cards edit.
+      function saveIdeas() { saver.set('p2_ideas', draft.p2_ideas.map(function (i) { return Object.assign({}, i); })); saver.set('p2_author', editAs); }
 
       function drawPart2() {
         p2Body.innerHTML = '';
-        picker = null;
+        picker = null; ideaPicker = null;
         if (!editing) {
           p2Body.appendChild(el('div', null, part2ReadHtml(state.p2_sub)));
           p2Body.appendChild(actionBar(true, state.p2_sub.at, null, function () { editing = true; drawPart2(); }).bar);
@@ -405,11 +451,35 @@
         grid.appendChild(shared.wrap);
         p2Body.appendChild(grid);
 
+        // The ideas, with the family's Part 1 ideas on their left.
+        var ideasGrid = el('div', 'mom-shared-grid mom-ideas-grid');
+        var ideasCol = el('div');
         var ideasWrap = el('div', 'mom-ideas');
-        p2Body.appendChild(ideasWrap);
+        ideasCol.appendChild(ideasWrap);
         var addBtn = el('button', 'eot2-btn eot2-btn-secondary mom-add', '+ Add another idea');
         addBtn.type = 'button';
-        p2Body.appendChild(addBtn);
+        ideasCol.appendChild(addBtn);
+        ideaPicker = ideaPickList(function () { return draft.p2_ideas; }, function (opt, at) {
+          if (at !== -1) {
+            var idea = draft.p2_ideas[at];
+            var rest = String(idea.idea || '').split('\n').filter(function (l) { return l.replace(/^•\s*/, '').trim() !== opt; });
+            idea.idea = rest.length === 1 ? rest[0].replace(/^•\s*/, '') : rest.join('\n');
+          } else {
+            var target = draft.p2_ideas.filter(function (i) { return !filled(i.idea); })[0];
+            if (!target && draft.p2_ideas.length < MAX_IDEAS) draft.p2_ideas.push(target = {});
+            if (target) target.idea = opt;
+            else {
+              var last = draft.p2_ideas[draft.p2_ideas.length - 1];
+              var cur = String(last.idea || '').trim();
+              last.idea = (cur.indexOf('\n') === -1 && cur.charAt(0) !== '•' ? '• ' + cur : cur) + '\n• ' + opt;
+            }
+          }
+          drawIdeas(); saveIdeas();
+        });
+        ideaPicker.setPart1(family.p1_sub || null);
+        ideasGrid.appendChild(ideaPicker.el);
+        ideasGrid.appendChild(ideasCol);
+        p2Body.appendChild(ideasGrid);
         function drawIdeas() {
           ideasWrap.innerHTML = '';
           draft.p2_ideas.forEach(function (idea, n) {
@@ -417,7 +487,10 @@
             card.appendChild(el('div', 'mom-idea-head', '<strong>Idea ' + (n + 1) + ' for Term 3</strong>' +
               (n > 0 ? '<button type="button" class="mom-remove">Remove</button>' : '')));
             IDEA_FIELDS.forEach(function (f) {
-              card.appendChild(textField(f, idea[f.id], function (v) { idea[f.id] = v; saveIdeas(); }, 2).wrap);
+              card.appendChild(textField(f, idea[f.id], function (v) {
+                idea[f.id] = v; saveIdeas();
+                if (f.id === 'idea' && ideaPicker) ideaPicker.draw();
+              }, 2).wrap);
             });
             var rm = card.querySelector('.mom-remove');
             if (rm) rm.addEventListener('click', function () {
@@ -427,6 +500,7 @@
             ideasWrap.appendChild(card);
           });
           addBtn.hidden = draft.p2_ideas.length >= MAX_IDEAS;
+          if (ideaPicker) ideaPicker.draw();
         }
         addBtn.addEventListener('click', function () { draft.p2_ideas.push({}); drawIdeas(); });
         drawIdeas();

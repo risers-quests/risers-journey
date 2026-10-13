@@ -309,7 +309,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--font-body
 .mom-when-block { display: block; margin: -6px 0 18px; }
 .mom-msg { font-size: .85rem; color: #a3432b; }
 .mom-shared-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 18px; align-items: start; }
-.mom-shared-grid .mom-field textarea { min-height: 260px; }
+.mom-shared-grid:not(.mom-ideas-grid) .mom-field textarea { min-height: 260px; }
 .mom-pick { border: 1px solid var(--border); border-radius: 14px; background: var(--paper-soft); padding: 12px; max-height: 440px; overflow-y: auto; margin-bottom: 18px; }
 .mom-pick-title { margin: 0 0 8px; font-weight: 600; font-size: .95rem; }
 .mom-pick-h { margin: 12px 0 6px; font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
@@ -335,6 +335,8 @@ body { background: var(--paper); color: var(--ink); font-family: var(--font-body
 .mom-pick-tag-same { background: var(--good-soft); color: var(--good); }
 .mom-pick-tag-different { background: var(--warn-soft); color: var(--warn); }
 .mom-pick { max-height: 560px; }
+.mom-ideas-grid { margin-top: 8px; }
+.mom-ideas-grid .mom-pick { position: sticky; top: 16px; }
 @media (max-width: 760px) { .mom-shared-grid { grid-template-columns: 1fr; } }
 
 /* Staff: each Riser's own link (staff/staff.js). */
