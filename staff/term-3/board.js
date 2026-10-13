@@ -53,6 +53,7 @@
     var gid = (window.LH_T3_GROUPS || {})[me];
     group = GROUPS.filter(function (g) { return g.id === gid; })[0];
     if (!group) { location.replace('../index.html'); return; }
+    var ME = group.kids.filter(function (k) { return k.toLowerCase() === me; })[0] || '';
   } else {
     group = GROUPS.filter(function (g) { return g.id === params.get('group'); })[0] || GROUPS[0];
   }
@@ -267,9 +268,12 @@
       list.forEach(function (card) {
         var k = el('article', 'pb-card' + (card.stuck ? ' is-stuck' : ''));
         k.innerHTML =
-          '<button type="button" class="pb-card-main"><span class="pb-card-title">' + (card.stuck ? '🚩 ' : '') + esc(card.title) + '</span>' +
+          '<button type="button" class="pb-card-main">' +
+          (card.by ? '<span class="pb-by">' + (card.by === 'facilitator' ? 'Facilitator' : esc(card.by)) + '</span>' : '') +
+          '<span class="pb-card-title">' + (card.stuck ? '🚩 ' : '') + esc(card.title) + '</span>' +
           '<span class="pb-card-meta">' + sizeDots(card) + '<span class="pb-avs">' + who(card) + '</span></span>' +
-          (card.stuck && card.stuckNote ? '<span class="pb-stuck-note">Stuck: ' + esc(card.stuckNote) + '</span>' : '') + '</button>' +
+          (card.stuck && card.stuckNote ? '<span class="pb-stuck-note">Stuck: ' + esc(card.stuckNote) + '</span>' : '') +
+          '</button>' +
           '<div class="pb-moves">' +
             (ci > 0 ? '<button type="button" class="pb-move" data-d="-1" aria-label="Move back">&larr;</button>' : '<span></span>') +
             (ci < COLS.length - 1 ? '<button type="button" class="pb-move" data-d="1" aria-label="Move on">' + (ci === 0 ? 'This week' : ci === 1 ? 'Start' : 'Done') + ' &rarr;</button>' : '') +
@@ -304,7 +308,8 @@
       e.preventDefault();
       var t = f.querySelector('input').value.trim();
       if (!t) return;
-      putCard(uid(), { title: t, col: 'backlog', size: 1, who: [], order: now() });
+      // Tag the job with whoever added it.
+      putCard(uid(), { title: t, col: 'backlog', size: 1, who: [], order: now(), by: KID ? ME : 'facilitator' });
       draw();
       var again = app.querySelector('.pb-add input');
       if (again) again.focus();
@@ -318,6 +323,7 @@
     function paint() {
       box.innerHTML = '<div class="pb-modal-card" role="dialog" aria-label="Edit job">' +
         '<label class="pb-field"><span>Job</span><input type="text" class="pb-e-title" value="' + esc(c.title) + '"></label>' +
+        (c.by ? '<p class="pb-by">' + (c.by === 'facilitator' ? 'Facilitator' : esc(c.by)) + '</p>' : '') +
         '<div class="pb-field"><span>Who’s doing it</span><div class="pb-pick">' + group.kids.map(function (k, i) {
           return '<button type="button" class="pb-chip' + (c.who.indexOf(k) !== -1 ? ' is-on' : '') + '" data-k="' + esc(k) + '"><span class="pb-av pb-av-' + i + '">' + esc(initial(k)) + '</span>' + esc(k) + '</button>';
         }).join('') + '</div></div>' +
@@ -469,8 +475,9 @@
   function sampleBoard() {
     var t = now(), s = blank(), n = 0;
     function m(k, v) { s.meta[k] = { v: v, u: t }; }
+    var adders = ['Asha', 'Ravi', 'Meera'];
     function card(title, col, size, who, extra) {
-      s.cards['s' + (++n)] = Object.assign({ title: title, col: col, size: size, who: who, order: n, u: t }, extra || {});
+      s.cards['s' + (++n)] = Object.assign({ title: title, col: col, size: size, who: who, order: n, u: t, by: adders[n % 3] }, extra || {});
     }
     m('build', 'Breakfast machine');
     m('leader', 'Asha');
