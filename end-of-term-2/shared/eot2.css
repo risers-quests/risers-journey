@@ -323,6 +323,18 @@ body { background: var(--paper); color: var(--ink); font-family: var(--font-body
 .mom-pick-item em { flex-shrink: 0; font-style: normal; font-weight: 600; font-size: .78rem; color: var(--accent); }
 .mom-pick-item.is-on { background: var(--accent-soft); border-color: transparent; color: var(--ink-soft); }
 .mom-pick-item.is-on em { color: var(--good); }
+/* one rubric category in the pick list */
+.mom-pick-cat { background: #fff; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; }
+.mom-pick-cat > summary { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; padding: 9px 12px; cursor: pointer; font-size: .88rem; }
+.mom-pick-cat > summary span { font-size: .76rem; color: var(--ink-faint); white-space: nowrap; }
+.mom-pick-cat[open] { padding: 0 8px 4px; }
+.mom-pick-cat[open] > summary { padding: 9px 4px; }
+.mom-pick-cat .mom-pick-item { background: var(--paper-soft); }
+.mom-pick-cat .mom-pick-item.is-on { background: var(--accent-soft); }
+.mom-pick-tag { display: inline-block; font-size: .66rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 1px 6px; border-radius: 6px; margin-right: 2px; }
+.mom-pick-tag-same { background: var(--good-soft); color: var(--good); }
+.mom-pick-tag-different { background: var(--warn-soft); color: var(--warn); }
+.mom-pick { max-height: 560px; }
 @media (max-width: 760px) { .mom-shared-grid { grid-template-columns: 1fr; } }
 
 /* Staff: each Riser's own link (staff/staff.js). */

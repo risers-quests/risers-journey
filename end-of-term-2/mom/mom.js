@@ -207,29 +207,43 @@
   // How each rating reads as an observation.
   var SEEN = { NE: 'as not seen yet', E: 'as just starting', D: 'as happening some of the time', CD: 'as happening every time' };
   function stmt(r) { return r.item.text.replace(/[.\s]+$/, ''); }
-  function listNames(n) { return n.length > 1 ? n.slice(0, -1).join(', ') + ' and ' + n[n.length - 1] : n[0]; }
 
+  // One group per rubric category (as in the self-assessment), each with
+  // a one-line overview, then every statement: differences first.
   function pickItems(kid, compare, part1) {
     var groups = [];
     if (compare) {
       var d = window.EOT2_compareData(compare.self, compare.staff);
       if (d.complete && d.compared) {
-        var lines = [];
-        if (d.agreeAreas.length) lines.push(kid.name + ' and staff see ' + listNames(d.agreeAreas.slice(0, 3).map(function (a) { return a.name; })) + ' in much the same way.');
-        d.strengths.slice(0, 4).forEach(function (r) { lines.push(stmt(r) + ': ' + kid.name + ' and staff both see this ' + SEEN[r.self] + '.'); });
-        d.growing.slice(0, 4).forEach(function (r) {
-          lines.push(stmt(r) + ': ' + kid.name + ' and staff both see this ' + (r.self === r.staff ? SEEN[r.self] : 'as still early on') + '.');
+        var cats = [];
+        d.rows.forEach(function (r) {
+          var key = r.section + '|' + (r.sub || '');
+          var c = cats[cats.length - 1];
+          if (!c || c.key !== key) cats.push(c = { key: key, section: r.section, title: r.sub || r.section, rows: [] });
+          if (r.s !== -1 && r.f !== -1) c.rows.push(r);
         });
-        groups.push({ title: 'Similarities', lines: lines });
-        var diff = [];
-        d.selfHigher.slice(0, 4).forEach(function (r) { diff.push(stmt(r) + ': ' + kid.name + ' sees this ' + SEEN[r.self] + ', while staff see it ' + SEEN[r.staff] + '.'); });
-        d.staffHigher.slice(0, 4).forEach(function (r) { diff.push(stmt(r) + ': staff see this ' + SEEN[r.staff] + ', while ' + kid.name + ' sees it ' + SEEN[r.self] + '.'); });
-        groups.push({ title: 'Differences', lines: diff });
+        cats.forEach(function (c) {
+          var same = c.rows.filter(function (r) { return r.same; });
+          var diff = c.rows.filter(function (r) { return !r.same; }).sort(function (x, y) { return Math.abs(y.gap) - Math.abs(x.gap); });
+          var lines = [];
+          if (c.rows.length) {
+            lines.push({ text: c.title + ': ' + kid.name + ' and staff gave the same rating on ' + same.length + ' of ' + c.rows.length + ' statements.' });
+          }
+          diff.forEach(function (r) {
+            lines.push({ tag: 'Different', text: r.gap > 0
+              ? stmt(r) + ': ' + kid.name + ' sees this ' + SEEN[r.self] + ', while staff see it ' + SEEN[r.staff] + '.'
+              : stmt(r) + ': staff see this ' + SEEN[r.staff] + ', while ' + kid.name + ' sees it ' + SEEN[r.self] + '.' });
+          });
+          same.forEach(function (r) {
+            lines.push({ tag: 'Same', text: stmt(r) + ': ' + kid.name + ' and staff both see this ' + SEEN[r.self] + '.' });
+          });
+          groups.push({ cat: true, section: c.section, title: c.title, same: same.length, diff: diff.length, lines: lines });
+        });
       }
     }
     if (part1) {
       groups.push({ title: 'From Part 1', lines: PART1.filter(function (f) { return filled(part1[f.id]); }).map(function (f) {
-        return f.label + ': ' + String(part1[f.id]).trim().replace(/\s*\n+\s*/g, ' ');
+        return { text: f.label + ': ' + String(part1[f.id]).trim().replace(/\s*\n+\s*/g, ' ') };
       }) });
     }
     return groups.filter(function (g) { return g.lines.length; });
@@ -238,6 +252,7 @@
   function pickList(kid, ta, onChange) {
     var box = el('div', 'mom-pick');
     var data = { compare: null, part1: null };
+    var open = {};
     function has(line) {
       return ta.value.split('\n').some(function (l) { return l.replace(/^•\s*/, '').trim() === line; });
     }
@@ -250,23 +265,40 @@
       onChange(ta.value);
       draw();
     }
+    function item(line) {
+      var on = has(line.text);
+      var b = el('button', 'mom-pick-item' + (on ? ' is-on' : ''),
+        '<span>' + (line.tag ? '<b class="mom-pick-tag mom-pick-tag-' + line.tag.toLowerCase() + '">' + line.tag + '</b> ' : '') + escapeHtml(line.text) + '</span>' +
+        '<em>' + (on ? '✓ Added' : '+ Add') + '</em>');
+      b.type = 'button';
+      b.addEventListener('click', function () { toggle(line.text); });
+      return b;
+    }
     function draw() {
       var groups = pickItems(kid, data.compare, data.part1);
+      var scroll = box.scrollTop;
       box.innerHTML = '<p class="mom-pick-title">Pick one or two to add</p>';
       if (!groups.length) {
         box.appendChild(el('p', 'mom-pick-empty', 'The self and staff comparison shows here once consolidation is done, and the family’s answers once Part 1 is submitted.'));
         return;
       }
+      var lastSection = null;
       groups.forEach(function (g) {
-        box.appendChild(el('p', 'mom-pick-h', g.title));
-        g.lines.forEach(function (line) {
-          var on = has(line);
-          var b = el('button', 'mom-pick-item' + (on ? ' is-on' : ''), '<span>' + escapeHtml(line) + '</span><em>' + (on ? '✓ Added' : '+ Add') + '</em>');
-          b.type = 'button';
-          b.addEventListener('click', function () { toggle(line); });
-          box.appendChild(b);
-        });
+        if (!g.cat) {
+          box.appendChild(el('p', 'mom-pick-h', g.title));
+          g.lines.forEach(function (line) { box.appendChild(item(line)); });
+          return;
+        }
+        if (g.section !== lastSection) { box.appendChild(el('p', 'mom-pick-h', g.section)); lastSection = g.section; }
+        var det = el('details', 'mom-pick-cat');
+        var added = g.lines.filter(function (l) { return has(l.text); }).length;
+        det.open = !!open[g.section + g.title];
+        det.appendChild(el('summary', '', '<strong>' + escapeHtml(g.title === g.section ? 'Statements' : g.title) + '</strong><span>' + g.same + ' same &middot; ' + g.diff + ' different' + (added ? ' &middot; ' + added + ' added' : '') + '</span>'));
+        det.addEventListener('toggle', function () { open[g.section + g.title] = det.open; });
+        g.lines.forEach(function (line) { det.appendChild(item(line)); });
+        box.appendChild(det);
       });
+      box.scrollTop = scroll;
     }
     ta.addEventListener('input', draw);
     draw();
