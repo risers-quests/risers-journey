@@ -131,3 +131,6 @@ a.pb-ov-row:hover { border-color: var(--accent); }
   .pb-ov-group, .pb-ov-week { grid-column: 1 / -1; }
 }
 .pb-ov-prog .pb-track { flex: none; width: 100%; }
+.pb-ov-avs { display: flex; gap: 3px; }
+.pb-av.is-away { background: #fff !important; color: var(--ink-faint); border: 1.5px dashed var(--border); }
+.pb-ov-stand em { font-style: normal; font-size: .75rem; color: var(--ink-soft); }

@@ -492,7 +492,7 @@
     var stood = g.kids.filter(function (k) {
       var r = s.standups[day + '_' + k.toLowerCase()];
       return r && (r.did || r.will || r.stuck);
-    }).length;
+    });
     var ci = s.checkins['w' + w] || {};
     return {
       build: m('build', ''), leader: m('leader', ''), week: w, goal: m('goal' + w, ''),
@@ -521,7 +521,14 @@
           '<span class="pb-ov-prog">' + (a.total ? '<span class="pb-track"><span style="width:' + pct + '%"></span></span><em>' + a.got + ' of ' + a.total + ' points</em>' : '<em class="pb-ov-none">' + (a.cards ? 'Nothing picked for this week' : 'Board not started') + '</em>') + '</span>' +
           '<span class="pb-ov-doing">' + (a.doing.length ? a.doing.map(function (k) { return '<span class="pb-av pb-av-' + g.kids.indexOf(k) + '" title="' + esc(k) + '">' + esc(initial(k)) + '</span>'; }).join('') : '<em class="pb-ov-none">No one</em>') + '</span>' +
           '<span class="pb-ov-stuck">' + (a.stuck.length ? '<strong class="pb-ov-flag" title="' + esc(a.stuck.map(function (c) { return c.title; }).join(', ')) + '">🚩 ' + a.stuck.length + '</strong>' : '<em class="pb-ov-none">—</em>') + '</span>' +
-          '<span class="pb-ov-stand">' + (a.stood ? '<strong class="is-ok">✓ Done</strong>' : '<em class="pb-ov-none">Not yet</em>') + '</span>' +
+          // Who was at today's stand-up: solid initials for those who were,
+          // faded for those who weren't, and who's missing in words.
+          '<span class="pb-ov-stand">' + (a.stood.length ? '<span class="pb-ov-avs">' + g.kids.map(function (k, j) {
+            var here = a.stood.indexOf(k) !== -1;
+            return '<span class="pb-av pb-av-' + j + (here ? '' : ' is-away') + '" title="' + esc(k) + (here ? ' was there' : ' wasn’t there') + '">' + esc(initial(k)) + '</span>';
+          }).join('') + '</span>' + (a.stood.length === g.kids.length ? '<em class="is-ok">Everyone</em>'
+            : '<em>Missing: ' + g.kids.filter(function (k) { return a.stood.indexOf(k) === -1; }).map(esc).join(', ') + '</em>')
+            : '<em class="pb-ov-none">Not done yet</em>') + '</span>' +
           '<span class="pb-ov-check">' + (a.signed ? '<strong class="is-ok">✓ Week ' + a.week + '</strong>' : '<em class="pb-ov-none">Not yet</em>') + '</span>';
         list.appendChild(row);
       });
