@@ -521,7 +521,7 @@
           '<span class="pb-ov-prog">' + (a.total ? '<span class="pb-track"><span style="width:' + pct + '%"></span></span><em>' + a.got + ' of ' + a.total + ' points</em>' : '<em class="pb-ov-none">' + (a.cards ? 'Nothing picked for this week' : 'Board not started') + '</em>') + '</span>' +
           '<span class="pb-ov-doing">' + (a.doing.length ? a.doing.map(function (k) { return '<span class="pb-av pb-av-' + g.kids.indexOf(k) + '" title="' + esc(k) + '">' + esc(initial(k)) + '</span>'; }).join('') : '<em class="pb-ov-none">No one</em>') + '</span>' +
           '<span class="pb-ov-stuck">' + (a.stuck.length ? '<strong class="pb-ov-flag" title="' + esc(a.stuck.map(function (c) { return c.title; }).join(', ')) + '">🚩 ' + a.stuck.length + '</strong>' : '<em class="pb-ov-none">—</em>') + '</span>' +
-          '<span class="pb-ov-stand">' + (a.stood ? '<strong class="' + (a.stood === g.kids.length ? 'is-ok' : '') + '">' + a.stood + ' of ' + g.kids.length + '</strong>' : '<em class="pb-ov-none">Not yet</em>') + '</span>' +
+          '<span class="pb-ov-stand">' + (a.stood ? '<strong class="is-ok">✓ Done</strong>' : '<em class="pb-ov-none">Not yet</em>') + '</span>' +
           '<span class="pb-ov-check">' + (a.signed ? '<strong class="is-ok">✓ Week ' + a.week + '</strong>' : '<em class="pb-ov-none">Not yet</em>') + '</span>';
         list.appendChild(row);
       });
