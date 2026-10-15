@@ -74,8 +74,9 @@
   ];
 
   // Risers whose group is using the Term 3 project board (group id on the
-  // staff board). Add a group's Risers here to switch it on for them.
-  window.LH_T3_GROUPS = { benjamin: 'g1', yokesh: 'g1', eva: 'g1' };
+  // staff board). Add a group's Risers here to switch it on for them,
+  // e.g. { benjamin: 'g1', yokesh: 'g1', eva: 'g1' }. Empty: staff only.
+  window.LH_T3_GROUPS = {};
   if (!isStaff) {
     var t3kid = null;
     try { t3kid = (localStorage.getItem(KID_KEY) || '').toLowerCase(); } catch (e) {}
