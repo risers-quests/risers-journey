@@ -46,7 +46,8 @@
   var head = el('div', 'eot2-head');
   head.innerHTML = '<h1>Term 2 Conference — Staff View</h1><p>Completion across every kid and every form. Click a badge to open that record.</p>' +
     '<p class="eot2-head-action"><a class="eot2-btn" href="../consolidate/index.html">Consolidate self-assessments &rarr;</a> ' +
-    '<a class="eot2-btn eot2-btn-secondary" href="../my-say/index.html?view=staff">Risers’ Feedback &rarr;</a></p>';
+    '<a class="eot2-btn eot2-btn-secondary" href="../my-say/index.html?view=staff">Risers’ Feedback &rarr;</a> ' +
+    '<a class="eot2-btn eot2-btn-secondary" href="../parent-feedback/index.html">Parents’ Feedback &rarr;</a></p>';
   app.appendChild(head);
 
   var tableWrap = el('div', null, '<p class="eot2-msg">Loading…</p>');
