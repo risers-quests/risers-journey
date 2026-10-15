@@ -189,27 +189,10 @@
       var sent = rows.filter(function (r) { return r.state && r.state._submitted; });
       body.innerHTML = '<p class="ms-lede">' + sent.length + ' of ' + rows.length + ' families have submitted.</p>';
       SECTIONS.forEach(function (sec) {
-        var box = el('section', 'pf-sum', '<h2>' + esc(sec.title) + '</h2>');
+        var box = el('section', 'qs-sum', '<h2>' + esc(sec.title) + '</h2>');
         box.style.setProperty('--sec', sec.color);
-        sec.qs.forEach(function (q) {
-          var qd = el('div', 'pf-q', '<p>' + esc(q.text) + '</p>');
-          var ans = sent.map(function (r) { return { kid: r.kid, v: (r.state[sec.id] || {})[q.id] }; });
-          if (q.type === 'text') {
-            var said = ans.filter(function (x) { return filled(x.v); });
-            qd.appendChild(said.length
-              ? el('ul', 'pf-texts', said.map(function (x) { return '<li><strong>' + esc(x.kid.name) + '’s family:</strong>' + esc(x.v) + '</li>'; }).join(''))
-              : el('p', 'pf-none', 'No answers yet.'));
-          } else {
-            q.options.forEach(function (o) {
-              var who = ans.filter(function (x) { return Array.isArray(x.v) ? x.v.indexOf(o) !== -1 : x.v === o; });
-              var pct = sent.length ? Math.round(who.length / sent.length * 100) : 0;
-              var row = el('div', 'pf-bar', '<span>' + esc(o) + '</span><i><b style="width:' + pct + '%"></b></i><em>' + who.length + '</em>');
-              row.title = who.map(function (x) { return x.kid.name; }).join(', ');
-              qd.appendChild(row);
-            });
-          }
-          box.appendChild(qd);
-        });
+        var answers = sent.map(function (r) { return { name: r.kid.name + '’s family', a: r.state[sec.id] || {} }; });
+        sec.qs.forEach(function (q) { box.appendChild(window.EOT2_answerSummaryEl(q, answers, sent.length)); });
         body.appendChild(box);
       });
       var list = el('div', 'ms-kids', '<h2>Each family</h2>');

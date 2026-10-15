@@ -175,6 +175,34 @@
         }).join('')));
       });
       body.appendChild(tally);
+
+      // Every answer, one section at a time.
+      body.appendChild(el('div', 'ms-kids', '<h2>All answers</h2>'));
+      ALL.forEach(function (sec) {
+        var answers = sent.map(function (r) { return { name: r.kid.name, a: r.state[sec.id] || {} }; });
+        var det = el('details', 'qs-sec');
+        det.style.setProperty('--sec', sec.color);
+        var votes = '';
+        if (!sec.staff && sec.id !== 'final') {
+          var n = answers.filter(function (x) { return x.a.vote; }).length;
+          votes = n + ' of ' + sent.length + ' voted';
+        }
+        det.appendChild(el('summary', '', esc(sec.title) + '<span>' + votes + '</span>'));
+        var inner = el('div', 'qs-sec-body');
+        if (votes) {
+          inner.appendChild(window.EOT2_answerSummaryEl(
+            { id: 'vote', type: 'single', text: 'How is it working for me?', options: VOTES.map(function (v) { return v.id; }) },
+            answers, sent.length));
+          // Show vote labels, not ids.
+          Array.prototype.forEach.call(inner.querySelectorAll('.qs-bar > span'), function (s, i) { s.textContent = VOTES[i].label; });
+          var none = answers.filter(function (x) { return !x.a.vote; }).map(function (x) { return x.name; });
+          if (none.length) inner.appendChild(el('p', 'qs-none', 'Didn’t vote: ' + esc(none.join(', '))));
+        }
+        sec.qs.forEach(function (q) { inner.appendChild(window.EOT2_answerSummaryEl(q, answers, sent.length)); });
+        det.appendChild(inner);
+        body.appendChild(det);
+      });
+
       var list = el('div', 'ms-kids', '<h2>Each Riser</h2>');
       rows.forEach(function (r) {
         var a = el('a', 'ms-kid', '<strong>' + r.kid.name + '</strong><span>' + (r.state && r.state._submitted ? 'Submitted' : r.state ? 'Started' : 'Not started') + '</span><em aria-hidden="true">&rarr;</em>');
