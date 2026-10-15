@@ -24,8 +24,6 @@ window.PF_SECTIONS = [
     { id: 'timing', type: 'single', text: 'Did the timing and schedule work for you?', options: ['Yes', 'Mostly', 'No'] },
     { id: 'again', type: 'single', text: 'Would you like the same format next term?', options: ['Yes, keep it', 'Yes, with small changes', 'No, change it'] },
     { id: 'home', type: 'text', text: 'What does your child say about LifeHub at home?' },
-    { id: 'well', type: 'text', text: 'One thing that went well:' },
-    { id: 'better', type: 'text', text: 'One thing we could do better next time:' },
     { id: 'else', type: 'text', text: 'Anything else you’d like us to know?' }
   ] }
 ];
