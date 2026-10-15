@@ -31,7 +31,7 @@
   var WEEK_KEY = 'term2-mom';          // Part 2 (and older-format notes)
   var FAMILY_KEY = 'term2-mom-family'; // Part 1
   var CONFERENCE_DATE = 'Thursday 15 October';
-  var MAX_IDEAS = 3;
+  var MAX_IDEAS = 1; // one idea; extra picks go into it as a list
   var app = document.getElementById('app');
   var params = new URLSearchParams(location.search);
   var editAs = params.get('editAs');
@@ -170,7 +170,7 @@
 
   function ideaReadHtml(idea, n) {
     return '<div class="mom-idea-read">' +
-      '<p class="mom-idea-title"><span>Idea ' + n + '</span>' + (filled(idea.idea) ? text(idea.idea) : '—') + '</p>' +
+      '<p class="mom-idea-title"><span>' + (n ? 'Idea ' + n : 'Idea') + '</span>' + (filled(idea.idea) ? text(idea.idea) : '—') + '</p>' +
       IDEA_FIELDS.slice(1).filter(function (f) { return filled(idea[f.id]); }).map(function (f) {
         return '<div class="mom-role"><strong>' + f.label.replace('…', '') + '</strong><p>' + text(idea[f.id]) + '</p></div>';
       }).join('') +
@@ -183,7 +183,7 @@
     var ideas = ideasOf(sub);
     if (ideas.length) {
       html += '<h3 class="mom-read-h">What we’ll try in Term 3</h3>';
-      ideas.forEach(function (idea, n) { html += ideaReadHtml(idea, n + 1); });
+      ideas.forEach(function (idea, n) { html += ideaReadHtml(idea, ideas.length > 1 ? n + 1 : 0); });
     }
     if (filled(sub.p2_notes)) html += '<div class="mom-read"><h3>Anything else</h3><p>' + text(sub.p2_notes) + '</p></div>';
     return html || '<p class="mom-wait">Nothing written.</p>';
@@ -311,11 +311,11 @@
 
   /* ---------- Part 2 idea pick list ---------- */
 
-  // The family's Part 1 idea, split at commas (and new lines) into separate
-  // options. Picking one puts it in the first idea with an empty "The idea"
-  // (adding a new idea if all are used); picking it again takes it out.
+  // The family's Part 1 idea, split at commas and new lines into separate
+  // options. Picking one adds it to "The idea" (as a list once there's
+  // more than one); picking it again takes it out.
   function splitIdeas(text) {
-    return String(text || '').split(/[,\n]+/).map(function (t) {
+    return String(text || '').split(/[,\r\n]+/).map(function (t) {
       t = t.replace(/^[\s•\-–]+|[\s.;]+$/g, '');
       return t ? t.charAt(0).toUpperCase() + t.slice(1) : '';
     }).filter(Boolean);
@@ -343,7 +343,7 @@
       opts.forEach(function (opt) {
         var at = where(opt);
         var b = el('button', 'mom-pick-item' + (at !== -1 ? ' is-on' : ''),
-          '<span>' + escapeHtml(opt) + '</span><em>' + (at !== -1 ? '✓ Idea ' + (at + 1) : '+ Add') + '</em>');
+          '<span>' + escapeHtml(opt) + '</span><em>' + (at !== -1 ? '✓ Added' : '+ Add') + '</em>');
         b.type = 'button';
         b.addEventListener('click', function () { onPick(opt, at); });
         box.appendChild(b);
@@ -416,7 +416,7 @@
 
       // Part 2 — planning together.
       var p2 = el('section', 'mom-part');
-      p2.appendChild(partHead(2, 'Planning Together', 'Parents, ' + kid.name + ' and staff', 'agree on at least one idea for Term 3'));
+      p2.appendChild(partHead(2, 'Planning Together', 'Parents, ' + kid.name + ' and staff', 'agree on an idea for Term 3'));
       var p2Body = el('div');
       p2.appendChild(p2Body);
       body.appendChild(p2);
@@ -484,7 +484,7 @@
           ideasWrap.innerHTML = '';
           draft.p2_ideas.forEach(function (idea, n) {
             var card = el('div', 'mom-idea');
-            card.appendChild(el('div', 'mom-idea-head', '<strong>Idea ' + (n + 1) + ' for Term 3</strong>' +
+            card.appendChild(el('div', 'mom-idea-head', '<strong>' + (draft.p2_ideas.length > 1 ? 'Idea ' + (n + 1) + ' for Term 3' : 'Idea for Term 3') + '</strong>' +
               (n > 0 ? '<button type="button" class="mom-remove">Remove</button>' : '')));
             IDEA_FIELDS.forEach(function (f) {
               card.appendChild(textField(f, idea[f.id], function (v) {
