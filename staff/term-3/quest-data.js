@@ -15,8 +15,9 @@
     ],
     // The project levels each group chooses from (Groups 1 and 2 harder).
     LEVELS: { g1: [2, 3], g2: [2, 3], g3: [1, 2], g4: [1, 2] },
-    // Expected length of a project, in school weeks, by level.
-    WEEKS_BY_LEVEL: { 1: 4, 2: 5, 3: 6 },
+    // Expected length of a project, in school weeks, by level: two weeks
+    // to a month.
+    WEEKS_BY_LEVEL: { 1: 2, 2: 3, 3: 4 },
     // Quest times. Monday and Wednesday: the whole group together.
     // Tuesday: each Riser on their own.
     TIMES: {
