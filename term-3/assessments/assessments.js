@@ -571,10 +571,11 @@
         if (note) { msg.textContent = note; msg.classList.add('is-ok'); }
         bar.appendChild(b);
         bar.appendChild(msg);
-        if (ans._reviewed) {
-          bar.appendChild(el('div', 'as-wait', kid.name + ' sent their revision plan on ' + day(ans._reviewed) + ':'));
-          bar.appendChild(reviewEl(paper, ans, true));
-        }
+        // What I've Learnt is the Riser's to fill in; staff only read it.
+        bar.appendChild(el('div', 'as-wait', ans._reviewed
+          ? 'What I’ve Learnt, filled in by ' + esc(kid.name) + ' on ' + day(ans._reviewed) + ' (read only):'
+          : esc(kid.name) + ' hasn’t filled in What I’ve Learnt yet. It shows here, read only, once they send it.'));
+        if (ans._reviewed) bar.appendChild(reviewEl(paper, ans, true));
       }
       draw();
       refresh();
