@@ -270,3 +270,30 @@ a.pb-ov-row:hover { border-color: var(--accent); }
 .pb-jobs .pb-add { margin-bottom: 4px; }
 .pb-blockers:not(.has-open) .pb-bl-head p { display: none; }
 .pb-bl .pq-seg { align-self: center; }
+
+/* Week line, Quest Master gate, Quest Pack extras, board ownership. */
+.pb-line { display: flex; flex-wrap: wrap; gap: 6px 22px; align-items: center; font-size: .92rem; color: var(--ink-soft); margin: 0 0 12px; }
+.pb-line b { color: var(--ink); }
+.pb-line select { font: inherit; font-size: .9rem; padding: 4px 8px; border: 1.5px solid var(--border); border-radius: 8px; background: #fff; }
+.pb-gate { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 24px; text-align: center; max-width: 560px; margin: 10px auto; }
+.pb-gate h2 { margin: 0 0 8px; }
+.pb-gate p { margin: 0 0 8px; color: var(--ink-soft); }
+.pb-gate-hint { font-size: .85rem; }
+.pb-gate-kids { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 14px; }
+.pq-link { background: none; border: 0; padding: 6px 0; font: inherit; font-size: .85rem; color: var(--ink-faint); text-decoration: underline; cursor: pointer; }
+.pq-role .pq-seg, .pq-role-pick { margin-top: 8px; }
+.pq-role-pick { font: inherit; font-size: .85rem; padding: 5px 8px; border: 1.5px solid var(--border); border-radius: 8px; background: #fff; }
+.pq-mat { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--border); }
+.pq-mat input { width: 20px; height: 20px; accent-color: var(--accent); flex: none; }
+.pq-mat-item { flex: 1; min-width: 0; }
+.pq-mat.is-got .pq-mat-item { text-decoration: line-through; color: var(--ink-faint); }
+.pq-mat-who { font-size: .8rem; color: var(--ink-faint); }
+.pq-mat-del { background: none; border: 0; color: var(--ink-faint); cursor: pointer; font-size: .9rem; }
+.pq-mat-add { margin-top: 8px; }
+.pq-mat-add select, .pb-add select { font: inherit; font-size: .85rem; padding: 6px 8px; border: 1.5px solid var(--border); border-radius: 10px; background: #fff; min-width: 0; }
+.pb-card-who { display: flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--ink-soft); margin-top: 6px; }
+.pb-card.is-theirs { opacity: .8; }
+.pb-card.is-theirs .pb-card-main { cursor: default; }
+.pb-su-card.is-locked textarea { background: var(--paper-soft); }
+.pb-goal-line { background: var(--accent-soft); border-radius: 12px; padding: 10px 14px; margin: 0 0 12px; font-size: .92rem; }
+.pb-blockers > h2 { font-size: 1rem; margin: 0 0 4px; }

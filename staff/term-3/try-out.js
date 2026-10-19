@@ -55,7 +55,7 @@
     var jobs = [];
     var now = Date.now();
     if (what.indexOf('quest') !== -1) {
-      jobs.push(window.eot2Save('term-3', g.id, 'board', { meta: { _reset: { v: now, u: now } }, cards: {}, standups: {}, checkins: {}, blockers: {} }));
+      jobs.push(window.eot2Save('term-3', g.id, 'board', { meta: { _reset: { v: now, u: now } }, cards: {}, standups: {}, checkins: {}, blockers: {}, materials: {} }));
     }
     if (what.indexOf('checkin') !== -1) jobs.push(window.eot2Save(k.group, k.slug, 'term3-agreements', {}));
     if (what.indexOf('schedule') !== -1) jobs.push(window.eot2Save(k.group, k.slug, 'term3-schedule', {}));

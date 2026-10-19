@@ -30,16 +30,18 @@
       sol: { name: 'Make it for LifeHub', hookLbl: 'Why it matters', note: 'Design and build something real that LifeHub will use every day.' },
       sci: { name: 'Science in action', hookLbl: 'Big idea', note: 'Build something that shows how science works. Test it, and show what you found out.' }
     },
+    // Roles, named by what the person does. What each one looks after in a
+    // project is in build-pool.js (resp).
     ROLES: {
       sol: [
-        { name: 'Researcher', icon: '🔎', duties: ['Talks to the people who will use it (Risers, facilitators)', 'Writes down what it must do, in one clear sentence', 'Checks it really works for the people using it', 'Leads the showcase talk'] },
-        { name: 'Designer', icon: '✏️', duties: ['Sketches the plan with measurements', 'Makes the materials list', 'Designs labels, signs and instructions', 'Keeps the design log up to date'] },
-        { name: 'Builder', icon: '🔨', duties: ['Leads the build and keeps tool safety', 'Measures, cuts, joins and assembles', 'Fixes what breaks during testing', 'Returns tools and leftover materials'] }
+        { name: 'Finding out', icon: '🔎' },
+        { name: 'Drawing and planning', icon: '✏️' },
+        { name: 'Making and fixing', icon: '🔨' }
       ],
       sci: [
-        { name: 'Investigator', icon: '🔬', duties: ['Researches the science idea', 'Explains it in the group’s own words', 'Writes the prediction before testing', 'Leads the showcase explanation'] },
-        { name: 'Engineer', icon: '⚙️', duties: ['Leads the build and keeps tool safety', 'Follows the design and adjusts the model between tests', 'Keeps the model working for the showcase', 'Returns tools and leftover materials'] },
-        { name: 'Data keeper', icon: '📊', duties: ['Plans the fair test: what changes, what stays the same', 'Measures and records every test', 'Turns results into a chart or table', 'Spots the pattern in the results'] }
+        { name: 'Finding out and explaining', icon: '🔬' },
+        { name: 'Building and testing', icon: '⚙️' },
+        { name: 'Measuring and recording', icon: '📊' }
       ]
     },
     // School weeks of Term 3 (first and last school day), December
@@ -76,12 +78,6 @@
     var s = day(startIso), w = Q.weekOf(s);
     if (s.getDay() === 4 || s.getDay() === 5) w += 1;
     return Math.min(w, Q.WEEKS.length);
-  };
-  // The school week each week of a project's plan falls in (capped at the
-  // last week of term).
-  Q.planWeeks = function (b, startIso) {
-    var w = Q.startWeek(startIso);
-    return b.plan.map(function (x, i) { return Math.min(w + i, Q.WEEKS.length); });
   };
   Q.weekLabel = function (r) {
     if (typeof r === 'number') r = { from: r, to: r };
