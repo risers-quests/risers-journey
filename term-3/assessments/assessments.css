@@ -1,6 +1,6 @@
-/* Term 3 Assessments (assessments.js). Marks are in a bright red pen
-   colour so they stand out against the writing. */
-:root { --pen: #e0262e; }
+/* Term 3 Assessments (assessments.js). Marks are in a bright pink so
+   they stand out against the writing. */
+:root { --pen: #e6007e; }
 .as-body { max-width: 860px; }
 .as-sub { color: var(--ink-soft); font-size: .9rem; margin: 0 0 12px; }
 .as-topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
@@ -10,7 +10,7 @@
 .as-cover { margin: 0 0 10px; color: var(--ink-soft); font-size: .9rem; text-align: center; }
 .as-namedate { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: .95rem; }
 .as-note, .as-wait { background: var(--paper-soft); border-radius: 12px; padding: 10px 14px; color: var(--ink-soft); font-size: .9rem; }
-.as-banner { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; background: #fff7f0; border: 1.5px solid #f3c9b6; border-radius: 14px; padding: 12px 16px; margin-bottom: 16px; font-size: .92rem; }
+.as-banner { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; background: #fff0f8; border: 1.5px solid #f6b8da; border-radius: 14px; padding: 12px 16px; margin-bottom: 16px; font-size: .92rem; }
 .as-banner a { color: var(--accent-dark); font-weight: 700; }
 .as-sec { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 6px 20px 10px; margin-bottom: 16px; }
 .as-sec-title { margin: 12px 0 6px; font-size: 1rem; font-family: var(--font-head); background: #eef3f6; color: #2f4858; padding: 8px 12px; border-radius: 10px; }
@@ -41,7 +41,7 @@ p.as-blank { margin: 6px 0 0; font-size: .85rem; }
 .as-markbtns { display: flex; gap: 6px; margin: 8px 0 0 44px; }
 .as-part .as-markbtns { margin-left: 36px; }
 .as-mbtn { font: inherit; font-size: .85rem; font-weight: 600; padding: 6px 14px; border-radius: 99px; border: 1.5px solid var(--border); background: #fff; color: var(--ink-soft); cursor: pointer; }
-.as-mbtn.is-on { border-color: var(--pen); background: #fdecec; color: var(--pen); }
+.as-mbtn.is-on { border-color: var(--pen); background: #fde6f3; color: var(--pen); }
 
 /* The marks: a red tick beside, or a red circle around, the number. */
 .as-tick { color: var(--pen); font-style: normal; font-weight: 900; font-size: 1.35rem; line-height: 1; margin-left: 2px; transform: rotate(-6deg); }
@@ -90,3 +90,21 @@ p.as-blank { margin: 6px 0 0; font-size: .85rem; }
   .as-part .as-ans, .as-part .as-markbtns { margin-left: 0; }
   .as-opts { grid-template-columns: 1fr 1fr; }
 }
+
+/* Answers still to fill in, and the way to them. */
+.as-missing { border-radius: 12px; box-shadow: 0 0 0 3px var(--pen); background: #fff0f8; }
+.as-q.as-missing, .as-part.as-missing { padding-left: 8px; padding-right: 8px; }
+.as-alert { width: 100%; background: #fff0f8; border: 2px solid var(--pen); border-radius: 14px; padding: 14px 16px; }
+.as-alert p { margin: 0 0 10px; }
+.as-alert-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.as-jump { font: inherit; font-size: .85rem; font-weight: 700; padding: 5px 12px; border-radius: 99px; border: 1.5px solid var(--pen); background: #fff; color: var(--pen); cursor: pointer; }
+.as-alert .as-first { width: auto; padding: 9px 20px; margin-right: 10px; }
+.as-passlink { font: inherit; font-size: .85rem; background: none; border: 0; color: var(--ink-soft); text-decoration: underline; cursor: pointer; padding: 8px 0 0; display: block; }
+.as-pass { margin-top: 12px; padding-top: 12px; border-top: 1px dashed #f6b8da; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.as-pass label { font-size: .9rem; font-weight: 600; display: flex; gap: 8px; align-items: center; }
+.as-pass input { font: inherit; width: 110px; padding: 7px 10px; border: 1.5px solid var(--border); border-radius: 8px; letter-spacing: .2em; }
+.as-pass .eot2-btn { width: auto; padding: 9px 20px; }
+.as-working span { display: block; font-family: var(--font-body); font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); }
+.as-written.as-working { margin-bottom: 6px; }
+.as-ans textarea + textarea { margin-top: 6px; }
+.as-note-pass { background: #fff0f8; color: #8a0050; }

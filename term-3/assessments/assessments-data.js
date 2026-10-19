@@ -4,9 +4,10 @@
      parts:   [{ l: 'a', text }]  each part answered and marked on its own
      options: ['…', …]            multiple choice, lettered (a), (b), …
      (neither)                     one written answer
-   work: true gives a bigger box for working. Fractions are written
-   {num/den}, so 2{1/3} is two and a third. The answer keys are not here:
-   they live on the private staff site (answer-keys/term-3/). */
+   work: true adds a box for working above the answer. Fractions are
+   written {num/den}, so 2{1/3} is two and a third. The answers are not
+   here: auto holds only their fingerprints (assessments-mark.js), and the
+   readable key lives on the private staff site (answer-keys/term-3/). */
 window.T3_ASSESSMENTS = [
   {
     id: 'math-t1', subject: 'Mathematics', grade: 'Grade 7', title: 'Term 1 Assessment',
@@ -76,9 +77,29 @@ window.T3_ASSESSMENTS = [
         { n: 44, work: true, text: 'A recipe needs {2/3} cup of sugar for one batch. If Aisha wants to make 5 batches, how many cups of sugar does she need in total?' },
         { n: 45, work: true, text: 'A lift descends a total distance represented by the rational number {-45/6} m, moving an equal distance in each of 3 stages. What rational number represents the distance moved in each stage?' }
       ] }
-    ]
+    ],
+    // Fingerprints of the accepted answers (see assessments-mark.js).
+    auto: {
+      '1a': ['958f7b4ce6944f2a'], '1b': ['6e28611aac33dbf2'], '1c': ['291e666a9e2ccbb4'], '2a': ['05871648b4217163'],
+      '2b': ['bce385e113033a90'], '3': ['cd4a57a8cb718f0e'], '4': ['74585b33eddcfdce'], '5': ['29a35f7ac9974f44'],
+      '6': ['cd63fc7016a72a5c'], '7': ['3ce463d376f911a2'], '8': ['fb86ec13a42c2c87'], '9': ['cfb730cc8ee516d9'],
+      '10': ['33dc01cf16b77f79'], '11': ['8d3adc0f2fb25575'], '12': ['3b83bc445256c87f'], '13': ['8ea7415267bde230'],
+      '14': ['d3ac07a3a287eeeb'], '15': ['60ede188f4be08dd'], '16': ['0d84d065a507d7ec'], '17': ['08315bcd1e8b1c87'],
+      '18': ['f7743a260208528e'], '19': ['66c8d1aef5e60d83'], '20': ['61755bd5561b0f6b'], '21': ['efcf9d7e558559b4'],
+      '22': ['e36f6cc30f8bea86'], '23': ['c7bec91c6e01a5e0'], '24': ['22ccc1f9b899bff0'], '25': ['ae3cc4f63c44c10b'],
+      '26': ['f90f6f695f3f33ac'], '27': ['59d66ec3a69287a8'], '28': ['875530af930d872e'], '29': ['e7d01b0e6f669ff7'],
+      '30': ['8587481ec5118f8c'], '31': ['4d7908f62b96c6f1'], '32': ['889e5be5eb101174'], '34': ['372e033e51d94ca2'],
+      '35': ['e30de1f1fc521046'], '36': ['2a04eaa02a4956fc'], '37': ['48a3b04a5f9c32c3'], '38': ['56ba940d74b10ac4'],
+      '39': ['83e2bea03ef73852'], '40': ['2044f5e7dbb2d473'], '41': ['f7455759d0c46f85'], '42': ['5fbdbf5de6e3cfce'],
+      '43': ['91c86f0291ad1852'], '44': ['b918a73ad077abcc'], '45': ['5e0d565f68848dda']
+    },
+    rules: { '31': { fraction: true }, '32': { symbol: true }, '33': { between: [-1, 0], count: 4 } }
   }
 ];
 
 // Which Risers have which papers.
 window.T3_ASSIGNED = { benjamin: ['math-t1'] };
+
+// Fingerprint of the facilitator PIN, which lets a Riser submit with
+// answers left blank.
+window.T3_PASS = 'f016d5f854c8aa37';

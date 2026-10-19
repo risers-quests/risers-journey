@@ -84,6 +84,7 @@
       s.qs.forEach(function (q) {
         var qd = el('div', 'as-q');
         var whole = !q.parts;
+        if (whole) qd.dataset.item = String(q.n);
         // A question with lettered parts is marked on its letters only.
         qd.appendChild(el('div', 'as-qhead', numHtml(q.n + '.', whole ? marks[String(q.n)] : '', mode) +
           '<p class="as-qtext">' + math(q.text) + '</p>'));
@@ -91,6 +92,7 @@
           q.parts.forEach(function (p) {
             var id = q.n + p.l;
             var row = el('div', 'as-part', '<div class="as-plabel">' + numHtml('(' + p.l + ')', marks[id], mode, true) + '<span>' + math(p.text) + '</span></div>');
+            row.dataset.item = id;
             row.appendChild(answerEl(id, null, mode));
             if (mode === 'mark') row.appendChild(markEl(id));
             qd.appendChild(row);
@@ -117,6 +119,8 @@
           b.addEventListener('click', function () {
             answers[id] = answers[id] === l ? '' : l;
             Array.prototype.forEach.call(opts.children, function (x, j) { x.classList.toggle('is-on', answers[id] === LETTERS[j]); });
+            var holder = opts.closest('[data-item]');
+            if (holder && answers[id]) holder.classList.remove('as-missing');
             hooks.change();
           });
           opts.appendChild(b);
@@ -124,17 +128,29 @@
         wrap.appendChild(opts);
         if (mode !== 'answer' && !answers[id]) wrap.appendChild(el('p', 'as-blank', 'No answer'));
       } else if (mode === 'answer') {
-        var ta = el('textarea', 'as-input');
-        ta.rows = q && q.work ? 4 : 1;
-        ta.placeholder = q && q.work ? 'Working and answer' : 'Answer';
-        ta.value = answers[id] || '';
-        ta.addEventListener('input', function () { answers[id] = ta.value; hooks.change(); });
-        wrap.appendChild(ta);
+        if (q && q.work) wrap.appendChild(inputBox(id + 'w', 3, 'Working (optional)'));
+        wrap.appendChild(inputBox(id, 1, 'Answer'));
       } else {
+        if (q && q.work && filled(answers[id + 'w'])) wrap.appendChild(el('p', 'as-written as-working', '<span>Working</span>' + esc(answers[id + 'w']).replace(/\n/g, '<br>')));
         wrap.appendChild(el('p', 'as-written' + (filled(answers[id]) ? '' : ' as-blank'), filled(answers[id]) ? esc(answers[id]).replace(/\n/g, '<br>') : 'No answer'));
       }
       if (mode === 'mark' && hooks.key && hooks.key[id]) wrap.appendChild(el('p', 'as-key', '<b>Key:</b> ' + esc(hooks.key[id])));
       return wrap;
+    }
+
+    function inputBox(id, rows, label) {
+      var ta = el('textarea', 'as-input');
+      ta.rows = rows;
+      ta.placeholder = label;
+      ta.setAttribute('aria-label', label);
+      ta.value = answers[id] || '';
+      ta.addEventListener('input', function () {
+        answers[id] = ta.value;
+        var holder = ta.closest('[data-item]');
+        if (holder && filled(ta.value)) holder.classList.remove('as-missing');
+        hooks.change();
+      });
+      return ta;
     }
 
     function markEl(id) {
@@ -279,7 +295,7 @@
       if (mk._returned) {
         var sc = scores(paper, marks);
         var total = sc.reduce(function (n, s) { return n + s.right; }, 0), of = sc.reduce(function (n, s) { return n + s.of; }, 0);
-        body.appendChild(el('div', 'as-banner', '<strong>Your marked paper is back: ' + total + ' out of ' + of + '.</strong> ' +
+        body.appendChild(el('div', 'as-banner', '<strong>Your paper is marked: ' + total + ' out of ' + of + '.</strong> ' +
           '<span><i class="as-tick">✓</i> right &nbsp; <span class="as-num as-w as-legend">7<i class="as-ring"></i></span> needs another look</span>' +
           (ans._reviewed ? '' : '<a href="#review">Fill in What I’ve Learnt ↓</a>')));
         body.appendChild(paperEl(paper, ans, marks, 'marked'));
@@ -298,19 +314,127 @@
         return;
       }
       if (ans._submitted) {
-        body.appendChild(el('div', 'as-banner', '<strong>Submitted ' + day(ans._submitted) + '.</strong> <span>Your facilitator will mark it and send it back to you here.</span>'));
-        body.appendChild(paperEl(paper, ans, {}, 'read'));
+        // Submitted but not marked yet (say the connection dropped): mark it now.
+        body.appendChild(el('p', 'as-note', 'Marking your paper…'));
+        markAndSave(kid, paper, ans).then(function () { renderKidPaper(kid, paper); });
         return;
       }
-      body.appendChild(el('p', 'as-note', esc(paper.note) + ' Type fractions like 2/3, and mixed numbers like 4 1/6.'));
+      body.appendChild(el('p', 'as-note', esc(paper.note) + ' Type fractions like 2/3 (always in simplest form), and mixed numbers like 4 1/6.'));
       body.appendChild(paperEl(paper, ans, {}, 'answer', { change: function () { save(); } }));
-      body.appendChild(submitBar('Submit', function () {
-        var blank = allItems(paper).filter(function (i) { return !filled(ans.answers[i]); }).length;
-        if (blank && !confirm(blank + ' answer' + (blank > 1 ? 's are' : ' is') + ' still empty. Submit anyway? You can’t change it after this.')) return null;
-        if (!blank && !confirm('Submit your assessment? You can’t change it after this.')) return null;
-        ans._submitted = new Date().toISOString();
-        return save(true);
-      }, function () { renderKidPaper(kid, paper); window.scrollTo(0, 0); }, function () { delete ans._submitted; }));
+      body.appendChild(submitPanel(kid, paper, ans, save));
+    });
+  }
+
+  function blanksOf(paper, ans) {
+    return allItems(paper).filter(function (i) { return !filled((ans.answers || {})[i]); });
+  }
+  function label(id) { var m = /^(\d+)([a-z]?)$/.exec(id); return m[1] + (m[2] ? '(' + m[2] + ')' : ''); }
+  function jumpTo(id) {
+    var t = document.querySelector('[data-item="' + id + '"]');
+    if (!t) return;
+    t.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    var f = t.querySelector('textarea, button');
+    if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, 400);
+  }
+
+  // Marks the paper from the key, then saves the marks for staff and the
+  // Riser. Resolves true once both are saved.
+  function markAndSave(kid, paper, ans) {
+    return window.T3_autoMark(paper, ans.answers || {}, items).then(function (marks) {
+      var now = new Date().toISOString();
+      return window.eot2Save(kid.group, kid.slug, marksKeyOf(paper.id), { marks: marks, auto: true, _returned: now, by: 'auto' })
+        .then(function (r) { return r.ok; });
+    }, function () { return false; });
+  }
+
+  // Submit: every answer box must be filled. If some aren't, list them,
+  // highlight them and offer a way to each; a facilitator's PIN lets the
+  // Riser submit anyway (blank answers are marked wrong).
+  function submitPanel(kid, paper, ans, save) {
+    var bar = el('div', 'as-submitbar');
+    var alertBox = el('div', 'as-alert');
+    alertBox.hidden = true;
+    var b = el('button', 'eot2-btn', 'Submit');
+    b.type = 'button';
+    var msg = el('span', 'as-msg');
+    bar.appendChild(alertBox);
+    bar.appendChild(b);
+    bar.appendChild(msg);
+
+    function send(pass) {
+      ans._submitted = new Date().toISOString();
+      if (pass) ans._pass = { at: ans._submitted, blank: blanksOf(paper, ans) };
+      b.disabled = true;
+      msg.className = 'as-msg';
+      msg.textContent = 'Sending and marking…';
+      save(true).then(function (ok) {
+        if (!ok) return false;
+        return markAndSave(kid, paper, ans);
+      }).then(function (ok) {
+        if (ok) { renderKidPaper(kid, paper); window.scrollTo(0, 0); return; }
+        delete ans._submitted; delete ans._pass;
+        save(true);
+        b.disabled = false;
+        msg.textContent = 'Not sent — check the connection and try again.';
+      });
+    }
+
+    b.addEventListener('click', function () {
+      var blank = blanksOf(paper, ans);
+      Array.prototype.forEach.call(document.querySelectorAll('.as-missing'), function (x) { x.classList.remove('as-missing'); });
+      if (!blank.length) {
+        alertBox.hidden = true;
+        if (confirm('Submit your assessment? You can’t change it after this.')) send(false);
+        return;
+      }
+      blank.forEach(function (id) { var t = document.querySelector('[data-item="' + id + '"]'); if (t) t.classList.add('as-missing'); });
+      alertBox.hidden = false;
+      alertBox.innerHTML = '<p><strong>' + (blank.length === 1 ? '1 question isn’t answered yet.' : blank.length + ' questions aren’t answered yet.') + '</strong> Please answer ' + (blank.length === 1 ? 'it' : 'every one') + ' before you submit.</p>';
+      var list = el('div', 'as-alert-list');
+      blank.forEach(function (id) {
+        var go = el('button', 'as-jump', 'Q' + label(id));
+        go.type = 'button';
+        go.addEventListener('click', function () { jumpTo(id); });
+        list.appendChild(go);
+      });
+      alertBox.appendChild(list);
+      var first = el('button', 'eot2-btn as-first', 'Take me to the first one');
+      first.type = 'button';
+      first.addEventListener('click', function () { jumpTo(blank[0]); });
+      alertBox.appendChild(first);
+
+      var passBtn = el('button', 'as-passlink', 'I can’t answer some of these — ask my facilitator');
+      passBtn.type = 'button';
+      var pass = el('div', 'as-pass');
+      pass.hidden = true;
+      pass.innerHTML = '<p>Your facilitator can let you submit with these left blank. They will count as not right.</p>' +
+        '<label>Facilitator PIN <input type="password" inputmode="numeric" autocomplete="off" maxlength="8"></label>';
+      var ok = el('button', 'eot2-btn', 'Submit with facilitator pass');
+      ok.type = 'button';
+      var pmsg = el('span', 'as-msg');
+      pass.appendChild(ok);
+      pass.appendChild(pmsg);
+      var pin = pass.querySelector('input');
+      function tryPin() {
+        sha16('lifehub-t3|pin|' + pin.value.trim()).then(function (h) {
+          if (h !== window.T3_PASS) { pmsg.textContent = 'That PIN isn’t right.'; pin.select(); return; }
+          pmsg.textContent = '';
+          send(true);
+        });
+      }
+      ok.addEventListener('click', tryPin);
+      pin.addEventListener('keydown', function (e) { if (e.key === 'Enter') tryPin(); });
+      passBtn.addEventListener('click', function () { pass.hidden = false; passBtn.hidden = true; pin.focus(); });
+      alertBox.appendChild(passBtn);
+      alertBox.appendChild(pass);
+      alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    return bar;
+  }
+
+  function sha16(text) {
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)).then(function (buf) {
+      return Array.prototype.map.call(new Uint8Array(buf), function (x) { return ('0' + x.toString(16)).slice(-2); }).join('').slice(0, 16);
     });
   }
 
@@ -341,7 +465,7 @@
   function renderStaffList() {
     app.innerHTML = '';
     app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/term-3/index.html">&larr; Term 3</a>'));
-    app.appendChild(el('div', 'eot2-head', '<h1>Term 3 Assessments</h1><p>Mark submitted papers and send them back. Each Riser then fills in What I’ve Learnt.</p>'));
+    app.appendChild(el('div', 'eot2-head', '<h1>Term 3 Assessments</h1><p>Papers are marked automatically from the answer key when a Riser submits. Open one to check the marks or change any of them.</p>'));
     var list = el('div', 'as-list', '<p class="as-sub">Loading…</p>');
     app.appendChild(list);
     var jobs = [];
@@ -403,6 +527,8 @@
         return;
       }
       body.insertAdjacentHTML('beforeend', headerHtml(paper, kid, day(ans._submitted)));
+      if (mk.auto) body.appendChild(el('p', 'as-note', 'Marked automatically from the answer key' + (mk.by && mk.by !== 'auto' ? ', then checked by ' + esc(mk.by.charAt(0).toUpperCase() + mk.by.slice(1)) : '') + '. Change any mark below, then send the updated marks.'));
+      if (ans._pass) body.appendChild(el('p', 'as-note as-note-pass', 'Submitted with a facilitator pass. Left blank: ' + ans._pass.blank.map(label).map(function (x) { return 'Q' + x; }).join(', ') + '.'));
       var save = saver(kid, marksKeyOf(paper.id), mk, function (m, t) { st.set(m, m === 'saved' && mk._returned ? 'Returned · saved' : t); });
       var tally = el('div', 'as-tally');
       body.appendChild(tally);
