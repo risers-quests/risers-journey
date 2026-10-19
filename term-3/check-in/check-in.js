@@ -47,7 +47,10 @@
   function fmt(iso) { return day(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); }
   function range(w) { return fmt(w.start) + ' – ' + fmt(w.end); }
   function today() { var d = new Date(); return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
-  function isOpen(w) { return today() >= day(w.start); }
+  // Before term starts, a Riser trying it out (assets/brand.js LH_TRIAL)
+  // can tick any week.
+  var TRIAL = false;
+  function isOpen(w) { return TRIAL && today() < day(WEEKS[0].start) || today() >= day(w.start); }
   function isNow(w) { var t = today(); return t >= day(w.start) && t <= day(w.end); }
 
   // Light clean-up for display: spacing, capitals, a lone "i", the child's name, a full stop.
@@ -92,6 +95,7 @@
   /* ---------- the family ---------- */
 
   function renderKid(kid) {
+    TRIAL = (window.LH_TRIAL || []).indexOf(kid.slug) !== -1;
     app.innerHTML = '';
     app.appendChild(el('div', 'eot2-crumb', '<a href="../index.html">&larr; Term 3</a>'));
     app.appendChild(el('div', 'eot2-form-header',

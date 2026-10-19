@@ -118,6 +118,12 @@
         out[m][k] = !p ? q : !q ? p : ((q.u || 0) > (p.u || 0) ? q : p);
       });
     });
+    // A cleared board (staff Try-out page) drops everything older than the
+    // clear, so a device that still had the old board can't bring it back.
+    var reset = out.meta._reset ? out.meta._reset.v : 0;
+    if (reset) MAPS.forEach(function (m) {
+      Object.keys(out[m]).forEach(function (k) { if (k !== '_reset' && (out[m][k].u || 0) < reset) delete out[m][k]; });
+    });
     return out;
   }
 

@@ -62,6 +62,10 @@
     }).join('');
   };
 
+  // Risers trying Term 3 out before it starts: they can tick any check-in
+  // week early. Staff clear their try-out data on Term 3 → Try-out data.
+  window.LH_TRIAL = ['benjamin'];
+
   var NAV = isStaff ? [
     // Only the staff Home itself (not end-of-term-2/staff/ and the like).
     { label: 'Home', href: root + 'staff/index.html', icon: 'home', match: new RegExp('^' + new URL(root, location.href).pathname + 'staff/(index\\.html)?$') },
