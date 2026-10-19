@@ -66,6 +66,9 @@
           '<p><b>You’ll make:</b> ' + esc(b.make) + '</p>' +
           '<p class="pq-learn"><b>Learning:</b> ' + esc(b.learn) + '<br><b>Learning outcome:</b> ' + esc(b.lo) + '</p>' +
           '<p class="pq-time">About ' + Q.weeksFor(b) + ' weeks · shown to ' + (sees.length ? sees.join(', ') : 'no group') + '</p>' +
+          '<details class="pq-peek"><summary>Stage plan</summary><ol>' + b.plan.map(function (s) {
+            return '<li><b>' + esc(s[0]) + '</b><ul>' + Q.ROLES[b.cat].map(function (r, j) { return '<li>' + r.icon + ' ' + esc(r.name) + ': ' + esc(s[j + 1]) + '</li>'; }).join('') + '</ul></li>';
+          }).join('') + '</ol></details>' +
           (by.length ? '<p class="bl-by">Chosen by ' + by.join(', ') + '</p>' : '')));
       });
       body.appendChild(grid);

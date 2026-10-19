@@ -274,6 +274,15 @@
       '<p class="pq-learn"><b>Learning:</b> ' + esc(b.learn) + '<br><b>Learning outcome:</b> ' + esc(b.lo) + '</p>';
   }
 
+  // The four stages and every role's job, folded away on a project card.
+  function planPeek(b) {
+    var roles = Q.ROLES[b.cat];
+    return '<details class="pq-peek"><summary>See the plan: a job for each of you, every stage</summary><ol>' +
+      b.plan.map(function (s) {
+        return '<li><b>' + esc(s[0]) + '</b><ul>' + roles.map(function (r, j) { return '<li>' + r.icon + ' ' + esc(r.name) + ': ' + esc(s[j + 1]) + '</li>'; }).join('') + '</ul></li>';
+      }).join('') + '</ol></details>';
+  }
+
   function chooserView(current) {
     var wrap = el('div', 'pq');
     var levels = Q.LEVELS[group.id] || [1, 2, 3];
@@ -298,7 +307,8 @@
         var card = el('article', 'pq-card pq-' + cat + (current && current.id === b.id ? ' is-current' : ''),
           (KID ? '' : '<span class="pq-level">Level ' + b.level + '</span>') +
           '<h3>' + esc(b.title) + '</h3>' + detailHtml(b) +
-          '<p class="pq-time">About ' + Q.weeksFor(b) + ' weeks · ready by ' + Q.nice(due.date) + (due.short ? ' (when the term ends)' : '') + '</p>');
+          '<p class="pq-time">About ' + Q.weeksFor(b) + ' weeks · ready by ' + Q.nice(due.date) + (due.short ? ' (when the term ends)' : '') + '</p>' +
+          planPeek(b));
         var go = el('button', 'pq-btn', current && current.id === b.id ? 'Our project now' : 'Choose this project');
         go.type = 'button';
         go.disabled = !!(current && current.id === b.id);
@@ -362,11 +372,66 @@
     });
     wrap.appendChild(sec);
 
+    wrap.appendChild(planEl(b));
+
     var change = el('button', 'pq-btn pq-btn-ghost', 'Change our project');
     change.type = 'button';
     change.addEventListener('click', function () { changing = true; draw(); });
     wrap.appendChild(change);
     return wrap;
+  }
+
+  // The project's four stages: when each happens and each role's job in
+  // it. Everyone has a job every stage, so everyone works every session.
+  function planEl(b) {
+    var roles = Q.ROLES[b.cat], ranges = Q.stageWeeks(b, meta('started')), nowWk = Q.weekOf();
+    var sec = el('section', 'pq-sec', '<h3>How the weeks go</h3>' +
+      '<p class="pq-sub">Each stage has a job for every role, about the same size, so everyone is busy every session and the work is shared fairly. ' +
+      'On Monday and Wednesday you work on your jobs together; on Tuesday, carry on with your own job.</p>');
+    b.plan.forEach(function (stg, i) {
+      var r = ranges[i], here = nowWk >= r.from && nowWk <= r.to;
+      var box = el('div', 'pq-stage' + (here ? ' is-now' : '') + (nowWk > r.to ? ' is-past' : ''),
+        '<div class="pq-stage-head"><b>' + (i + 1) + '. ' + esc(stg[0]) + '</b><span>' + Q.weekLabel(r) + (here ? ' · now' : '') + '</span></div>' +
+        '<ul>' + roles.map(function (role, j) {
+          var who = group.kids.filter(function (k) { return meta('role_' + k) === j; });
+          return '<li><span class="pq-stage-role">' + role.icon + ' ' + esc(role.name) + (who.length ? ' (' + who.map(esc).join(', ') + ')' : '') + '</span>' + esc(stg[j + 1]) + '</li>';
+        }).join('') + '</ul>');
+      var key = 'staged_' + b.id + '_' + i;
+      var add = el('button', 'pq-seg', meta(key) ? '✓ On our board' : 'Put these jobs on our board');
+      add.type = 'button';
+      add.disabled = !!meta(key);
+      add.addEventListener('click', function () {
+        roles.forEach(function (role, j) {
+          var who = group.kids.filter(function (k) { return meta('role_' + k) === j; });
+          putCard(uid(), { title: stg[j + 1], col: 'todo', size: 2, who: who, order: now() + j, by: KID ? ME : 'facilitator' });
+        });
+        setMeta(key, true);
+        tab = 'board';
+        draw();
+      });
+      box.appendChild(add);
+      sec.appendChild(box);
+    });
+    return sec;
+  }
+
+  // Points of finished jobs for each Riser, this week and overall, so the
+  // group can see the work is shared fairly.
+  function fairShare() {
+    var all = cards();
+    var rows = group.kids.map(function (k) {
+      var mine = all.filter(function (c) { return c.col === 'done' && (c.who || []).indexOf(k) !== -1; });
+      var pts = function (l) { return l.reduce(function (n, c) { return n + (c.size || 1); }, 0); };
+      return { k: k, week: pts(mine.filter(function (c) { return c.doneWeek === sprint(); })), all: pts(mine) };
+    });
+    var max = Math.max.apply(null, rows.map(function (r) { return r.all; }).concat([1]));
+    var low = rows.filter(function (r) { return r.all < max / 2; }).map(function (r) { return r.k; });
+    return el('div', 'pb-fair', '<span class="pb-fair-title">Fair share <em>points of finished jobs</em></span>' +
+      rows.map(function (r) {
+        return '<span class="pb-fair-row"><span class="pb-av pb-av-' + kidIndex(r.k) + '">' + esc(initial(r.k)) + '</span>' + esc(r.k) +
+          '<i><b style="width:' + Math.round(r.all / max * 100) + '%"></b></i><em>' + r.week + ' this week · ' + r.all + ' in all</em></span>';
+      }).join('') +
+      (max >= 4 && low.length ? '<span class="pb-fair-note">' + low.map(esc).join(' and ') + ': take on the next jobs, so the work stays fair.</span>' : ''));
   }
 
   /* ---------- board ---------- */
@@ -382,7 +447,10 @@
   }
 
   function boardView() {
+    var outer = el('div');
+    outer.appendChild(fairShare());
     var wrap = el('div', 'pb-board');
+    outer.appendChild(wrap);
     var doingCount = {};
     inCol('doing').forEach(function (c) { (c.who || []).forEach(function (k) { doingCount[k] = (doingCount[k] || 0) + 1; }); });
     var busy = Object.keys(doingCount).filter(function (k) { return doingCount[k] > 1; });
@@ -417,7 +485,7 @@
       if (!list.length && col.id !== 'backlog') c.appendChild(el('p', 'pb-empty', col.id === 'todo' ? 'Move jobs here from the Ideas list.' : col.id === 'doing' ? 'Nothing being worked on.' : 'Nothing finished yet this week.'));
       wrap.appendChild(c);
     });
-    return wrap;
+    return outer;
   }
 
   function moveCard(card, d) {

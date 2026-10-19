@@ -70,6 +70,31 @@
     for (var i = 0; i < Q.WEEKS.length; i++) if (t <= day(Q.WEEKS[i][1])) return i + 1;
     return Q.WEEKS.length;
   };
+  // The school week a project starts in (Thursday or Friday: the next one).
+  Q.startWeek = function (startIso) {
+    var s = day(startIso), w = Q.weekOf(s);
+    if (s.getDay() === 4 || s.getDay() === 5) w += 1;
+    return Math.min(w, Q.WEEKS.length);
+  };
+  // The four stages of a project's plan, as school-week ranges: the weeks
+  // shared out as evenly as possible, with any extra going to the middle.
+  Q.stageWeeks = function (b, startIso) {
+    var total = Q.weeksFor(b), base = Math.floor(total / 4), extra = total - base * 4;
+    var sizes = [base, base, base, base];
+    [1, 2, 0, 3].slice(0, extra).forEach(function (i) { sizes[i] += 1; });
+    var w = Q.startWeek(startIso), out = [];
+    sizes.forEach(function (n) {
+      var from = Math.min(w, Q.WEEKS.length), to = Math.min(w + Math.max(n, 1) - 1, Q.WEEKS.length);
+      out.push({ from: from, to: to });
+      w += Math.max(n, 1);
+    });
+    return out;
+  };
+  Q.weekLabel = function (r) {
+    var a = Q.WEEKS[r.from - 1], b = Q.WEEKS[r.to - 1];
+    var dm = function (x) { return day(x).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); };
+    return (r.from === r.to ? 'Week ' + r.from : 'Weeks ' + r.from + '–' + r.to) + ' · ' + dm(a[0]) + ' – ' + dm(b[1]);
+  };
   // The Wednesday (last group session) of the n-th school week from the
   // week a project starts. A project chosen on Thursday or Friday starts
   // the next week.

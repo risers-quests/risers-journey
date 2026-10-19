@@ -197,3 +197,27 @@ a.pb-ov-row:hover { border-color: var(--accent); }
 .bl-chip.is-on { border-color: var(--ink); color: var(--ink); font-weight: 700; }
 .pq-cat span { font-weight: 400; color: var(--ink-faint); font-size: .9rem; }
 .bl-by { font-weight: 700; color: #b0005f; font-size: .85rem !important; }
+
+/* The project's stages (board.js planEl) and the board's fair share. */
+.pq-stage { border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+.pq-stage.is-now { border-color: var(--accent); background: var(--accent-soft); }
+.pq-stage.is-past { opacity: .7; }
+.pq-stage-head { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.pq-stage-head span { font-size: .82rem; color: var(--ink-soft); }
+.pq-stage ul { margin: 0 0 8px; padding: 0; list-style: none; }
+.pq-stage li { font-size: .9rem; padding: 4px 0; }
+.pq-stage-role { display: block; font-size: .75rem; font-weight: 700; color: var(--ink-soft); }
+.pb-fair { display: flex; flex-direction: column; gap: 6px; background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; }
+.pb-fair-title { font-weight: 700; font-size: .9rem; }
+.pb-fair-title em { font-style: normal; font-weight: 400; color: var(--ink-faint); font-size: .8rem; margin-left: 6px; }
+.pb-fair-row { display: grid; grid-template-columns: 28px 90px minmax(0, 1fr) auto; align-items: center; gap: 8px; font-size: .88rem; }
+.pb-fair-row i { display: block; height: 8px; background: var(--paper-soft); border-radius: 99px; overflow: hidden; }
+.pb-fair-row i b { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+.pb-fair-row em { font-style: normal; font-size: .8rem; color: var(--ink-soft); }
+.pb-fair-note { font-size: .85rem; color: #8a5200; font-weight: 600; }
+@media (max-width: 560px) { .pb-fair-row { grid-template-columns: 28px minmax(0, 1fr) auto; } .pb-fair-row i { display: none; } }
+.pq-peek { font-size: .86rem; }
+.pq-peek summary { cursor: pointer; color: var(--accent-dark); font-weight: 600; }
+.pq-peek ol { margin: 8px 0 0; padding-left: 18px; }
+.pq-peek ol > li { margin-bottom: 6px; }
+.pq-peek ul { margin: 2px 0 0; padding-left: 0; list-style: none; color: var(--ink-soft); }
