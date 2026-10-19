@@ -108,6 +108,3 @@ p.as-blank { margin: 6px 0 0; font-size: .85rem; }
 .as-written.as-working { margin-bottom: 6px; }
 .as-ans textarea + textarea { margin-top: 6px; }
 .as-note-pass { background: #fff0f8; color: #8a0050; }
-.as-reset { display: flex; align-items: center; gap: 10px; justify-content: flex-end; margin: -6px 0 12px; }
-.as-resetbtn { font: inherit; font-size: .85rem; font-weight: 600; padding: 7px 16px; border-radius: 99px; border: 1.5px solid var(--border); background: #fff; color: var(--ink-soft); cursor: pointer; }
-.as-resetbtn:hover { border-color: var(--pen); color: var(--pen); }

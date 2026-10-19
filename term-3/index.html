@@ -15,8 +15,8 @@
 <div id="app"></div>
 <script src="assessments/assessments-data.js"></script>
 <script>
-/* A Riser's Term 3: the weekly check-in, plus their assessments and their
-   group's quest board when they have them. */
+/* A Riser's Term 3: the weekly check-in, their assessments, and their
+   group's quest board when they have one. */
 (function () {
   var kid = null, staff = null;
   try { kid = (localStorage.getItem('imm-l3-kid') || '').toLowerCase(); staff = localStorage.getItem('rj-staff-name'); } catch (e) {}
@@ -24,7 +24,7 @@
   var tiles = [
     { title: 'Weekly Check-in', desc: 'Each week, tick off what your family agreed at the Term 2 Conference.', href: 'check-in/index.html', icon: 'check', tone: 'amber' }
   ];
-  if ((window.T3_ASSIGNED || {})[kid]) tiles.push({ title: 'Assessments', desc: 'Your Term 3 assessments, marked papers and revision plan.', href: 'assessments/index.html', icon: 'paper', tone: 'slate' });
+  tiles.push({ title: 'Assessments', desc: 'Your Term 3 assessments, marked papers and revision plan.', href: 'assessments/index.html', icon: 'paper', tone: 'slate' });
   if ((window.LH_T3_GROUPS || {})[kid]) tiles.push({ title: 'Term 3 Quest', desc: 'Your group’s build: plan it, track it, and check in every week.', href: 'quest/index.html', icon: 'skills', tone: 'green' });
   document.getElementById('app').innerHTML =
     '<header class="hd-welcome"><h1>Term 3</h1><p>26 October – 21 January</p></header>' +

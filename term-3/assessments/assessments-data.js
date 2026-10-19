@@ -97,8 +97,9 @@ window.T3_ASSESSMENTS = [
   }
 ];
 
-// Which Risers have which papers.
-window.T3_ASSIGNED = { benjamin: ['math-t1'] };
+// Which Risers have which papers, e.g. { benjamin: ['math-t1'] }.
+// (math-t1 was a trial and isn't set for anyone.)
+window.T3_ASSIGNED = {};
 
 // Fingerprint of the facilitator PIN, which lets a Riser submit with
 // answers left blank.

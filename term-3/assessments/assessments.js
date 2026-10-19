@@ -263,7 +263,7 @@
       return Promise.all([window.eot2Fetch(kid.group, kid.slug, keyOf(p.id)), window.eot2Fetch(kid.group, kid.slug, marksKeyOf(p.id))])
         .then(function (r) { return { paper: p, st: status(r[0] && r[0].state, r[1] && r[1].state) }; });
     })).then(function (rows) {
-      list.innerHTML = '';
+      list.innerHTML = rows.length ? '' : '<p class="as-wait">No assessments yet. They’ll appear here when your facilitator sets them.</p>';
       rows.forEach(function (r) {
         var a = el('a', 'as-card as-st-' + r.st.id, '<span class="as-card-sub">' + esc(r.paper.subject) + '</span><strong>' + esc(r.paper.title) + '</strong>' +
           '<span class="as-card-cover">' + esc(r.paper.covering) + '</span><em>' + (r.st.id === 'returned' ? 'Marked — fill in What I’ve Learnt' : r.st.label) + '</em>');
@@ -486,31 +486,6 @@
     });
   }
 
-  // Clears the Riser's answers, marks and revision plan so they can take
-  // the paper again from a blank page.
-  function resetEl(kid, paper) {
-    var box = el('div', 'as-reset');
-    var b = el('button', 'as-resetbtn', 'Start again for ' + esc(kid.name));
-    b.type = 'button';
-    var msg = el('span', 'as-msg');
-    b.addEventListener('click', function () {
-      if (!confirm('Clear ' + kid.name + '’s answers, marks and revision plan for this paper, so they start again from a blank paper? This can’t be undone.')) return;
-      b.disabled = true;
-      msg.textContent = 'Clearing…';
-      Promise.all([
-        window.eot2Save(kid.group, kid.slug, keyOf(paper.id), {}),
-        window.eot2Save(kid.group, kid.slug, marksKeyOf(paper.id), {})
-      ]).then(function (r) {
-        if (r[0].ok && r[1].ok) { renderStaffMark(kid, paper); return; }
-        b.disabled = false;
-        msg.textContent = 'Not cleared — check the connection and try again.';
-      });
-    });
-    box.appendChild(b);
-    box.appendChild(msg);
-    return box;
-  }
-
   function loadKey(paper) {
     return new Promise(function (resolve) {
       var base = window.LH_STAFF_SITE;
@@ -547,8 +522,6 @@
       var key = r[2];
       st.set('saved', mk._returned ? 'Returned' : 'Saved');
       body.innerHTML = '';
-      var started = ans._submitted || (ans.answers && Object.keys(ans.answers).length) || mk._returned;
-      if (started) body.appendChild(resetEl(kid, paper));
       if (!ans._submitted) {
         body.appendChild(el('p', 'as-wait', kid.name + ' hasn’t submitted this yet. It can be marked once it’s submitted.'));
         return;
@@ -623,6 +596,5 @@
   var kid = window.EOT2_signedInKid();
   if (!kid) { window.EOT2_leaveWithoutKid('index.html?view=staff', '../../index.html'); return; }
   var mine = ASSIGNED[kid.slug] || [];
-  if (!mine.length) { location.replace('../index.html'); return; }
   if (paper && mine.indexOf(paper.id) !== -1) renderKidPaper(kid, paper); else renderKidList(kid);
 })();
