@@ -33,6 +33,7 @@
   var Q = window.T3Q;
   var GROUPS = Q.GROUPS;
   var POOL = window.T3_POOL || [];
+  var CARDS = window.T3_CARDS || {}, PACKS = window.T3_PACKS || {};
   function project(id) { return POOL.filter(function (b) { return b.id === id; })[0] || null; }
   var WEEKS = Q.WEEKS.map(function (w, i) { return i + 1; });
   var MAPS = ['meta', 'cards', 'standups', 'checkins', 'blockers', 'materials'];
@@ -269,12 +270,17 @@
   }
   var changing = false;
 
+  // The full description, folded under "More" on a quest card.
+  function detailHtml(b) {
+    return '<p>' + esc(b.what) + '</p><p><b>You’ll make:</b> ' + esc(b.make) + '</p><p><b>You’ll learn:</b> ' + esc(b.lo) + '</p>';
+  }
+
   function chooserView(current) {
     var wrap = el('div', 'pq');
     var levels = Q.LEVELS[group.id] || [1, 2, 3];
     wrap.appendChild(el('p', 'pq-intro', current
       ? 'Choose a different quest, or keep <b>' + esc(current.title) + '</b>.'
-      : 'Choose one quest for your team. Talk about it together first.'));
+      : 'Pick your quest. Talk about it together first, then choose one as a team.'));
     if (current) {
       var keep = el('button', 'pq-btn pq-btn-ghost', 'Keep ' + esc(current.title));
       keep.type = 'button';
@@ -288,12 +294,16 @@
       if (!list.length) return;
       shown += list.length;
       wrap.appendChild(el('h2', 'pq-cat pq-cat-' + cat, esc(Q.CATS[cat].name)));
-      var grid = el('div', 'pq-grid');
+      var grid = el('div', 'qc-grid');
       list.forEach(function (b) {
-        var card = el('article', 'pq-card pq-' + cat,
-          (KID ? '' : '<span class="pq-level">Level ' + b.level + '</span>') +
-          '<h3>' + esc(b.title) + '</h3><p class="pq-what">' + esc(b.what) + '</p>' +
-          '<p class="pq-time">About ' + Q.weeksFor(b) + ' weeks</p>');
+        var c = CARDS[b.id];
+        var card = el('article', 'qc qc-' + cat,
+          '<div class="qc-art"><span class="qc-kind">' + esc(Q.CATS[cat].name) + '</span>' + (KID ? '' : '<span class="qc-level">Level ' + b.level + '</span>') + (c ? c.icon : '') + '</div>' +
+          '<div class="qc-body"><h3>' + esc(b.title) + '</h3>' +
+          '<p class="qc-tag">' + esc(c ? c.tag : b.what) + '</p>' +
+          (c ? '<p class="qc-make">🎁 ' + esc(c.make) + '</p>' : '') +
+          '<div class="qc-chips"><span>⏱ ' + Q.weeksFor(b) + ' weeks</span>' + (c ? '<span>🧠 ' + esc(c.learn) + '</span><span>' + esc(c.feel) + '</span>' : '') + '</div>' +
+          '<details class="qc-more"><summary>More</summary>' + detailHtml(b) + '</details></div>');
         var go = el('button', 'pq-btn', current && current.id === b.id ? 'Our quest now' : 'Choose this quest');
         go.type = 'button';
         go.disabled = !!(current && current.id === b.id);
@@ -306,7 +316,7 @@
           draw();
           window.scrollTo(0, 0);
         });
-        card.appendChild(go);
+        card.querySelector('.qc-body').appendChild(go);
         grid.appendChild(card);
       });
       wrap.appendChild(grid);
@@ -317,17 +327,61 @@
 
   /* ---------- Quest Pack ---------- */
 
+  var folds = {};
+  function fold(key, title, inner) {
+    var d = el('details', 'qp-fold');
+    d.open = !!folds[key];
+    d.appendChild(el('summary', '', title));
+    d.appendChild(inner);
+    d.addEventListener('toggle', function () { folds[key] = d.open; });
+    return d;
+  }
+  function sec(icon, tone, title, note) {
+    return el('section', 'qp-sec' + (tone === 'bad' ? ' qp-bnd' : ''), '<div class="qp-h"><span class="qp-n qp-' + tone + '">' + icon + '</span><h3>' + title + '</h3>' + (note ? '<small>' + note + '</small>' : '') + '</div>');
+  }
+  function tiles(list, cls) {
+    return '<div class="qp-tiles">' + list.map(function (r) { return '<div class="' + cls + '"><span class="e">' + r[0] + '</span>' + esc(r[1]) + '</div>'; }).join('') + '</div>';
+  }
+
   function packView() {
-    var b = project(meta('project'));
-    var wrap = el('div', 'pq');
-    wrap.appendChild(el('article', 'pq-card pq-chosen pq-' + b.cat,
-      '<h2>' + esc(b.title) + '</h2><p class="pq-what">' + esc(b.what) + '</p>' +
-      '<p><b>We’ll make:</b> ' + esc(b.make) + '</p>' +
-      '<p><b>We’ll learn:</b> ' + esc(b.learn) + '. ' + esc(b.lo) + '</p>'));
+    var b = project(meta('project')), c = CARDS[b.id], p = PACKS[b.id], due = deadline();
+    var wrap = el('div', 'qp');
+    wrap.appendChild(el('div', 'qp-hero',
+      '<div class="qp-ic">' + (c ? c.icon : '⭐') + '</div><div><h2>' + esc(b.title) + '</h2><p>' + esc(p ? p.mission : (c ? c.tag : b.what)) + '</p>' +
+      '<div class="qp-chips"><span>⏱ ' + Q.weeksFor(b) + ' weeks</span>' + (due ? '<span>🎯 Ready by ' + Q.nice(due.date) + '</span>' : '') + '<span>📚 ' + esc(c ? c.learn : b.learn) + '</span></div></div>'));
+
+    if (!p) {
+      wrap.appendChild(el('section', 'qp-sec qp-wait', '<div class="qp-h"><span class="qp-n qp-good">📦</span><h3>Your Quest Pack is on its way</h3></div>' +
+        '<p>A facilitator is getting it ready for you: what you must make, when it’s done, the boundaries and the rules. Start your Materials list while you wait.</p>'));
+    } else {
+      var mk = sec('📦', 'green', 'What we must make', p.make.length + ' things');
+      mk.insertAdjacentHTML('beforeend', '<div class="qp-make">' + p.make.map(function (m) {
+        return '<div class="qp-tile"><span class="e">' + m[0] + '</span><b>' + esc(m[1]) + '</b><span>' + esc(m[2]) + '</span></div>';
+      }).join('') + '</div>');
+      wrap.appendChild(mk);
+      var dn = sec('🏁', 'good', 'It’s done when…', 'tick them all');
+      dn.insertAdjacentHTML('beforeend', '<div class="qp-done">' + p.done.map(function (d) { return '<div class="qp-ck"><i>✓</i>' + esc(d) + '</div>'; }).join('') + '</div>' +
+        (p.notDone ? '<div class="qp-not">✗ <span><b>Not done:</b> ' + esc(p.notDone) + '</span></div>' : ''));
+      wrap.appendChild(dn);
+      (p.formats || []).forEach(function (fm) {
+        var fs = sec('📄', 'blue', esc(fm.title), 'use this format');
+        fs.insertAdjacentHTML('beforeend', (fm.note ? '<p class="qp-note">' + esc(fm.note) + '</p>' : '') +
+          '<div class="qp-table-wrap"><table class="qp-table"><thead><tr>' + fm.cols.map(function (h) { return '<th>' + esc(h) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+          fm.rows.map(function (r) { return '<tr>' + r.map(function (x) { return '<td>' + esc(x) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table></div>');
+        wrap.appendChild(fs);
+      });
+      var bd = sec('🛑', 'bad', 'Boundaries', 'never cross these');
+      bd.insertAdjacentHTML('beforeend', '<p class="qp-note">For our ' + esc(b.title.toLowerCase()) + ':</p>' + tiles(p.bounds, 'qp-nv') +
+        '<div class="qp-ask">🙋 Not sure if something is OK? Ask a facilitator <b>before</b> you do it.</div>');
+      wrap.appendChild(bd);
+    }
+    var ru = sec('📏', 'blue', 'Quest rules');
+    ru.insertAdjacentHTML('beforeend', (p && p.rules ? tiles(p.rules, 'qp-rule qp-rule-q') + '<div class="qp-sub">Every quest</div>' : '') + tiles(window.T3_EVERY_RULES || [], 'qp-rule'));
+    wrap.appendChild(ru);
 
     // Who does what: pick your own role.
     var roles = Q.ROLES[b.cat];
-    var sec = el('section', 'pq-sec', '<h3>Who does what</h3><p class="pq-sub">Pick one role each. Everyone still helps with everything.</p>');
+    var sec2 = el('div', 'pq-sec-in', '<p class="pq-sub">Pick one role each. Everyone still helps with everything.</p>');
     var grid = el('div', 'pq-roles');
     roles.forEach(function (r, i) {
       var who = group.kids.filter(function (k) { return meta('role_' + k) === i; });
@@ -347,10 +401,9 @@
       }
       grid.appendChild(card);
     });
-    sec.appendChild(grid);
-    wrap.appendChild(sec);
-
-    wrap.appendChild(materialsEl());
+    sec2.appendChild(grid);
+    wrap.appendChild(fold('roles', '👥 Who does what', sec2));
+    wrap.appendChild(fold('mats', '🧰 Materials', materialsEl()));
 
     var change = el('button', 'pq-link', 'Change our quest');
     change.type = 'button';
@@ -361,7 +414,7 @@
 
   // The team's own materials list: what, who brings it, got it.
   function materialsEl() {
-    var sec = el('section', 'pq-sec', '<h3>Materials</h3><p class="pq-sub">What do we need to build it? Add everything you can think of.</p>');
+    var sec = el('div', 'pq-sec-in', '<p class="pq-sub">What do we need to build it? Add everything you can think of.</p>');
     var list = Object.keys(state.materials).map(function (id) { return Object.assign({ id: id }, state.materials[id]); })
       .filter(function (m) { return !m.deleted && m.item; }).sort(function (a, b) { return (a.at || 0) - (b.at || 0); });
     list.forEach(function (m) {

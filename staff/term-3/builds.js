@@ -108,6 +108,9 @@
       bt.addEventListener('click', function () { save({ v: st === bt.dataset.v ? '' : bt.dataset.v }); });
     });
     var ta = box.querySelector('textarea');
+    // Grow the note box to fit what's written.
+    function fit() { if (ta) { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 2 + 'px'; } }
+    if (ta) { ta.addEventListener('input', fit); setTimeout(fit, 0); }
     if (ta) ta.addEventListener('change', function () { save({ note: ta.value.trim() }); });
     return box;
   }

@@ -289,11 +289,11 @@ window.T3_POOL = [
 
   /* ---------- Make it for LifeHub ---------- */
   { id: 'sol-snackshop', cat: 'sol', level: 1, title: 'LifeHub snack shop',
-    what: 'You plan, make and sell a healthy snack at recess, like fruit cups or popcorn. You work out what to make, what it costs, the price, and how much you earn.',
+    what: 'You run a real snack business for two weeks. Find out what Risers want, test recipes, design your brand and packaging, sell on four days, and work out your profit.',
     hook: 'A real shop teaches you how money works, and everyone gets a tasty snack.',
-    make: 'A snack stall with a menu, price list and money box, run on three days.',
+    make: 'A snack brand with a name and packaging, a tested recipe card, a shop open on four days, a sales log and a money report.',
     learn: 'Money: cost, price and profit',
-    lo: 'We can work out the cost, price and profit of our snack, and show it in a simple sales chart.',
+    lo: 'We can work out the cost, price and profit of our snack, change one thing after the first day, and show our sales in a chart.',
     resp: [
       ['Plan a snack survey and ask 15 Risers', 'Work out the cost and price of each snack', 'Add up each day’s money', 'Work out the profit and make a chart'],
       ['Design the menu and price list', 'Make a money box with a coin tray', 'Make a “new today” sign', 'Make the thank-you poster'],
@@ -355,11 +355,11 @@ window.T3_POOL = [
       ['Make a paper version of one game', 'Make the pieces for game 1', 'Make the pieces for games 2 and 3', 'Make a box for each game']
     ] },
   { id: 'sol-newsshow', cat: 'sol', level: 1, title: 'LifeHub news show',
-    what: 'You make a short video news show about what is happening at LifeHub, with news, interviews and a weather report. You plan it, film it and edit it.',
+    what: 'You are LifeHub\'s news team. You find real stories, interview people, write a proper script, film it and edit it into a news show for families.',
     hook: 'Families love to see what happens at LifeHub, and you get to be the reporters.',
-    make: 'A 3-minute news show, shared with families at the end of the project.',
-    learn: 'Script writing and video editing',
-    lo: 'We can write a short script, film it clearly, and edit clips together in the right order.',
+    make: 'A LifeHub news show of 10 minutes or more, with at least 4 stories, an interview and a weather report.',
+    learn: 'Reporting, script writing and video editing',
+    lo: 'We can write a script in a two-column news script format, film each part clearly, and edit the clips together in the right order.',
     resp: [
       ['Find three news stories at LifeHub', 'Interview for story 3', 'Write the introduction', 'Introduce the show and answer questions'],
       ['Plan the running order and titles', 'Write the script for stories 1 and 2', 'Add titles, music and pictures', 'Make the poster and invitations'],
@@ -421,9 +421,9 @@ window.T3_POOL = [
       ['Make the gear for game 1', 'Make the gear for games 2 and 3', 'Make the gear for game 5', 'Build the games box']
     ] },
   { id: 'sol-buzzerphone', cat: 'sol', level: 2, title: 'Room-to-room buzzer phone',
-    what: 'A long wire, a battery, a switch and a buzzer join two rooms. Press the switch in one room and the buzzer sounds in the other. You send messages in Morse code.',
+    what: 'Two rooms, one long wire. In room A there is a button. In room B there is a buzzer. Press the button and the buzzer goes off. Short and long buzzes spell words in Morse code.',
     hook: 'We walk between rooms all day just to pass short messages.',
-    make: 'A working buzzer line between two rooms, and a Morse code card for every Riser.',
+    make: 'A buzzer line between two rooms that works every time, a Morse code card for every Riser, and 10 messages sent and read correctly.',
     learn: 'Electric circuits and codes',
     lo: 'We can build a closed circuit with a switch, and send and read a short message in Morse code.',
     resp: [
@@ -487,9 +487,9 @@ window.T3_POOL = [
       ['Make a test patch', 'Stitch outfit 2', 'Last fixes to the outfits', 'Help the models on the day']
     ] },
   { id: 'sol-hideout', cat: 'sol', level: 3, title: 'Bamboo hideout',
-    what: 'A hideout made of bamboo poles tied together with rope, with a shade cloth on top. It is a cool, shady place to read, rest and hang out.',
+    what: 'A small hideout made of bamboo poles tied with rope, covered with old cloth or sheets. It costs very little: no nails, no bought fittings, just rope, bamboo and things we reuse.',
     hook: 'Every Riser wants a secret hideout outside.',
-    make: 'A bamboo hideout big enough for four children to sit inside.',
+    make: 'A small bamboo hideout for four children, tied with rope and covered with reused cloth.',
     learn: 'Lashing knots and bracing',
     lo: 'We can tie a square lashing and a clove hitch without help, and explain how a diagonal pole stops a frame leaning.',
     resp: [
@@ -509,11 +509,11 @@ window.T3_POOL = [
       ['Build the short test line', 'Test two pulleys', 'Run ten safe test runs', 'Keep the line working']
     ] },
   { id: 'sol-booklift', cat: 'sol', level: 3, title: 'Book lift',
-    what: 'A hand-wound lift with a box that goes up and down. A heavy weight on the other side of a pulley makes it easy to lift.',
-    hook: 'Carrying heavy boxes of books up and down is hard work.',
-    make: 'A lift that carries a box of books up to a high shelf, with a brake so it stays put.',
-    learn: 'Pulleys and counterweights',
-    lo: 'We can explain how a counterweight makes lifting easier, and measure the force needed with and without it.',
+    what: 'A box on a rope goes up and down to a high shelf. A bag of weights on the other end of the rope helps pull the box up, so it feels light.',
+    hook: 'Carrying heavy books up high is hard work.',
+    make: 'A lift that carries a box of books up to a high shelf, and a brake so it stays put.',
+    learn: 'Pulleys and balancing weights',
+    lo: 'We can show that the balancing bag makes the box feel lighter, and measure how hard we pull with and without it.',
     resp: [
       ['Find out how pulleys and counterweights work', 'Measure force with and without a counterweight', 'Plan the load test', 'Measure the force with books'],
       ['Sketch the lift', 'Mark the wood', 'Build the brake', 'Make the sign and use chart'],
@@ -564,3 +564,38 @@ window.T3_POOL = [
       ['Lay the first row', 'Lay the second row', 'Smooth the bench', 'Open the bench']
     ] }
 ];
+
+/* The quest cards Risers choose from: icon, one exciting line, what you'll
+   make (short), what you'll learn (short) and a feel tag. A project without
+   a card here shows its plain name and description. */
+window.T3_CARDS = {
+  'sci-junkband': { icon: '🎸', tag: 'Turn junk into a real band.', make: 'Instruments and a concert', learn: 'Sound', feel: '🎵 Music' },
+  'sci-planes': { icon: '✈️', tag: 'Fold, fly, test… and win the cup.', make: 'Your best planes and a championship', learn: 'Lift and drag', feel: '📊 Testing' },
+  'sci-slime': { icon: '🟢', tag: 'Make the stretchiest slime ever.', make: 'Slime recipes and a slime stall', learn: 'Mixing and fair tests', feel: '🧪 Messy' },
+  'sci-spy': { icon: '🕵️', tag: 'Secret ink, fingerprints and a mystery.', make: 'A spy kit and a mystery to solve', learn: 'Ink and fingerprints', feel: '🔎 Mystery' },
+  'sci-egg': { icon: '🥚', tag: 'Keep the egg safe from a big drop.', make: 'A lander with a parachute', learn: 'Gravity and air', feel: '📊 Testing' },
+  'sci-kites': { icon: '🪁', tag: 'Build kites that really fly.', make: 'Three kites and a kite festival', learn: 'Lift and wind', feel: '🌳 Outdoors' },
+  'sci-lightcards': { icon: '💡', tag: 'Cards and posters that light up.', make: 'Light-up cards and a glowing poster', learn: 'Circuits', feel: '🎨 Art' },
+  'sci-hand': { icon: '🤖', tag: 'A cardboard hand that really grabs.', make: 'A hand that picks up a cup', learn: 'Tendons and joints', feel: '✂️ Making' },
+  'sci-fort': { icon: '⛺', tag: 'A paper dome you can sit inside.', make: 'A dome fort with a door', learn: 'Triangles', feel: '🏗️ Building' },
+  'sci-steamboat': { icon: '🚤', tag: 'A tiny boat powered by steam.', make: 'Two steam boats and a race', learn: 'Heat and steam', feel: '🏁 Race' },
+  'sci-solarcar': { icon: '☀️', tag: 'A car that runs on sunshine.', make: 'A solar car and a race', learn: 'Solar power and gears', feel: '🏁 Race' },
+  'sci-turbine': { icon: '🌬️', tag: 'Catch the wind and turn it into light.', make: 'A turbine that lights an LED', learn: 'Energy and circuits', feel: '📊 Testing' },
+  'sol-minigolf': { icon: '⛳', tag: 'Design 6 tricky holes everyone wants to play.', make: 'A 6-hole course and a golf day', learn: 'Angles', feel: '🎉 Event' },
+  'sol-readingnook': { icon: '📚', tag: 'Make the cosiest reading corner.', make: 'Stools, a bench and a book display', learn: 'Strong shapes', feel: '🔨 Building' },
+  'sol-fashion': { icon: '👗', tag: 'Turn rubbish into runway outfits.', make: '3 outfits and a fashion show', learn: 'Measuring and sewing', feel: '🎭 Show' },
+  'sol-treasuremap': { icon: '🗺️', tag: 'Map LifeHub. Hide the treasure.', make: 'A big map and a treasure hunt', learn: 'Maps and directions', feel: '🌳 Outdoors' },
+  'sol-gokart': { icon: '🏎️', tag: 'Build a real kart. Race it on sports day.', make: 'A go-kart that steers and brakes', learn: 'Gravity and friction', feel: '🔨 Woodwork' },
+  'sol-zipline': { icon: '🪢', tag: 'Send snacks flying across LifeHub.', make: 'A zip line with a basket', learn: 'Slopes and pulleys', feel: '🌳 Outdoors' },
+  'sol-boardgames': { icon: '🎲', tag: 'Invent board games people really want to play.', make: '3 new board games and a game café', learn: 'Rules and chance', feel: '🎲 Games' },
+  'sol-newsshow': { icon: '📺', tag: 'Be the reporters of LifeHub.', make: 'A news show for families', learn: 'Reporting and filming', feel: '🎬 Film' },
+  'sol-snackshop': { icon: '🍿', tag: 'Run a real snack business.', make: 'A snack brand, a shop and a money report', learn: 'Cost and profit', feel: '💼 Business' },
+  'sol-steppingstones': { icon: '🪨', tag: 'Leave your handprint in the garden.', make: '6 decorated stepping stones', learn: 'Mixing cement', feel: '🌳 Outdoors' },
+  'sol-escaperoom': { icon: '🔐', tag: 'Build puzzles nobody can escape.', make: 'An escape room with 4 puzzles', learn: 'Codes and logic', feel: '🧩 Puzzles' },
+  'sol-buzzerphone': { icon: '📞', tag: 'Send secret messages between rooms.', make: 'A buzzer line and Morse code cards', learn: 'Circuits and codes', feel: '⚡ Wiring' },
+  'sol-hideout': { icon: '🎋', tag: 'Build a secret hideout from bamboo.', make: 'A bamboo hideout for four', learn: 'Knots and bracing', feel: '🌳 Outdoors' },
+  'sol-booklift': { icon: '📦', tag: 'A lift that carries books up high.', make: 'A book lift with a brake', learn: 'Pulleys', feel: '🔨 Building' },
+  'sol-postoffice': { icon: '✉️', tag: 'Run LifeHub\'s own post office.', make: 'Mailboxes, stamps and a post week', learn: 'Letters and sorting', feel: '📬 Service' },
+  'sol-recessbox': { icon: '⚽', tag: 'Invent 5 new games for recess.', make: 'A games box with rules and gear', learn: 'Clear rules', feel: '🏃 Active' },
+  'sol-library': { icon: '📖', tag: 'A little library anyone can use.', make: 'A rain-proof book cupboard', learn: 'Woodwork', feel: '🔨 Building' }
+};
