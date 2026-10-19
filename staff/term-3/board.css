@@ -11,7 +11,7 @@
 .pb-group.is-on { border-color: var(--accent); background: var(--accent-soft); }
 
 .pb-top { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 16px 18px; box-shadow: var(--shadow-sm); margin-bottom: 16px; }
-.pb-top-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto; gap: 14px; align-items: end; margin-bottom: 12px; }
+.pb-top-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: end; margin-bottom: 12px; }
 .pb-field { display: flex; flex-direction: column; gap: 4px; }
 .pb-field > span { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); }
 .pb-field > em { font-style: normal; font-size: .8rem; color: var(--ink-faint); }
@@ -108,7 +108,7 @@
 .pb-ov-lede { margin: 0 0 10px; font-size: .9rem; color: var(--ink-soft); }
 .pb-ov { display: flex; flex-direction: column; gap: 8px; }
 .pb-ov-row {
-  display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 2fr) minmax(0, 1.4fr) minmax(0, .9fr) minmax(0, .6fr) minmax(0, .9fr) minmax(0, .9fr);
+  display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 2fr) minmax(0, 1.4fr) minmax(0, .6fr) minmax(0, .9fr) minmax(0, .9fr);
   gap: 14px; align-items: center; padding: 14px 16px; background: #fff; border: 1px solid var(--border); border-radius: 16px;
   text-decoration: none; color: var(--ink); box-shadow: var(--shadow-sm);
 }
@@ -256,3 +256,17 @@ a.pb-ov-row:hover { border-color: var(--accent); }
 .pb-bl-done { margin-top: 8px; font-size: .85rem; }
 .pb-bl-done ul { margin: 6px 0 0; padding-left: 18px; }
 .pb-su-open { background: #fffbeb; border: 1px solid #f59e0b; border-radius: 10px; padding: 8px 12px; font-size: .88rem; margin-bottom: 12px; }
+
+/* Jobs list (board.js boardView). */
+.pb-jobs { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; }
+.pb-jobs h2 { font-size: 1rem; margin: 0 0 8px; }
+.pb-jobs-done > summary { cursor: pointer; font-weight: 700; font-size: .92rem; }
+.pb-job { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--border); }
+.pb-job-tick { width: 22px; height: 22px; accent-color: var(--accent); flex: none; cursor: pointer; }
+.pb-job-main { flex: 1; min-width: 0; text-align: left; background: none; border: 0; padding: 0; font: inherit; color: var(--ink); cursor: pointer; display: flex; flex-direction: column; }
+.pb-job-title { font-size: .95rem; }
+.pb-job.is-done .pb-job-title { text-decoration: line-through; color: var(--ink-faint); }
+.pb-job.is-stuck .pb-job-title { color: #a3432b; font-weight: 600; }
+.pb-jobs .pb-add { margin-bottom: 4px; }
+.pb-blockers:not(.has-open) .pb-bl-head p { display: none; }
+.pb-bl .pq-seg { align-self: center; }
