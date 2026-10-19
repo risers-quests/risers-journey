@@ -86,6 +86,21 @@
     var dm = function (x) { return day(x).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); };
     return (r.from === r.to ? 'Week ' + r.from : 'Weeks ' + r.from + '–' + r.to) + ' · ' + dm(a[0]) + ' – ' + dm(b[1]);
   };
+  // Staff approval of each project: group "term-3", kid "staff", week
+  // "approvals", as { items: { <project id>: { v: 'yes' | 'no', note, by, u } } }.
+  // Risers only see approved projects.
+  Q.fetchApprovals = function () {
+    return window.eot2Fetch('term-3', 'staff', 'approvals').then(function (d) {
+      return (d && d.state && d.state.items) || {};
+    });
+  };
+  Q.saveApproval = function (id, fields) {
+    return window.eot2Fetch('term-3', 'staff', 'approvals').then(function (d) {
+      var items = (d && d.state && d.state.items) || {};
+      items[id] = Object.assign({}, items[id] || {}, fields, { u: Date.now() });
+      return window.eot2Save('term-3', 'staff', 'approvals', { items: items }).then(function (r) { return r.ok ? items : null; });
+    });
+  };
   // The Wednesday (last group session) of the n-th school week from the
   // week a project starts.
   Q.deadline = function (startIso, weeks) {

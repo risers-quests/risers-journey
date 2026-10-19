@@ -293,3 +293,15 @@ a.pb-ov-row:hover { border-color: var(--accent); }
 .pb-goal-line { background: var(--accent-soft); border-radius: 12px; padding: 10px 14px; margin: 0 0 12px; font-size: .92rem; }
 .pb-blockers > h2 { font-size: 1rem; margin: 0 0 4px; }
 .pb-line small { font-size: .78rem; color: var(--ink-faint); }
+
+/* Staff approval on the Term 3 Quests page (builds.js). */
+.bl-approve { border-top: 1px solid var(--border); margin-top: 10px; padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.bl-approve.is-saving { opacity: .5; pointer-events: none; }
+.bl-approve-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.bl-ap { font: inherit; font-size: .82rem; font-weight: 600; padding: 6px 12px; border-radius: 99px; border: 1.5px solid var(--border); background: #fff; color: var(--ink-soft); cursor: pointer; }
+.bl-ap-yes.is-on { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+.bl-ap-no.is-on { background: #f8e3dc; border-color: #a3432b; color: #a3432b; }
+.bl-approve textarea { font: inherit; font-size: .85rem; padding: 6px 8px; border: 1.5px solid var(--border); border-radius: 8px; resize: vertical; }
+.bl-approve small { font-size: .75rem; color: var(--ink-faint); }
+.pq-card.bl-st-no { border-color: #e7b9a9; }
+.pq-card.bl-st-yes { border-color: #a9d3b5; }

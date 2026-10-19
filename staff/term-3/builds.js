@@ -1,12 +1,16 @@
 /* Term 3 Quests, staff: every project in the pool with its level, which
-   groups can see it (quest-data.js LEVELS) and which groups chose it (from
-   each group's board record). Groups choose on their own Term 3 Quest page;
-   a facilitator can also choose for a group from that group's board. */
+   groups can see it (quest-data.js LEVELS), which groups chose it (from
+   each group's board record), and whether staff approved it. Risers only
+   see approved projects; a project marked "Not approved" can carry a note
+   on what to change. */
 (function () {
   var Q = window.T3Q, POOL = window.T3_POOL || [];
   var app = document.getElementById('app');
-  var ui = { cat: 'all', level: 0 };
-  var picks = {};
+  var ui = { cat: 'all', level: 0, status: 'all' };
+  var picks = {}, approvals = {};
+  var STAFF = '';
+  try { STAFF = localStorage.getItem('rj-staff-name') || ''; } catch (e) {}
+  function status(id) { var a = approvals[id]; return a && a.v === 'yes' ? 'yes' : a && a.v === 'no' ? 'no' : 'none'; }
 
   function el(tag, cls, html) {
     var e = document.createElement(tag);
@@ -50,16 +54,18 @@
     body.appendChild(chosen);
     body.appendChild(chips([['all', 'Everything'], ['sol', Q.CATS.sol.name], ['sci', Q.CATS.sci.name]], 'cat'));
     body.appendChild(chips([[0, 'All levels'], [1, 'Level 1'], [2, 'Level 2'], [3, 'Level 3']], 'level'));
+    var count = function (v) { return POOL.filter(function (b) { return status(b.id) === v; }).length; };
+    body.appendChild(chips([['all', 'Any'], ['none', 'To check (' + count('none') + ')'], ['yes', 'Approved (' + count('yes') + ')'], ['no', 'Not approved (' + count('no') + ')']], 'status'));
     ['sol', 'sci'].forEach(function (cat) {
       if (ui.cat !== 'all' && ui.cat !== cat) return;
-      var list = POOL.filter(function (b) { return b.cat === cat && (!ui.level || b.level === ui.level); })
+      var list = POOL.filter(function (b) { return b.cat === cat && (!ui.level || b.level === ui.level) && (ui.status === 'all' || status(b.id) === ui.status); })
         .sort(function (x, y) { return x.level - y.level || x.title.localeCompare(y.title); });
       body.appendChild(el('h2', 'pq-cat pq-cat-' + cat, esc(Q.CATS[cat].name) + ' <span>(' + list.length + ')</span>'));
       var grid = el('div', 'pq-grid');
       list.forEach(function (b) {
         var sees = Q.GROUPS.filter(function (g) { return Q.LEVELS[g.id].indexOf(b.level) !== -1; }).map(function (g) { return g.name; });
         var by = Q.GROUPS.filter(function (g) { return picks[g.id] && picks[g.id].project === b.id; }).map(function (g) { return g.name; });
-        grid.appendChild(el('article', 'pq-card pq-' + cat,
+        var card = el('article', 'pq-card pq-' + cat + ' bl-st-' + status(b.id),
           '<span class="pq-level">Level ' + b.level + '</span><h3>' + esc(b.title) + '</h3>' +
           '<p class="pq-what">' + esc(b.what) + '</p>' +
           '<p><b>' + Q.CATS[cat].hookLbl + ':</b> ' + esc(b.hook) + '</p>' +
@@ -69,16 +75,44 @@
           '<details class="pq-peek"><summary>Who does what</summary><ul>' + Q.ROLES[b.cat].map(function (r, j) {
             return '<li>' + r.icon + ' <b>' + esc(r.name) + ':</b> ' + b.resp[j].map(esc).join(' · ') + '</li>';
           }).join('') + '</ul></details>' +
-          (by.length ? '<p class="bl-by">Chosen by ' + by.join(', ') + '</p>' : '')));
+          (by.length ? '<p class="bl-by">Chosen by ' + by.join(', ') + '</p>' : ''));
+        card.appendChild(approvalEl(b));
+        grid.appendChild(card);
       });
       body.appendChild(grid);
     });
   }
 
+  // Approve or not; a note on what to change when it's not.
+  function approvalEl(b) {
+    var a = approvals[b.id] || {}, st = status(b.id);
+    var box = el('div', 'bl-approve',
+      '<div class="bl-approve-btns">' +
+        '<button type="button" class="bl-ap bl-ap-yes' + (st === 'yes' ? ' is-on' : '') + '" data-v="yes">✓ Approved</button>' +
+        '<button type="button" class="bl-ap bl-ap-no' + (st === 'no' ? ' is-on' : '') + '" data-v="no">✗ Not approved</button>' +
+      '</div>' +
+      (st === 'no' ? '<textarea rows="2" placeholder="What needs to change?">' + esc(a.note || '') + '</textarea>' : '') +
+      (a.by ? '<small>' + (st === 'yes' ? 'Approved' : st === 'no' ? 'Not approved' : 'Changed') + ' by ' + esc(a.by) + '</small>' : '') +
+      (st === 'yes' ? '' : '<small class="bl-hidden">Risers can’t see this yet.</small>'));
+    function save(fields) {
+      box.classList.add('is-saving');
+      Q.saveApproval(b.id, Object.assign({ by: STAFF }, fields)).then(function (items) {
+        if (!items) { alert('Not saved — check the connection.'); box.classList.remove('is-saving'); return; }
+        approvals = items; draw();
+      });
+    }
+    Array.prototype.forEach.call(box.querySelectorAll('.bl-ap'), function (bt) {
+      bt.addEventListener('click', function () { save({ v: st === bt.dataset.v ? '' : bt.dataset.v }); });
+    });
+    var ta = box.querySelector('textarea');
+    if (ta) ta.addEventListener('change', function () { save({ note: ta.value.trim() }); });
+    return box;
+  }
+
   app.innerHTML = '';
   app.appendChild(el('div', 'dash-crumb', '<a href="index.html">&larr; Term 3</a>'));
   app.appendChild(el('header', 'hd-page-head pb-head', '<div><p class="hd-eyebrow">Term 3</p><h1>Term 3 Quests</h1>' +
-    '<p>Each group chooses its own project on its Term 3 Quest page, from the levels set for it. They don’t see the levels, and more than one group can choose the same project.</p></div>' +
+    '<p>Approve each project before Risers can choose it. Each group sees only approved projects at its own levels, and more than one group can choose the same project.</p></div>' +
     '<a class="bl-boards" href="board.html">Project boards &rarr;</a>'));
   app.appendChild(el('div', 'bl-body', '<p>Loading…</p>'));
   Promise.all(Q.GROUPS.map(function (g) {
@@ -86,5 +120,5 @@
       var s = d && d.state;
       picks[g.id] = m(s, 'project') ? { project: m(s, 'project'), started: m(s, 'started') } : null;
     });
-  })).then(draw, draw);
+  }).concat(Q.fetchApprovals().then(function (a) { approvals = a; }))).then(draw, draw);
 })();
