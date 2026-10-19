@@ -289,11 +289,11 @@ window.T3_POOL = [
 
   /* ---------- Make it for LifeHub ---------- */
   { id: 'sol-snackshop', cat: 'sol', level: 1, title: 'LifeHub snack shop',
-    what: 'You run a real snack business for two weeks. Find out what Risers want, test recipes, design your brand and packaging, sell on four days, and work out your profit.',
+    what: 'You run a real no-cook snack business, like fruit cups or trail mix. Find out what Risers want, work out costs and prices, design your brand, take orders, then make and sell on one sale day.',
     hook: 'A real shop teaches you how money works, and everyone gets a tasty snack.',
-    make: 'A snack brand with a name and packaging, a tested recipe card, a shop open on four days, a sales log and a money report.',
+    make: 'A snack brand with a name and packaging, an order form, a no-cook recipe card, one sale day and a money report.',
     learn: 'Money: cost, price and profit',
-    lo: 'We can work out the cost, price and profit of our snack, change one thing after the first day, and show our sales in a chart.',
+    lo: 'We can work out the cost, price and profit of our snack, take orders before we make it, and show our sales in a money report.',
     resp: [
       ['Plan a snack survey and ask 15 Risers', 'Work out the cost and price of each snack', 'Add up each day’s money', 'Work out the profit and make a chart'],
       ['Design the menu and price list', 'Make a money box with a coin tray', 'Make a “new today” sign', 'Make the thank-you poster'],
@@ -589,7 +589,7 @@ window.T3_CARDS = {
   'sol-zipline': { icon: '🪢', tag: 'Send snacks flying across LifeHub.', make: 'A zip line with a basket', learn: 'Slopes and pulleys', feel: '🌳 Outdoors' },
   'sol-boardgames': { icon: '🎲', tag: 'Invent board games people really want to play.', make: '3 new board games and a game café', learn: 'Rules and chance', feel: '🎲 Games' },
   'sol-newsshow': { icon: '📺', tag: 'Be the reporters of LifeHub.', make: 'A news show for families', learn: 'Reporting and filming', feel: '🎬 Film' },
-  'sol-snackshop': { icon: '🍿', tag: 'Run a real snack business.', make: 'A snack brand, a shop and a money report', learn: 'Cost and profit', feel: '💼 Business' },
+  'sol-snackshop': { icon: '🍓', tag: 'Run a real no-cook snack business.', make: 'A snack brand, orders and a sale day', learn: 'Cost and profit', feel: '💼 Business' },
   'sol-steppingstones': { icon: '🪨', tag: 'Leave your handprint in the garden.', make: '6 decorated stepping stones', learn: 'Mixing cement', feel: '🌳 Outdoors' },
   'sol-escaperoom': { icon: '🔐', tag: 'Build puzzles nobody can escape.', make: 'An escape room with 4 puzzles', learn: 'Codes and logic', feel: '🧩 Puzzles' },
   'sol-buzzerphone': { icon: '📞', tag: 'Send secret messages between rooms.', make: 'A buzzer line and Morse code cards', learn: 'Circuits and codes', feel: '⚡ Wiring' },
