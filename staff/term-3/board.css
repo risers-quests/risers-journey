@@ -305,3 +305,5 @@ a.pb-ov-row:hover { border-color: var(--accent); }
 .bl-approve small { font-size: .75rem; color: var(--ink-faint); }
 .pq-card.bl-st-no { border-color: #e7b9a9; }
 .pq-card.bl-st-yes { border-color: #a9d3b5; }
+.bl-ap-maybe.is-on { background: var(--warn-soft); border-color: var(--warn); color: var(--warn); }
+.pq-card.bl-st-maybe { border-color: #e8cf9a; }
