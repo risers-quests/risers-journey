@@ -87,7 +87,7 @@
     return (r.from === r.to ? 'Week ' + r.from : 'Weeks ' + r.from + '–' + r.to) + ' · ' + dm(a[0]) + ' – ' + dm(b[1]);
   };
   // Staff approval of each project: group "term-3", kid "staff", week
-  // "approvals", as { items: { <project id>: { v: 'yes' | 'maybe' | 'no', note, by, u } } }.
+  // "approvals", as { items: { <project id>: { v: 'yes' | 'tweak' | 'maybe' | 'no', note, by, u } } }.
   // Risers only see approved projects.
   Q.fetchApprovals = function () {
     return window.eot2Fetch('term-3', 'staff', 'approvals').then(function (d) {

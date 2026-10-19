@@ -307,3 +307,5 @@ a.pb-ov-row:hover { border-color: var(--accent); }
 .pq-card.bl-st-yes { border-color: #a9d3b5; }
 .bl-ap-maybe.is-on { background: var(--warn-soft); border-color: var(--warn); color: var(--warn); }
 .pq-card.bl-st-maybe { border-color: #e8cf9a; }
+.bl-ap-tweak.is-on { background: #e6eefb; border-color: #3a64a8; color: #3a64a8; }
+.pq-card.bl-st-tweak { border-color: #a9bde3; }

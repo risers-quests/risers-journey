@@ -1,8 +1,9 @@
 /* Term 3 Quests, staff: every project in the pool with its level, which
    groups can see it (quest-data.js LEVELS), which groups chose it (from
    each group's board record), and whether staff approved it. Risers only
-   see approved projects; one marked "Maybe" or "Not approved" can carry a
-   note (what you're unsure about, or what to change). */
+   see approved projects; one marked "Tweak", "Maybe" or "Not approved"
+   carries a note (the tweak suggested, what you're unsure about, or what
+   to change) and stays hidden until it's changed and approved. */
 (function () {
   var Q = window.T3Q, POOL = window.T3_POOL || [];
   var app = document.getElementById('app');
@@ -10,7 +11,7 @@
   var picks = {}, approvals = {};
   var STAFF = '';
   try { STAFF = localStorage.getItem('rj-staff-name') || ''; } catch (e) {}
-  function status(id) { var a = approvals[id]; return a && ['yes', 'maybe', 'no'].indexOf(a.v) !== -1 ? a.v : 'none'; }
+  function status(id) { var a = approvals[id]; return a && ['yes', 'tweak', 'maybe', 'no'].indexOf(a.v) !== -1 ? a.v : 'none'; }
 
   function el(tag, cls, html) {
     var e = document.createElement(tag);
@@ -55,7 +56,7 @@
     body.appendChild(chips([['all', 'Everything'], ['sol', Q.CATS.sol.name], ['sci', Q.CATS.sci.name]], 'cat'));
     body.appendChild(chips([[0, 'All levels'], [1, 'Level 1'], [2, 'Level 2'], [3, 'Level 3']], 'level'));
     var count = function (v) { return POOL.filter(function (b) { return status(b.id) === v; }).length; };
-    body.appendChild(chips([['all', 'Any'], ['none', 'To check (' + count('none') + ')'], ['yes', 'Approved (' + count('yes') + ')'], ['maybe', 'Maybe (' + count('maybe') + ')'], ['no', 'Not approved (' + count('no') + ')']], 'status'));
+    body.appendChild(chips([['all', 'Any'], ['none', 'To check (' + count('none') + ')'], ['yes', 'Approved (' + count('yes') + ')'], ['tweak', 'Tweak (' + count('tweak') + ')'], ['maybe', 'Maybe (' + count('maybe') + ')'], ['no', 'Not approved (' + count('no') + ')']], 'status'));
     ['sol', 'sci'].forEach(function (cat) {
       if (ui.cat !== 'all' && ui.cat !== cat) return;
       var list = POOL.filter(function (b) { return b.cat === cat && (!ui.level || b.level === ui.level) && (ui.status === 'all' || status(b.id) === ui.status); })
@@ -89,11 +90,12 @@
     var box = el('div', 'bl-approve',
       '<div class="bl-approve-btns">' +
         '<button type="button" class="bl-ap bl-ap-yes' + (st === 'yes' ? ' is-on' : '') + '" data-v="yes">✓ Approved</button>' +
+        '<button type="button" class="bl-ap bl-ap-tweak' + (st === 'tweak' ? ' is-on' : '') + '" data-v="tweak">✎ Tweak</button>' +
         '<button type="button" class="bl-ap bl-ap-maybe' + (st === 'maybe' ? ' is-on' : '') + '" data-v="maybe">? Maybe</button>' +
         '<button type="button" class="bl-ap bl-ap-no' + (st === 'no' ? ' is-on' : '') + '" data-v="no">✗ Not approved</button>' +
       '</div>' +
-      (st === 'no' || st === 'maybe' ? '<textarea rows="2" placeholder="' + (st === 'no' ? 'What needs to change?' : 'What are you unsure about?') + '">' + esc(a.note || '') + '</textarea>' : '') +
-      (a.by ? '<small>' + (st === 'yes' ? 'Approved' : st === 'no' ? 'Not approved' : st === 'maybe' ? 'Maybe' : 'Changed') + ' by ' + esc(a.by) + '</small>' : '') +
+      (st === 'no' || st === 'maybe' || st === 'tweak' ? '<textarea rows="2" placeholder="' + (st === 'no' ? 'What needs to change?' : st === 'tweak' ? 'What tweak do you suggest?' : 'What are you unsure about?') + '">' + esc(a.note || '') + '</textarea>' : '') +
+      (a.by ? '<small>' + (st === 'yes' ? 'Approved' : st === 'no' ? 'Not approved' : st === 'maybe' ? 'Maybe' : st === 'tweak' ? 'Tweak suggested' : 'Changed') + ' by ' + esc(a.by) + '</small>' : '') +
       (st === 'yes' ? '' : '<small class="bl-hidden">Risers can’t see this yet.</small>'));
     function save(fields) {
       box.classList.add('is-saving');
