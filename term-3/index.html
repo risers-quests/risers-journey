@@ -15,8 +15,8 @@
 <div id="app"></div>
 <script src="assessments/assessments-data.js"></script>
 <script>
-/* A Riser's Term 3: their group's quest, the weekly check-in and their
-   assessments. */
+/* A Riser's Term 3: their group's quest, the weekly check-in, their
+   schedule and their assessments. */
 (function () {
   var kid = null, staff = null;
   try { kid = (localStorage.getItem('imm-l3-kid') || '').toLowerCase(); staff = localStorage.getItem('rj-staff-name'); } catch (e) {}
@@ -24,6 +24,7 @@
   var tiles = [
     { title: 'Weekly Check-in', desc: 'Each week, tick off what your family agreed at the Term 2 Conference.', href: 'check-in/index.html', icon: 'check', tone: 'amber' }
   ];
+  tiles.push({ title: 'My Schedule', desc: 'Your week at LifeHub. Move things around and change them.', href: 'schedule/index.html', icon: 'clock', tone: 'violet' });
   tiles.push({ title: 'Assessments', desc: 'Your Term 3 assessments, marked papers and revision plan.', href: 'assessments/index.html', icon: 'paper', tone: 'slate' });
   tiles.unshift({ title: 'Term 3 Quest', desc: 'Your group’s project: choose it, plan it, build it, and check in every week.', href: 'quest/index.html', icon: 'skills', tone: 'green' });
   document.getElementById('app').innerHTML =

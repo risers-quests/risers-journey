@@ -25,6 +25,7 @@
   }).join('') + '</select></label>' +
     '<label class="to-check"><input type="checkbox" value="quest" checked> <span class="to-quest"></span></label>' +
     '<label class="to-check"><input type="checkbox" value="checkin" checked> Their weekly check-in ticks</label>' +
+    '<label class="to-check"><input type="checkbox" value="schedule" checked> Their schedule changes (back to the school timetable)</label>' +
     '<label class="to-check"><input type="checkbox" value="asmt" checked> Their assessment answers, marks and revision plans</label>' +
     '<p class="to-note">Conference notes and everything from Terms 1 and 2 stay as they are.</p>';
   var go = el('button', 'to-btn', 'Clear');
@@ -57,6 +58,7 @@
       jobs.push(window.eot2Save('term-3', g.id, 'board', { meta: { _reset: { v: now, u: now } }, cards: {}, standups: {}, checkins: {}, blockers: {} }));
     }
     if (what.indexOf('checkin') !== -1) jobs.push(window.eot2Save(k.group, k.slug, 'term3-agreements', {}));
+    if (what.indexOf('schedule') !== -1) jobs.push(window.eot2Save(k.group, k.slug, 'term3-schedule', {}));
     if (what.indexOf('asmt') !== -1) {
       (window.T3_ASSESSMENTS || []).forEach(function (p) {
         jobs.push(window.eot2Save(k.group, k.slug, 'term3-asmt-' + p.id, {}));
