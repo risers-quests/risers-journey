@@ -6,39 +6,18 @@
 <title>Term 3 Quests — Risers Journey — Staff</title>
 <link rel="stylesheet" href="../../dashboard/dashboard.css" />
 <link rel="stylesheet" href="../../home.css" />
-<link rel="stylesheet" href="../staff-home.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/lifehub.css" />
+<link rel="stylesheet" href="board.css" />
 <script src="../../assets/brand.js" data-area="staff"></script>
-<style>
-  .t3-bar { display: flex; justify-content: flex-end; margin: 0 0 12px; }
-  .t3-bar a { font-weight: 600; color: var(--accent); text-decoration: none; border: 1.5px solid var(--border); background: #fff; border-radius: 99px; padding: 8px 16px; }
-  .t3-bar a:hover { border-color: var(--accent); }
-  .t3-frame { display: block; width: 100%; min-height: 80vh; border: 0; border-radius: 18px; background: #fff; }
-</style>
 </head>
 <body>
-<div id="app">
-  <!-- The Term 3 Quests planner, kept as its own page (its own styles and
-       saving) and shown here inside the staff shell. Staff side only. -->
-  <div class="t3-bar"><a href="board.html">Project board ›</a></div>
-  <iframe class="t3-frame" id="t3-frame" src="term3-quests.html" title="Term 3 Quests"></iframe>
-</div>
-<script>
-(function () {
-  var frame = document.getElementById('t3-frame');
-  frame.addEventListener('load', function () {
-    var doc = frame.contentDocument;
-    if (!doc) return;
-    // Match the light staff shell rather than following the device's dark mode.
-    doc.documentElement.setAttribute('data-theme', 'light');
-    function fit() { frame.style.height = doc.documentElement.scrollHeight + 'px'; }
-    fit();
-    if (window.ResizeObserver) new ResizeObserver(fit).observe(doc.body);
-  });
-})();
-</script>
+<div id="app"></div>
+<script src="../../end-of-term-2/shared/eot2-sync.js"></script>
+<script src="build-pool.js"></script>
+<script src="quest-data.js"></script>
+<script src="builds.js"></script>
 </body>
 </html>

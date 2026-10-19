@@ -75,11 +75,6 @@
     { label: 'Term 1', href: root + 'term-1/index.html', icon: 'conf', short: 'Term 1', match: /\/(term-1|term-1-conference)\// }
   ];
 
-  // Risers whose group is using the Term 3 project board (group id on the
-  // staff board); it shows on their Term 3 page. Add a group's Risers here
-  // to switch it on for them, e.g. { benjamin: 'g1', yokesh: 'g1', eva:
-  // 'g1' }. Empty: staff only.
-  window.LH_T3_GROUPS = {};
 
   function isActive(item) {
     if (!item.match) return false;
