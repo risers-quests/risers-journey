@@ -1,7 +1,8 @@
-/* Term 3 — My Schedule: a Riser's week, Monday to Friday, as blocks they
-   can change.
+/* Term 3 — My Schedule: a Riser's week, Monday to Friday, as blocks.
+   Risers can only look at it; staff change it.
 
    - Starts from the school timetable (timetable-data.js).
+   Staff can:
    - Tap a block to change its name, colour, day or times, or delete it.
    - Drag a block to move it (on a phone or tablet, press and hold first),
      and drag its bottom edge to make it longer or shorter. Times snap to
@@ -13,7 +14,7 @@
    { days: { Mon: [{ s, e, t, c }], … }, u, by }  (s, e: minutes after
    midnight; t: what it is; c: colour, empty for the usual colour).
    Staff, ?view=staff: every Riser and how many blocks changed;
-   ?view=staff&kid=<slug>: that Riser's schedule, which staff can change too. */
+   ?view=staff&kid=<slug>: that Riser's schedule, to change. */
 (function () {
   var KEY = 'term3-schedule';
   var DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
@@ -89,6 +90,7 @@
     var days = school(kid.slug), base = school(kid.slug);
     var history = [], saveTimer = null;
     var narrow = function () { return window.innerWidth < 760; };
+    var EDIT = who === 'staff';
     var dayNow = DAYS[Math.min(Math.max(new Date().getDay() - 1, 0), 4)];
     var shown = dayNow;
 
@@ -96,14 +98,15 @@
     if (crumb) app.appendChild(el('div', 'eot2-crumb', crumb));
     app.appendChild(el('header', 'hd-page-head sc-head',
       '<div><p class="hd-eyebrow">Term 3</p><h1>' + (who === 'staff' ? esc(kid.name) + '’s schedule' : 'My schedule') + '</h1>' +
-      '<p>Your week at LifeHub. Tap a block to change it. Drag a block to move it' +
-      ' (on a phone or tablet, press and hold it first). Drag the bottom edge to make it longer or shorter.</p></div>' +
+      (EDIT ? '<p>Tap a block to change it. Drag a block to move it' +
+        ' (on a phone or tablet, press and hold it first). Drag the bottom edge to make it longer or shorter. ' + esc(kid.name) + ' sees the changes on their page.</p></div>'
+        : '<p>Your week at LifeHub. If something needs to change, ask a facilitator.</p></div>') +
       '<span class="sc-status">Loading…</span>'));
     var tools = el('div', 'sc-tools',
       '<button type="button" class="sc-btn sc-add">+ Add a block</button>' +
       '<button type="button" class="sc-btn sc-undo" disabled>Undo</button>' +
       '<button type="button" class="sc-btn sc-ghost sc-reset">Start again from the school timetable</button>');
-    app.appendChild(tools);
+    if (EDIT) app.appendChild(tools);
     var tabs = el('div', 'sc-tabs');
     app.appendChild(tabs);
     var note = el('p', 'sc-note');
@@ -203,17 +206,19 @@
         days[d].forEach(function (b, i) {
           var p = L.pos[i];
           var blk = el('div', 'sc-blk sc-c-' + colourOf(b) + (b.e - b.s <= 15 ? ' is-short' : '') + (p.of > 1 ? ' is-clash' : ''),
-            '<span class="sc-blk-t">' + esc(b.t || 'Untitled') + (isChanged(b, d, base) ? ' <i class="sc-mark" title="Changed from the school timetable">✎</i>' : '') + '</span>' +
+            '<span class="sc-blk-t">' + esc(b.t || 'Untitled') + (EDIT && isChanged(b, d, base) ? ' <i class="sc-mark" title="Changed from the school timetable">✎</i>' : '') + '</span>' +
             '<span class="sc-blk-time">' + span(b) + '</span><span class="sc-grip" aria-hidden="true"></span>');
           blk.style.top = (b.s - START) * PX + 'px';
           blk.style.height = Math.max((b.e - b.s) * PX - 2, 12) + 'px';
           blk.style.left = 'calc(' + (p.lane / p.of * 100) + '% + 2px)';
           blk.style.width = 'calc(' + (100 / p.of) + '% - 4px)';
+          if (EDIT) {
           blk.tabIndex = 0;
           blk.setAttribute('role', 'button');
           blk.setAttribute('aria-label', (b.t || 'Untitled') + ', ' + DAY_NAMES[d] + ' ' + span(b) + '. Tap to change.');
           blk.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); sheet(b, d, false); } });
           drag(blk, b, d);
+          } else blk.classList.add('is-fixed');
           body.appendChild(blk);
         });
         col.appendChild(body);
@@ -356,7 +361,7 @@
         days = {};
         DAYS.forEach(function (d) { days[d] = (r.state.days[d] || []).filter(function (b) { return b && b.e > b.s; }); });
       }
-      status('Saved', 'is-ok');
+      if (EDIT) status('Saved', 'is-ok'); else { var st = app.querySelector('.sc-status'); if (st) st.remove(); }
       paint();
     });
   }
@@ -367,7 +372,7 @@
     app.innerHTML = '';
     app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/term-3/index.html">&larr; Term 3</a>'));
     app.appendChild(el('header', 'hd-page-head', '<div><p class="hd-eyebrow">Term 3</p><h1>Schedules</h1>' +
-      '<p>Each Riser’s week, starting from the school timetable. Risers can change theirs; so can you.</p></div>'));
+      '<p>Each Riser’s week, starting from the school timetable. Only staff can change a schedule; Risers see theirs on their Term 3 page.</p></div>'));
     var list = el('div', 'sc-kids', '<p class="sc-note">Loading…</p>');
     app.appendChild(list);
     var kids = window.EOT2_KIDS.slice().sort(function (a, b) { return a.name.localeCompare(b.name); });

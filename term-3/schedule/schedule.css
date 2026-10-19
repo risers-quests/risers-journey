@@ -74,3 +74,5 @@
 .sc-kid.is-changed span { color: var(--warn); }
 
 @media (max-width: 480px) { .sc-row { grid-template-columns: 1fr 1fr; } .sc-row .sc-field:first-child { grid-column: 1 / -1; } }
+.sc-blk.is-fixed { cursor: default; }
+.sc-blk.is-fixed .sc-grip { display: none; }
