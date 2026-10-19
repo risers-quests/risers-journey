@@ -486,6 +486,31 @@
     });
   }
 
+  // Clears the Riser's answers, marks and revision plan so they can take
+  // the paper again from a blank page.
+  function resetEl(kid, paper) {
+    var box = el('div', 'as-reset');
+    var b = el('button', 'as-resetbtn', 'Start again for ' + esc(kid.name));
+    b.type = 'button';
+    var msg = el('span', 'as-msg');
+    b.addEventListener('click', function () {
+      if (!confirm('Clear ' + kid.name + '’s answers, marks and revision plan for this paper, so they start again from a blank paper? This can’t be undone.')) return;
+      b.disabled = true;
+      msg.textContent = 'Clearing…';
+      Promise.all([
+        window.eot2Save(kid.group, kid.slug, keyOf(paper.id), {}),
+        window.eot2Save(kid.group, kid.slug, marksKeyOf(paper.id), {})
+      ]).then(function (r) {
+        if (r[0].ok && r[1].ok) { renderStaffMark(kid, paper); return; }
+        b.disabled = false;
+        msg.textContent = 'Not cleared — check the connection and try again.';
+      });
+    });
+    box.appendChild(b);
+    box.appendChild(msg);
+    return box;
+  }
+
   function loadKey(paper) {
     return new Promise(function (resolve) {
       var base = window.LH_STAFF_SITE;
@@ -522,6 +547,8 @@
       var key = r[2];
       st.set('saved', mk._returned ? 'Returned' : 'Saved');
       body.innerHTML = '';
+      var started = ans._submitted || (ans.answers && Object.keys(ans.answers).length) || mk._returned;
+      if (started) body.appendChild(resetEl(kid, paper));
       if (!ans._submitted) {
         body.appendChild(el('p', 'as-wait', kid.name + ' hasn’t submitted this yet. It can be marked once it’s submitted.'));
         return;
