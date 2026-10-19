@@ -6,11 +6,18 @@
      big = 1 / 2 / 3 points), and a red flag when someone is stuck.
    - Weeks are sprints. Each week has a goal, and the bar shows how much of
      this week's work is done.
-   - Stand-up: at the start of each session, every Riser answers three
-     questions (what I did, what I'll do, am I stuck). The group leader
-     types it in.
-   - Check-in: at the end of the week, with a facilitator — what we
-     finished, keep doing, change, shout-outs, and next week's goal.
+   - No fixed leader: each week the team chooses a team director, who
+     starts things off and looks after the team that week. The turn goes
+     round so everyone has a go.
+   - Stand-up: every day, at the start of the session, every Riser answers
+     three questions (what I did, what I'll do, is anything in my way). The
+     team director runs it and types it in.
+   - Blockers: anything in the team's way. Anyone can flag one; a stand-up
+     answer about being stuck flags one by itself, and so does a job marked
+     stuck. They stay on the board until someone marks them solved.
+   - Check-in: once a week, at the end of the week, with a facilitator —
+     what we finished, blockers, keep doing, change, shout-outs, and next
+     week's goal.
 
    One shared board per group, saved through the progress Worker under
    group "term-3", kid = the group id, week "board". Every card, stand-up
@@ -22,7 +29,8 @@
 
    The group's project lives in the same record: meta.project (an id from
    build-pool.js), meta.started (the day it was chosen) and meta.role_<Kid>
-   (each Riser's role). A group chooses only from the levels set for it in
+   (each Riser's role), meta.director<week> (that week's team director),
+   and the blockers map. A group chooses only from the levels set for it in
    quest-data.js and never sees the levels; more than one group can choose
    the same project. Weeks are the school weeks of Term 3. */
 (function () {
@@ -41,7 +49,7 @@
   ];
   var SIZES = [{ v: 1, name: 'Small' }, { v: 2, name: 'Medium' }, { v: 3, name: 'Big' }];
   var WEEKS = Q.WEEKS.map(function (w, i) { return i + 1; });
-  var MAPS = ['meta', 'cards', 'standups', 'checkins'];
+  var MAPS = ['meta', 'cards', 'standups', 'checkins', 'blockers'];
 
   // A Riser (term-3/quest/index.html sets PB_KID_MODE) sees only their own
   // group; staff pick any.
@@ -62,7 +70,7 @@
   var state = blank();
   var loaded = false, saving = false, dirty = false, saveTimer = null;
 
-  function blank() { return { meta: {}, cards: {}, standups: {}, checkins: {} }; }
+  function blank() { return { meta: {}, cards: {}, standups: {}, checkins: {}, blockers: {} }; }
   function now() { return Date.now(); }
   function uid() { return Math.random().toString(36).slice(2, 9); }
   function esc(s) {
@@ -92,6 +100,14 @@
   function meta(key, fallback) { var m = state.meta[key]; return m && m.v !== undefined ? m.v : fallback; }
   function setMeta(key, v) { state.meta[key] = { v: v, u: now() }; changed(); }
   function sprint() { return meta('sprint', Q.weekOf()); }
+  function director(w) { return meta('director' + (w || sprint()), ''); }
+  // Who hasn't been team director yet this term (everyone, once all have).
+  function notYet() {
+    var had = {};
+    WEEKS.forEach(function (n) { var d = meta('director' + n, ''); if (d) had[d] = 1; });
+    var left = group.kids.filter(function (k) { return !had[k]; });
+    return left.length ? left : group.kids.slice();
+  }
   function cards() {
     return Object.keys(state.cards).map(function (id) { return Object.assign({ id: id }, state.cards[id]); })
       .filter(function (c) { return !c.deleted; })
@@ -205,7 +221,8 @@
     if (!tab) tab = meta('project') ? 'board' : 'project';
     if (meta('project')) main.appendChild(topBar());
     var tabs = el('div', 'pb-tabs');
-    [['project', meta('project') ? 'Our project' : 'Choose our project'], ['board', 'Board'], ['standup', 'Stand-up'], ['checkin', 'Weekly check-in']].forEach(function (t) {
+    var nb = openBlockers().length;
+    [['project', meta('project') ? 'Our project' : 'Choose our project'], ['board', 'Board' + (nb ? ' <span class="pb-tab-flag">🚧 ' + nb + '</span>' : '')], ['standup', 'Daily stand-up'], ['checkin', 'Weekly check-in']].forEach(function (t) {
       var b = el('button', 'pb-tab' + (tab === t[0] ? ' is-on' : ''), t[1]);
       b.type = 'button';
       b.addEventListener('click', function () {
@@ -220,7 +237,7 @@
     window.scrollTo(0, y);
   }
 
-  // Build name, leader, this week, the week's goal and how much is done.
+  // Project, this week's team director, the week, its goal and how much is done.
   function topBar() {
     var bar = el('div', 'pb-top');
     var w = sprint();
@@ -231,17 +248,20 @@
     bar.innerHTML =
       '<div class="pb-top-row">' +
         '<div class="pb-field pb-build"><span>Our project</span><strong>' + esc(projectTitle()) + '</strong>' + (deadline() ? '<em>Expected by ' + Q.nice(deadline().date) + '</em>' : '') + '</div>' +
-        '<label class="pb-field"><span>Group leader</span><select class="pb-leader"><option value="">Choose…</option>' +
-          group.kids.map(function (k) { return '<option' + (meta('leader') === k ? ' selected' : '') + '>' + esc(k) + '</option>'; }).join('') + '</select></label>' +
+        '<label class="pb-field"><span>Team director, week ' + w + '</span><select class="pb-director"><option value="">Choose…</option>' +
+          group.kids.map(function (k) { return '<option' + (director(w) === k ? ' selected' : '') + '>' + esc(k) + '</option>'; }).join('') + '</select>' +
+          (director(w) ? '' : '<em>Not had a turn yet: ' + notYet().map(esc).join(', ') + '</em>') + '</label>' +
         '<div class="pb-field"><span>Week</span><div class="pb-weeks">' + WEEKS.map(function (n) {
           return '<button type="button" class="pb-week' + (n === w ? ' is-on' : '') + (n === Q.weekOf() ? ' is-now' : '') + '" data-w="' + n + '" title="' + Q.nice(Q.WEEKS[n - 1][0]) + ' – ' + Q.nice(Q.WEEKS[n - 1][1]) + '">' + n + '</button>';
         }).join('') + '</div></div>' +
       '</div>' +
+      '<p class="pb-dir-note">' + (director(w) ? '<b>' + esc(director(w)) + '</b> is team director this week: ' : 'Choose a team director for this week. The team director ') +
+        'starts the daily stand-up, keeps the board up to date, makes sure blockers get flagged and solved, and leads the weekly check-in.</p>' +
       '<label class="pb-field pb-goal"><span>Week ' + w + ' goal</span><input type="text" value="' + esc(meta('goal' + w, '')) + '" placeholder="By the end of this week we will…"></label>' +
       '<div class="pb-progress"><div class="pb-track"><span style="width:' + (total ? Math.round(got / total * 100) : 0) + '%"></span></div>' +
         '<span>' + (total ? got + ' of ' + total + ' points done this week' : 'Pick jobs for this week to get started') + '</span></div>';
     bar.querySelector('.pb-goal input').addEventListener('change', function () { setMeta('goal' + w, this.value.trim()); });
-    bar.querySelector('.pb-leader').addEventListener('change', function () { setMeta('leader', this.value); });
+    bar.querySelector('.pb-director').addEventListener('change', function () { setMeta('director' + w, this.value); draw(); });
     Array.prototype.forEach.call(bar.querySelectorAll('.pb-week'), function (b) {
       b.addEventListener('click', function () { setMeta('sprint', +b.dataset.w); draw(); });
     });
@@ -274,12 +294,14 @@
       '<p class="pq-learn"><b>Learning:</b> ' + esc(b.learn) + '<br><b>Learning outcome:</b> ' + esc(b.lo) + '</p>';
   }
 
-  // The four stages and every role's job, folded away on a project card.
+  // The week-by-week plan and every role's jobs, folded away on a project card.
   function planPeek(b) {
     var roles = Q.ROLES[b.cat];
-    return '<details class="pq-peek"><summary>See the plan: a job for each of you, every stage</summary><ol>' +
-      b.plan.map(function (s) {
-        return '<li><b>' + esc(s[0]) + '</b><ul>' + roles.map(function (r, j) { return '<li>' + r.icon + ' ' + esc(r.name) + ': ' + esc(s[j + 1]) + '</li>'; }).join('') + '</ul></li>';
+    return '<details class="pq-peek"><summary>See the plan: ' + b.plan.length + ' weeks, a job for each of you every day</summary><ol>' +
+      b.plan.map(function (w) {
+        return '<li><b>' + esc(w.t) + '</b><ul>' + roles.map(function (r, j) {
+          return '<li>' + r.icon + ' ' + esc(r.name) + ': ' + w.j[j].map(esc).join(' · ') + '</li>';
+        }).join('') + '</ul></li>';
       }).join('') + '</ol></details>';
   }
 
@@ -381,38 +403,118 @@
     return wrap;
   }
 
-  // The project's four stages: when each happens and each role's job in
-  // it. Everyone has a job every stage, so everyone works every session.
+  // The project week by week: the school week it falls in, and each role's
+  // job for Monday (together), Tuesday (on their own) and Wednesday
+  // (together). Everyone has a job every session, so the work is fair.
+  var DAYS = ['Monday', 'Tuesday', 'Wednesday'];
   function planEl(b) {
-    var roles = Q.ROLES[b.cat], ranges = Q.stageWeeks(b, meta('started')), nowWk = Q.weekOf();
-    var sec = el('section', 'pq-sec', '<h3>How the weeks go</h3>' +
-      '<p class="pq-sub">Each stage has a job for every role, about the same size, so everyone is busy every session and the work is shared fairly. ' +
-      'On Monday and Wednesday you work on your jobs together; on Tuesday, carry on with your own job.</p>');
-    b.plan.forEach(function (stg, i) {
-      var r = ranges[i], here = nowWk >= r.from && nowWk <= r.to;
-      var box = el('div', 'pq-stage' + (here ? ' is-now' : '') + (nowWk > r.to ? ' is-past' : ''),
-        '<div class="pq-stage-head"><b>' + (i + 1) + '. ' + esc(stg[0]) + '</b><span>' + Q.weekLabel(r) + (here ? ' · now' : '') + '</span></div>' +
-        '<ul>' + roles.map(function (role, j) {
+    var roles = Q.ROLES[b.cat], weeks = Q.planWeeks(b, meta('started')), nowWk = Q.weekOf();
+    var sec = el('section', 'pq-sec', '<h3>Our plan, week by week</h3>' +
+      '<p class="pq-sub">Every role has a job every day, about the same size, so everyone is busy and the work is shared fairly. ' +
+      'Monday and Wednesday you work together; Tuesday, you do your own job.</p>');
+    b.plan.forEach(function (wk, i) {
+      var sw = weeks[i], here = sw === nowWk, past = sw < nowWk;
+      var box = el('details', 'pq-stage' + (here ? ' is-now' : '') + (past ? ' is-past' : ''));
+      if (here || (i === 0 && nowWk < sw)) box.open = true;
+      box.innerHTML = '<summary class="pq-stage-head"><b>Week ' + (i + 1) + ': ' + esc(wk.t) + '</b><span>' + Q.weekLabel(sw) + (here ? ' · this week' : '') + '</span></summary>' +
+        '<div class="pq-week">' + roles.map(function (role, j) {
           var who = group.kids.filter(function (k) { return meta('role_' + k) === j; });
-          return '<li><span class="pq-stage-role">' + role.icon + ' ' + esc(role.name) + (who.length ? ' (' + who.map(esc).join(', ') + ')' : '') + '</span>' + esc(stg[j + 1]) + '</li>';
-        }).join('') + '</ul>');
-      var key = 'staged_' + b.id + '_' + i;
-      var add = el('button', 'pq-seg', meta(key) ? '✓ On our board' : 'Put these jobs on our board');
+          return '<div class="pq-week-row"><span class="pq-stage-role">' + role.icon + ' ' + esc(role.name) + (who.length ? ' · ' + who.map(esc).join(', ') : '') + '</span>' +
+            wk.j[j].map(function (job, d) { return '<span class="pq-day"><small>' + DAYS[d] + (d === 1 ? ' · on my own' : '') + '</small>' + esc(job) + '</span>'; }).join('') + '</div>';
+        }).join('') + '</div>';
+      var key = 'staged_' + b.id + '_w' + i;
+      var add = el('button', 'pq-seg', meta(key) ? '✓ On our board' : 'Put this week’s jobs on our board');
       add.type = 'button';
       add.disabled = !!meta(key);
       add.addEventListener('click', function () {
         roles.forEach(function (role, j) {
           var who = group.kids.filter(function (k) { return meta('role_' + k) === j; });
-          putCard(uid(), { title: stg[j + 1], col: 'todo', size: 2, who: who, order: now() + j, by: KID ? ME : 'facilitator' });
+          wk.j[j].forEach(function (job, d) {
+            putCard(uid(), { title: DAYS[d].slice(0, 3) + ': ' + job, col: 'todo', size: 1, who: who, order: now() + d * 10 + j, by: KID ? ME : 'facilitator' });
+          });
         });
         setMeta(key, true);
+        if (sw > sprint()) setMeta('sprint', sw);
         tab = 'board';
         draw();
       });
-      box.appendChild(add);
+      box.querySelector('.pq-week').appendChild(add);
       sec.appendChild(box);
     });
     return sec;
+  }
+
+  /* ---------- blockers ---------- */
+
+  var BLOCK_TYPES = [
+    { id: 'things', name: 'We need things' },
+    { id: 'how', name: 'We don’t know how' },
+    { id: 'team', name: 'Team trouble' },
+    { id: 'time', name: 'Not enough time' },
+    { id: 'idea', name: 'We need an idea' },
+    { id: 'other', name: 'Something else' }
+  ];
+  function typeName(id) { return (BLOCK_TYPES.filter(function (t) { return t.id === id; })[0] || BLOCK_TYPES[5]).name; }
+  // "No", "nothing", "none" and the like aren't blockers.
+  function saysNo(t) { return /^\s*(no+|nope|none|nothing|nah|not really|no one|nil|-+|n\/a)\s*[.!]*\s*$/i.test(t || ''); }
+
+  // Every open blocker: flagged ones and stuck jobs, oldest first.
+  function openBlockers() {
+    var list = Object.keys(state.blockers).map(function (id) { return Object.assign({ id: id }, state.blockers[id]); })
+      .filter(function (x) { return !x.deleted && !x.solved && x.what; });
+    cards().filter(function (c) { return c.stuck && c.col !== 'done'; }).forEach(function (c) {
+      list.push({ id: 'card_' + c.id, card: c.id, what: c.title + (c.stuckNote ? ': ' + c.stuckNote : ''), type: 'other', who: c.who || [], at: c.u, from: 'card' });
+    });
+    return list.sort(function (a, b) { return (a.at || 0) - (b.at || 0); });
+  }
+  function putBlocker(id, fields) {
+    state.blockers[id] = Object.assign({}, state.blockers[id] || {}, fields, { u: now() });
+    changed();
+  }
+  function solve(x, how) {
+    if (x.card) putCard(x.card, { stuck: false, stuckNote: '' });
+    else putBlocker(x.id, { solved: true, how: how || '', solvedBy: KID ? ME : 'facilitator', solvedAt: now() });
+    draw();
+  }
+
+  function blockersEl() {
+    var list = openBlockers();
+    var wrap = el('section', 'pb-blockers' + (list.length ? ' has-open' : ''),
+      '<div class="pb-bl-head"><h2>🚧 Blockers <em>' + list.length + '</em></h2><p>Anything in the way of our work. Flag it as soon as it happens, so we can get help and keep going.</p></div>');
+    list.forEach(function (x) {
+      var row = el('div', 'pb-bl');
+      row.innerHTML = '<div class="pb-bl-main"><span class="pb-bl-type">' + (x.from === 'card' ? '🚩 Stuck job' : esc(typeName(x.type))) + '</span>' +
+        '<strong>' + esc(x.what) + '</strong>' +
+        '<small>' + ((x.who || []).length ? x.who.map(esc).join(', ') + ' · ' : '') + (x.at ? niceDate(Q.iso(new Date(x.at))) : '') +
+        (x.from === 'standup' ? ' · from the stand-up' : '') + (x.help ? ' · Help from: ' + esc(x.help) : '') + '</small></div>' +
+        '<div class="pb-bl-solve"><input type="text" placeholder="How did we solve it?" aria-label="How did we solve it?"><button type="button" class="pq-seg">✓ Solved</button></div>';
+      row.querySelector('button').addEventListener('click', function () { solve(x, row.querySelector('input').value.trim()); });
+      wrap.appendChild(row);
+    });
+    if (!list.length) wrap.appendChild(el('p', 'pb-empty', 'Nothing in our way right now.'));
+
+    var f = el('form', 'pb-bl-form');
+    f.innerHTML = '<input type="text" class="pb-bl-what" placeholder="What’s in our way?" aria-label="What’s in our way?">' +
+      '<select class="pb-bl-kind" aria-label="What kind of blocker">' + BLOCK_TYPES.map(function (t) { return '<option value="' + t.id + '">' + t.name + '</option>'; }).join('') + '</select>' +
+      '<input type="text" class="pb-bl-help" placeholder="Who could help? (optional)" aria-label="Who could help?">' +
+      '<button type="submit" class="pb-add-btn">Flag it</button>';
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var what = f.querySelector('.pb-bl-what').value.trim();
+      if (!what) { f.querySelector('.pb-bl-what').focus(); return; }
+      putBlocker(uid(), { what: what, type: f.querySelector('.pb-bl-kind').value, help: f.querySelector('.pb-bl-help').value.trim(),
+        who: KID ? [ME] : [], by: KID ? ME : 'facilitator', at: now(), week: sprint(), from: 'form' });
+      draw();
+    });
+    wrap.appendChild(f);
+
+    var solved = Object.keys(state.blockers).map(function (id) { return state.blockers[id]; })
+      .filter(function (x) { return x && x.solved && !x.deleted && x.what; })
+      .sort(function (a, b) { return (b.solvedAt || 0) - (a.solvedAt || 0); });
+    if (solved.length) wrap.appendChild(el('details', 'pb-bl-done', '<summary>Solved (' + solved.length + ')</summary><ul>' + solved.map(function (x) {
+      return '<li><b>' + esc(x.what) + '</b>' + (x.how ? ' — ' + esc(x.how) : '') + '</li>';
+    }).join('') + '</ul>'));
+    return wrap;
   }
 
   // Points of finished jobs for each Riser, this week and overall, so the
@@ -448,6 +550,7 @@
 
   function boardView() {
     var outer = el('div');
+    outer.appendChild(blockersEl());
     outer.appendChild(fairShare());
     var wrap = el('div', 'pb-board');
     outer.appendChild(wrap);
@@ -572,15 +675,19 @@
   var STANDUP_QS = [
     { id: 'did', label: 'What I did last time' },
     { id: 'will', label: 'What I’ll do today' },
-    { id: 'stuck', label: 'Anything I’m stuck on?' }
+    { id: 'stuck', label: 'Is anything in my way?' }
   ];
 
   function standupView() {
     var wrap = el('div', 'pb-standup');
     var day = today();
-    wrap.appendChild(el('div', 'pb-intro', '<h2>Stand-up · ' + niceDate(day) + '</h2>' +
-      '<p>Stand in a circle at the start of the session. Each person answers three quick questions. ' +
-      (meta('leader') ? esc(meta('leader')) + ', as group leader, types the answers in.' : 'The group leader types the answers in.') + '</p>'));
+    var dir = director(Q.weekOf(new Date(day + 'T12:00:00')));
+    wrap.appendChild(el('div', 'pb-intro', '<h2>Daily stand-up · ' + niceDate(day) + '</h2>' +
+      '<p>Every day, stand in a circle at the start of the session. Each person answers three quick questions. ' +
+      (dir ? esc(dir) + ', as team director this week, runs it and types the answers in.' : 'This week’s team director runs it and types the answers in.') +
+      ' If something is in your way, say it: it goes on the board as a blocker.</p>'));
+    var open = openBlockers();
+    if (open.length) wrap.appendChild(el('div', 'pb-su-open', '<b>🚧 Still in our way:</b> ' + open.map(function (x) { return esc(x.what); }).join(' · ')));
     var grid = el('div', 'pb-su-grid');
     group.kids.forEach(function (k, i) {
       var id = day + '_' + k.toLowerCase();
@@ -597,6 +704,15 @@
           r.u = now();
           state.standups[id] = r;
           changed();
+        });
+        // A real answer to "Is anything in my way?" flags a blocker.
+        if (ta.dataset.q === 'stuck') ta.addEventListener('change', function () {
+          var bid = 'su_' + id, t = ta.value.trim(), had = state.blockers[bid];
+          if (t && !saysNo(t)) {
+            if (!had || had.what !== t) putBlocker(bid, { what: t, type: (had && had.type) || 'other', who: [k], by: k, at: (had && had.at) || now(), week: sprint(), from: 'standup', solved: had ? had.solved : false });
+          } else if (had && !had.solved) putBlocker(bid, { deleted: true });
+          var nb = openBlockers().length, bt = app.querySelectorAll('.pb-tab')[1];
+          if (bt) bt.innerHTML = 'Board' + (nb ? ' <span class="pb-tab-flag">🚧 ' + nb + '</span>' : '');
         });
       });
       grid.appendChild(card);
@@ -637,12 +753,14 @@
     var id = 'w' + w;
     var rec = state.checkins[id] || {};
     var wrap = el('div', 'pb-checkin');
-    wrap.appendChild(el('div', 'pb-intro', '<h2>Week ' + w + ' check-in</h2><p>Sit down with a facilitator at the end of the week. Show what you finished, then talk about how the week went.</p>'));
+    wrap.appendChild(el('div', 'pb-intro', '<h2>Week ' + w + ' check-in</h2><p>Once a week, at the end of the week, sit down with a facilitator. ' +
+      (director(w) ? esc(director(w)) + ', as team director, leads it. ' : 'This week’s team director leads it. ') +
+      'Show what you finished, look at any blockers, then talk about how the week went. Choose next week’s team director at the end.</p>'));
     var done = inCol('done');
-    var stuck = cards().filter(function (c) { return c.stuck && c.col !== 'done'; });
+    var stuck = openBlockers();
     wrap.appendChild(el('div', 'pb-review',
       '<div><h3>What we finished</h3>' + (done.length ? '<ul>' + done.map(function (c) { return '<li>' + esc(c.title) + ' <span class="pb-avs">' + who(c) + '</span></li>'; }).join('') + '</ul>' : '<p class="pb-empty">Nothing in Done yet this week.</p>') + '</div>' +
-      '<div><h3>Still stuck</h3>' + (stuck.length ? '<ul>' + stuck.map(function (c) { return '<li>🚩 ' + esc(c.title) + (c.stuckNote ? ' — ' + esc(c.stuckNote) : '') + '</li>'; }).join('') + '</ul>' : '<p class="pb-empty">No one is stuck.</p>') + '</div>'));
+      '<div><h3>🚧 Blockers still open</h3>' + (stuck.length ? '<ul>' + stuck.map(function (x) { return '<li>' + esc(x.what) + ((x.who || []).length ? ' — ' + x.who.map(esc).join(', ') : '') + '</li>'; }).join('') + '</ul>' : '<p class="pb-empty">Nothing in our way.</p>') + '</div>'));
     var form = el('div', 'pb-retro');
     CHECKIN_QS.forEach(function (q) {
       var ro = KID && q.id === 'note';
@@ -663,6 +781,12 @@
       state.checkins[id] = r;
       changed();
     });
+    if (w < WEEKS.length) {
+      var nd = el('label', 'pb-field', '<span>Team director for week ' + (w + 1) + '</span><em>Not had a turn yet: ' + notYet().map(esc).join(', ') + '</em>' +
+        '<select><option value="">Choose…</option>' + group.kids.map(function (k) { return '<option' + (director(w + 1) === k ? ' selected' : '') + '>' + esc(k) + '</option>'; }).join('') + '</select>');
+      nd.querySelector('select').addEventListener('change', function () { setMeta('director' + (w + 1), this.value); });
+      form.appendChild(nd);
+    }
     form.appendChild(sign);
     wrap.appendChild(form);
     return wrap;
@@ -689,9 +813,11 @@
     var ci = s.checkins['w' + w] || {};
     return {
       build: projectTitle(m('project'), m('build', '')), due: m('project') && m('started') ? deadline(m('project'), m('started')) : null,
-      leader: m('leader', ''), week: w, goal: m('goal' + w, ''),
+      director: m('director' + w, ''), week: w, goal: m('goal' + w, ''),
       got: pts(done), total: pts(done) + pts(open), cards: all.length,
-      doing: Object.keys(doing), stuck: all.filter(function (c) { return c.stuck && c.col !== 'done'; }),
+      doing: Object.keys(doing),
+      stuck: all.filter(function (c) { return c.stuck && c.col !== 'done'; }).map(function (c) { return c.title; })
+        .concat(Object.keys(s.blockers || {}).map(function (id) { return s.blockers[id]; }).filter(function (x) { return x && x.what && !x.solved && !x.deleted; }).map(function (x) { return x.what; })),
       stood: stood, signed: !!ci.signed
     };
   }
@@ -703,18 +829,18 @@
       main.innerHTML = '<p class="pb-ov-lede">Every group’s board at a glance. Tap a group to open its board.</p>';
       var list = el('div', 'pb-ov');
       list.appendChild(el('div', 'pb-ov-row pb-ov-headrow',
-        '<span>Group</span><span>This week</span><span>Progress</span><span>Doing now</span><span>Stuck</span><span>Stand-up today</span><span>Check-in</span>'));
+        '<span>Group</span><span>This week</span><span>Progress</span><span>Doing now</span><span>Blockers</span><span>Stand-up today</span><span>Check-in</span>'));
       groups.forEach(function (g, i) {
         var a = glance(boards[i], g);
         var pct = a.total ? Math.round(a.got / a.total * 100) : 0;
         var row = el('a', 'pb-ov-row');
         row.href = '?group=' + g.id;
         row.innerHTML =
-          '<span class="pb-ov-group"><strong>' + g.name + '</strong><em>' + esc(a.build || 'No project chosen yet') + '</em>' + (a.due ? '<small>Expected by ' + Q.nice(a.due.date) + '</small>' : '') + '<small>' + g.kids.join(', ') + (a.leader ? ' · Leader: ' + esc(a.leader) : '') + '</small></span>' +
+          '<span class="pb-ov-group"><strong>' + g.name + '</strong><em>' + esc(a.build || 'No project chosen yet') + '</em>' + (a.due ? '<small>Expected by ' + Q.nice(a.due.date) + '</small>' : '') + '<small>' + g.kids.join(', ') + (a.director ? ' · Director: ' + esc(a.director) : '') + '</small></span>' +
           '<span class="pb-ov-week"><small>Week</small><strong>' + a.week + '</strong>' + (a.goal ? '<em>' + esc(a.goal) + '</em>' : '<em class="pb-ov-none">No goal set</em>') + '</span>' +
           '<span class="pb-ov-prog">' + (a.total ? '<span class="pb-track"><span style="width:' + pct + '%"></span></span><em>' + a.got + ' of ' + a.total + ' points</em>' : '<em class="pb-ov-none">' + (a.cards ? 'Nothing picked for this week' : 'Board not started') + '</em>') + '</span>' +
           '<span class="pb-ov-doing">' + (a.doing.length ? a.doing.map(function (k) { return '<span class="pb-av pb-av-' + g.kids.indexOf(k) + '" title="' + esc(k) + '">' + esc(initial(k)) + '</span>'; }).join('') : '<em class="pb-ov-none">No one</em>') + '</span>' +
-          '<span class="pb-ov-stuck">' + (a.stuck.length ? '<strong class="pb-ov-flag" title="' + esc(a.stuck.map(function (c) { return c.title; }).join(', ')) + '">🚩 ' + a.stuck.length + '</strong>' : '<em class="pb-ov-none">—</em>') + '</span>' +
+          '<span class="pb-ov-stuck">' + (a.stuck.length ? '<strong class="pb-ov-flag" title="' + esc(a.stuck.join(', ')) + '">🚧 ' + a.stuck.length + '</strong>' : '<em class="pb-ov-none">—</em>') + '</span>' +
           // Who was at today's stand-up: solid initials for those who were,
           // faded for those who weren't, and who's missing in words.
           '<span class="pb-ov-stand">' + (a.stood.length ? '<span class="pb-ov-avs">' + g.kids.map(function (k, j) {
