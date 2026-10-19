@@ -43,7 +43,7 @@
   var WEEKS = [1, 2, 3, 4];
   var MAPS = ['meta', 'cards', 'standups', 'checkins'];
 
-  // A Riser (term-3/index.html sets PB_KID_MODE) sees only their own
+  // A Riser (term-3/quest/index.html sets PB_KID_MODE) sees only their own
   // group's board, from the group list in assets/brand.js; staff pick any.
   var KID = !!window.PB_KID_MODE;
   var group;
@@ -172,7 +172,7 @@
 
   function render() {
     app.innerHTML = '';
-    app.appendChild(el('div', 'dash-crumb', KID ? '<a href="../index.html">&larr; Home</a>' : '<a href="index.html">&larr; Term 3 Quests</a>'));
+    app.appendChild(el('div', 'dash-crumb', KID ? '<a href="../index.html">&larr; Term 3</a>' : '<a href="quests.html">&larr; Term 3 Quests</a>'));
     app.appendChild(el('header', 'hd-page-head pb-head',
       '<div><p class="hd-eyebrow">Term 3 Quest' + (KID ? ' &middot; ' + group.kids.join(', ') : 's') + '</p><h1>' + (KID ? 'Our project board' : 'Project board') + '</h1>' +
       '<p>Plan the build, work on it in weekly sprints, and check in every week.</p></div>' +

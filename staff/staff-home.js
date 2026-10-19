@@ -42,8 +42,7 @@
       '<h1>' + hello + ', ' + staffInfo.label + '</h1>' +
       '<p>Where would you like to go today?</p>'));
     app.appendChild(el('div', 'hd-tiles', window.LH_tiles([
-      { title: 'Term 3 Quests', desc: 'Group builds, quest packs and weekly checkpoints.', href: 'term-3/index.html', icon: 'skills', tone: 'amber' },
-      { title: 'Term 3 Check-ins', desc: 'Which families ticked off their conference agreement each week.', href: '../term-3/check-in/index.html?view=staff', icon: 'check', tone: 'amber' },
+      { title: 'Term 3', desc: 'Quests, weekly check-ins and assessments.', href: 'term-3/index.html', icon: 'skills', tone: 'amber' },
       { title: 'Term 1 Conference', desc: 'Each Riser’s Term 1 conference feedback.', href: '../term-1-conference/index.html?view=staff', icon: 'conf', tone: 'violet' },
       { title: 'Term 2 Conference', desc: 'Self-assessments, reflections and MOMs.', href: '../end-of-term-2/staff/index.html', icon: 'term', tone: 'slate' },
       { title: 'Term 2 Quests', desc: 'Every Riser’s self-paced quests, with feedback.', href: 'quests/index.html', icon: 'quests', tone: 'green' }

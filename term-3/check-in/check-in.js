@@ -93,6 +93,7 @@
 
   function renderKid(kid) {
     app.innerHTML = '';
+    app.appendChild(el('div', 'eot2-crumb', '<a href="../index.html">&larr; Term 3</a>'));
     app.appendChild(el('div', 'eot2-form-header',
       '<div><h1>Term 3 Check-in</h1><div class="eot2-sub">Each week, parents and child each tick whether they did their part of what you agreed at the Term 2 Conference.</div></div>' +
       '<div class="eot2-status eot2-status-offline" id="save-status">Loading&hellip;</div>'));
@@ -272,6 +273,7 @@
 
   function renderStaffAll() {
     app.innerHTML = '';
+    app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/term-3/index.html">&larr; Term 3</a>'));
     app.appendChild(el('div', 'eot2-head', '<h1>Term 3 Check-ins</h1><p>Each week, parents and their child each tick whether they did their part of the Term 2 Conference agreement. 26 Oct – 21 Jan, with the December holidays off.</p>'));
     var wrap = el('div', 'ci-table-wrap', '<p class="ci-wait">Loading…</p>');
     app.appendChild(wrap);

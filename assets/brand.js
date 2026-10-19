@@ -37,6 +37,7 @@
     term: '<rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/><path d="m9 15 2 2 4-4"/>',
     skills: '<path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 13 9 5 9-5"/>',
     sel: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/>',
+    paper: '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h6M9 16h4"/>',
     check: '<rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="m8 12.5 2.8 2.8L16.5 9"/>',
     logout: '<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5M5 12h11"/>',
   };
@@ -63,30 +64,23 @@
 
   var NAV = isStaff ? [
     { label: 'Home', href: root + 'staff/index.html', icon: 'home', match: /\/staff\/(index\.html)?$/ },
-    { label: 'Term 3 Quests', href: root + 'staff/term-3/index.html', icon: 'skills', short: 'T3 Quests', match: /\/staff\/term-3\// },
-    { label: 'Term 3 Check-ins', href: root + 'term-3/check-in/index.html?view=staff', icon: 'check', short: 'Check-ins', match: /\/term-3\/check-in\// },
+    { label: 'Term 3', href: root + 'staff/term-3/index.html', icon: 'skills', short: 'Term 3', match: /\/term-3\// },
     { label: 'Term 1 Conference', href: root + 'term-1-conference/index.html?view=staff', icon: 'conf', short: 'Term 1', match: /\/term-1-conference\// },
     { label: 'Term 2 Conference', href: root + 'end-of-term-2/staff/index.html', icon: 'term', short: 'Term 2', match: /\/end-of-term-2\// },
     { label: 'Term 2 Quests', href: root + 'staff/quests/index.html', icon: 'quests', short: 'Quests', match: /\/staff\/quests\// }
   ] : [
     { label: 'Home', href: root + 'index.html', icon: 'home', match: /\/(index\.html)?$/, exact: true },
-    { label: 'Term 3 Check-in', href: root + 'term-3/check-in/index.html', icon: 'check', short: 'Check-in', match: /\/term-3\/check-in\// },
+    { label: 'Term 3', href: root + 'term-3/index.html', icon: 'skills', short: 'Term 3', match: /\/term-3\// },
     { label: 'Term 1 Conference', href: root + 'term-1-conference/index.html', icon: 'conf', short: 'Term 1', match: /\/term-1-conference\// },
     { label: 'Term 2 Conference', href: root + 'end-of-term-2/index.html', icon: 'term', short: 'Term 2', match: /\/end-of-term-2\// },
     { label: 'Term 2 Quests', href: root + 'dashboard/index.html', icon: 'quests', short: 'Quests', match: /\/dashboard\// }
   ];
 
   // Risers whose group is using the Term 3 project board (group id on the
-  // staff board). Add a group's Risers here to switch it on for them,
-  // e.g. { benjamin: 'g1', yokesh: 'g1', eva: 'g1' }. Empty: staff only.
+  // staff board); it shows on their Term 3 page. Add a group's Risers here
+  // to switch it on for them, e.g. { benjamin: 'g1', yokesh: 'g1', eva:
+  // 'g1' }. Empty: staff only.
   window.LH_T3_GROUPS = {};
-  if (!isStaff) {
-    var t3kid = null;
-    try { t3kid = (localStorage.getItem(KID_KEY) || '').toLowerCase(); } catch (e) {}
-    if (window.LH_T3_GROUPS[t3kid]) {
-      NAV.splice(2, 0, { label: 'Term 3 Quest', href: root + 'term-3/index.html', icon: 'skills', short: 'Quest', match: /\/term-3\/(index\.html)?$/ });
-    }
-  }
 
   function isActive(item) {
     if (!item.match) return false;
