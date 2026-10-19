@@ -38,3 +38,8 @@
 .ci-key { font-size: .8rem; color: var(--ink-soft); margin-top: 10px; }
 .ci-key span { font-weight: 700; margin: 0 2px 0 10px; }
 .ci-key span:first-child { margin-left: 0; }
+.ci-editbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: -6px 0 18px; }
+.ci-editbar span { font-size: .82rem; color: var(--ink-faint); flex: 1; }
+.ci-editbar .eot2-btn { width: auto; padding: 8px 18px; }
+.ci-edit textarea { width: 100%; margin: 4px 0 12px; }
+.ci-msg { font-size: .85rem; color: #a3432b; }

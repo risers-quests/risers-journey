@@ -7,7 +7,12 @@
      be marked "Done" or "Not this week". Saved under week key
      term3-agreements as { weeks: { <monday>: { v: 'yes'|'no', at } } }.
    - Staff, ?view=staff: every Riser by week. ?view=staff&kid=<slug>:
-     one Riser's agreement and weeks, read only. */
+     one Riser's agreement and weeks, read only, with Edit wording.
+
+   The agreement is shown tidied (capitals, spacing, a lone "i", full
+   stops), or as
+   staff reworded it here (state.text[i] = { idea, parent }). The
+   conference notes themselves are never changed. */
 (function () {
   var KEY = 'term3-agreements';
   var MOM_KEY = 'term2-mom';
@@ -44,10 +49,28 @@
   function isOpen(w) { return today() >= day(w.start); }
   function isNow(w) { var t = today(); return t >= day(w.start) && t <= day(w.end); }
 
-  // The family's agreements from the submitted MOM Part 2.
-  function agreements(mom) {
+  // Light clean-up for display: spacing, capitals, a lone "i", a full stop.
+  function tidy(s) {
+    return String(s || '').split('\n').map(function (line) {
+      line = line.replace(/\s+/g, ' ').trim()
+        .replace(/\s+([,.;:!?])/g, '$1')
+        .replace(/([,.;:!?])(?=[A-Za-z])/g, '$1 ')
+        .replace(/\bi\b/g, 'I')
+        .replace(/([.!?]\s+)([a-z])/g, function (m, a, b) { return a + b.toUpperCase(); });
+      line = line.replace(/^((?:[•\-*]|\d+[.)])\s*)?([a-z])/, function (m, a, b) { return (a || '') + b.toUpperCase(); });
+      // Full stop at the end of a sentence (not on a list item).
+      return /^(?:[•\-*]|\d+[.)])/.test(line) || !/[A-Za-z0-9)]$/.test(line) ? line : line + '.';
+    }).filter(function (l, i, all) { return l || (i && all[i - 1]); }).join('\n').trim();
+  }
+
+  // The family's agreements from the submitted MOM Part 2, as shown here.
+  function agreements(mom, state) {
     var sub = mom && mom.p2_sub;
-    return ((sub && sub.p2_ideas) || []).filter(function (i) { return filled(i.parent); });
+    var edits = (state && state.text) || [];
+    return ((sub && sub.p2_ideas) || []).filter(function (i) { return filled(i.parent); }).map(function (i, n) {
+      var e = edits[n] || {};
+      return { idea: filled(e.idea) ? e.idea : tidy(i.idea), parent: filled(e.parent) ? e.parent : tidy(i.parent), edited: !!(e.idea || e.parent) };
+    });
   }
   function agreementHtml(list) {
     return list.map(function (i) {
@@ -73,9 +96,9 @@
       window.eot2Fetch(kid.group, kid.slug, MOM_KEY),
       window.eot2Fetch(kid.group, kid.slug, KEY)
     ]).then(function (r) {
-      var list = agreements(r[0] && r[0].state);
       var state = (r[1] && r[1].state) || {};
       state.weeks = state.weeks || {};
+      var list = agreements(r[0] && r[0].state, state);
       setStatus('saved', 'Saved');
       if (!list.length) {
         body.appendChild(el('p', 'ci-wait', 'Your agreement from the Term 2 Conference will show here once your conference notes are ready.'));
@@ -149,12 +172,65 @@
       window.eot2Fetch(kid.group, kid.slug, MOM_KEY),
       window.eot2Fetch(kid.group, kid.slug, KEY)
     ]).then(function (r) {
-      var list = agreements(r[0] && r[0].state);
+      var mom = r[0] && r[0].state;
       var state = (r[1] && r[1].state) || {};
       state.weeks = state.weeks || {};
-      body.innerHTML = list.length ? agreementHtml(list)
-        : '<p class="ci-wait">No parent agreement yet. It comes from the submitted Minutes of Meeting, Part 2.</p>';
-      body.appendChild(weeksEl(state, true));
+      function draw() {
+        var list = agreements(mom, state);
+        body.innerHTML = '';
+        if (!list.length) {
+          body.appendChild(el('p', 'ci-wait', 'No parent agreement yet. It comes from the submitted Minutes of Meeting, Part 2.'));
+        } else {
+          body.insertAdjacentHTML('beforeend', agreementHtml(list));
+          var bar = el('div', 'ci-editbar', list.some(function (x) { return x.edited; }) ? '<span>Reworded for this page. The conference notes are unchanged.</span>' : '');
+          var edit = el('button', 'eot2-btn eot2-btn-secondary', 'Edit wording');
+          edit.type = 'button';
+          edit.addEventListener('click', function () { editor(list); });
+          bar.appendChild(edit);
+          body.appendChild(bar);
+        }
+        body.appendChild(weeksEl(state, true));
+      }
+      function editor(list) {
+        body.innerHTML = '<p class="ci-wait">Polish the wording families see here. The conference notes stay as they are.</p>';
+        var fields = list.map(function (x) {
+          var box = el('div', 'ci-agree ci-edit');
+          var idea = el('textarea', 'eot2-textarea'); idea.rows = 3; idea.value = x.idea || '';
+          var parent = el('textarea', 'eot2-textarea'); parent.rows = 3; parent.value = x.parent || '';
+          box.appendChild(el('span', '', 'Our idea')); box.appendChild(idea);
+          box.appendChild(el('span', '', 'What we, as parents, agreed to do')); box.appendChild(parent);
+          body.appendChild(box);
+          return { idea: idea, parent: parent };
+        });
+        var acts = el('div', 'ci-editbar');
+        var save = el('button', 'eot2-btn', 'Save');
+        var reset = el('button', 'eot2-btn eot2-btn-secondary', 'Use the conference wording');
+        var cancel = el('button', 'eot2-btn eot2-btn-secondary', 'Cancel');
+        var msg = el('span', 'ci-msg');
+        [save, reset, cancel].forEach(function (b) { b.type = 'button'; acts.appendChild(b); });
+        acts.appendChild(msg);
+        body.appendChild(acts);
+        function store(text) {
+          msg.textContent = 'Saving…';
+          // Start from the latest copy so a family's ticks aren't lost.
+          window.eot2Fetch(kid.group, kid.slug, KEY).then(function (d) {
+            var latest = (d && d.state) || {};
+            latest.weeks = latest.weeks || {};
+            if (text) latest.text = text; else delete latest.text;
+            return window.eot2Save(kid.group, kid.slug, KEY, latest).then(function (res) {
+              if (!res.ok) { msg.textContent = 'Not saved — check the connection and try again.'; return; }
+              state = latest;
+              draw();
+            });
+          });
+        }
+        save.addEventListener('click', function () {
+          store(fields.map(function (f) { return { idea: f.idea.value.trim(), parent: f.parent.value.trim() }; }));
+        });
+        reset.addEventListener('click', function () { store(null); });
+        cancel.addEventListener('click', draw);
+      }
+      draw();
     });
   }
 
@@ -165,7 +241,7 @@
     app.appendChild(wrap);
     Promise.all(window.EOT2_KIDS.map(function (k) {
       return Promise.all([window.eot2Fetch(k.group, k.slug, MOM_KEY), window.eot2Fetch(k.group, k.slug, KEY)])
-        .then(function (r) { return { kid: k, agreed: agreements(r[0] && r[0].state).length > 0, weeks: ((r[1] && r[1].state) || {}).weeks || {} }; });
+        .then(function (r) { return { kid: k, agreed: agreements(r[0] && r[0].state, r[1] && r[1].state).length > 0, weeks: ((r[1] && r[1].state) || {}).weeks || {} }; });
     })).then(function (rows) {
       var head = '<tr><th>Riser</th><th>Agreement</th>' + WEEKS.map(function (w) {
         return '<th class="' + (isNow(w) ? 'is-now' : '') + '" title="' + range(w) + '">W' + w.n + '<small>' + fmt(w.start) + '</small></th>';
