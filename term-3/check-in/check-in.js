@@ -1,11 +1,12 @@
 /* Term 3 Check-in — each week, the family ticks whether they did what
-   they agreed at the Term 2 Conference (the "Parent will…" part of the
-   MOM's Part 2 idea, as submitted).
+   they agreed at the Term 2 Conference (the "Parent will…" and "Child
+   will…" parts of the MOM's Part 2 idea, as submitted).
 
    - Riser's page (their parents use it with them): the agreement, then
-     one row per school week. A week opens on its Monday; open weeks can
-     be marked "Done" or "Not this week". Saved under week key
-     term3-agreements as { weeks: { <monday>: { v: 'yes'|'no', at } } }.
+     one row per school week. A week opens on its first day; in an open
+     week the parents and the child each mark their own part "Done" or
+     "Not this week". Saved under week key term3-agreements as
+     { weeks: { <first day>: { parent: { v: 'yes'|'no', at }, child: … } } }.
    - Staff, ?view=staff: every Riser by week. ?view=staff&kid=<slug>:
      one Riser's agreement and weeks, read only, with Edit wording.
 
@@ -93,7 +94,7 @@
   function renderKid(kid) {
     app.innerHTML = '';
     app.appendChild(el('div', 'eot2-form-header',
-      '<div><h1>Term 3 Check-in</h1><div class="eot2-sub">Each week, tick whether you did what you agreed at the Term 2 Conference.</div></div>' +
+      '<div><h1>Term 3 Check-in</h1><div class="eot2-sub">Each week, parents and child each tick whether they did their part of what you agreed at the Term 2 Conference.</div></div>' +
       '<div class="eot2-status eot2-status-offline" id="save-status">Loading&hellip;</div>'));
     var status = document.getElementById('save-status');
     function setStatus(mode, t) { status.className = 'eot2-status eot2-status-' + mode; status.textContent = t; }
@@ -124,44 +125,69 @@
           });
         }, 400);
       }
-      body.appendChild(weeksEl(state, false, save));
+      body.appendChild(weeksEl(state, false, save, whoFor(list, kid)));
     });
   }
 
-  function weeksEl(state, readOnly, onChange) {
+  // Who ticks: the parents' part and the child's part, each on its own.
+  function whoFor(list, kid) {
+    var who = [];
+    if (!list.length || list.some(function (x) { return filled(x.parent); })) who.push({ id: 'parent', label: 'Parents' });
+    if (!list.length || list.some(function (x) { return filled(x.child); })) who.push({ id: 'child', label: kid.name });
+    return who;
+  }
+  // One week's tick for one side. Older records held a single tick ({ v })
+  // for the parents.
+  function mark(state, start, id) {
+    var rec = state.weeks[start] || {};
+    return rec[id] ? rec[id].v : id === 'parent' ? rec.v : undefined;
+  }
+
+  function weeksEl(state, readOnly, onChange, who) {
     var box = el('div', 'ci-weeks');
     WEEKS.forEach(function (w) {
-      var rec = state.weeks[w.start] || {};
       var row = el('div', 'ci-week' + (isNow(w) ? ' is-now' : '') + (isOpen(w) ? '' : ' is-later'));
       row.appendChild(el('div', 'ci-when', '<strong>Week ' + w.n + '</strong><span>' + range(w) + (isNow(w) ? ' &middot; this week' : '') + '</span>'));
-      var ctl = el('div', 'ci-ctl');
+      var sides = el('div', 'ci-sides');
       if (!isOpen(w)) {
-        ctl.appendChild(el('span', 'ci-later', 'Opens ' + fmt(w.start)));
-      } else if (readOnly) {
-        ctl.appendChild(el('span', 'ci-mark ci-mark-' + (rec.v || 'none'), rec.v === 'yes' ? '✓ Done' : rec.v === 'no' ? 'Not this week' : 'Not ticked'));
+        sides.appendChild(el('span', 'ci-later', 'Opens ' + fmt(w.start)));
       } else {
-        [['yes', '✓ Done'], ['no', 'Not this week']].forEach(function (o) {
-          var b = el('button', 'ci-btn ci-btn-' + o[0], o[1]);
-          b.type = 'button';
-          b.dataset.v = o[0];
-          b.addEventListener('click', function () {
-            if ((state.weeks[w.start] || {}).v === o[0]) delete state.weeks[w.start];
-            else state.weeks[w.start] = { v: o[0], at: new Date().toISOString() };
+        who.forEach(function (p) {
+          var line = el('div', 'ci-side', '<span class="ci-who">' + esc(p.label) + '</span>');
+          var ctl = el('div', 'ci-ctl');
+          var v = mark(state, w.start, p.id);
+          if (readOnly) {
+            ctl.appendChild(el('span', 'ci-mark ci-mark-' + (v || 'none'), v === 'yes' ? '✓ Done' : v === 'no' ? 'Not this week' : 'Not ticked'));
+          } else {
+            [['yes', '✓ Done'], ['no', 'Not this week']].forEach(function (o) {
+              var b = el('button', 'ci-btn ci-btn-' + o[0], o[1]);
+              b.type = 'button';
+              b.dataset.v = o[0];
+              b.addEventListener('click', function () {
+                var rec = state.weeks[w.start] || {};
+                if (rec.v && !rec.parent) { rec.parent = { v: rec.v, at: rec.at }; delete rec.v; delete rec.at; }
+                if (mark(state, w.start, p.id) === o[0]) delete rec[p.id];
+                else rec[p.id] = { v: o[0], at: new Date().toISOString() };
+                if (Object.keys(rec).length) state.weeks[w.start] = rec; else delete state.weeks[w.start];
+                paint();
+                onChange();
+              });
+              ctl.appendChild(b);
+            });
+            var paint = function () {
+              var cur = mark(state, w.start, p.id);
+              Array.prototype.forEach.call(ctl.children, function (x) {
+                x.classList.toggle('is-on', x.dataset.v === cur);
+                x.setAttribute('aria-pressed', x.dataset.v === cur);
+              });
+            };
             paint();
-            onChange();
-          });
-          ctl.appendChild(b);
+          }
+          line.appendChild(ctl);
+          sides.appendChild(line);
         });
-        var paint = function () {
-          var v = (state.weeks[w.start] || {}).v;
-          Array.prototype.forEach.call(ctl.children, function (x) {
-            x.classList.toggle('is-on', x.dataset.v === v);
-            x.setAttribute('aria-pressed', x.dataset.v === v);
-          });
-        };
-        paint();
       }
-      row.appendChild(ctl);
+      row.appendChild(sides);
       box.appendChild(row);
       if (w.n === HOLIDAY_AFTER) box.appendChild(el('div', 'ci-holiday', 'December holidays &middot; 19 Dec – 4 Jan'));
     });
@@ -197,7 +223,7 @@
           bar.appendChild(edit);
           body.appendChild(bar);
         }
-        body.appendChild(weeksEl(state, true));
+        body.appendChild(weeksEl(state, true, null, whoFor(list, kid)));
       }
       function editor(list) {
         body.innerHTML = '<p class="ci-wait">Polish the wording families see here. The conference notes stay as they are.</p>';
@@ -246,7 +272,7 @@
 
   function renderStaffAll() {
     app.innerHTML = '';
-    app.appendChild(el('div', 'eot2-head', '<h1>Term 3 Check-ins</h1><p>Each week, families tick whether they did what they agreed at the Term 2 Conference. 26 Oct – 21 Jan, with the December holidays off.</p>'));
+    app.appendChild(el('div', 'eot2-head', '<h1>Term 3 Check-ins</h1><p>Each week, parents and their child each tick whether they did their part of the Term 2 Conference agreement. 26 Oct – 21 Jan, with the December holidays off.</p>'));
     var wrap = el('div', 'ci-table-wrap', '<p class="ci-wait">Loading…</p>');
     app.appendChild(wrap);
     Promise.all(window.EOT2_KIDS.map(function (k) {
@@ -260,13 +286,16 @@
         return '<tr><td><a href="index.html?view=staff&kid=' + r.kid.slug + '">' + r.kid.name + '</a></td>' +
           '<td>' + (r.agreed ? '<span class="ci-mark ci-mark-yes">Ready</span>' : '<span class="ci-mark ci-mark-none">Not yet</span>') + '</td>' +
           WEEKS.map(function (w) {
-            var v = (r.weeks[w.start] || {}).v;
-            var cls = !isOpen(w) ? 'later' : v || 'none';
-            return '<td class="ci-cell ci-cell-' + cls + (isNow(w) ? ' is-now' : '') + '">' + (v === 'yes' ? '✓' : v === 'no' ? '✗' : isOpen(w) ? '–' : '') + '</td>';
+            if (!isOpen(w)) return '<td class="ci-cell' + (isNow(w) ? ' is-now' : '') + '"></td>';
+            var st = { weeks: r.weeks };
+            return '<td class="ci-cell' + (isNow(w) ? ' is-now' : '') + '">' + [['parent', 'P'], ['child', 'C']].map(function (p) {
+              var v = mark(st, w.start, p[0]);
+              return '<span class="ci-pc ci-cell-' + (v || 'none') + '"><small>' + p[1] + '</small>' + (v === 'yes' ? '✓' : v === 'no' ? '✗' : '–') + '</span>';
+            }).join('') + '</td>';
           }).join('') + '</tr>';
       }).join('');
       wrap.innerHTML = '<table class="ci-table"><thead>' + head + '</thead><tbody>' + bodyRows + '</tbody></table>' +
-        '<p class="ci-key"><span class="ci-cell-yes">✓</span> Done <span class="ci-cell-no">✗</span> Not this week <span class="ci-cell-none">–</span> Not ticked</p>';
+        '<p class="ci-key"><b>P</b> Parents <b>C</b> Child &nbsp;&middot;&nbsp; <span class="ci-cell-yes">✓</span> Done <span class="ci-cell-no">✗</span> Not this week <span class="ci-cell-none">–</span> Not ticked</p>';
     });
   }
 

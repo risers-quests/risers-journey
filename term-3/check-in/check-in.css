@@ -43,3 +43,11 @@
 .ci-editbar .eot2-btn { width: auto; padding: 8px 18px; }
 .ci-edit textarea { width: 100%; margin: 4px 0 12px; }
 .ci-msg { font-size: .85rem; color: #a3432b; }
+.ci-sides { display: flex; flex-direction: column; gap: 8px; }
+.ci-side { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+.ci-who { font-size: .82rem; font-weight: 700; color: var(--ink-soft); min-width: 64px; text-align: right; }
+.ci-pc { display: block; line-height: 1.5; }
+.ci-pc small { font-size: .62rem; font-weight: 700; color: var(--ink-faint); margin-right: 3px; }
+.ci-key b { margin-left: 6px; color: var(--ink-soft); }
+.ci-key b:first-child { margin-left: 0; }
+@media (max-width: 560px) { .ci-sides { width: 100%; } .ci-side { justify-content: space-between; } .ci-who { text-align: left; } }
