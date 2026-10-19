@@ -49,13 +49,15 @@
   function isOpen(w) { return today() >= day(w.start); }
   function isNow(w) { var t = today(); return t >= day(w.start) && t <= day(w.end); }
 
-  // Light clean-up for display: spacing, capitals, a lone "i", a full stop.
-  function tidy(s) {
+  // Light clean-up for display: spacing, capitals, a lone "i", the child's name, a full stop.
+  function tidy(s, name) {
+    var nameRe = name ? new RegExp('\\b' + name + '\\b', 'gi') : null;
     return String(s || '').split('\n').map(function (line) {
       line = line.replace(/\s+/g, ' ').trim()
         .replace(/\s+([,.;:!?])/g, '$1')
         .replace(/([,.;:!?])(?=[A-Za-z])/g, '$1 ')
         .replace(/\bi\b/g, 'I')
+        .replace(nameRe || /$^/, name || '')
         .replace(/([.!?]\s+)([a-z])/g, function (m, a, b) { return a + b.toUpperCase(); });
       line = line.replace(/^((?:[•\-*]|\d+[.)])\s*)?([a-z])/, function (m, a, b) { return (a || '') + b.toUpperCase(); });
       // Full stop at the end of a sentence (not on a list item).
@@ -64,15 +66,15 @@
   }
 
   // The family's agreements from the submitted MOM Part 2, as shown here.
-  function agreements(mom, state) {
+  function agreements(mom, state, name) {
     var sub = mom && mom.p2_sub;
     var edits = (state && state.text) || [];
     return ((sub && sub.p2_ideas) || []).filter(function (i) { return filled(i.parent) || filled(i.child); }).map(function (i, n) {
       var e = edits[n] || {};
       return {
-        idea: filled(e.idea) ? e.idea : tidy(i.idea),
-        parent: filled(e.parent) ? e.parent : tidy(i.parent),
-        child: filled(e.child) ? e.child : tidy(i.child),
+        idea: filled(e.idea) ? e.idea : tidy(i.idea, name),
+        parent: filled(e.parent) ? e.parent : tidy(i.parent, name),
+        child: filled(e.child) ? e.child : tidy(i.child, name),
         edited: !!(e.idea || e.parent || e.child)
       };
     });
@@ -104,7 +106,7 @@
     ]).then(function (r) {
       var state = (r[1] && r[1].state) || {};
       state.weeks = state.weeks || {};
-      var list = agreements(r[0] && r[0].state, state);
+      var list = agreements(r[0] && r[0].state, state, kid.name);
       setStatus('saved', 'Saved');
       if (!list.length) {
         body.appendChild(el('p', 'ci-wait', 'Your agreement from the Term 2 Conference will show here once your conference notes are ready.'));
@@ -182,7 +184,7 @@
       var state = (r[1] && r[1].state) || {};
       state.weeks = state.weeks || {};
       function draw() {
-        var list = agreements(mom, state);
+        var list = agreements(mom, state, kid.name);
         body.innerHTML = '';
         if (!list.length) {
           body.appendChild(el('p', 'ci-wait', 'No parent agreement yet. It comes from the submitted Minutes of Meeting, Part 2.'));
@@ -249,7 +251,7 @@
     app.appendChild(wrap);
     Promise.all(window.EOT2_KIDS.map(function (k) {
       return Promise.all([window.eot2Fetch(k.group, k.slug, MOM_KEY), window.eot2Fetch(k.group, k.slug, KEY)])
-        .then(function (r) { return { kid: k, agreed: agreements(r[0] && r[0].state, r[1] && r[1].state).length > 0, weeks: ((r[1] && r[1].state) || {}).weeks || {} }; });
+        .then(function (r) { return { kid: k, agreed: agreements(r[0] && r[0].state, r[1] && r[1].state, k.name).length > 0, weeks: ((r[1] && r[1].state) || {}).weeks || {} }; });
     })).then(function (rows) {
       var head = '<tr><th>Riser</th><th>Agreement</th>' + WEEKS.map(function (w) {
         return '<th class="' + (isNow(w) ? 'is-now' : '') + '" title="' + range(w) + '">W' + w.n + '<small>' + fmt(w.start) + '</small></th>';
