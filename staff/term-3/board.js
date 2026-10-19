@@ -238,11 +238,18 @@
     window.scrollTo(0, y);
   }
 
-  // One line: the week, the Quest Master, when the quest is due.
+  // The team's week in its quest: 0 while getting ready (the week the
+  // quest was chosen), then 1, 2, … up to the quest's length.
+  function questWeek() {
+    var b = project(meta('project'));
+    if (!b || !meta('started')) return null;
+    return { n: sprint() - Q.startWeek(meta('started')) + 1, of: Q.weeksFor(b) };
+  }
+  // One line: the quest week, the Quest Master, when the quest is due.
   function topLine() {
-    var w = sprint(), due = deadline();
+    var w = sprint(), due = deadline(), qw = questWeek();
     var line = el('div', 'pb-line',
-      '<span><b>Week ' + w + '</b></span>' +
+      '<span><b>' + (!qw ? 'Week ' + w : qw.n < 1 ? 'Getting ready: your quest starts next week' : 'Quest week ' + qw.n + ' of ' + qw.of + (qw.n > qw.of ? ' (extra time)' : '')) + '</b></span>' +
       '<span>Quest Master: ' + (KID && master() ? '<b>' + esc(master()) + '</b>' :
         '<select class="pb-master" aria-label="Quest Master this week"><option value="">Choose…</option>' +
         group.kids.map(function (k) { return '<option' + (master() === k ? ' selected' : '') + '>' + esc(k) + '</option>'; }).join('') + '</select>' +
@@ -251,7 +258,7 @@
     var sel = line.querySelector('.pb-master');
     if (sel) sel.addEventListener('change', function () {
       // Once a Riser picks, it stays for the week; a facilitator can change it.
-      if (KID && !confirm(this.value + ' is Quest Master for week ' + w + '?')) { this.value = ''; return; }
+      if (KID && !confirm(this.value + ' is Quest Master this week?')) { this.value = ''; return; }
       setMeta('master' + w, this.value); draw();
     });
     return line;
@@ -359,10 +366,31 @@
         return '<div class="qp-tile"><span class="e">' + m[0] + '</span><b>' + esc(m[1]) + '</b><span>' + esc(m[2]) + '</span></div>';
       }).join('') + '</div>');
       wrap.appendChild(mk);
-      var dn = sec('🏁', 'good', 'It’s done when…', 'tick them all');
-      dn.insertAdjacentHTML('beforeend', '<div class="qp-done">' + p.done.map(function (d) { return '<div class="qp-ck"><i>✓</i>' + esc(d) + '</div>'; }).join('') + '</div>' +
+      // The team ticks each line when it's true; the bar shows how close they are.
+      var ticked = p.done.filter(function (d, i) { return meta('done_' + i); }).length;
+      var dn = sec('🏁', 'good', 'It’s done when…', ticked + ' of ' + p.done.length + ' ticked');
+      dn.insertAdjacentHTML('beforeend', '<div class="qp-bar"><span style="width:' + Math.round(ticked / p.done.length * 100) + '%"></span></div>' +
+        (ticked === p.done.length ? '<p class="qp-all">🎉 Everything is ticked! Show a facilitator at your check-in.</p>' : '') +
+        '<div class="qp-done">' + p.done.map(function (d, i) {
+          var t = meta('done_' + i);
+          return '<button type="button" class="qp-ck' + (t ? ' is-on' : '') + '" data-i="' + i + '"><i>' + (t ? '✓' : '') + '</i><span>' + esc(d) + (t && t.by ? '<small>' + esc(t.by) + '</small>' : '') + '</span></button>';
+        }).join('') + '</div>' +
         (p.notDone ? '<div class="qp-not">✗ <span><b>Not done:</b> ' + esc(p.notDone) + '</span></div>' : ''));
+      Array.prototype.forEach.call(dn.querySelectorAll('.qp-ck'), function (bt) {
+        bt.addEventListener('click', function () {
+          var k = 'done_' + bt.dataset.i;
+          setMeta(k, meta(k) ? null : { by: KID ? ME : 'Facilitator' });
+          draw();
+        });
+      });
       wrap.appendChild(dn);
+      // Examples of what a finished thing looks like.
+      (p.looks || []).forEach(function (lk) {
+        var ls = sec('👀', 'green', 'Make it look like this: ' + esc(lk.title));
+        ls.insertAdjacentHTML('beforeend', '<div class="qp-look"><div class="qp-sample">' + lk.sample + '</div><div><div class="qp-sub">Must have</div><ul class="qp-must">' +
+          lk.must.map(function (m) { return '<li>' + esc(m) + '</li>'; }).join('') + '</ul></div></div>');
+        wrap.appendChild(ls);
+      });
       (p.formats || []).forEach(function (fm) {
         var fs = sec('📄', 'blue', esc(fm.title), 'use this format');
         fs.insertAdjacentHTML('beforeend', (fm.note ? '<p class="qp-note">' + esc(fm.note) + '</p>' : '') +
@@ -501,7 +529,7 @@
     COLS.forEach(function (col, ci) {
       var list = inCol(col.id);
       var c = el('section', 'pb-col pb-col-' + col.id, '<div class="pb-col-head"><h2>' + col.name + ' <em>' + list.length + '</em></h2><p>' + col.hint + '</p></div>');
-      if (col.id === 'backlog') c.appendChild(addForm());
+      if (col.id === 'backlog') { c.appendChild(addForm()); c.appendChild(ideasEl()); }
       list.forEach(function (card) {
         var own = mine(card), name = owner(card);
         var k = el('article', 'pb-card' + (card.stuck ? ' is-stuck' : '') + (own ? '' : ' is-theirs'));
@@ -512,12 +540,21 @@
           '</button>' +
           (own ? '<div class="pb-moves">' +
             (ci > 0 ? '<button type="button" class="pb-move" data-d="-1" aria-label="Move back">&larr;</button>' : '<span></span>') +
+            (col.id !== 'done' ? '<button type="button" class="pb-sos' + (card.stuck ? ' is-on' : '') + '">' + (card.stuck ? '✓ Sorted?' : '🆘 Stuck') + '</button>' : '') +
             (ci < COLS.length - 1 ? '<button type="button" class="pb-move" data-d="1" aria-label="Move on">&rarr;</button>' : '') +
           '</div>' : '');
         if (own) {
           k.querySelector('.pb-card-main').addEventListener('click', function () { editCard(card); });
           Array.prototype.forEach.call(k.querySelectorAll('.pb-move'), function (b) {
             b.addEventListener('click', function () { moveCard(card, ci + (+b.dataset.d)); });
+          });
+          var sos = k.querySelector('.pb-sos');
+          if (sos) sos.addEventListener('click', function () {
+            if (card.stuck) { putCard(card.id, { stuck: false, stuckNote: '' }); draw(); return; }
+            var why = prompt('What’s in the way?', '');
+            if (why === null) return;
+            putCard(card.id, { stuck: true, stuckNote: why.trim() });
+            draw();
           });
         }
         c.appendChild(k);
@@ -533,6 +570,32 @@
     if (to === 'done') { f.doneWeek = sprint(); f.stuck = false; }
     putCard(card.id, f);
     draw();
+  }
+
+  // "Need ideas?": a few starter jobs for my role (or every role), one tap to add.
+  var ideasOpen = false;
+  function ideasEl() {
+    var b = project(meta('project')), box = el('div', 'pb-ideas');
+    if (!b || !b.resp) return box;
+    var r = KID ? meta('role_' + ME) : null;
+    var pool = (r !== null && r !== undefined && b.resp[r]) ? b.resp[r] : [].concat(b.resp[0] || [], b.resp[1] || [], b.resp[2] || []);
+    var have = cards().map(function (c) { return c.title; });
+    var list = pool.filter(function (t) { return have.indexOf(t) === -1; }).slice(0, 3);
+    if (!list.length) return box;
+    var t = el('button', 'pb-ideas-btn', ideasOpen ? 'Hide ideas' : '💡 Need ideas?');
+    t.type = 'button';
+    t.addEventListener('click', function () { ideasOpen = !ideasOpen; draw(); });
+    box.appendChild(t);
+    if (ideasOpen) list.forEach(function (idea) {
+      var row = el('button', 'pb-idea', '<span>' + esc(idea) + '</span><b>+ Add</b>');
+      row.type = 'button';
+      row.addEventListener('click', function () {
+        putCard(uid(), { title: idea, col: 'backlog', who: [KID ? ME : ''], order: now(), by: KID ? ME : 'facilitator' });
+        draw();
+      });
+      box.appendChild(row);
+    });
+    return box;
   }
 
   function addForm() {

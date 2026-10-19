@@ -10,8 +10,10 @@
      notDone: 'one example of not done',
      bounds:  [[icon, 'short line'], …]                 for this quest,
      rules:   [[icon, 'short line'], …]                 for this quest,
-     formats: [{ title, note, cols: […], rows: [[…], …] }]  optional
+     formats: [{ title, note, cols: […], rows: [[…], …] }]  optional,
+     looks:   [{ title, sample: '<html of a finished example>', must: ['…'] }]  optional
    }
+   The team ticks the "done" lines on the page as they become true.
    The rules for every quest are in T3_EVERY_RULES. */
 window.T3_EVERY_RULES = [
   ['🤝', 'Be kind to everyone'],
@@ -46,6 +48,14 @@ window.T3_PACKS = {
       ['🙅', 'Never hit balls at people or windows'],
       ['⛳', 'It stays mini golf. No other game.'],
       ['📍', 'It fits in our space in the hall']
+    ],
+    looks: [
+      { title: 'a hole sign',
+        sample: '<div class="lk-sign"><span class="lk-num">3</span><b>The Volcano</b><small>Get it over the hill!</small><em>Best score: 2 hits</em></div>',
+        must: ['Big hole number', 'A fun name', 'A tip for players', 'Easy to read from 3 steps away'] },
+      { title: 'the score sheet',
+        sample: '<table class="lk-score"><tr><th>Name</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>Total</th></tr><tr><td>Asha</td><td>2</td><td>4</td><td>3</td><td>2</td><td>5</td><td>3</td><td>19</td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></table>',
+        must: ['A box for every hole', 'A total at the end', 'Room for 6 players', 'Lowest total wins'] }
     ],
     rules: [
       ['🏌️', 'Tap the ball gently'],

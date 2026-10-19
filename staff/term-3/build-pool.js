@@ -399,13 +399,13 @@ window.T3_POOL = [
       ['Make puzzle 1', 'Make puzzle 2', 'Build locked box 2', 'Test all four puzzles']
     ] },
   { id: 'sol-minigolf', cat: 'sol', level: 2, title: 'Mini golf course',
-    what: 'A mini golf course with ramps, tunnels, bridges and bumpers, made from wood, card and pipes. Every hole has a par score.',
+    what: 'A mini golf course with ramps, tunnels, bridges and bumpers, made from wood, card and pipes. Each hole has a best score to beat.',
     hook: 'Everyone loves mini golf, and you get to design every tricky hole.',
     make: 'A 6-hole mini golf course and a scorecard, played at a LifeHub event.',
     learn: 'Angles and measuring',
     lo: 'We can measure and build each hole to size, and show how angles change where the ball goes.',
     resp: [
-      ['Find out how angles change where a ball goes', 'Test holes 1 to 3 and set par', 'Test holes 4 to 6 and set par', 'Help players'],
+      ['Find out how angles change where a ball goes', 'Test holes 1 to 3 with friends', 'Test holes 4 to 6 with friends', 'Help players'],
       ['Design six holes with measurements', 'Make the scorecards', 'Put up the signs and set up the course', 'Hand out scorecards'],
       ['Build hole 1', 'Build hole 2', 'Build holes 4 and 5', 'Build hole 6']
     ] },
