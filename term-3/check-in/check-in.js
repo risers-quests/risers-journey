@@ -11,7 +11,7 @@
 
    The agreement is shown tidied (capitals, spacing, a lone "i", full
    stops), or as
-   staff reworded it here (state.text[i] = { idea, parent }). The
+   staff reworded it here (state.text[i] = { idea, parent, child }). The
    conference notes themselves are never changed. */
 (function () {
   var KEY = 'term3-agreements';
@@ -67,16 +67,22 @@
   function agreements(mom, state) {
     var sub = mom && mom.p2_sub;
     var edits = (state && state.text) || [];
-    return ((sub && sub.p2_ideas) || []).filter(function (i) { return filled(i.parent); }).map(function (i, n) {
+    return ((sub && sub.p2_ideas) || []).filter(function (i) { return filled(i.parent) || filled(i.child); }).map(function (i, n) {
       var e = edits[n] || {};
-      return { idea: filled(e.idea) ? e.idea : tidy(i.idea), parent: filled(e.parent) ? e.parent : tidy(i.parent), edited: !!(e.idea || e.parent) };
+      return {
+        idea: filled(e.idea) ? e.idea : tidy(i.idea),
+        parent: filled(e.parent) ? e.parent : tidy(i.parent),
+        child: filled(e.child) ? e.child : tidy(i.child),
+        edited: !!(e.idea || e.parent || e.child)
+      };
     });
   }
-  function agreementHtml(list) {
+  function agreementHtml(list, kid) {
     return list.map(function (i) {
       return '<div class="ci-agree">' +
         (filled(i.idea) ? '<p class="ci-idea"><span>Our idea</span>' + text(i.idea) + '</p>' : '') +
-        '<p class="ci-part"><span>What we, as parents, agreed to do</span>' + text(i.parent) + '</p></div>';
+        (filled(i.parent) ? '<p class="ci-part"><span>What we, as parents, agreed to do</span>' + text(i.parent) + '</p>' : '') +
+        (filled(i.child) ? '<p class="ci-child"><span>What ' + esc(kid.name) + ' agreed to do</span>' + text(i.child) + '</p>' : '') + '</div>';
     }).join('');
   }
 
@@ -104,7 +110,7 @@
         body.appendChild(el('p', 'ci-wait', 'Your agreement from the Term 2 Conference will show here once your conference notes are ready.'));
         return;
       }
-      body.insertAdjacentHTML('beforeend', agreementHtml(list));
+      body.insertAdjacentHTML('beforeend', agreementHtml(list, kid));
 
       var timer = null;
       function save() {
@@ -181,7 +187,7 @@
         if (!list.length) {
           body.appendChild(el('p', 'ci-wait', 'No parent agreement yet. It comes from the submitted Minutes of Meeting, Part 2.'));
         } else {
-          body.insertAdjacentHTML('beforeend', agreementHtml(list));
+          body.insertAdjacentHTML('beforeend', agreementHtml(list, kid));
           var bar = el('div', 'ci-editbar', list.some(function (x) { return x.edited; }) ? '<span>Reworded for this page. The conference notes are unchanged.</span>' : '');
           var edit = el('button', 'eot2-btn eot2-btn-secondary', 'Edit wording');
           edit.type = 'button';
@@ -197,10 +203,12 @@
           var box = el('div', 'ci-agree ci-edit');
           var idea = el('textarea', 'eot2-textarea'); idea.rows = 3; idea.value = x.idea || '';
           var parent = el('textarea', 'eot2-textarea'); parent.rows = 3; parent.value = x.parent || '';
+          var child = el('textarea', 'eot2-textarea'); child.rows = 3; child.value = x.child || '';
           box.appendChild(el('span', '', 'Our idea')); box.appendChild(idea);
           box.appendChild(el('span', '', 'What we, as parents, agreed to do')); box.appendChild(parent);
+          box.appendChild(el('span', '', 'What ' + esc(kid.name) + ' agreed to do')); box.appendChild(child);
           body.appendChild(box);
-          return { idea: idea, parent: parent };
+          return { idea: idea, parent: parent, child: child };
         });
         var acts = el('div', 'ci-editbar');
         var save = el('button', 'eot2-btn', 'Save');
@@ -225,7 +233,7 @@
           });
         }
         save.addEventListener('click', function () {
-          store(fields.map(function (f) { return { idea: f.idea.value.trim(), parent: f.parent.value.trim() }; }));
+          store(fields.map(function (f) { return { idea: f.idea.value.trim(), parent: f.parent.value.trim(), child: f.child.value.trim() }; }));
         });
         reset.addEventListener('click', function () { store(null); });
         cancel.addEventListener('click', draw);
