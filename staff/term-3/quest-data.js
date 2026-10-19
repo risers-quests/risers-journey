@@ -73,10 +73,11 @@
     for (var i = 0; i < Q.WEEKS.length; i++) if (t <= day(Q.WEEKS[i][1])) return i + 1;
     return Q.WEEKS.length;
   };
-  // The school week a project starts in (Thursday or Friday: the next one).
+  // A quest is chosen one week and started the next (chosen before term:
+  // it starts in week 1).
   Q.startWeek = function (startIso) {
-    var s = day(startIso), w = Q.weekOf(s);
-    if (s.getDay() === 4 || s.getDay() === 5) w += 1;
+    var s = day(startIso);
+    var w = s < day(Q.WEEKS[0][0]) ? 1 : Q.weekOf(s) + 1;
     return Math.min(w, Q.WEEKS.length);
   };
   Q.weekLabel = function (r) {
@@ -86,11 +87,9 @@
     return (r.from === r.to ? 'Week ' + r.from : 'Weeks ' + r.from + '–' + r.to) + ' · ' + dm(a[0]) + ' – ' + dm(b[1]);
   };
   // The Wednesday (last group session) of the n-th school week from the
-  // week a project starts. A project chosen on Thursday or Friday starts
-  // the next week.
+  // week a project starts.
   Q.deadline = function (startIso, weeks) {
-    var s = day(startIso), w = Q.weekOf(s);
-    if (s.getDay() === 4 || s.getDay() === 5) w += 1;
+    var w = Q.startWeek(startIso);
     var last = Math.min(w + weeks - 1, Q.WEEKS.length);
     var wk = Q.WEEKS[last - 1];
     var wed = day(wk[0]);

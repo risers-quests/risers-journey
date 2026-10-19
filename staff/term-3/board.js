@@ -12,9 +12,10 @@
    - Check-in, once a week on Wednesday. Only the Quest Master and
      facilitators fill it in; a facilitator adds a note and marks it seen.
 
-   Each week starts by choosing the Quest Master (the turn goes round).
-   Once chosen, only a facilitator can change it that week. The week is
-   always today's school week.
+   A team chooses its quest one week and starts it the next. Each week the
+   team picks a Quest Master in the top line (the turn goes round); once
+   picked, only a facilitator can change it that week. The week is always
+   today's school week.
 
    One shared record per team, saved through the progress Worker under
    group "term-3", kid = the group id, week "board": meta (project,
@@ -212,8 +213,6 @@
     if (!main) return;
     var y = window.scrollY;
     main.innerHTML = '';
-    // Each week starts by choosing the Quest Master.
-    if (KID && !master()) { main.appendChild(masterGate()); return; }
     if (!meta('project') || changing) { main.appendChild(chooserView(project(meta('project')))); return; }
     main.appendChild(topLine());
     if (TABS.map(function (t) { return t[0]; }).indexOf(tab) === -1) tab = 'board';
@@ -239,34 +238,18 @@
     var w = sprint(), due = deadline();
     var line = el('div', 'pb-line',
       '<span><b>Week ' + w + '</b></span>' +
-      '<span>Quest Master: ' + (KID ? '<b>' + esc(master() || '—') + '</b>' :
+      '<span>Quest Master: ' + (KID && master() ? '<b>' + esc(master()) + '</b>' :
         '<select class="pb-master" aria-label="Quest Master this week"><option value="">Choose…</option>' +
-        group.kids.map(function (k) { return '<option' + (master() === k ? ' selected' : '') + '>' + esc(k) + '</option>'; }).join('') + '</select>') + '</span>' +
+        group.kids.map(function (k) { return '<option' + (master() === k ? ' selected' : '') + '>' + esc(k) + '</option>'; }).join('') + '</select>' +
+        (master() ? '' : ' <small>Not had a turn yet: ' + notYet().map(esc).join(', ') + '</small>')) + '</span>' +
       (due ? '<span>Ready by <b>' + Q.nice(due.date) + '</b></span>' : ''));
     var sel = line.querySelector('.pb-master');
-    if (sel) sel.addEventListener('change', function () { setMeta('master' + w, this.value); draw(); });
-    return line;
-  }
-
-  function masterGate() {
-    var w = sprint(), left = notYet();
-    var box = el('section', 'pb-gate',
-      '<h2>Week ' + w + ': who is Quest Master?</h2>' +
-      '<p>Choose together. The Quest Master runs the stand-ups and the weekly check-in this week.</p>' +
-      '<p class="pb-gate-hint">Not had a turn yet: ' + left.map(esc).join(', ') + '</p>');
-    var row = el('div', 'pb-gate-kids');
-    group.kids.forEach(function (k) {
-      var b = el('button', 'pq-btn' + (left.indexOf(k) === -1 ? ' pq-btn-ghost' : ''), esc(k));
-      b.type = 'button';
-      b.addEventListener('click', function () {
-        if (!confirm(k + ' is Quest Master for week ' + w + '?')) return;
-        setMeta('master' + w, k);
-        draw();
-      });
-      row.appendChild(b);
+    if (sel) sel.addEventListener('change', function () {
+      // Once a Riser picks, it stays for the week; a facilitator can change it.
+      if (KID && !confirm(this.value + ' is Quest Master for week ' + w + '?')) { this.value = ''; return; }
+      setMeta('master' + w, this.value); draw();
     });
-    box.appendChild(row);
-    return box;
+    return line;
   }
 
   /* ---------- choosing the quest ---------- */
