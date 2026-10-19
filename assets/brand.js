@@ -63,17 +63,16 @@
   };
 
   var NAV = isStaff ? [
-    { label: 'Home', href: root + 'staff/index.html', icon: 'home', match: /\/staff\/(index\.html)?$/ },
+    // Only the staff Home itself (not end-of-term-2/staff/ and the like).
+    { label: 'Home', href: root + 'staff/index.html', icon: 'home', match: new RegExp('^' + new URL(root, location.href).pathname + 'staff/(index\\.html)?$') },
     { label: 'Term 3', href: root + 'staff/term-3/index.html', icon: 'skills', short: 'Term 3', match: /\/term-3\// },
-    { label: 'Term 1 Conference', href: root + 'term-1-conference/index.html?view=staff', icon: 'conf', short: 'Term 1', match: /\/term-1-conference\// },
-    { label: 'Term 2 Conference', href: root + 'end-of-term-2/staff/index.html', icon: 'term', short: 'Term 2', match: /\/end-of-term-2\// },
-    { label: 'Term 2 Quests', href: root + 'staff/quests/index.html', icon: 'quests', short: 'Quests', match: /\/staff\/quests\// }
+    { label: 'Term 2', href: root + 'staff/term-2/index.html', icon: 'term', short: 'Term 2', match: /\/(staff\/term-2|end-of-term-2|staff\/quests)\// },
+    { label: 'Term 1', href: root + 'staff/term-1/index.html', icon: 'conf', short: 'Term 1', match: /\/(staff\/term-1|term-1-conference)\// }
   ] : [
     { label: 'Home', href: root + 'index.html', icon: 'home', match: /\/(index\.html)?$/, exact: true },
     { label: 'Term 3', href: root + 'term-3/index.html', icon: 'skills', short: 'Term 3', match: /\/term-3\// },
-    { label: 'Term 1 Conference', href: root + 'term-1-conference/index.html', icon: 'conf', short: 'Term 1', match: /\/term-1-conference\// },
-    { label: 'Term 2 Conference', href: root + 'end-of-term-2/index.html', icon: 'term', short: 'Term 2', match: /\/end-of-term-2\// },
-    { label: 'Term 2 Quests', href: root + 'dashboard/index.html', icon: 'quests', short: 'Quests', match: /\/dashboard\// }
+    { label: 'Term 2', href: root + 'term-2/index.html', icon: 'term', short: 'Term 2', match: /\/(term-2|end-of-term-2|dashboard)\// },
+    { label: 'Term 1', href: root + 'term-1/index.html', icon: 'conf', short: 'Term 1', match: /\/(term-1|term-1-conference)\// }
   ];
 
   // Risers whose group is using the Term 3 project board (group id on the

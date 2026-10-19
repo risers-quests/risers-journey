@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Term 2 — Risers Journey</title>
+<link rel="stylesheet" href="../home.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/lifehub.css" />
+<script src="../assets/brand.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* A Riser's Term 2: the conference and the quests. */
+(function () {
+  var kid = null, staff = null;
+  try { kid = localStorage.getItem('imm-l3-kid'); staff = localStorage.getItem('rj-staff-name'); } catch (e) {}
+  if (!kid) { location.replace(staff ? '../staff/term-2/index.html' : '../index.html'); return; }
+  document.getElementById('app').innerHTML =
+    '<header class="hd-welcome"><h1>Term 2</h1><p>Your conference and your quests.</p></header>' +
+    '<div class="hd-tiles">' + window.LH_tiles([
+    { title: 'Term 2 Conference', desc: 'Your self-assessment, reflection and conference notes.', href: '../end-of-term-2/index.html', icon: 'term', tone: 'slate' },
+    { title: 'Term 2 Quests', desc: 'Your self-paced quests and how each one went.', href: '../dashboard/index.html', icon: 'quests', tone: 'green' }
+    ]) + '</div>';
+})();
+</script>
+</body>
+</html>

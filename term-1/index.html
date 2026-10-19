@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Term 1 — Risers Journey</title>
+<link rel="stylesheet" href="../home.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/lifehub.css" />
+<script src="../assets/brand.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* A Riser's Term 1: the conference. */
+(function () {
+  var kid = null, staff = null;
+  try { kid = localStorage.getItem('imm-l3-kid'); staff = localStorage.getItem('rj-staff-name'); } catch (e) {}
+  if (!kid) { location.replace(staff ? '../staff/term-1/index.html' : '../index.html'); return; }
+  document.getElementById('app').innerHTML =
+    '<header class="hd-welcome"><h1>Term 1</h1><p>Your Term 1 conference.</p></header>' +
+    '<div class="hd-tiles">' + window.LH_tiles([
+    { title: 'Term 1 Conference', desc: 'What we talked about at your Term 1 conference.', href: '../term-1-conference/index.html', icon: 'conf', tone: 'violet' }
+    ]) + '</div>';
+})();
+</script>
+</body>
+</html>

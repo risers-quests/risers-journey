@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Term 2 — Risers Journey — Staff</title>
+<link rel="stylesheet" href="../../home.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/lifehub.css" />
+<script src="../../assets/brand.js" data-area="staff"></script>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* Staff's Term 2: the conference and the quests. */
+(function () {
+  var staff = null;
+  try { staff = localStorage.getItem('rj-staff-name'); } catch (e) {}
+  if (!staff) { location.replace('../index.html'); return; }
+  document.getElementById('app').innerHTML =
+    '<header class="hd-welcome"><h1>Term 2</h1><p>The conference and the quests.</p></header>' +
+    '<div class="hd-tiles">' + window.LH_tiles([
+      { title: 'Term 2 Conference', desc: 'Self-assessments, reflections, MOMs and feedback.', href: '../../end-of-term-2/staff/index.html', icon: 'term', tone: 'slate' },
+      { title: 'Term 2 Quests', desc: 'Every Riser’s self-paced quests, with feedback.', href: '../quests/index.html', icon: 'quests', tone: 'green' }
+    ]) + '</div>';
+})();
+</script>
+</body>
+</html>
