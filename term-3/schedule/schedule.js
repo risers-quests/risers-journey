@@ -384,71 +384,206 @@
   /* ---------- staff: week 1 at a glance ---------- */
 
   // Monday to Wednesday of week 1 for everyone, built from each Riser's
-  // week 1 schedule (so staff changes show here). The same activity at
-  // overlapping or touching times is one block, labelled with who is in
-  // it; music and Tamil are shown as a bar for each Riser.
-  function glance(box, kids, all) {
+  // week 1 schedule (all[i]), so changes made either way show in both.
+  // The same activity at overlapping or touching times is one block,
+  // labelled with who is in it; music and Tamil are a bar for each time,
+  // with names, and stay fixed. Tap a block to change its name, times or
+  // who is in it, or delete it; Add a block; Undo; Start everyone again.
+  // A change is saved into each Riser's week 1 schedule it touches; new
+  // or moved times fit around that Riser's music and Tamil.
+  function glance(box, kids, all, saved) {
     var GDAYS = ['Mon', 'Tue', 'Wed'], OUT = /music|tamil/i, n = kids.length;
+    var past = [], clusters = [];
+
     function who(set) {
       if (set.length === n) return '';
-      var names = kids.filter(function (k) { return set.indexOf(k.slug) !== -1; }).map(function (k) { return k.name; });
       var G = window.T3_WEEK1_GROUPS || {}, label = Object.keys(G).filter(function (g) {
         return G[g].length === set.length && G[g].every(function (s) { return set.indexOf(s) !== -1; });
       })[0];
       if (label) return label;
-      if (set.length >= n - 3) return 'All except ' + kids.filter(function (k) { return set.indexOf(k.slug) === -1; }).map(function (k) { return k.name; }).join(', ');
-      return names.join(', ');
+      var name = function (k) { return k.name; };
+      if (set.length >= n - 3) return 'All except ' + kids.filter(function (k) { return set.indexOf(k.slug) === -1; }).map(name).join(', ');
+      return kids.filter(function (k) { return set.indexOf(k.slug) !== -1; }).map(name).join(', ');
     }
-    var cols = (END - START) / STEP;
-    var html = '<h2>Week 1 at a glance</h2><div class="sc-gl" style="grid-template-columns:110px repeat(' + cols + ',minmax(0,1fr))">';
-    for (var m = START; m < END; m += STEP) html += '<div class="sc-gl-t" style="grid-column:' + ((m - START) / STEP + 2) + '">' + hm(m) + '</div>';
-    var row = 2;
-    GDAYS.forEach(function (d) {
-      // Group the same activity at overlapping or touching times.
+
+    // Blocks for one day: the same activity at overlapping or touching
+    // times is one block; src keeps each Riser's own pieces of it.
+    function group(d) {
       var blocks = [], bars = [];
       kids.forEach(function (k, i) {
         (all[i][d] || []).forEach(function (b) {
           if (OUT.test(b.t)) {
-            // Music or Tamil at the same time: one bar with every name.
             var same = bars.filter(function (x) { return x.t === b.t && x.s === b.s && x.e === b.e; })[0];
             if (same) same.names.push(k.name); else bars.push({ s: b.s, e: b.e, t: b.t, names: [k.name] });
             return;
           }
-          blocks.push({ s: b.s, e: b.e, t: b.t, kids: [k.slug] });
+          blocks.push({ d: d, s: b.s, e: b.e, t: b.t, kids: [k.slug], src: [{ i: i, b: b }] });
         });
       });
       for (var again = true; again;) {
         again = false;
         for (var x = 0; x < blocks.length && !again; x++) for (var y = x + 1; y < blocks.length && !again; y++) {
-          var A = blocks[x], Bk = blocks[y];
-          if (A.t !== Bk.t || Bk.s > A.e || Bk.e < A.s) continue;
-          A.s = Math.min(A.s, Bk.s); A.e = Math.max(A.e, Bk.e);
-          Bk.kids.forEach(function (k) { if (A.kids.indexOf(k) === -1) A.kids.push(k); });
+          var A = blocks[x], B = blocks[y];
+          if (A.t !== B.t || B.s > A.e || B.e < A.s) continue;
+          A.s = Math.min(A.s, B.s); A.e = Math.max(A.e, B.e);
+          B.kids.forEach(function (k) { if (A.kids.indexOf(k) === -1) A.kids.push(k); });
+          A.src = A.src.concat(B.src);
           blocks.splice(y, 1); again = true;
         }
       }
-      // Put each block in the first lane where it fits.
-      blocks.sort(function (a, b) { return a.s - b.s || b.kids.length - a.kids.length; });
-      var ends = [];
-      blocks.forEach(function (b) { var l = 0; while (ends[l] !== undefined && ends[l] > b.s) l++; ends[l] = b.e; b.lane = l; });
-      bars.sort(function (a, b) { return a.s - b.s; });
-      var bends = [];
-      bars.forEach(function (b) { var l = 0; while (bends[l] !== undefined && bends[l] > b.s) l++; bends[l] = b.e; b.lane = l; });
-      var lanes = Math.max(ends.length, 1), blanes = bends.length;
-      html += '<div class="sc-gl-day" style="grid-row:' + row + '/span ' + (lanes + blanes) + '">' + DAY_NAMES[d] + '</div>';
-      blocks.forEach(function (b) {
-        var span = b.lane === 0 && blocks.every(function (x) { return x.lane === 0 || x.e <= b.s || x.s >= b.e; }) ? lanes : 1;
-        var c1 = (b.s - START) / STEP + 2, c2 = (b.e - START) / STEP + 2, w = who(b.kids);
-        html += '<div class="sc-gl-b' + (c2 - c1 <= 1 ? ' is-narrow' : '') + '" style="grid-row:' + (row + b.lane) + '/span ' + span + ';grid-column:' + c1 + '/' + c2 + '">' +
-          '<u>' + hm(b.s) + '–' + hm(b.e) + '</u><b>' + esc(b.t) + '</b>' + (w && c2 - c1 > 1 ? '<i>' + esc(w) + '</i>' : '') + '</div>';
+      return { blocks: blocks, bars: bars };
+    }
+
+    function draw() {
+      clusters = [];
+      var cols = (END - START) / STEP;
+      var html = '<div class="sc-gl-head"><h2>Week 1 at a glance</h2><span class="sc-gl-status"></span></div>' +
+        '<div class="sc-tools"><button type="button" class="sc-btn sc-gl-add">+ Add a block</button>' +
+        '<button type="button" class="sc-btn sc-gl-undo"' + (past.length ? '' : ' disabled') + '>Undo</button>' +
+        '<button type="button" class="sc-btn sc-ghost sc-gl-reset">Start everyone again from the week 1 plan</button></div>' +
+        '<p class="sc-note">Tap a block to change it, change who is in it, or delete it. Music and Tamil (yellow) stay where they are.</p>' +
+        '<div class="sc-gl-scroll"><div class="sc-gl" style="grid-template-columns:110px repeat(' + cols + ',minmax(0,1fr))">';
+      for (var m = START; m < END; m += STEP) html += '<div class="sc-gl-t" style="grid-column:' + ((m - START) / STEP + 2) + '">' + hm(m) + '</div>';
+      var row = 2;
+      GDAYS.forEach(function (d) {
+        var g = group(d), blocks = g.blocks, bars = g.bars;
+        blocks.sort(function (a, b) { return a.s - b.s || b.kids.length - a.kids.length; });
+        var ends = [];
+        blocks.forEach(function (b) { var l = 0; while (ends[l] !== undefined && ends[l] > b.s) l++; ends[l] = b.e; b.lane = l; });
+        bars.sort(function (a, b) { return a.s - b.s; });
+        var bends = [];
+        bars.forEach(function (b) { var l = 0; while (bends[l] !== undefined && bends[l] > b.s) l++; bends[l] = b.e; b.lane = l; });
+        var lanes = Math.max(ends.length, 1), blanes = bends.length;
+        html += '<div class="sc-gl-day" style="grid-row:' + row + '/span ' + (lanes + blanes) + '">' + DAY_NAMES[d] + '</div>';
+        blocks.forEach(function (b) {
+          var ci = clusters.push(b) - 1;
+          var span = b.lane === 0 && blocks.every(function (x) { return x.lane === 0 || x.e <= b.s || x.s >= b.e; }) ? lanes : 1;
+          var c1 = (b.s - START) / STEP + 2, c2 = (b.e - START) / STEP + 2, w = who(b.kids);
+          html += '<button type="button" data-ci="' + ci + '" class="sc-gl-b' + (c2 - c1 <= 1 ? ' is-narrow' : '') + '" style="grid-row:' + (row + b.lane) + '/span ' + span + ';grid-column:' + c1 + '/' + c2 + '"' +
+            ' aria-label="' + esc(b.t + ', ' + DAY_NAMES[d] + ' ' + hm(b.s) + '–' + hm(b.e) + (w ? ', ' + w : '') + '. Tap to change.') + '">' +
+            '<u>' + hm(b.s) + '–' + hm(b.e) + '</u><b>' + esc(b.t) + '</b>' + (w && c2 - c1 > 1 ? '<i>' + esc(w) + '</i>' : '') + '</button>';
+        });
+        bars.forEach(function (b) {
+          html += '<div class="sc-gl-bar" style="grid-row:' + (row + lanes + b.lane) + ';grid-column:' + ((b.s - START) / STEP + 2) + '/' + ((b.e - START) / STEP + 2) + '">' +
+            esc(b.names.join(', ')) + ' – ' + esc(b.t) + ' · ' + hm(b.s) + '–' + hm(b.e) + '</div>';
+        });
+        row += lanes + blanes;
       });
-      bars.forEach(function (b) {
-        html += '<div class="sc-gl-bar" style="grid-row:' + (row + lanes + b.lane) + ';grid-column:' + ((b.s - START) / STEP + 2) + '/' + ((b.e - START) / STEP + 2) + '">' +
-          esc(b.names.join(', ')) + ' – ' + esc(b.t) + ' · ' + hm(b.s) + '–' + hm(b.e) + '</div>';
+      box.innerHTML = html + '</div></div><p class="sc-note">Thursday and Friday are each Riser’s school timetable. Open a Riser below to change their week 1, including Thursday and Friday.</p>';
+      Array.prototype.forEach.call(box.querySelectorAll('.sc-gl-b'), function (bt) {
+        bt.addEventListener('click', function () { var c = clusters[+bt.dataset.ci]; sheet(c, c.d); });
       });
-      row += lanes + blanes;
-    });
-    box.innerHTML = html + '</div><p class="sc-note">Thursday and Friday are each Riser’s school timetable. Open a Riser below to change their week 1.</p>';
+      box.querySelector('.sc-gl-add').addEventListener('click', function () { sheet(null, 'Mon'); });
+      box.querySelector('.sc-gl-undo').addEventListener('click', function () {
+        if (!past.length) return;
+        var prev = past.pop();
+        prev.forEach(function (days, i) { all[i] = days; });
+        save(kids.map(function (k, i) { return i; }));
+      });
+      box.querySelector('.sc-gl-reset').addEventListener('click', function () {
+        if (!confirm('Put back the week 1 plan for every Riser? All week 1 changes will go.')) return;
+        remember();
+        kids.forEach(function (k, i) { all[i] = school(k.slug); });
+        save(kids.map(function (k, i) { return i; }));
+      });
+    }
+
+    function status(t, cls) { var s = box.querySelector('.sc-gl-status'); if (s) { s.textContent = t; s.className = 'sc-gl-status sc-status ' + (cls || ''); } }
+    function remember() { past.push(clone(all)); if (past.length > 30) past.shift(); }
+    function save(idx) {
+      draw();
+      status('Saving…');
+      Promise.all(idx.map(function (i) {
+        return window.eot2Save(kids[i].group, kids[i].slug, KEY, { days: all[i], u: Date.now(), by: 'staff' });
+      })).then(function (rs) {
+        var ok = rs.every(function (r) { return r.ok; });
+        status(ok ? 'Saved' : 'Not saved — check the connection', ok ? 'is-ok' : 'is-bad');
+        saved(all);
+      });
+    }
+
+    // Put [s, e] into one Riser's day, around their music and Tamil.
+    function fill(list, s, e, t) {
+      var at = s;
+      list.filter(function (b) { return OUT.test(b.t) && b.s < e && b.e > s; }).sort(function (a, b) { return a.s - b.s; }).forEach(function (g) {
+        if (g.s > at) list.push({ s: at, e: g.s, t: t, c: '' });
+        at = Math.max(at, g.e);
+      });
+      if (at < e) list.push({ s: at, e: e, t: t, c: '' });
+    }
+
+    // Change a block for everyone in it (c), or add one (c is null).
+    function sheet(c, d) {
+      var f = c ? { t: c.t, s: c.s, e: c.e, d: d, kids: c.kids.slice() } : { t: '', s: 9 * 60, e: 9 * 60 + 30, d: d, kids: [] };
+      var opts = function (from, to, v) {
+        var h = '';
+        for (var m = from; m <= to; m += STEP) h += '<option value="' + m + '"' + (m === v ? ' selected' : '') + '>' + hm(m) + '</option>';
+        return h;
+      };
+      var modal = el('div', 'sc-modal');
+      modal.innerHTML = '<form class="sc-modal-card" role="dialog" aria-label="' + (c ? 'Change this block' : 'Add a block') + '">' +
+        '<h2>' + (c ? 'Change this block' : 'Add a block') + '</h2>' +
+        '<label class="sc-field"><span>What is it?</span><input type="text" class="sc-e-t" maxlength="60" value="' + esc(f.t) + '" placeholder="Like “Reading time”"></label>' +
+        '<div class="sc-row">' +
+          '<label class="sc-field"><span>Day</span><select class="sc-e-d"' + (c ? ' disabled' : '') + '>' + GDAYS.map(function (x) { return '<option value="' + x + '"' + (x === d ? ' selected' : '') + '>' + DAY_NAMES[x] + '</option>'; }).join('') + '</select></label>' +
+          '<label class="sc-field"><span>Starts</span><select class="sc-e-s">' + opts(START, END - STEP, f.s) + '</select></label>' +
+          '<label class="sc-field"><span>Ends</span><select class="sc-e-e">' + opts(START + STEP, END, f.e) + '</select></label>' +
+        '</div>' +
+        '<div class="sc-field"><span>Who</span><div class="sc-who">' +
+          '<button type="button" class="sc-who-all">Everyone</button><button type="button" class="sc-who-none">No one</button>' +
+          kids.map(function (k) { return '<label><input type="checkbox" value="' + k.slug + '"' + (f.kids.indexOf(k.slug) !== -1 ? ' checked' : '') + '> ' + esc(k.name) + '</label>'; }).join('') +
+        '</div></div>' +
+        '<p class="sc-err" hidden></p>' +
+        '<div class="sc-modal-btns">' + (c ? '<button type="button" class="sc-btn sc-ghost sc-del">Delete for everyone</button>' : '') +
+          '<span></span><button type="button" class="sc-btn sc-ghost sc-cancel">Cancel</button><button type="submit" class="sc-btn sc-save">Save</button></div>' +
+        '</form>';
+      function close() { modal.remove(); }
+      function ticks(v) { Array.prototype.forEach.call(modal.querySelectorAll('.sc-who input'), function (x) { x.checked = v; }); }
+      modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+      modal.querySelector('.sc-cancel').addEventListener('click', close);
+      modal.querySelector('.sc-who-all').addEventListener('click', function () { ticks(true); });
+      modal.querySelector('.sc-who-none').addEventListener('click', function () { ticks(false); });
+      if (c) modal.querySelector('.sc-del').addEventListener('click', function () {
+        if (!confirm('Delete “' + c.t + '” ' + DAY_NAMES[d] + ' ' + hm(c.s) + '–' + hm(c.e) + ' for everyone in it?')) return;
+        close(); apply(c, d, null);
+      });
+      modal.querySelector('form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var t = modal.querySelector('.sc-e-t').value.trim(), s = +modal.querySelector('.sc-e-s').value, en = +modal.querySelector('.sc-e-e').value;
+        var picked = Array.prototype.filter.call(modal.querySelectorAll('.sc-who input'), function (x) { return x.checked; }).map(function (x) { return x.value; });
+        var err = modal.querySelector('.sc-err');
+        if (!t) { err.textContent = 'Give it a name.'; err.hidden = false; return; }
+        if (en <= s) { err.textContent = 'It has to end after it starts.'; err.hidden = false; return; }
+        if (!picked.length) { err.textContent = 'Tick who it is for.'; err.hidden = false; return; }
+        close(); apply(c, c ? d : modal.querySelector('.sc-e-d').value, { t: t, s: s, e: en, kids: picked });
+      });
+      document.body.appendChild(modal);
+      modal.querySelector('.sc-e-t').focus();
+    }
+
+    // Apply a change to each Riser it touches. Same times: rename each
+    // Riser's own pieces. New times: one block per Riser, around their
+    // music and Tamil. Not ticked any more: their pieces go.
+    function apply(c, d, f) {
+      remember();
+      var touched = [];
+      kids.forEach(function (k, i) {
+        var mine = c ? c.src.filter(function (x) { return x.i === i; }).map(function (x) { return x.b; }) : [];
+        var want = !!f && f.kids.indexOf(k.slug) !== -1;
+        if (!mine.length && !want) return;
+        var list = all[i][d] = all[i][d] || [];
+        if (want && mine.length && f.s === c.s && f.e === c.e) mine.forEach(function (b) { b.t = f.t; });
+        else {
+          mine.forEach(function (b) { list.splice(list.indexOf(b), 1); });
+          if (want) fill(list, f.s, f.e, f.t);
+        }
+        list.sort(function (x, y) { return x.s - y.s; });
+        touched.push(i);
+      });
+      save(touched);
+    }
+
+    draw();
   }
 
   /* ---------- staff: every Riser ---------- */
@@ -465,11 +600,11 @@
     var list = el('div', 'sc-kids', '<p class="sc-note">Loading…</p>');
     app.appendChild(list);
     var kids = window.EOT2_KIDS.slice().sort(function (a, b) { return a.name.localeCompare(b.name); });
-    Promise.all(kids.map(function (k) { return window.eot2Fetch(k.group, k.slug, KEY); })).then(function (rs) {
-      if (W1) glance(glanceBox, kids, rs.map(function (r, i) { return r && r.state && r.state.days ? r.state.days : school(kids[i].slug); }));
+    // Each Riser: how many blocks differ from the plan, and a link.
+    function paintList(states) {
       list.innerHTML = '';
       kids.forEach(function (k, i) {
-        var st = rs[i] && rs[i].state;
+        var st = states[i];
         var n = st && st.days ? changes(st.days, k.slug) : 0;
         var a = el('a', 'sc-kid', '<strong>' + esc(k.name) + '</strong><span>' +
           (n ? n + ' change' + (n > 1 ? 's' : '') + ' from ' + FROM + (st.by ? ' · last by ' + esc(st.by === 'staff' ? 'staff' : st.by) : '') : 'Same as ' + FROM) + '</span>');
@@ -477,6 +612,13 @@
         if (n) a.classList.add('is-changed');
         list.appendChild(a);
       });
+    }
+    Promise.all(kids.map(function (k) { return window.eot2Fetch(k.group, k.slug, KEY); })).then(function (rs) {
+      var states = rs.map(function (r) { return r && r.state; });
+      if (W1) glance(glanceBox, kids, states.map(function (st, i) { return st && st.days ? st.days : school(kids[i].slug); }), function (all) {
+        paintList(all.map(function (days) { return { days: days, by: 'staff' }; }));
+      });
+      paintList(states);
     });
   }
 
