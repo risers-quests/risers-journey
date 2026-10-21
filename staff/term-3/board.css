@@ -389,3 +389,20 @@ button.qp-ck { font: inherit; text-align: left; border: 2px solid transparent; c
 .pb-sos.is-on { background: var(--good-soft); border-color: var(--good); color: var(--good); }
 @media (max-width: 640px) { .qp-look { grid-template-columns: 1fr; } }
 .pb-moves { align-items: center; gap: 6px; }
+
+/* Our own quest: the team's idea, the form, and its OK from a facilitator. */
+.qo { margin: 26px 0 18px; padding-top: 6px; border-top: 1px dashed var(--border); }
+.qo-h { color: #b0005f; }
+.qo-card { max-width: 420px; }
+.qo-card .qc-art { background: linear-gradient(135deg, #fde3ef, #fff1c9); }
+.qo-st { margin: 0; font-size: .86rem; border-radius: 12px; padding: 8px 10px; background: var(--paper-soft); color: var(--ink-soft); }
+.qo-st-yes { background: #e6f6ec; color: #1d6b3a; }
+.qo-st-change { background: #fff3dc; color: #8a5300; }
+.qo-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.qo-acts .pq-btn-ghost { margin: 0; }
+.qo-form { display: flex; flex-direction: column; gap: 12px; max-width: 620px; background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 16px 18px; }
+.qo-form .pq-sub { margin: 0; }
+.qo-form .pb-pick { display: flex; flex-wrap: wrap; gap: 6px; }
+.pb-field.is-missing input, .pb-field.is-missing textarea, .pb-field.is-missing select { border-color: #d0342c; background: #fff6f5; }
+.qo-miss { margin: 0; color: #d0342c; font-weight: 600; font-size: .88rem; }
+.qo-flag { color: #b0005f !important; font-weight: 600; }

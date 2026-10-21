@@ -3,7 +3,8 @@
    each group's board record), and whether staff approved it. Risers only
    see approved projects; one marked "Tweak", "Maybe" or "Not approved"
    carries a note (the tweak suggested, what you're unsure about, or what
-   to change) and stays hidden until it's changed and approved. */
+   to change) and stays hidden until it's changed and approved. A team's
+   own quest idea is OK'd on that team's board. */
 (function () {
   var Q = window.T3Q, POOL = window.T3_POOL || [];
   var app = document.getElementById('app');
@@ -44,10 +45,12 @@
     var chosen = el('div', 'bl-groups');
     Q.GROUPS.forEach(function (g) {
       var p = picks[g.id];
-      var b = p && POOL.filter(function (x) { return x.id === p.project; })[0];
+      // A team's own quest has its own name and length (meta.own).
+      var b = p && (p.project === 'own' ? p.own && { title: p.own.title, weeks: +p.own.weeks } : POOL.filter(function (x) { return x.id === p.project; })[0]);
       var due = b && p.started ? Q.deadline(p.started, Q.weeksFor(b)) : null;
       var a = el('a', 'bl-group', '<strong>' + g.name + '</strong><span>' + g.kids.join(', ') + '</span>' +
         '<em>' + (b ? esc(b.title) + (due ? ' · expected by ' + Q.nice(due.date) : '') : 'No project chosen yet') + '</em>' +
+        (p && p.own && p.own.st === 'waiting' ? '<small class="qo-flag">💡 Own quest idea to OK: ' + esc(p.own.title) + '</small>' : '') +
         '<small>Sees level ' + Q.LEVELS[g.id].join(' and ') + ' projects</small>');
       a.href = 'board.html?group=' + g.id + '&tab=project';
       chosen.appendChild(a);
@@ -124,7 +127,7 @@
   Promise.all(Q.GROUPS.map(function (g) {
     return window.eot2Fetch('term-3', g.id, 'board').then(function (d) {
       var s = d && d.state;
-      picks[g.id] = m(s, 'project') ? { project: m(s, 'project'), started: m(s, 'started') } : null;
+      picks[g.id] = m(s, 'project') || m(s, 'own') ? { project: m(s, 'project'), started: m(s, 'started'), own: m(s, 'own') } : null;
     });
   }).concat(Q.fetchApprovals().then(function (a) { approvals = a; }))).then(draw, draw);
 })();

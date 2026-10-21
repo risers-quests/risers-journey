@@ -25,7 +25,9 @@
    Risers working at once don't wipe each other's changes. Deleted items
    are kept as { deleted: true }. The page refreshes from other devices
    every 15 seconds. A team chooses only from the levels set for it in
-   quest-data.js and never sees the levels. */
+   quest-data.js and never sees the levels, or makes up its own quest
+   (name, what it is, what we learn, what we make, how long), which a
+   facilitator OKs before the team can choose it. */
 (function () {
   var app = document.getElementById('app');
   var params = new URLSearchParams(location.search);
@@ -34,7 +36,16 @@
   var GROUPS = Q.GROUPS;
   var POOL = window.T3_POOL || [];
   var CARDS = window.T3_CARDS || {}, PACKS = window.T3_PACKS || {};
-  function project(id) { return POOL.filter(function (b) { return b.id === id; })[0] || null; }
+  // A pool project, or the team's own quest ('own', from a board record).
+  function project(id, s) { return id === 'own' ? ownQuest(s || state) : POOL.filter(function (b) { return b.id === id; })[0] || null; }
+  // The team's own quest idea, shaped like a pool project (no level, no
+  // role ideas): meta.own = { title, what, learn, make, weeks, cat, by,
+  // st: 'waiting' | 'yes' | 'change', note, okBy }.
+  function ownQuest(s) {
+    var o = s.meta.own && s.meta.own.v;
+    if (!o || !o.title) return null;
+    return { id: 'own', own: true, cat: o.cat || 'sol', title: o.title, what: o.what, make: o.make, learn: o.learn, lo: o.learn, weeks: +o.weeks || 3, resp: [], st: o.st, note: o.note, by: o.by, okBy: o.okBy };
+  }
   var WEEKS = Q.WEEKS.map(function (w, i) { return i + 1; });
   var MAPS = ['meta', 'cards', 'standups', 'checkins', 'blockers', 'materials'];
 
@@ -218,7 +229,10 @@
     if (!main) return;
     var y = window.scrollY;
     main.innerHTML = '';
-    if (!meta('project') || changing) { main.appendChild(chooserView(project(meta('project')))); return; }
+    if (!project(meta('project')) || changing) { main.appendChild(chooserView(project(meta('project')))); return; }
+    // A new own-quest idea from a team already on a quest: staff see it here.
+    var idea = project('own');
+    if (!KID && idea && idea.st === 'waiting' && meta('project') !== 'own') main.appendChild(ownEl(project(meta('project'))));
     main.appendChild(topLine());
     if (TABS.map(function (t) { return t[0]; }).indexOf(tab) === -1) tab = 'board';
     var tabs = el('div', 'pb-tabs');
@@ -266,10 +280,6 @@
 
   /* ---------- choosing the quest ---------- */
 
-  function projectTitle(id, fallback) {
-    var b = project(id === undefined ? meta('project') : id);
-    return b ? b.title : fallback || '';
-  }
   function deadline(id, started) {
     var b = project(id === undefined ? meta('project') : id);
     started = started === undefined ? meta('started') : started;
@@ -328,8 +338,139 @@
       });
       wrap.appendChild(grid);
     });
-    if (!shown) wrap.appendChild(el('p', 'pb-empty', KID ? 'Your quests are on their way. Check back soon.' : 'No projects approved for this team yet. Approve them on the Term 3 Quests page.'));
+    if (!shown) wrap.appendChild(el('p', 'pb-empty', KID ? 'Our quests are on their way. Check back soon, or make up your own below.' : 'No projects approved for this team yet. Approve them on the Term 3 Quests page.'));
+    wrap.appendChild(ownEl(current));
     return wrap;
+  }
+
+  /* ---------- our own quest ---------- */
+
+  // What a team must say about its own quest; every box must be filled in.
+  var OWN_QS = [
+    { id: 'title', label: 'Quest name', hint: 'A short, fun name.', ph: 'e.g. Bird feeder café', one: true },
+    { id: 'what', label: 'What is it?', hint: 'Explain your quest so anyone can understand it.', ph: 'e.g. We build bird feeders and see which birds come to LifeHub.' },
+    { id: 'learn', label: 'What will we learn?', hint: 'The science or the skill.', ph: 'e.g. Which foods different birds eat, and how to count fairly.' },
+    { id: 'make', label: 'What will we make?', hint: 'The real things you will have at the end.', ph: 'e.g. 3 bird feeders, a bird-count chart and a poster.' }
+  ];
+  var ownOpen = false, draft = null, ownMissing = false;
+
+  function ownEl(current) {
+    var o = project('own'), ours = !!(current && current.id === 'own');
+    var box = el('section', 'qo');
+    box.appendChild(el('h2', 'pq-cat qo-h', '💡 Our own quest'));
+    if (ownOpen) { box.appendChild(ownForm(o)); return box; }
+    if (!o) {
+      box.appendChild(el('p', 'pq-catnote', 'Got a better idea? Make up your own quest. A facilitator will look at it and say OK.'));
+      var start = el('button', 'pq-btn', '✏️ Make up our own quest');
+      start.type = 'button';
+      start.addEventListener('click', function () { ownOpen = true; draft = null; ownMissing = false; draw(); });
+      box.appendChild(start);
+      return box;
+    }
+    var due = Q.deadline(ours ? meta('started') : today(), o.weeks);
+    var card = el('article', 'qc qc-' + o.cat + ' qo-card',
+      '<div class="qc-art"><span class="qc-kind">' + esc(Q.CATS[o.cat].name) + '</span>💡</div>' +
+      '<div class="qc-body"><h3>' + esc(o.title) + '</h3>' +
+      '<p class="qc-tag">' + esc(o.what) + '</p>' +
+      '<p class="qc-make">🎁 ' + esc(o.make) + '</p>' +
+      '<div class="qc-chips"><span>⏱ ' + o.weeks + ' weeks</span><span>🎯 Ready by ' + Q.nice(due.date) + (ours ? '' : ' if we start next week') + '</span><span>🧠 ' + esc(o.learn) + '</span></div>' +
+      '<p class="qo-st qo-st-' + (o.st || 'waiting') + '">' +
+        (o.st === 'yes' ? '✓ A facilitator said OK' + (o.okBy ? ' (' + esc(o.okBy) + ')' : '') + '.'
+          : o.st === 'change' ? '✎ A facilitator asked for a change' + (o.note ? ': <b>' + esc(o.note) + '</b>' : '.')
+          : '⏳ Waiting for a facilitator to say OK.') + '</p></div>');
+    var body = card.querySelector('.qc-body');
+    if (o.st === 'yes') {
+      var go = el('button', 'pq-btn', ours ? 'Our quest now' : 'Choose this quest');
+      go.type = 'button';
+      go.disabled = ours;
+      go.addEventListener('click', function () {
+        if (!confirm('Choose “' + o.title + '” for your team?')) return;
+        setMeta('project', 'own');
+        setMeta('started', today());
+        changing = false;
+        tab = 'pack';
+        draw();
+        window.scrollTo(0, 0);
+      });
+      body.appendChild(go);
+    }
+    // Staff say OK, or ask for a change with a note.
+    if (!KID && !ours) {
+      var rv = el('div', 'bl-approve',
+        '<div class="bl-approve-btns"><button type="button" class="bl-ap bl-ap-yes' + (o.st === 'yes' ? ' is-on' : '') + '" data-v="yes">✓ OK</button>' +
+        '<button type="button" class="bl-ap bl-ap-tweak' + (o.st === 'change' ? ' is-on' : '') + '" data-v="change">✎ Ask for a change</button></div>' +
+        (o.st === 'change' ? '<textarea rows="2" placeholder="What should they change?">' + esc(o.note || '') + '</textarea>' : ''));
+      Array.prototype.forEach.call(rv.querySelectorAll('.bl-ap'), function (bt) {
+        bt.addEventListener('click', function () { putOwn({ st: o.st === bt.dataset.v ? 'waiting' : bt.dataset.v, okBy: staffName() }); draw(); });
+      });
+      var ta = rv.querySelector('textarea');
+      if (ta) ta.addEventListener('change', function () { putOwn({ note: ta.value.trim() }); });
+      body.appendChild(rv);
+    }
+    if (!ours) {
+      var acts = el('div', 'qo-acts');
+      var ed = el('button', 'pq-link', 'Change our idea');
+      ed.type = 'button';
+      ed.addEventListener('click', function () { ownOpen = true; draft = null; ownMissing = false; draw(); });
+      var rm = el('button', 'pq-link', 'Remove it');
+      rm.type = 'button';
+      rm.addEventListener('click', function () {
+        if (!confirm('Remove “' + o.title + '”?')) return;
+        setMeta('own', null); draw();
+      });
+      acts.appendChild(ed); acts.appendChild(rm);
+      body.appendChild(acts);
+    }
+    box.appendChild(card);
+    return box;
+  }
+  function staffName() { try { return localStorage.getItem('rj-staff-name') || 'Facilitator'; } catch (e) { return 'Facilitator'; } }
+  function putOwn(fields) { setMeta('own', Object.assign({}, meta('own') || {}, fields)); }
+
+  // The form for our own quest. Changing it sends it back for an OK.
+  function ownForm(o) {
+    if (!draft) draft = o ? { title: o.title, what: o.what, learn: o.learn, make: o.make, weeks: o.weeks, cat: o.cat } : { title: '', what: '', learn: '', make: '', weeks: 0, cat: 'sol' };
+    var f = el('form', 'qo-form');
+    f.innerHTML = '<p class="pq-sub">Fill in every box. A facilitator will look at it and say OK, then you can choose it.</p>' +
+      OWN_QS.map(function (q) {
+        var bad = ownMissing && !String(draft[q.id] || '').trim();
+        return '<label class="pb-field' + (bad ? ' is-missing' : '') + '"><span>' + q.label + ' *</span><em>' + q.hint + '</em>' +
+          (q.one ? '<input type="text" maxlength="60" data-k="' + q.id + '" placeholder="' + esc(q.ph) + '" value="' + esc(draft[q.id]) + '">'
+            : '<textarea rows="3" data-k="' + q.id + '" placeholder="' + esc(q.ph) + '">' + esc(draft[q.id]) + '</textarea>') + '</label>';
+      }).join('') +
+      '<label class="pb-field' + (ownMissing && !draft.weeks ? ' is-missing' : '') + '"><span>How long? *</span><em>If you start next week, this is when it must be ready.</em>' +
+        '<select data-k="weeks"><option value="">Choose…</option>' + [2, 3, 4].map(function (n) {
+          return '<option value="' + n + '"' + (+draft.weeks === n ? ' selected' : '') + '>' + n + ' weeks · ready by ' + Q.nice(Q.deadline(today(), n).date) + '</option>';
+        }).join('') + '</select></label>' +
+      '<div class="pb-field"><span>What kind?</span><div class="pb-pick">' + ['sol', 'sci'].map(function (k) {
+        return '<button type="button" class="pq-seg' + (draft.cat === k ? ' is-on' : '') + '" data-cat="' + k + '">' + esc(Q.CATS[k].name) + '</button>';
+      }).join('') + '</div></div>' +
+      (ownMissing ? '<p class="qo-miss">Fill in every box marked * first.</p>' : '') +
+      '<div class="qo-acts"><button type="submit" class="pq-btn">Send to a facilitator</button><button type="button" class="pq-btn pq-btn-ghost qo-cancel">Cancel</button></div>';
+    Array.prototype.forEach.call(f.querySelectorAll('[data-k]'), function (x) {
+      x.addEventListener(x.tagName === 'SELECT' ? 'change' : 'input', function () {
+        draft[x.dataset.k] = x.value;
+        if (x.value.trim()) x.parentNode.classList.remove('is-missing');
+      });
+    });
+    Array.prototype.forEach.call(f.querySelectorAll('[data-cat]'), function (bt) {
+      bt.addEventListener('click', function () { draft.cat = bt.dataset.cat; draw(); });
+    });
+    f.querySelector('.qo-cancel').addEventListener('click', function () { ownOpen = false; draft = null; ownMissing = false; draw(); });
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var d = {};
+      OWN_QS.forEach(function (q) { d[q.id] = String(draft[q.id] || '').trim(); });
+      d.weeks = +draft.weeks;
+      if (OWN_QS.some(function (q) { return !d[q.id]; }) || !d.weeks) { ownMissing = true; draw(); return; }
+      d.cat = draft.cat;
+      d.by = KID ? ME : staffName();
+      d.st = 'waiting'; d.note = ''; d.okBy = '';
+      setMeta('own', d);
+      ownOpen = false; draft = null; ownMissing = false;
+      draw();
+    });
+    return f;
   }
 
   /* ---------- Quest Pack ---------- */
@@ -354,10 +495,16 @@
     var b = project(meta('project')), c = CARDS[b.id], p = PACKS[b.id], due = deadline();
     var wrap = el('div', 'qp');
     wrap.appendChild(el('div', 'qp-hero',
-      '<div class="qp-ic">' + (c ? c.icon : '⭐') + '</div><div><h2>' + esc(b.title) + '</h2><p>' + esc(p ? p.mission : (c ? c.tag : b.what)) + '</p>' +
+      '<div class="qp-ic">' + (c ? c.icon : b.own ? '💡' : '⭐') + '</div><div><h2>' + esc(b.title) + '</h2><p>' + esc(p ? p.mission : (c ? c.tag : b.what)) + '</p>' +
       '<div class="qp-chips"><span>⏱ ' + Q.weeksFor(b) + ' weeks</span>' + (due ? '<span>🎯 Ready by ' + Q.nice(due.date) + '</span>' : '') + '<span>📚 ' + esc(c ? c.learn : b.learn) + '</span></div></div>'));
 
-    if (!p) {
+    if (b.own) {
+      // Our own quest: the team's own words stand in for a Quest Pack.
+      var oq = sec('💡', 'green', 'Our own quest', 'we made this up');
+      oq.insertAdjacentHTML('beforeend', '<div class="qp-make"><div class="qp-tile"><span class="e">🎁</span><b>What we make</b><span>' + esc(b.make) + '</span></div>' +
+        '<div class="qp-tile"><span class="e">🧠</span><b>What we learn</b><span>' + esc(b.learn) + '</span></div></div>');
+      wrap.appendChild(oq);
+    } else if (!p) {
       wrap.appendChild(el('section', 'qp-sec qp-wait', '<div class="qp-h"><span class="qp-n qp-good">📦</span><h3>Your Quest Pack is on its way</h3></div>' +
         '<p>A facilitator is getting it ready for you: what you must make, when it’s done, the boundaries and the rules. Start your Materials list while you wait.</p>'));
     } else {
@@ -776,8 +923,10 @@
       return r && (r.did || r.will || r.stuck);
     });
     var ci = s.checkins['w' + w] || {};
+    var b = project(m('project'), s);
     return {
-      build: projectTitle(m('project'), ''), due: m('project') && m('started') ? deadline(m('project'), m('started')) : null,
+      build: b ? b.title : '', due: b && m('started') ? Q.deadline(m('started'), Q.weeksFor(b)) : null,
+      idea: s.meta.own && s.meta.own.v && s.meta.own.v.st === 'waiting' ? s.meta.own.v.title : '',
       master: m('master' + w, '') || m('director' + w, ''), week: w, goal: (s.checkins['w' + (w - 1)] || {}).next || '',
       got: done.length, total: done.length + open.length,
       stuck: all.filter(function (c) { return c.stuck && c.col !== 'done'; }).map(function (c) { return c.title; })
@@ -799,7 +948,7 @@
         var row = el('a', 'pb-ov-row');
         row.href = '?group=' + g.id;
         row.innerHTML =
-          '<span class="pb-ov-group"><strong>' + g.name + '</strong><em>' + esc(a.build || 'No quest chosen yet') + '</em>' + (a.due ? '<small>Ready by ' + Q.nice(a.due.date) + '</small>' : '') + '<small>' + g.kids.join(', ') + '</small></span>' +
+          '<span class="pb-ov-group"><strong>' + g.name + '</strong><em>' + esc(a.build || 'No quest chosen yet') + '</em>' + (a.idea ? '<small class="qo-flag">💡 Own quest idea to OK: ' + esc(a.idea) + '</small>' : '') + (a.due ? '<small>Ready by ' + Q.nice(a.due.date) + '</small>' : '') + '<small>' + g.kids.join(', ') + '</small></span>' +
           '<span class="pb-ov-week"><small>Week ' + a.week + '</small><strong>' + (a.master ? 'Quest Master: ' + esc(a.master) : '<em class="pb-ov-none">No Quest Master yet</em>') + '</strong>' + (a.goal ? '<em>' + esc(a.goal) + '</em>' : '') + '</span>' +
           '<span class="pb-ov-prog">' + (a.total ? '<span class="pb-track"><span style="width:' + pct + '%"></span></span><em>' + a.got + ' of ' + a.total + ' done this week</em>' : '<em class="pb-ov-none">No jobs this week</em>') + '</span>' +
           '<span class="pb-ov-stuck">' + (a.stuck.length ? '<strong class="pb-ov-flag" title="' + esc(a.stuck.join(', ')) + '">🚩 ' + a.stuck.length + '</strong>' : '<em class="pb-ov-none">—</em>') + '</span>' +
