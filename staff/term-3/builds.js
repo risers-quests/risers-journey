@@ -4,7 +4,8 @@
    see approved projects; one marked "Tweak", "Maybe" or "Not approved"
    carries a note (the tweak suggested, what you're unsure about, or what
    to change) and stays hidden until it's changed and approved. A team's
-   own quest idea is OK'd on that team's board. */
+   own quest idea (meta.own in its board record) is OK'd here or on that
+   team's board. */
 (function () {
   var Q = window.T3Q, POOL = window.T3_POOL || [];
   var app = document.getElementById('app');
@@ -56,6 +57,7 @@
       chosen.appendChild(a);
     });
     body.appendChild(chosen);
+    body.appendChild(ideasEl());
     body.appendChild(chips([['all', 'Everything'], ['sol', Q.CATS.sol.name], ['sci', Q.CATS.sci.name]], 'cat'));
     body.appendChild(chips([[0, 'All levels'], [1, 'Level 1'], [2, 'Level 2'], [3, 'Level 3']], 'level'));
     var count = function (v) { return POOL.filter(function (b) { return status(b.id) === v; }).length; };
@@ -84,6 +86,55 @@
         grid.appendChild(card);
       });
       body.appendChild(grid);
+    });
+  }
+
+  // Quest ideas the teams made up themselves: OK, or ask for a change.
+  function ideasEl() {
+    var wrap = el('div', 'qo-staff');
+    var list = Q.GROUPS.filter(function (g) { return picks[g.id] && picks[g.id].own && picks[g.id].own.title; });
+    if (!list.length) return wrap;
+    wrap.appendChild(el('h2', 'pq-cat qo-h', '💡 Teams’ own quest ideas <span>(' + list.length + ')</span>'));
+    var grid = el('div', 'pq-grid');
+    list.forEach(function (g) {
+      var o = picks[g.id].own, st = o.st || 'waiting', ours = picks[g.id].project === 'own';
+      var card = el('article', 'pq-card pq-' + (o.cat || 'sol'),
+        '<span class="pq-level">' + g.name + '</span><h3>' + esc(o.title) + '</h3>' +
+        '<p class="pq-what">' + esc(o.what) + '</p>' +
+        '<p><b>You’ll make:</b> ' + esc(o.make) + '</p>' +
+        '<p class="pq-learn"><b>Learning:</b> ' + esc(o.learn) + '</p>' +
+        '<p class="pq-time">' + o.weeks + ' weeks · ' + esc(Q.CATS[o.cat || 'sol'].name) + ' · from ' + esc(o.by || g.kids.join(', ')) + '</p>' +
+        '<p class="qo-st qo-st-' + st + '">' + (ours ? '✓ This is ' + g.name + '’s quest now.' : st === 'yes' ? '✓ OK' + (o.okBy ? ' by ' + esc(o.okBy) : '') + '. The team can choose it.' : st === 'change' ? '✎ Change asked for' + (o.okBy ? ' by ' + esc(o.okBy) : '') : '⏳ Waiting for your OK') + '</p>');
+      if (!ours) {
+        var box = el('div', 'bl-approve',
+          '<div class="bl-approve-btns"><button type="button" class="bl-ap bl-ap-yes' + (st === 'yes' ? ' is-on' : '') + '" data-v="yes">✓ OK</button>' +
+          '<button type="button" class="bl-ap bl-ap-tweak' + (st === 'change' ? ' is-on' : '') + '" data-v="change">✎ Ask for a change</button></div>' +
+          (st === 'change' ? '<textarea rows="2" placeholder="What should they change?">' + esc(o.note || '') + '</textarea>' : ''));
+        Array.prototype.forEach.call(box.querySelectorAll('.bl-ap'), function (bt) {
+          bt.addEventListener('click', function () { saveIdea(g, { st: st === bt.dataset.v ? 'waiting' : bt.dataset.v, okBy: STAFF }, box); });
+        });
+        var ta = box.querySelector('textarea');
+        if (ta) ta.addEventListener('change', function () { saveIdea(g, { note: ta.value.trim() }, box); });
+        card.appendChild(box);
+      }
+      grid.appendChild(card);
+    });
+    wrap.appendChild(grid);
+    return wrap;
+  }
+  // Save into the team's board record, on top of its latest copy.
+  function saveIdea(g, fields, box) {
+    box.classList.add('is-saving');
+    window.eot2Fetch('term-3', g.id, 'board').then(function (d) {
+      var s = (d && d.state) || { meta: {}, cards: {}, standups: {}, checkins: {}, blockers: {}, materials: {} };
+      s.meta = s.meta || {};
+      var own = Object.assign({}, m(s, 'own') || {}, fields);
+      s.meta.own = { v: own, u: Date.now() };
+      return window.eot2Save('term-3', g.id, 'board', s).then(function (r) {
+        if (!r.ok) { alert('Not saved — check the connection.'); box.classList.remove('is-saving'); return; }
+        picks[g.id] = { project: m(s, 'project'), started: m(s, 'started'), own: own };
+        draw();
+      });
     });
   }
 

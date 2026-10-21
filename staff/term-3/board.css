@@ -406,3 +406,5 @@ button.qp-ck { font: inherit; text-align: left; border: 2px solid transparent; c
 .pb-field.is-missing input, .pb-field.is-missing textarea, .pb-field.is-missing select { border-color: #d0342c; background: #fff6f5; }
 .qo-miss { margin: 0; color: #d0342c; font-weight: 600; font-size: .88rem; }
 .qo-flag { color: #b0005f !important; font-weight: 600; }
+.qo-staff .pq-grid { margin-bottom: 18px; }
+.qo-staff .qo-st { margin-top: 2px; }

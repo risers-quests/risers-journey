@@ -216,7 +216,14 @@
     app.appendChild(main);
     if (!KID && OVERVIEW) { overview(main); return; }
     Promise.all([load(), Q.fetchApprovals().then(function (a) { approvals = a; })])
-      .then(function () { setStatus(dirty ? 'Saving…' : 'Saved', dirty ? '' : 'is-ok'); draw(); });
+      .then(function () {
+        setStatus(dirty ? 'Saving…' : 'Saved', dirty ? '' : 'is-ok');
+        // From the Our Own Quest tile: straight to our own quest (the form, if there's no idea yet).
+        if (KID && params.get('own')) { changing = true; ownOpen = !project('own'); }
+        draw();
+        var qo = KID && params.get('own') && app.querySelector('.qo');
+        if (qo) qo.scrollIntoView();
+      });
   }
   // Projects staff have approved; Risers only see these.
   var approvals = {};
