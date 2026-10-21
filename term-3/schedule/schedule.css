@@ -8,6 +8,9 @@
 .sc-btn { font: inherit; font-size: .88rem; font-weight: 600; padding: 9px 16px; border-radius: 99px; border: 1.5px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; }
 .sc-btn:disabled { opacity: .45; cursor: default; }
 .sc-ghost { background: #fff; color: var(--ink-soft); border-color: var(--border); }
+.sc-weeks { display: inline-flex; gap: 4px; padding: 4px; margin: 0 0 12px; background: var(--paper-soft); border-radius: 99px; }
+.sc-week { font-size: .88rem; font-weight: 600; padding: 7px 16px; border-radius: 99px; color: var(--ink-soft); text-decoration: none; }
+.sc-week.is-on { background: var(--ink); color: #fff; }
 .sc-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
 .sc-tab { flex: 1; font: inherit; font-size: .88rem; font-weight: 600; padding: 8px 0; border-radius: 10px; border: 1.5px solid var(--border); background: #fff; color: var(--ink-soft); cursor: pointer; }
 .sc-tab.is-on { background: var(--ink); border-color: var(--ink); color: #fff; }

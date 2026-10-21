@@ -14,7 +14,10 @@
    { days: { Mon: [{ s, e, t, c }], … }, u, by }  (s, e: minutes after
    midnight; t: what it is; c: colour, empty for the usual colour).
    Staff, ?view=staff: every Riser and how many blocks changed;
-   ?view=staff&kid=<slug>: that Riser's schedule, to change. */
+   ?view=staff&kid=<slug>: that Riser's schedule, to change.
+   Add &week=1 for week 1 (26–30 October): it starts from the week 1 plan
+   (week1-data.js) instead of the school timetable, is saved under
+   term3-schedule-w1, and is changed the same way. */
 (function () {
   var KEY = 'term3-schedule';
   var DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
@@ -22,10 +25,14 @@
   var START = 8 * 60 + 45, END = 15 * 60, STEP = 15, PX = 1.7;
   var app = document.getElementById('app');
   var params = new URLSearchParams(location.search);
+  // Week 1 has its own plan and its own saved copy (staff only).
+  var W1 = params.get('week') === '1';
+  if (W1) KEY = 'term3-schedule-w1';
+  var FROM = W1 ? 'the week 1 plan' : 'the school timetable';
 
   // Colours, and which one a block gets by its name.
   var COLOURS = [
-    { id: 'gold', name: 'Gold', re: /negotiable/i },
+    { id: 'gold', name: 'Gold', re: /negotiable|why quests|choose our quest/i },
     { id: 'blue', name: 'Blue', re: /core skills|progress board/i },
     { id: 'green', name: 'Green', re: /stem/i },
     { id: 'plum', name: 'Plum', re: /\bsel\b/i },
@@ -33,7 +40,7 @@
     { id: 'teal', name: 'Teal', re: /global|tamil/i },
     { id: 'brown', name: 'Brown', re: /carpentry/i },
     { id: 'leaf', name: 'Leaf', re: /garden/i },
-    { id: 'orange', name: 'Orange', re: /recess|daring|catch-up|skill builder/i },
+    { id: 'orange', name: 'Orange', re: /recess|daring|catch-up|skill builder|games?\b|team building|classroom agreement|art \//i },
     { id: 'red', name: 'Red', re: /set up|dismissal/i },
     { id: 'grey', name: 'Grey', re: /lunch|snack/i }
   ];
@@ -62,14 +69,14 @@
   function clone(x) { return JSON.parse(JSON.stringify(x)); }
 
   function school(slug) {
-    var t = (window.T3_TIMETABLE || {})[slug];
+    var t = ((W1 ? window.T3_WEEK1 : window.T3_TIMETABLE) || {})[slug];
     var days = {};
     DAYS.forEach(function (d) {
       days[d] = ((t && t[d]) || []).map(function (x) { return { s: x[0], e: x[1], t: x[2], c: '' }; });
     });
     return days;
   }
-  // How many blocks differ from the school timetable.
+  // How many blocks differ from the school timetable (or the week 1 plan).
   function changes(days, slug) {
     var base = school(slug), n = 0;
     DAYS.forEach(function (d) {
@@ -97,15 +104,16 @@
     app.innerHTML = '';
     if (crumb) app.appendChild(el('div', 'eot2-crumb', crumb));
     app.appendChild(el('header', 'hd-page-head sc-head',
-      '<div><p class="hd-eyebrow">Term 3</p><h1>' + (who === 'staff' ? esc(kid.name) + '’s schedule' : 'My schedule') + '</h1>' +
+      '<div><p class="hd-eyebrow">Term 3' + (W1 ? ' · Week 1, 26–30 October' : '') + '</p><h1>' + (who === 'staff' ? esc(kid.name) + '’s ' + (W1 ? 'week 1' : 'schedule') : 'My schedule') + '</h1>' +
       (EDIT ? '<p>Tap a block to change it. Drag a block to move it' +
-        ' (on a phone or tablet, press and hold it first). Drag the bottom edge to make it longer or shorter. ' + esc(kid.name) + ' sees the changes on their page.</p></div>'
+        ' (on a phone or tablet, press and hold it first). Drag the bottom edge to make it longer or shorter. ' + (W1 ? 'Only staff see week 1.' : esc(kid.name) + ' sees the changes on their page.') + '</p></div>'
         : '<p>Your week at LifeHub. If something needs to change, ask a facilitator.</p></div>') +
       '<span class="sc-status">Loading…</span>'));
+    if (EDIT) app.appendChild(weekSwitch('index.html?view=staff&kid=' + kid.slug));
     var tools = el('div', 'sc-tools',
       '<button type="button" class="sc-btn sc-add">+ Add a block</button>' +
       '<button type="button" class="sc-btn sc-undo" disabled>Undo</button>' +
-      '<button type="button" class="sc-btn sc-ghost sc-reset">Start again from the school timetable</button>');
+      '<button type="button" class="sc-btn sc-ghost sc-reset">Start again from ' + FROM + '</button>');
     if (EDIT) app.appendChild(tools);
     var tabs = el('div', 'sc-tabs');
     app.appendChild(tabs);
@@ -138,7 +146,7 @@
       changed();
     });
     tools.querySelector('.sc-reset').addEventListener('click', function () {
-      if (!confirm('Put back the school timetable? Your changes will go.')) return;
+      if (!confirm('Put back ' + FROM + '? Your changes will go.')) return;
       remember();
       days = school(kid.slug);
       changed();
@@ -206,7 +214,7 @@
         days[d].forEach(function (b, i) {
           var p = L.pos[i];
           var blk = el('div', 'sc-blk sc-c-' + colourOf(b) + (b.e - b.s <= 15 ? ' is-short' : '') + (p.of > 1 ? ' is-clash' : ''),
-            '<span class="sc-blk-t">' + esc(b.t || 'Untitled') + (EDIT && isChanged(b, d, base) ? ' <i class="sc-mark" title="Changed from the school timetable">✎</i>' : '') + '</span>' +
+            '<span class="sc-blk-t">' + esc(b.t || 'Untitled') + (EDIT && isChanged(b, d, base) ? ' <i class="sc-mark" title="Changed from ' + FROM + '">✎</i>' : '') + '</span>' +
             '<span class="sc-blk-time">' + span(b) + '</span><span class="sc-grip" aria-hidden="true"></span>');
           blk.style.top = (b.s - START) * PX + 'px';
           blk.style.height = Math.max((b.e - b.s) * PX - 2, 12) + 'px';
@@ -366,13 +374,22 @@
     });
   }
 
+  // Usual week or week 1, for staff.
+  function weekSwitch(href) {
+    return el('div', 'sc-weeks',
+      '<a class="sc-week' + (W1 ? '' : ' is-on') + '" href="' + href + '">Usual week</a>' +
+      '<a class="sc-week' + (W1 ? ' is-on' : '') + '" href="' + href + '&week=1">Week 1 · 26–30 Oct</a>');
+  }
+
   /* ---------- staff: every Riser ---------- */
 
   function staffAll() {
     app.innerHTML = '';
     app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/term-3/index.html">&larr; Term 3</a>'));
     app.appendChild(el('header', 'hd-page-head', '<div><p class="hd-eyebrow">Term 3</p><h1>Schedules</h1>' +
-      '<p>Each Riser’s week, starting from the school timetable. Only staff can change a schedule; Risers see theirs on their Term 3 page.</p></div>'));
+      (W1 ? '<p>Week 1 (26–30 October), starting from the week 1 plan: Monday to Wednesday are the launch days, Thursday and Friday the school timetable. Only staff see and change it.</p></div>'
+        : '<p>Each Riser’s week, starting from the school timetable. Only staff can change a schedule; Risers see theirs on their Term 3 page.</p></div>')));
+    app.appendChild(weekSwitch('index.html?view=staff'));
     var list = el('div', 'sc-kids', '<p class="sc-note">Loading…</p>');
     app.appendChild(list);
     var kids = window.EOT2_KIDS.slice().sort(function (a, b) { return a.name.localeCompare(b.name); });
@@ -382,8 +399,8 @@
         var st = rs[i] && rs[i].state;
         var n = st && st.days ? changes(st.days, k.slug) : 0;
         var a = el('a', 'sc-kid', '<strong>' + esc(k.name) + '</strong><span>' +
-          (n ? n + ' change' + (n > 1 ? 's' : '') + ' from the school timetable' + (st.by ? ' · last by ' + esc(st.by === 'staff' ? 'staff' : st.by) : '') : 'Same as the school timetable') + '</span>');
-        a.href = 'index.html?view=staff&kid=' + k.slug;
+          (n ? n + ' change' + (n > 1 ? 's' : '') + ' from ' + FROM + (st.by ? ' · last by ' + esc(st.by === 'staff' ? 'staff' : st.by) : '') : 'Same as ' + FROM) + '</span>');
+        a.href = 'index.html?view=staff&kid=' + k.slug + (W1 ? '&week=1' : '');
         if (n) a.classList.add('is-changed');
         list.appendChild(a);
       });
