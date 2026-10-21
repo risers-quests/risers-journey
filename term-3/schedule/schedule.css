@@ -91,10 +91,10 @@
 .sc-gl { display: grid; grid-auto-rows: minmax(40px, auto); gap: 3px; min-width: 1250px; background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 10px; }
 .sc-gl-t { grid-row: 1; font-size: .68rem; font-weight: 700; color: var(--ink-faint); border-left: 1px solid var(--border); padding-left: 3px; min-height: 0; align-self: end; }
 .sc-gl-day { grid-column: 1; font-weight: 700; display: flex; align-items: center; padding-left: 8px; border-radius: 8px; background: var(--paper-soft); }
-.sc-gl-b { font: inherit; text-align: left; color: inherit; background: #fff; cursor: pointer; border: 1px solid var(--border); border-radius: 8px; padding: 4px 6px; display: flex; flex-direction: column; justify-content: center; overflow: hidden; min-width: 0; }
-.sc-gl-b u { text-decoration: none; font-size: .64rem; color: var(--ink-faint); font-weight: 600; }
+.sc-gl-b { font: inherit; text-align: left; cursor: pointer; border: 0; border-left: 4px solid rgba(0, 0, 0, .25); border-radius: 8px; padding: 4px 6px; display: flex; flex-direction: column; justify-content: center; overflow: hidden; min-width: 0; }
+.sc-gl-b u { text-decoration: none; font-size: .64rem; opacity: .8; font-weight: 600; }
 .sc-gl-b b { font-size: .76rem; line-height: 1.15; }
-.sc-gl-b i { font-style: normal; font-size: .66rem; color: var(--ink-soft); font-weight: 600; }
+.sc-gl-b i { font-style: normal; font-size: .66rem; opacity: .85; font-weight: 600; }
 .sc-gl-b.is-narrow { padding: 3px; overflow-wrap: anywhere; } .sc-gl-b.is-narrow b { font-size: .64rem; } .sc-gl-b.is-narrow u { font-size: .56rem; }
-.sc-gl-bar { background: #ffe066; border-radius: 6px; font-size: .68rem; font-weight: 700; line-height: 1.2; padding: 3px 6px; display: flex; align-items: center; overflow: hidden; min-height: 22px; }
-.sc-gl-b:hover { border-color: var(--accent); }
+.sc-gl-bar { border-left: 4px solid rgba(0, 0, 0, .3); border-radius: 6px; font-size: .68rem; font-weight: 700; line-height: 1.2; padding: 3px 6px; display: flex; align-items: center; overflow: hidden; min-height: 22px; }
+.sc-gl-b:hover { box-shadow: 0 0 0 2px var(--accent); }

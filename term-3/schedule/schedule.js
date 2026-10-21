@@ -386,8 +386,9 @@
   // Monday to Wednesday of week 1 for everyone, built from each Riser's
   // week 1 schedule (all[i]), so changes made either way show in both.
   // The same activity at overlapping or touching times is one block,
-  // labelled with who is in it; music and Tamil are a bar for each time,
-  // with names, and stay fixed. Tap a block to change its name, times or
+  // labelled with who is in it, in the same colours as the Riser's
+  // schedule; music and Tamil are a bar for each time, with names, and
+  // stay fixed. Tap a block to change its name, times or
   // who is in it, or delete it; Add a block; Undo; Start everyone again.
   // A change is saved into each Riser's week 1 schedule it touches; new
   // or moved times fit around that Riser's music and Tamil.
@@ -441,7 +442,7 @@
         '<div class="sc-tools"><button type="button" class="sc-btn sc-gl-add">+ Add a block</button>' +
         '<button type="button" class="sc-btn sc-gl-undo"' + (past.length ? '' : ' disabled') + '>Undo</button>' +
         '<button type="button" class="sc-btn sc-ghost sc-gl-reset">Start everyone again from the week 1 plan</button></div>' +
-        '<p class="sc-note">Tap a block to change it, change who is in it, or delete it. Music and Tamil (yellow) stay where they are.</p>' +
+        '<p class="sc-note">Tap a block to change it, change who is in it, or delete it. Music and Tamil (the bars under each day) stay where they are.</p>' +
         '<div class="sc-gl-scroll"><div class="sc-gl" style="grid-template-columns:110px repeat(' + cols + ',minmax(0,1fr))">';
       for (var m = START; m < END; m += STEP) html += '<div class="sc-gl-t" style="grid-column:' + ((m - START) / STEP + 2) + '">' + hm(m) + '</div>';
       var row = 2;
@@ -459,12 +460,12 @@
           var ci = clusters.push(b) - 1;
           var span = b.lane === 0 && blocks.every(function (x) { return x.lane === 0 || x.e <= b.s || x.s >= b.e; }) ? lanes : 1;
           var c1 = (b.s - START) / STEP + 2, c2 = (b.e - START) / STEP + 2, w = who(b.kids);
-          html += '<button type="button" data-ci="' + ci + '" class="sc-gl-b' + (c2 - c1 <= 1 ? ' is-narrow' : '') + '" style="grid-row:' + (row + b.lane) + '/span ' + span + ';grid-column:' + c1 + '/' + c2 + '"' +
+          html += '<button type="button" data-ci="' + ci + '" class="sc-gl-b sc-c-' + colourOf(b.src[0].b) + (c2 - c1 <= 1 ? ' is-narrow' : '') + '" style="grid-row:' + (row + b.lane) + '/span ' + span + ';grid-column:' + c1 + '/' + c2 + '"' +
             ' aria-label="' + esc(b.t + ', ' + DAY_NAMES[d] + ' ' + hm(b.s) + '–' + hm(b.e) + (w ? ', ' + w : '') + '. Tap to change.') + '">' +
             '<u>' + hm(b.s) + '–' + hm(b.e) + '</u><b>' + esc(b.t) + '</b>' + (w && c2 - c1 > 1 ? '<i>' + esc(w) + '</i>' : '') + '</button>';
         });
         bars.forEach(function (b) {
-          html += '<div class="sc-gl-bar" style="grid-row:' + (row + lanes + b.lane) + ';grid-column:' + ((b.s - START) / STEP + 2) + '/' + ((b.e - START) / STEP + 2) + '">' +
+          html += '<div class="sc-gl-bar sc-c-' + colourOf(b) + '" style="grid-row:' + (row + lanes + b.lane) + ';grid-column:' + ((b.s - START) / STEP + 2) + '/' + ((b.e - START) / STEP + 2) + '">' +
             esc(b.names.join(', ')) + ' – ' + esc(b.t) + ' · ' + hm(b.s) + '–' + hm(b.e) + '</div>';
         });
         row += lanes + blanes;
