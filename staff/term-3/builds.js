@@ -92,9 +92,13 @@
   // Quest ideas the teams made up themselves: OK, or ask for a change.
   function ideasEl() {
     var wrap = el('div', 'qo-staff');
+    wrap.id = 'own-ideas';
     var list = Q.GROUPS.filter(function (g) { return picks[g.id] && picks[g.id].own && picks[g.id].own.title; });
-    if (!list.length) return wrap;
     wrap.appendChild(el('h2', 'pq-cat qo-h', '💡 Teams’ own quest ideas <span>(' + list.length + ')</span>'));
+    if (!list.length) {
+      wrap.appendChild(el('p', 'pq-catnote', 'No team has sent in its own quest idea yet. When one does, it shows here for you to OK or ask for a change.'));
+      return wrap;
+    }
     var grid = el('div', 'pq-grid');
     list.forEach(function (g) {
       var o = picks[g.id].own, st = o.st || 'waiting', ours = picks[g.id].project === 'own';
@@ -180,5 +184,9 @@
       var s = d && d.state;
       picks[g.id] = m(s, 'project') || m(s, 'own') ? { project: m(s, 'project'), started: m(s, 'started'), own: m(s, 'own') } : null;
     });
-  }).concat(Q.fetchApprovals().then(function (a) { approvals = a; }))).then(draw, draw);
+  }).concat(Q.fetchApprovals().then(function (a) { approvals = a; }))).then(draw, draw).then(function () {
+    // From the Own Quest Ideas tile: straight to the ideas.
+    var to = location.hash === '#own-ideas' && document.getElementById('own-ideas');
+    if (to) to.scrollIntoView();
+  });
 })();
