@@ -64,6 +64,12 @@
     return d;
   }
 
+  // Named groups, for labels on the at-a-glance view.
+  window.T3_WEEK1_GROUPS = {
+    'Teams 2 & 3': TEAMS_23,
+    'Teams 1 & 4': ['benjamin', 'yokesh', 'eva', 'karis', 'pranavi', 'zach']
+  };
+
   var school = window.T3_TIMETABLE || {};
   window.T3_WEEK1 = {};
   Object.keys(school).forEach(function (k) {

@@ -381,6 +381,76 @@
       '<a class="sc-week' + (W1 ? ' is-on' : '') + '" href="' + href + '&week=1">Week 1 · 26–30 Oct</a>');
   }
 
+  /* ---------- staff: week 1 at a glance ---------- */
+
+  // Monday to Wednesday of week 1 for everyone, built from each Riser's
+  // week 1 schedule (so staff changes show here). The same activity at
+  // overlapping or touching times is one block, labelled with who is in
+  // it; music and Tamil are shown as a bar for each Riser.
+  function glance(box, kids, all) {
+    var GDAYS = ['Mon', 'Tue', 'Wed'], OUT = /music|tamil/i, n = kids.length;
+    function who(set) {
+      if (set.length === n) return '';
+      var names = kids.filter(function (k) { return set.indexOf(k.slug) !== -1; }).map(function (k) { return k.name; });
+      var G = window.T3_WEEK1_GROUPS || {}, label = Object.keys(G).filter(function (g) {
+        return G[g].length === set.length && G[g].every(function (s) { return set.indexOf(s) !== -1; });
+      })[0];
+      if (label) return label;
+      if (set.length >= n - 3) return 'All except ' + kids.filter(function (k) { return set.indexOf(k.slug) === -1; }).map(function (k) { return k.name; }).join(', ');
+      return names.join(', ');
+    }
+    var cols = (END - START) / STEP;
+    var html = '<h2>Week 1 at a glance</h2><div class="sc-gl" style="grid-template-columns:110px repeat(' + cols + ',minmax(0,1fr))">';
+    for (var m = START; m < END; m += STEP) html += '<div class="sc-gl-t" style="grid-column:' + ((m - START) / STEP + 2) + '">' + hm(m) + '</div>';
+    var row = 2;
+    GDAYS.forEach(function (d) {
+      // Group the same activity at overlapping or touching times.
+      var blocks = [], bars = [];
+      kids.forEach(function (k, i) {
+        (all[i][d] || []).forEach(function (b) {
+          if (OUT.test(b.t)) {
+            // Music or Tamil at the same time: one bar with every name.
+            var same = bars.filter(function (x) { return x.t === b.t && x.s === b.s && x.e === b.e; })[0];
+            if (same) same.names.push(k.name); else bars.push({ s: b.s, e: b.e, t: b.t, names: [k.name] });
+            return;
+          }
+          blocks.push({ s: b.s, e: b.e, t: b.t, kids: [k.slug] });
+        });
+      });
+      for (var again = true; again;) {
+        again = false;
+        for (var x = 0; x < blocks.length && !again; x++) for (var y = x + 1; y < blocks.length && !again; y++) {
+          var A = blocks[x], Bk = blocks[y];
+          if (A.t !== Bk.t || Bk.s > A.e || Bk.e < A.s) continue;
+          A.s = Math.min(A.s, Bk.s); A.e = Math.max(A.e, Bk.e);
+          Bk.kids.forEach(function (k) { if (A.kids.indexOf(k) === -1) A.kids.push(k); });
+          blocks.splice(y, 1); again = true;
+        }
+      }
+      // Put each block in the first lane where it fits.
+      blocks.sort(function (a, b) { return a.s - b.s || b.kids.length - a.kids.length; });
+      var ends = [];
+      blocks.forEach(function (b) { var l = 0; while (ends[l] !== undefined && ends[l] > b.s) l++; ends[l] = b.e; b.lane = l; });
+      bars.sort(function (a, b) { return a.s - b.s; });
+      var bends = [];
+      bars.forEach(function (b) { var l = 0; while (bends[l] !== undefined && bends[l] > b.s) l++; bends[l] = b.e; b.lane = l; });
+      var lanes = Math.max(ends.length, 1), blanes = bends.length;
+      html += '<div class="sc-gl-day" style="grid-row:' + row + '/span ' + (lanes + blanes) + '">' + DAY_NAMES[d] + '</div>';
+      blocks.forEach(function (b) {
+        var span = b.lane === 0 && blocks.every(function (x) { return x.lane === 0 || x.e <= b.s || x.s >= b.e; }) ? lanes : 1;
+        var c1 = (b.s - START) / STEP + 2, c2 = (b.e - START) / STEP + 2, w = who(b.kids);
+        html += '<div class="sc-gl-b' + (c2 - c1 <= 1 ? ' is-narrow' : '') + '" style="grid-row:' + (row + b.lane) + '/span ' + span + ';grid-column:' + c1 + '/' + c2 + '">' +
+          '<u>' + hm(b.s) + '–' + hm(b.e) + '</u><b>' + esc(b.t) + '</b>' + (w && c2 - c1 > 1 ? '<i>' + esc(w) + '</i>' : '') + '</div>';
+      });
+      bars.forEach(function (b) {
+        html += '<div class="sc-gl-bar" style="grid-row:' + (row + lanes + b.lane) + ';grid-column:' + ((b.s - START) / STEP + 2) + '/' + ((b.e - START) / STEP + 2) + '">' +
+          esc(b.names.join(', ')) + ' – ' + esc(b.t) + ' · ' + hm(b.s) + '–' + hm(b.e) + '</div>';
+      });
+      row += lanes + blanes;
+    });
+    box.innerHTML = html + '</div><p class="sc-note">Thursday and Friday are each Riser’s school timetable. Open a Riser below to change their week 1.</p>';
+  }
+
   /* ---------- staff: every Riser ---------- */
 
   function staffAll() {
@@ -390,10 +460,13 @@
       (W1 ? '<p>Week 1 (26–30 October), starting from the week 1 plan: Monday to Wednesday are the launch days, Thursday and Friday the school timetable. Only staff see and change it.</p></div>'
         : '<p>Each Riser’s week, starting from the school timetable. Only staff can change a schedule; Risers see theirs on their Term 3 page.</p></div>')));
     app.appendChild(weekSwitch('index.html?view=staff'));
+    var glanceBox = el('div', 'sc-glance');
+    if (W1) app.appendChild(glanceBox);
     var list = el('div', 'sc-kids', '<p class="sc-note">Loading…</p>');
     app.appendChild(list);
     var kids = window.EOT2_KIDS.slice().sort(function (a, b) { return a.name.localeCompare(b.name); });
     Promise.all(kids.map(function (k) { return window.eot2Fetch(k.group, k.slug, KEY); })).then(function (rs) {
+      if (W1) glance(glanceBox, kids, rs.map(function (r, i) { return r && r.state && r.state.days ? r.state.days : school(kids[i].slug); }));
       list.innerHTML = '';
       kids.forEach(function (k, i) {
         var st = rs[i] && rs[i].state;
