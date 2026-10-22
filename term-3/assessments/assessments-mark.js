@@ -15,6 +15,9 @@
    - rules (paper.rules[item]): { symbol: true } (the answer is < or >),
      { fraction: true } (must be written as a fraction, not a decimal),
      { between: [lo, hi], count: n } (n different numbers strictly between).
+   - uploaded papers say each item's kind in paper.kinds[item]: 'num',
+     'mcq', 'symbol', 'fraction', 'text' (words: lower case, letters and
+     numbers only) or 'staff' (not marked here; staff mark it).
 
    Also used by tools/ to make the fingerprints, so it runs in Node too. */
 (function (root) {
@@ -72,6 +75,7 @@
     var s = clean(answer);
     if (!s) return '';
     if (kind === 'mcq') return s.replace(/[^a-h]/g, '').slice(0, 1);
+    if (kind === 'text') return s.replace(/[^a-z0-9]+/g, ' ').trim();
     if (kind === 'symbol') {
       var lt = s.indexOf('<') !== -1, gt = s.indexOf('>') !== -1;
       return lt === gt ? '' : lt ? '<' : '>';
@@ -98,15 +102,16 @@
 
   // Browser: mark every item of a paper. Resolves to { <item>: 'r'|'w' }.
   root.T3_autoMark = function (paper, answers, itemsOf) {
-    var auto = paper.auto || {}, rules = paper.rules || {};
+    var auto = paper.auto || {}, rules = paper.rules || {}, kinds = paper.kinds || {};
     var jobs = [];
     paper.sections.forEach(function (s) {
       s.qs.forEach(function (q) {
         itemsOf(q).forEach(function (id) {
           var a = answers[id];
           var rule = rules[id];
+          if (kinds[id] === 'staff') return;
           if (rule && rule.between) { jobs.push(Promise.resolve([id, inside(a, rule)])); return; }
-          var kind = q.options ? 'mcq' : rule && rule.symbol ? 'symbol' : rule && rule.fraction ? 'fraction' : 'num';
+          var kind = kinds[id] || (q.options ? 'mcq' : rule && rule.symbol ? 'symbol' : rule && rule.fraction ? 'fraction' : 'num');
           var c = canonical(a, kind);
           if (!c) { jobs.push(Promise.resolve([id, false])); return; }
           jobs.push(root.T3_hash(paper.id, id, c).then(function (h) { return [id, (auto[id] || []).indexOf(h) !== -1]; }));

@@ -1,24 +1,29 @@
-/* Term 3 Assessments (papers in assessments-data.js).
+/* Term 3 Assessments (papers in assessments-data.js, and papers staff
+   upload as a PDF: upload.js, kept as in assessments-store.js).
 
    - Riser, no ?id: their papers and where each one is up to.
-   - Riser, ?id=<paper>: answer, saving as they go; Submit sends it.
-     Once staff return it marked: the marked paper (a tick or a circle on
+   - Riser, ?id=<paper>: answer, saving as they go; Submit sends it, and
+     it's marked automatically from the key for staff to check. Once
+     staff return it: the marked paper (a tick or a circle on
      each question number, and on each part letter), My Results (right
      out of total for each section) and What I've Learnt, which they fill
      in and submit.
    - Staff, ?view=staff: every Riser's papers and status.
-     ?view=staff&kid=<slug>&id=<paper>: mark it, with the answer key from
-     the private staff site, and return it.
+     ?view=staff&kid=<slug>&id=<paper>: check the marks, with the answer
+     key (from the private staff site, or locked in an uploaded paper),
+     and return it. ?view=upload: set a new paper from a PDF.
 
    Records (week keys): term3-asmt-<paper> is the Riser's
    { answers, _submitted, review, _reviewed }; term3-asmt-<paper>-marks is
-   staff's { marks: { <item>: 'r'|'w' }, _returned, by }. Items are the
+   { marks: { <item>: 'r'|'w' }, auto, _returned, by }: the automatic
+   marks (by 'auto'), then staff's. Items are the
    question number, or number + part letter ('1a'). */
 (function () {
   var app = document.getElementById('app');
   var params = new URLSearchParams(location.search);
   var PAPERS = window.T3_ASSESSMENTS || [];
   var ASSIGNED = window.T3_ASSIGNED || {};
+  var UPLOADED = {}; // the uploaded papers' list, loaded at the start
 
   function el(tag, cls, html) {
     var e = document.createElement(tag);
@@ -38,6 +43,16 @@
   function filled(v) { return v && String(v).trim(); }
   function day(iso) { return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }); }
   function paperById(id) { return PAPERS.filter(function (p) { return p.id === id; })[0] || null; }
+  // A paper's details for lists: its own, or its entry in the uploaded list.
+  function infoById(id) { var p = paperById(id); return p || (UPLOADED[id] && !UPLOADED[id].off ? Object.assign({ id: id }, UPLOADED[id]) : null); }
+  function getPaper(id) { return paperById(id) ? Promise.resolve(paperById(id)) : infoById(id) ? window.T3_store.fetchPaper(id) : Promise.resolve(null); }
+  function papersFor(slug) {
+    var ids = (ASSIGNED[slug] || []).slice();
+    Object.keys(UPLOADED).forEach(function (id) {
+      if (!UPLOADED[id].off && (UPLOADED[id].kids || []).indexOf(slug) !== -1 && ids.indexOf(id) === -1) ids.push(id);
+    });
+    return ids.map(infoById).filter(Boolean);
+  }
   function keyOf(id) { return 'term3-asmt-' + id; }
   function marksKeyOf(id) { return 'term3-asmt-' + id + '-marks'; }
   var LETTERS = 'abcdefgh';
@@ -66,7 +81,7 @@
   function status(ans, mk) {
     if (ans && ans._reviewed) return { id: 'done', label: 'Revision plan done' };
     if (mk && mk._returned) return { id: 'returned', label: 'Marked' };
-    if (ans && ans._submitted) return { id: 'submitted', label: 'Submitted' };
+    if (ans && ans._submitted) return { id: 'submitted', label: 'Submitted', auto: !!(mk && mk.auto) };
     if (ans && ans.answers && Object.keys(ans.answers).some(function (k) { return filled(ans.answers[k]); })) return { id: 'started', label: 'Started' };
     return { id: 'new', label: 'Not started' };
   }
@@ -78,20 +93,32 @@
   function paperEl(paper, ans, marks, mode, hooks) {
     var answers = ans.answers = ans.answers || {};
     var box = el('div', 'as-paper');
+    // An uploaded paper: each page's picture, then the answer boxes for
+    // the questions on it.
+    var pages = paper.uploaded ? (paper.pages || []).slice() : [];
+    function pagesTo(n, sec) {
+      while (pages.length && pages[0] <= n) {
+        var holder = el('div', 'as-page');
+        holder.appendChild(pageImg(paper, pages.shift()));
+        (sec || box).appendChild(holder);
+      }
+    }
     paper.sections.forEach(function (s, si) {
       var sec = el('section', 'as-sec');
+      if (paper.uploaded && s.qs[0]) pagesTo(s.qs[0].page - 1);
       sec.appendChild(el('h2', 'as-sec-title', 'Section ' + (si + 1) + ': ' + esc(s.title)));
       s.qs.forEach(function (q) {
+        if (paper.uploaded) pagesTo(q.page, sec);
         var qd = el('div', 'as-q');
         var whole = !q.parts;
         if (whole) qd.dataset.item = String(q.n);
         // A question with lettered parts is marked on its letters only.
         qd.appendChild(el('div', 'as-qhead', numHtml(q.n + '.', whole ? marks[String(q.n)] : '', mode) +
-          '<p class="as-qtext">' + math(q.text) + '</p>'));
+          '<p class="as-qtext">' + (q.text ? math(q.text) : '<span class="as-qref">Question ' + q.n + '</span>') + '</p>'));
         if (q.parts) {
           q.parts.forEach(function (p) {
             var id = q.n + p.l;
-            var row = el('div', 'as-part', '<div class="as-plabel">' + numHtml('(' + p.l + ')', marks[id], mode, true) + '<span>' + math(p.text) + '</span></div>');
+            var row = el('div', 'as-part', '<div class="as-plabel">' + numHtml('(' + p.l + ')', marks[id], mode, true) + '<span>' + math(p.text || '') + '</span></div>');
             row.dataset.item = id;
             row.appendChild(answerEl(id, null, mode));
             if (mode === 'mark') row.appendChild(markEl(id));
@@ -105,6 +132,7 @@
       });
       box.appendChild(sec);
     });
+    pagesTo(Infinity);
     return box;
 
     function answerEl(id, q, mode) {
@@ -113,7 +141,7 @@
         var opts = el('div', 'as-opts');
         q.options.forEach(function (o, i) {
           var l = LETTERS[i];
-          var b = el('button', 'as-opt' + (answers[id] === l ? ' is-on' : ''), '<b>(' + l + ')</b> ' + math(o));
+          var b = el('button', 'as-opt' + (answers[id] === l ? ' is-on' : ''), '<b>(' + l + ')</b> ' + math(o || ''));
           b.type = 'button';
           b.disabled = mode !== 'answer';
           b.addEventListener('click', function () {
@@ -134,6 +162,7 @@
         if (q && q.work && filled(answers[id + 'w'])) wrap.appendChild(el('p', 'as-written as-working', '<span>Working</span>' + esc(answers[id + 'w']).replace(/\n/g, '<br>')));
         wrap.appendChild(el('p', 'as-written' + (filled(answers[id]) ? '' : ' as-blank'), filled(answers[id]) ? esc(answers[id]).replace(/\n/g, '<br>') : 'No answer'));
       }
+      if (mode === 'mark' && paper.kinds && paper.kinds[id] === 'staff') wrap.appendChild(el('p', 'as-key as-key-staff', 'Not marked automatically: mark this one yourself.'));
       if (mode === 'mark' && hooks.key && hooks.key[id]) wrap.appendChild(el('p', 'as-key', '<b>Key:</b> ' + esc(hooks.key[id])));
       return wrap;
     }
@@ -175,9 +204,23 @@
       (show && mark === 'w' ? '<i class="as-ring" aria-label="wrong"></i>' : '') + '</span>';
   }
 
+  // One picture per page, reused when the paper is drawn again, so a
+  // redraw doesn't jump while pictures load.
+  var imgs = {};
+  function pageImg(paper, n) {
+    var k = paper.id + '-' + n;
+    if (imgs[k]) return imgs[k];
+    var img = imgs[k] = el('img', 'as-pageimg');
+    img.alt = 'Page ' + n;
+    window.T3_store.fetchPage(paper.id, n).then(function (src) {
+      if (src) img.src = src; else img.replaceWith(el('p', 'as-wait', 'Page ' + n + ' didn’t load. Check the connection, then open the paper again.'));
+    });
+    return img;
+  }
+
   function headerHtml(paper, kid, when) {
-    return '<div class="as-head"><p class="as-band">' + esc(paper.grade) + ' &nbsp;•&nbsp; ' + esc(paper.subject) + ' &nbsp;•&nbsp; ' + esc(paper.title) + '</p>' +
-      '<p class="as-cover">Covering: ' + esc(paper.covering) + '</p>' +
+    return '<div class="as-head"><p class="as-band">' + [paper.grade, paper.subject, paper.title].filter(Boolean).map(esc).join(' &nbsp;•&nbsp; ') + '</p>' +
+      (paper.covering ? '<p class="as-cover">Covering: ' + esc(paper.covering) + '</p>' : '') +
       '<div class="as-namedate"><span><b>Name:</b> ' + esc(kid.name) + '</span><span><b>Date:</b> ' + esc(when) + '</span></div></div>';
   }
 
@@ -258,7 +301,7 @@
     app.appendChild(el('div', 'eot2-head', '<h1>Assessments</h1><p>Your assessments for Term 3.</p>'));
     var list = el('div', 'as-list', '<p class="as-sub">Loading…</p>');
     app.appendChild(list);
-    var mine = (ASSIGNED[kid.slug] || []).map(paperById).filter(Boolean);
+    var mine = papersFor(kid.slug);
     Promise.all(mine.map(function (p) {
       return Promise.all([window.eot2Fetch(kid.group, kid.slug, keyOf(p.id)), window.eot2Fetch(kid.group, kid.slug, marksKeyOf(p.id))])
         .then(function (r) { return { paper: p, st: status(r[0] && r[0].state, r[1] && r[1].state) }; });
@@ -266,7 +309,8 @@
       list.innerHTML = rows.length ? '' : '<p class="as-wait">No assessments yet. They’ll appear here when your facilitator sets them.</p>';
       rows.forEach(function (r) {
         var a = el('a', 'as-card as-st-' + r.st.id, '<span class="as-card-sub">' + esc(r.paper.subject) + '</span><strong>' + esc(r.paper.title) + '</strong>' +
-          '<span class="as-card-cover">' + esc(r.paper.covering) + '</span><em>' + (r.st.id === 'returned' ? 'Marked — fill in What I’ve Learnt' : r.st.label) + '</em>');
+          (r.paper.covering ? '<span class="as-card-cover">' + esc(r.paper.covering) + '</span>' : '') +
+          '<em>' + (r.st.id === 'returned' ? 'Marked — fill in What I’ve Learnt' : r.st.id === 'submitted' ? 'Sent — your facilitator is checking it' : r.st.label) + '</em>');
         a.href = 'index.html?id=' + r.paper.id;
         list.appendChild(a);
       });
@@ -315,11 +359,12 @@
       }
       if (ans._submitted) {
         // Submitted but not marked yet (say the connection dropped): mark it now.
-        body.appendChild(el('p', 'as-note', 'Marking your paper…'));
-        markAndSave(kid, paper, ans).then(function () { renderKidPaper(kid, paper); });
+        if (!mk.auto) markAndSave(kid, paper, ans);
+        body.appendChild(el('div', 'as-banner', '<strong>Your paper has gone to your facilitator.</strong> <span>They will check it and send it back to you with your marks.</span>'));
+        body.appendChild(paperEl(paper, ans, {}, 'read'));
         return;
       }
-      body.appendChild(el('p', 'as-note', esc(paper.note) + ' Type fractions like 2/3 (always in simplest form), and mixed numbers like 4 1/6.'));
+      body.appendChild(el('p', 'as-note', esc(paper.note) + (paper.uploaded ? '' : ' Type fractions like 2/3 (always in simplest form), and mixed numbers like 4 1/6.')));
       body.appendChild(paperEl(paper, ans, {}, 'answer', { change: function () { save(); } }));
       body.appendChild(submitPanel(kid, paper, ans, save));
     });
@@ -337,12 +382,11 @@
     if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, 400);
   }
 
-  // Marks the paper from the key, then saves the marks for staff and the
-  // Riser. Resolves true once both are saved.
+  // Marks the paper from the key and saves the marks for staff to check;
+  // the Riser sees them once staff return it. Resolves true once saved.
   function markAndSave(kid, paper, ans) {
     return window.T3_autoMark(paper, ans.answers || {}, items).then(function (marks) {
-      var now = new Date().toISOString();
-      return window.eot2Save(kid.group, kid.slug, marksKeyOf(paper.id), { marks: marks, auto: true, _returned: now, by: 'auto' })
+      return window.eot2Save(kid.group, kid.slug, marksKeyOf(paper.id), { marks: marks, auto: true, _marked: new Date().toISOString(), by: 'auto' })
         .then(function (r) { return r.ok; });
     }, function () { return false; });
   }
@@ -366,7 +410,7 @@
       if (pass) ans._pass = { at: ans._submitted, blank: blanksOf(paper, ans) };
       b.disabled = true;
       msg.className = 'as-msg';
-      msg.textContent = 'Sending and marking…';
+      msg.textContent = 'Sending…';
       save(true).then(function (ok) {
         if (!ok) return false;
         return markAndSave(kid, paper, ans);
@@ -465,13 +509,29 @@
   function renderStaffList() {
     app.innerHTML = '';
     app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/term-3/index.html">&larr; Term 3</a>'));
-    app.appendChild(el('div', 'eot2-head', '<h1>Term 3 Assessments</h1><p>Papers are marked automatically from the answer key when a Riser submits. Open one to check the marks or change any of them.</p>'));
+    app.appendChild(el('div', 'eot2-head', '<h1>Term 3 Assessments</h1><p>When a Riser submits, the paper is marked automatically from the answer key and comes to you. Check the marks, then return it to them.</p>'));
+    var add = el('a', 'eot2-btn as-new', '+ New assessment');
+    add.href = 'index.html?view=upload';
+    app.appendChild(add);
     var list = el('div', 'as-list', '<p class="as-sub">Loading…</p>');
     app.appendChild(list);
+    var all = Object.keys(UPLOADED);
+    if (all.length) {
+      var mg = el('div', 'as-manage', '<h2>Uploaded papers</h2>');
+      all.sort(function (a, b) { return (UPLOADED[b].at || '').localeCompare(UPLOADED[a].at || ''); }).forEach(function (id) {
+        var it = UPLOADED[id];
+        var names = (it.kids || []).map(function (s) { var k = window.EOT2_findKid(s); return k ? k.name : s; });
+        var a = el('a', 'as-mrow' + (it.off ? ' is-off' : ''), '<b>' + esc(it.subject ? it.subject + ' — ' : '') + esc(it.title) + '</b><span>' + (it.off ? 'Hidden' : names.length ? esc(names.join(', ')) : 'No one yet') + '</span><em>Change</em>');
+        a.href = 'index.html?view=upload&id=' + encodeURIComponent(id);
+        mg.appendChild(a);
+      });
+      app.appendChild(mg);
+    }
     var jobs = [];
     window.EOT2_KIDS.forEach(function (k) {
-      (ASSIGNED[k.slug] || []).forEach(function (id) { var p = paperById(id); if (p) jobs.push({ kid: k, paper: p }); });
+      papersFor(k.slug).forEach(function (p) { jobs.push({ kid: k, paper: p }); });
     });
+
     Promise.all(jobs.map(function (j) {
       return Promise.all([window.eot2Fetch(j.kid.group, j.kid.slug, keyOf(j.paper.id)), window.eot2Fetch(j.kid.group, j.kid.slug, marksKeyOf(j.paper.id))])
         .then(function (r) { j.st = status(r[0] && r[0].state, r[1] && r[1].state); return j; });
@@ -479,7 +539,7 @@
       list.innerHTML = rows.length ? '' : '<p class="as-sub">No assessments set yet.</p>';
       rows.forEach(function (j) {
         var a = el('a', 'as-card as-st-' + j.st.id, '<span class="as-card-sub">' + esc(j.kid.name) + '</span><strong>' + esc(j.paper.subject) + ' — ' + esc(j.paper.title) + '</strong>' +
-          '<em>' + (j.st.id === 'submitted' ? 'Submitted — ready to mark' : j.st.label) + '</em>');
+          '<em>' + (j.st.id === 'submitted' ? (j.st.auto ? 'Marked automatically — check and return' : 'Submitted — ready to mark') : j.st.id === 'returned' ? 'Returned — waiting for the revision plan' : j.st.label) + '</em>');
         a.href = 'index.html?view=staff&kid=' + j.kid.slug + '&id=' + j.paper.id;
         list.appendChild(a);
       });
@@ -514,25 +574,57 @@
     Promise.all([
       window.eot2Fetch(kid.group, kid.slug, keyOf(paper.id)),
       window.eot2Fetch(kid.group, kid.slug, marksKeyOf(paper.id)),
-      loadKey(paper)
+      paper.uploaded ? null : loadKey(paper)
     ]).then(function (r) {
       var ans = (r[0] && r[0].state) || {};
       var mk = (r[1] && r[1].state) || {};
       mk.marks = mk.marks || {};
       var key = r[2];
       st.set('saved', mk._returned ? 'Returned' : 'Saved');
+      // An uploaded paper's key is locked with the facilitator PIN.
+      var keyBox = null;
+      if (paper.enc) {
+        keyBox = el('div', 'as-pass as-keybox', '<label>Answer key: facilitator PIN <input type="password" inputmode="numeric" autocomplete="off" maxlength="8"></label>');
+        var kb = el('button', 'eot2-btn', 'Show the key');
+        kb.type = 'button';
+        var kmsg = el('span', 'as-msg');
+        keyBox.appendChild(kb); keyBox.appendChild(kmsg);
+        var kin = keyBox.querySelector('input');
+        var tryKey = function (pin, quiet) {
+          return window.T3_store.unlock(paper.enc, pin).then(function (k) {
+            if (!k) { if (!quiet) { kmsg.textContent = 'That PIN isn’t right.'; kin.select(); } return; }
+            try { sessionStorage.setItem('rj-t3-pin', pin); } catch (e) {}
+            key = k;
+            keyBox.remove();
+            if (ans._submitted) drawKeep();
+          });
+        };
+        kb.addEventListener('click', function () { tryKey(kin.value.trim()); });
+        kin.addEventListener('keydown', function (e) { if (e.key === 'Enter') tryKey(kin.value.trim()); });
+        var remembered = null;
+        try { remembered = sessionStorage.getItem('rj-t3-pin'); } catch (e) {}
+        if (remembered) tryKey(remembered, true);
+      }
       body.innerHTML = '';
       if (!ans._submitted) {
         body.appendChild(el('p', 'as-wait', kid.name + ' hasn’t submitted this yet. It can be marked once it’s submitted.'));
         return;
       }
       body.insertAdjacentHTML('beforeend', headerHtml(paper, kid, day(ans._submitted)));
-      if (mk.auto) body.appendChild(el('p', 'as-note', 'Marked automatically from the answer key' + (mk.by && mk.by !== 'auto' ? ', then checked by ' + esc(mk.by.charAt(0).toUpperCase() + mk.by.slice(1)) : '') + '. Change any mark below, then send the updated marks.'));
+      if (mk.auto) body.appendChild(el('p', 'as-note', 'Marked automatically from the answer key' + (mk.by && mk.by !== 'auto' ? ', then checked by ' + esc(mk.by.charAt(0).toUpperCase() + mk.by.slice(1)) : '') + '. ' +
+        (mk._returned ? 'Change any mark below, then send the updated marks.' : 'Check the marks, mark any it left for you, then return it to ' + esc(kid.name) + '.')));
+      else if (!mk._returned) {
+        // Submitted, but the automatic marks never arrived: make them now.
+        body.appendChild(el('p', 'as-note', 'Marking it from the answer key…'));
+        markAndSave(kid, paper, ans).then(function (ok) { if (ok) renderStaffMark(kid, paper); });
+        return;
+      }
       if (ans._pass) body.appendChild(el('p', 'as-note as-note-pass', 'Submitted with a facilitator pass. Left blank: ' + ans._pass.blank.map(label).map(function (x) { return 'Q' + x; }).join(', ') + '.'));
       var save = saver(kid, marksKeyOf(paper.id), mk, function (m, t) { st.set(m, m === 'saved' && mk._returned ? 'Returned · saved' : t); });
       var tally = el('div', 'as-tally');
       body.appendChild(tally);
-      if (!key) body.appendChild(el('p', 'as-note', 'The answer key couldn’t be loaded from the staff site, so mark from the paper key.'));
+      if (keyBox) body.appendChild(keyBox);
+      else if (!key) body.appendChild(el('p', 'as-note', 'The answer key couldn’t be loaded from the staff site, so mark from the paper key.'));
       var paperBox = el('div');
       body.appendChild(paperBox);
       var results = el('div');
@@ -584,17 +676,28 @@
 
   /* ---------- start ---------- */
 
-  var paper = params.get('id') && paperById(params.get('id'));
-  if (params.get('view') === 'staff') {
+  var id = params.get('id');
+  var view = params.get('view');
+  if (view === 'staff' || view === 'upload') {
     var staffName = null;
     try { staffName = localStorage.getItem('rj-staff-name'); } catch (e) {}
     if (!staffName) { location.replace('../../index.html'); return; }
-    var k = params.get('kid') && window.EOT2_findKid(params.get('kid'));
-    if (k && paper) renderStaffMark(k, paper); else renderStaffList();
-    return;
+    if (view === 'upload') { window.T3_renderUpload(app, id); return; }
+  } else {
+    var kid = window.EOT2_signedInKid();
+    if (!kid) { window.EOT2_leaveWithoutKid('index.html?view=staff', '../../index.html'); return; }
   }
-  var kid = window.EOT2_signedInKid();
-  if (!kid) { window.EOT2_leaveWithoutKid('index.html?view=staff', '../../index.html'); return; }
-  var mine = ASSIGNED[kid.slug] || [];
-  if (paper && mine.indexOf(paper.id) !== -1) renderKidPaper(kid, paper); else renderKidList(kid);
+  app.innerHTML = '<p class="as-sub">Loading…</p>';
+  window.T3_store.fetchIndex().then(function (items) {
+    UPLOADED = items;
+    if (view === 'staff') {
+      var k = params.get('kid') && window.EOT2_findKid(params.get('kid'));
+      if (!k || !id || !infoById(id)) { renderStaffList(); return; }
+      getPaper(id).then(function (p) { if (p) renderStaffMark(k, p); else renderStaffList(); });
+      return;
+    }
+    var mine = papersFor(kid.slug).map(function (p) { return p.id; });
+    if (!id || mine.indexOf(id) === -1) { renderKidList(kid); return; }
+    getPaper(id).then(function (p) { if (p) renderKidPaper(kid, p); else renderKidList(kid); });
+  });
 })();
