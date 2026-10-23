@@ -1,10 +1,12 @@
-/* Term 3 Assessments — set a new paper from one PDF (staff only).
+/* Term 3 Assessments — set a new paper from one PDF or Word file (staff
+   only).
 
-   ?view=upload: choose the PDF (questions, then the answer key on a new
-   page headed "Answer Key"). The browser reads it (pdf.js): each page
-   becomes a picture, and the key is matched to the question numbers
-   (assessments-parse.js). Staff check each answer and how it's marked,
-   choose the Risers and send it. Pages from the key on are never saved.
+   ?view=upload: choose who it's for, then the file (questions, then the
+   answer key on a new page headed "Answer Key"). The browser reads it: a
+   PDF's pages become pictures (pdf.js); a Word file's questions are kept
+   as text, one piece per question (docx.js). The key is matched to the
+   question numbers (assessments-parse.js). Staff check each answer and
+   how it's marked, and send it. Nothing from the key on is ever saved.
    ?view=upload&id=<paper>: change who has an uploaded paper, or hide it. */
 (function () {
   var PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
@@ -136,17 +138,22 @@
     try { staff = localStorage.getItem('rj-staff-name'); } catch (e) {}
     app.innerHTML = '';
     app.appendChild(el('div', 'eot2-crumb', '<a href="index.html?view=staff">&larr; Term 3 Assessments</a>'));
-    app.appendChild(el('div', 'eot2-head', '<h1>New assessment</h1><p>Upload one PDF: the questions first, then the answer key. Start the answer key on a new page with the heading <b>Answer Key</b>, and number its answers the same way as the questions (1. 2. 3. and (a) (b) for parts).</p>'));
+    app.appendChild(el('div', 'eot2-head', '<h1>New assessment</h1><p>Upload one file, PDF or Word: the questions first, then the answer key. Start the answer key on a new page with the heading <b>Answer Key</b>, and number its answers the same way as the questions (1. 2. 3. and (a) (b) for parts).</p>'));
     var body = el('div', 'as-body');
     app.appendChild(body);
-    var pick = el('div', 'up-pick');
+
+    var who = el('section', 'as-results', '<h2>1. Who is it for?</h2>');
+    var kids = kidPicker(who, []);
+    body.appendChild(who);
+
+    var pick = el('section', 'as-results up-pick', '<h2>2. The paper</h2>');
     var file = el('input');
     file.type = 'file';
-    file.accept = 'application/pdf,.pdf';
+    file.accept = 'application/pdf,.pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.docx';
     file.id = 'up-file';
-    var lab = el('label', 'eot2-btn up-choose', 'Choose the PDF');
+    var lab = el('label', 'eot2-btn up-choose', 'Choose the file');
     lab.htmlFor = 'up-file';
-    var msg = el('p', 'as-sub');
+    var msg = el('p', 'as-sub', 'A PDF or a Word file (.docx).');
     pick.appendChild(file); pick.appendChild(lab); pick.appendChild(msg);
     body.appendChild(pick);
     var out = el('div');
@@ -157,27 +164,38 @@
       if (!f) return;
       out.innerHTML = '';
       msg.textContent = 'Opening ' + f.name + '…';
-      readPdf(f, function (t) { msg.textContent = t; }).then(function (pages) {
+      var progress = function (t) { msg.textContent = t; };
+      if (/\.docx$/i.test(f.name)) {
+        window.T3_readDocx(f, progress).then(function (w) {
+          msg.textContent = f.name + ' · ' + Object.keys(w.blocks).length + ' questions';
+          review(out, [{ n: 1, lines: w.lines }], staff, kids, w);
+        }, function () {
+          msg.textContent = 'That file couldn’t be read. Check it’s a Word file (.docx; an old .doc won’t work) and try again.';
+        });
+        return;
+      }
+      readPdf(f, progress).then(function (pages) {
         msg.textContent = f.name + ' · ' + pages.length + ' page' + (pages.length > 1 ? 's' : '');
-        review(out, pages, staff);
+        review(out, pages, staff, kids, null);
       }, function () {
-        msg.textContent = 'That file couldn’t be read. Check it’s a PDF and try again.';
+        msg.textContent = 'That file couldn’t be read. Check it’s a PDF or a Word file and try again.';
       });
     });
   }
 
-  function review(out, pages, staff) {
+  function review(out, pages, staff, kids, word) {
     var parsed = window.T3_parse(pages);
     var d = parsed.details;
     out.innerHTML = '';
+    if (word) word.notes.forEach(function (n) { out.appendChild(el('p', 'as-note as-note-pass', esc(n))); });
     if (!parsed.keyPage) {
       out.appendChild(el('p', 'as-note as-note-pass', 'No answer key found. Add a page at the end with the heading <b>Answer Key</b>, then upload it again. You can still send it and mark every answer yourself.'));
-    } else if (parsed.keyStartsMidPage) {
+    } else if (!word && parsed.keyStartsMidPage) {
       out.appendChild(el('p', 'as-note as-note-pass', 'The answer key starts on page ' + parsed.keyPage + ', which also has questions on it. Start the key on a new page and upload it again, so Risers can’t see any of it.'));
     }
 
     // Details.
-    var det = el('section', 'as-results', '<h2>1. The paper</h2>');
+    var det = el('section', 'as-results', '<h2>3. Details</h2>');
     var fields = {};
     [['subject', 'Subject'], ['title', 'Title'], ['grade', 'Grade'], ['covering', 'Covering']].forEach(function (f) {
       var row = el('label', 'up-field', '<span>' + f[1] + '</span>');
@@ -198,8 +216,19 @@
     if (secInputs.length) det.appendChild(el('p', 'as-sub', 'Sections are scored on their own, and each one is a line in the Riser’s revision plan.'));
     out.appendChild(det);
 
+    // A Word paper: each question as Risers will see it.
+    if (word) {
+      var pv = el('section', 'as-results', '<h2>4. What Risers see</h2><p class="as-sub">Each question as Risers will see it, with answer boxes under it. The answer key is left out. If something looks wrong, fix it in Word, or save it as a PDF and upload that.</p>');
+      var box = el('div', 'up-preview');
+      parsed.questions.forEach(function (q) {
+        box.appendChild(el('div', 'up-pq', '<b>' + q.n + '.</b><div class="as-qhtml">' + (word.blocks[q.n] || '<i>Not found</i>') + '</div>'));
+      });
+      pv.appendChild(box);
+      out.appendChild(pv);
+    }
+
     // Pages Risers see: everything before the key.
-    var pg = el('section', 'as-results', '<h2>2. Pages Risers see</h2><p class="as-sub">The answer key pages are left out. Tap a page to change it.</p>');
+    var pg = el('section', 'as-results', '<h2>4. Pages Risers see</h2><p class="as-sub">The answer key pages are left out. Tap a page to change it.</p>');
     var grid = el('div', 'up-pages');
     var show = {};
     pages.forEach(function (p) {
@@ -216,11 +245,11 @@
       grid.appendChild(b);
     });
     pg.appendChild(grid);
-    out.appendChild(pg);
+    if (!word) out.appendChild(pg);
 
     // The answers.
     var items = parsed.items.map(function (it) { return Object.assign({}, it); });
-    var an = el('section', 'as-results', '<h2>3. Answers and marking</h2><p class="as-sub">Check each answer read from the key. Numbers are marked by value, so 2.5, 5/2 and 2 1/2 are the same; fractions must be in simplest form. To accept more than one answer, write “or” between them.</p>');
+    var an = el('section', 'as-results', '<h2>5. Answers and marking</h2><p class="as-sub">Check each answer read from the key. Numbers are marked by value, so 2.5, 5/2 and 2 1/2 are the same; fractions must be in simplest form. To accept more than one answer, write “or” between them.</p>');
     if (!items.length) an.appendChild(el('p', 'as-wait', 'No numbered questions found.'));
     var table = el('div', 'up-rows');
     items.forEach(function (it) {
@@ -256,13 +285,8 @@
     an.appendChild(table);
     out.appendChild(an);
 
-    // Who takes it.
-    var who = el('section', 'as-results', '<h2>4. Who takes it</h2>');
-    var kids = kidPicker(who, []);
-    out.appendChild(who);
-
     // Send.
-    var send = el('section', 'as-results', '<h2>5. Send</h2><p class="as-sub">The facilitator PIN locks the answer key, so only staff can read it when marking.</p>');
+    var send = el('section', 'as-results', '<h2>6. Send</h2><p class="as-sub">The facilitator PIN locks the answer key, so only staff can read it when marking.</p>');
     var pinRow = el('label', 'up-field', '<span>Facilitator PIN</span>');
     var pin = el('input', 'as-input up-pin');
     pin.type = 'password'; pin.inputMode = 'numeric'; pin.autocomplete = 'off'; pin.maxLength = 8;
@@ -280,19 +304,19 @@
       smsg.className = 'as-msg';
       var bad = items.filter(function (it) { return !check(it).ok; });
       var chosen = kids();
-      var shown = pages.filter(function (p) { return show[p.n]; }).map(function (p) { return p.n; });
+      var shown = word ? [] : pages.filter(function (p) { return show[p.n]; }).map(function (p) { return p.n; });
       if (!fields.title.value.trim()) { smsg.textContent = 'Add a title.'; return; }
-      if (!items.length) { smsg.textContent = 'No questions found in this PDF.'; return; }
+      if (!items.length) { smsg.textContent = 'No questions found in this file.'; return; }
       if (bad.length) { smsg.textContent = bad.length + ' answer' + (bad.length > 1 ? 's need' : ' needs') + ' fixing (marked ⚠).'; bad[0] && table.querySelector('.up-row.is-bad').scrollIntoView({ block: 'center' }); return; }
-      if (!shown.length) { smsg.textContent = 'Choose at least one page for Risers to see.'; return; }
-      if (!chosen.length) { smsg.textContent = 'Choose who takes it.'; return; }
+      if (!word && !shown.length) { smsg.textContent = 'Choose at least one page for Risers to see.'; return; }
+      if (!chosen.length) { smsg.textContent = 'Choose who it’s for (at the top).'; document.querySelector('.up-kids').scrollIntoView({ block: 'center' }); return; }
       sha16('lifehub-t3|pin|' + pin.value.trim()).then(function (h) {
         if (h !== window.T3_PASS) { smsg.textContent = 'That PIN isn’t right.'; return; }
         b.disabled = true;
         smsg.textContent = 'Saving…';
         parsed.sections = secInputs.map(function (inp, i) { return inp.value.trim() || 'Section ' + (i + 1); });
-        build(parsed, items, fields, shown, pin.value.trim()).then(function (paper) {
-          return saveAll(paper, pages, shown, chosen, staff, function (t) { smsg.textContent = t; });
+        build(parsed, items, fields, shown, pin.value.trim(), word).then(function (paper) {
+          return saveAll(paper, pages, shown, chosen, staff, function (t) { smsg.textContent = t; }, word);
         }).then(function (ok) {
           if (!ok) { b.disabled = false; smsg.textContent = 'Not sent — check the connection and try again.'; return; }
           location.href = 'index.html?view=staff';
@@ -301,22 +325,45 @@
     });
   }
 
+  // Tap Risers to choose them, or a quick pick for a whole age group.
   function kidPicker(box, on) {
-    var grid = el('div', 'up-kids');
     var picked = {};
     on.forEach(function (s) { picked[s] = true; });
-    window.EOT2_KIDS.forEach(function (k) {
-      var b = el('button', 'up-kid' + (picked[k.slug] ? ' is-on' : ''), esc(k.name));
+    var quick = el('div', 'up-quick');
+    var grid = el('div', 'up-kids');
+    var count = el('p', 'as-sub up-count');
+    var btns = [];
+    function paint() {
+      btns.forEach(function (x) { x.b.classList.toggle('is-on', !!picked[x.k.slug]); });
+      var n = window.EOT2_KIDS.filter(function (k) { return picked[k.slug]; }).length;
+      count.textContent = n ? n + ' chosen' : 'No one chosen yet. Tap a name.';
+    }
+    [['Everyone', function () { return true; }], ['Ages 8–10', function (k) { return k.ageBand === '8-10'; }],
+      ['Ages 11–13', function (k) { return k.ageBand === '11-13'; }], ['Clear', null]].forEach(function (q) {
+      var b = el('button', 'up-qbtn', q[0]);
       b.type = 'button';
-      b.addEventListener('click', function () { picked[k.slug] = !picked[k.slug]; b.classList.toggle('is-on', !!picked[k.slug]); });
+      b.addEventListener('click', function () {
+        window.EOT2_KIDS.forEach(function (k) { picked[k.slug] = !!(q[1] && q[1](k)); });
+        paint();
+      });
+      quick.appendChild(b);
+    });
+    window.EOT2_KIDS.forEach(function (k) {
+      var b = el('button', 'up-kid', esc(k.name));
+      b.type = 'button';
+      b.addEventListener('click', function () { picked[k.slug] = !picked[k.slug]; paint(); });
+      btns.push({ b: b, k: k });
       grid.appendChild(b);
     });
+    box.appendChild(quick);
     box.appendChild(grid);
+    box.appendChild(count);
+    paint();
     return function () { return window.EOT2_KIDS.map(function (k) { return k.slug; }).filter(function (s) { return picked[s]; }); };
   }
 
   // The paper record: structure, fingerprints and the locked key.
-  function build(parsed, items, fields, shown, pin) {
+  function build(parsed, items, fields, shown, pin, word) {
     var id = 'u-' + Date.now().toString(36);
     var byId = {};
     items.forEach(function (it) { byId[it.id] = it; });
@@ -355,21 +402,25 @@
         id: id, uploaded: true,
         subject: fields.subject.value.trim(), title: fields.title.value.trim(),
         grade: fields.grade.value.trim(), covering: fields.covering.value.trim(),
-        note: 'Read each page, then write your answers in the boxes under it.' + (hasNum ? ' Type fractions like 2/3 (always in simplest form), and mixed numbers like 4 1/6.' : ''),
-        pages: shown, sections: sections, kinds: kinds, rules: rules, auto: auto, enc: enc
+        note: (word ? 'Read each question, then write your answer in the box under it.' : 'Read each page, then write your answers in the boxes under it.') + (hasNum ? ' Type fractions like 2/3 (always in simplest form), and mixed numbers like 4 1/6.' : ''),
+        format: word ? 'docx' : 'pdf', pages: shown, sections: sections, kinds: kinds, rules: rules, auto: auto, enc: enc
       };
     });
   }
 
   // Pages first, then the paper, then the list: a paper only appears
   // once everything it needs is saved.
-  function saveAll(paper, pages, shown, kids, staff, progress) {
+  function saveAll(paper, pages, shown, kids, staff, progress, word) {
     var S = window.T3_store;
-    var todo = pages.filter(function (p) { return shown.indexOf(p.n) !== -1; });
+    // A PDF: one record per page picture. Word: the questions, packed a
+    // few to a record.
+    var todo = word ? chunks(word.blocks) : pages.filter(function (p) { return shown.indexOf(p.n) !== -1; });
+    if (word) paper.htmlChunks = todo.length;
     function one(i) {
       if (i >= todo.length) return Promise.resolve(true);
-      progress('Saving page ' + (i + 1) + ' of ' + todo.length + '…');
-      return S.savePage(paper.id, todo[i].n, todo[i].img).then(function (ok) { return ok && one(i + 1); });
+      progress('Saving ' + (word ? 'part ' : 'page ') + (i + 1) + ' of ' + todo.length + '…');
+      var job = word ? S.saveHtml(paper.id, i, todo[i]) : S.savePage(paper.id, todo[i].n, todo[i].img);
+      return job.then(function (ok) { return ok && one(i + 1); });
     }
     return one(0).then(function (ok) {
       if (!ok) return false;
@@ -384,6 +435,18 @@
     });
   }
 
+  function chunks(blocks) {
+    var out = [], cur = {}, size = 0;
+    Object.keys(blocks).forEach(function (n) {
+      var len = blocks[n].length + 20;
+      if (size && size + len > 150000) { out.push(cur); cur = {}; size = 0; }
+      cur[n] = blocks[n];
+      size += len;
+    });
+    if (size) out.push(cur);
+    return out;
+  }
+
   // An uploaded paper: who has it, or hide it.
   function renderEdit(app, id) {
     app.innerHTML = '';
@@ -395,7 +458,7 @@
       body.innerHTML = '';
       if (!it) { body.appendChild(el('p', 'as-wait', 'This paper wasn’t found.')); return; }
       body.appendChild(el('div', 'eot2-head', '<h1>' + esc(it.subject ? it.subject + ' — ' : '') + esc(it.title) + '</h1><p>Uploaded' + (it.by ? ' by ' + esc(it.by.charAt(0).toUpperCase() + it.by.slice(1)) : '') + (it.at ? ' on ' + new Date(it.at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' }) : '') + '.</p>'));
-      var who = el('section', 'as-results', '<h2>Who takes it</h2><p class="as-sub">Taking a Riser off hides the paper from them; anything they wrote is kept.</p>');
+      var who = el('section', 'as-results', '<h2>Who is it for?</h2><p class="as-sub">Taking a Riser off hides the paper from them; anything they wrote is kept.</p>');
       var kids = kidPicker(who, it.kids || []);
       body.appendChild(who);
       var bar = el('div', 'as-submitbar');

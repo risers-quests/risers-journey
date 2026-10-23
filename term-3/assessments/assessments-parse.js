@@ -1,9 +1,9 @@
 /* Term 3 Assessments — reading an uploaded paper.
 
-   One PDF: the questions, then the answer key starting on a new page with
-   a heading such as "Answer Key". Questions are numbered 1. 2. 3. …; a
-   question's parts and choices are lettered (a) (b) …; "Section 1: …"
-   lines start a section.
+   One PDF or Word file: the questions, then the answer key starting on a
+   new page with a heading such as "Answer Key". Questions are numbered
+   1. 2. 3. …; a question's parts and choices are lettered (a) (b) …;
+   "Section 1: …" lines start a section.
 
    T3_parse(pages) takes the text of each page, as lines, and returns the
    paper's details, sections and questions, the page the key starts on,
@@ -13,7 +13,7 @@
 (function (root) {
   var QNUM = /^(\d{1,3})\s*[.)]\s*(.*)$/;
   var SECTION = /^section\s+(\d+)\s*[:.\-–—]?\s*(.*)$/i;
-  var KEYHEAD = /^(answer\s*key|answers|answer\s*sheet|marking\s*(scheme|key|guide)|memo(randum)?|solutions)\b\s*[:.]?\s*(section.*)?$/i;
+  var KEYHEAD = /^(answer\s*key|answers|answer\s*sheet|marking\s*(scheme|key|guide)|memo(randum)?|solutions|for\s+(guide|teacher|staff|facilitator)s?(['’]s?)?\s+use\s+only|teacher['’]?s?\s+(copy|key))\b\s*[:.]?\s*(section.*)?$/i;
   var NUMTOK = /-?\s*\d+(?:\.\d+)?(?:\s+\d+\s*\/\s*\d+|\s*\/\s*-?\s*\d+)?/g;
 
   function norm(s) { return String(s || '').replace(/[−–—]/g, '-').replace(/\s+/g, ' ').trim(); }
@@ -164,5 +164,6 @@
   }
 
   root.T3_parse = parse;
+  root.T3_parseRules = { QNUM: QNUM, SECTION: SECTION, KEYHEAD: KEYHEAD };
   root.T3_guess = guess;
 })(typeof window !== 'undefined' ? window : globalThis);

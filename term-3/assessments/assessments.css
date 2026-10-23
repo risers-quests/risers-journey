@@ -150,3 +150,15 @@ p.as-blank { margin: 6px 0 0; font-size: .85rem; }
 .up-kid { font: inherit; font-size: .9rem; padding: 7px 16px; border-radius: 99px; border: 1.5px solid var(--border); background: #fff; cursor: pointer; }
 .up-kid.is-on { border-color: var(--accent); background: var(--accent-soft, #eef2fd); font-weight: 600; }
 @media (max-width: 560px) { .up-field { grid-template-columns: 1fr; gap: 4px; } }
+.up-quick { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
+.up-qbtn { font: inherit; font-size: .8rem; font-weight: 600; padding: 5px 12px; border-radius: 8px; border: 1px dashed var(--border); background: var(--paper-soft); color: var(--ink-soft); cursor: pointer; }
+.up-count { margin: 10px 0 0; }
+.up-pick h2 { width: 100%; }
+.up-preview { max-height: 460px; overflow: auto; border: 1px solid var(--border); border-radius: 12px; padding: 4px 14px; background: #fff; }
+.up-pq { display: grid; grid-template-columns: 34px 1fr; gap: 6px; padding: 10px 0; border-top: 1px solid var(--border); }
+.up-pq:first-child { border-top: 0; }
+.as-qhtml { flex: 1; min-width: 0; line-height: 1.6; }
+.as-qhtml p { margin: 2px 0 6px; }
+.as-qhtml table { border-collapse: collapse; margin: 4px 0 8px; }
+.as-qhtml td, .as-qhtml th { padding: 2px 18px 2px 0; vertical-align: top; }
+.as-qhtml img { max-width: 100%; height: auto; }

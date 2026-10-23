@@ -114,7 +114,9 @@
         if (whole) qd.dataset.item = String(q.n);
         // A question with lettered parts is marked on its letters only.
         qd.appendChild(el('div', 'as-qhead', numHtml(q.n + '.', whole ? marks[String(q.n)] : '', mode) +
-          '<p class="as-qtext">' + (q.text ? math(q.text) : '<span class="as-qref">Question ' + q.n + '</span>') + '</p>'));
+          (q.text ? '<p class="as-qtext">' + math(q.text) + '</p>'
+            : paper.html && paper.html[q.n] ? '<div class="as-qtext as-qhtml">' + paper.html[q.n] + '</div>'
+            : '<p class="as-qtext"><span class="as-qref">Question ' + q.n + '</span></p>')));
         if (q.parts) {
           q.parts.forEach(function (p) {
             var id = q.n + p.l;

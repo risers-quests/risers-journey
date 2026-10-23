@@ -8,7 +8,10 @@
                            see, each item's kind and answer fingerprints
                            (as in assessments-mark.js), and the readable
                            key locked with the facilitator PIN (enc).
-     asmt-page-<id>-<n>    { img } page n of the PDF as a picture.
+     asmt-page-<id>-<n>    { img } page n of a PDF as a picture.
+     asmt-html-<id>-<k>    { blocks: { <n>: html } } a Word paper's
+                           questions, a few to a record (htmlChunks says
+                           how many records).
    A Riser's answers and marks use the same records as the other papers. */
 (function () {
   var G = 'term-3', K = 'staff';
@@ -24,8 +27,22 @@
       return window.eot2Save(G, K, 'asmt-papers', { items: items }).then(function (r) { return r.ok; });
     });
   }
+  // A Word paper comes back with its questions' HTML in paper.html.
   function fetchPaper(id) {
-    return window.eot2Fetch(G, K, 'asmt-paper-' + id).then(function (r) { return r && r.state && r.state.id ? r.state : null; });
+    return window.eot2Fetch(G, K, 'asmt-paper-' + id).then(function (r) {
+      var p = r && r.state && r.state.id ? r.state : null;
+      if (!p || !p.htmlChunks) return p;
+      var jobs = [];
+      for (var i = 0; i < p.htmlChunks; i++) jobs.push(window.eot2Fetch(G, K, 'asmt-html-' + id + '-' + i));
+      return Promise.all(jobs).then(function (rs) {
+        p.html = {};
+        rs.forEach(function (x) { Object.assign(p.html, (x && x.state && x.state.blocks) || {}); });
+        return p;
+      });
+    });
+  }
+  function saveHtml(id, k, blocks) {
+    return window.eot2Save(G, K, 'asmt-html-' + id + '-' + k, { blocks: blocks }).then(function (r) { return r.ok; });
   }
   function savePaper(paper) {
     return window.eot2Save(G, K, 'asmt-paper-' + paper.id, paper).then(function (r) { return r.ok; });
@@ -64,7 +81,7 @@
   window.T3_store = {
     fetchIndex: fetchIndex, saveIndexItem: saveIndexItem,
     fetchPaper: fetchPaper, savePaper: savePaper,
-    fetchPage: fetchPage, savePage: savePage,
+    fetchPage: fetchPage, savePage: savePage, saveHtml: saveHtml,
     lock: lock, unlock: unlock
   };
 })();
