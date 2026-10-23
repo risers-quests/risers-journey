@@ -7,7 +7,8 @@
    as text, one piece per question (docx.js). The key is matched to the
    question numbers (assessments-parse.js). Staff check each answer and
    how it's marked, and send it. Nothing from the key on is ever saved.
-   ?view=upload&id=<paper>: change who has an uploaded paper, or hide it. */
+   ?view=upload&id=<paper>: change who has a paper (taking it back from
+   someone), or delete it. */
 (function () {
   var PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
   var KINDS = [
@@ -447,40 +448,62 @@
     return out;
   }
 
-  // An uploaded paper: who has it, or hide it.
+  // A paper: who has it, or delete it.
   function renderEdit(app, id) {
     app.innerHTML = '';
     app.appendChild(el('div', 'eot2-crumb', '<a href="index.html?view=staff">&larr; Term 3 Assessments</a>'));
     var body = el('div', 'as-body', '<p class="as-sub">Loading…</p>');
     app.appendChild(body);
     window.T3_store.fetchIndex().then(function (items) {
-      var it = items[id];
+      var built = (window.T3_ASSESSMENTS || []).filter(function (p) { return p.id === id; })[0];
+      var it = items[id] || {};
+      var info = built || it;
       body.innerHTML = '';
-      if (!it) { body.appendChild(el('p', 'as-wait', 'This paper wasn’t found.')); return; }
-      body.appendChild(el('div', 'eot2-head', '<h1>' + esc(it.subject ? it.subject + ' — ' : '') + esc(it.title) + '</h1><p>Uploaded' + (it.by ? ' by ' + esc(it.by.charAt(0).toUpperCase() + it.by.slice(1)) : '') + (it.at ? ' on ' + new Date(it.at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' }) : '') + '.</p>'));
-      var who = el('section', 'as-results', '<h2>Who is it for?</h2><p class="as-sub">Taking a Riser off hides the paper from them; anything they wrote is kept.</p>');
-      var kids = kidPicker(who, it.kids || []);
+      if ((!built && !items[id]) || it.deleted) { body.appendChild(el('p', 'as-wait', 'This paper wasn’t found. It may have been deleted.')); return; }
+      body.appendChild(el('div', 'eot2-head', '<h1>' + esc(info.subject ? info.subject + ' — ' : '') + esc(info.title) + '</h1>' +
+        (it.at ? '<p>Uploaded' + (it.by ? ' by ' + esc(it.by.charAt(0).toUpperCase() + it.by.slice(1)) : '') + ' on ' + new Date(it.at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' }) + '.</p>' : '')));
+      var who = el('section', 'as-results', '<h2>Who is it for?</h2><p class="as-sub">Taking a Riser off takes the paper back: they won’t see it, and anything they wrote is kept.</p>');
+      var kids = kidPicker(who, window.T3_store.kidsOf(items, id));
       body.appendChild(who);
       var bar = el('div', 'as-submitbar');
       var b = el('button', 'eot2-btn', 'Save');
       b.type = 'button';
-      var hide = el('button', 'as-passlink', it.off ? 'Show this paper again' : 'Hide this paper from everyone');
-      hide.type = 'button';
       var msg = el('span', 'as-msg');
-      bar.appendChild(b); bar.appendChild(msg); bar.appendChild(hide);
+      bar.appendChild(b); bar.appendChild(msg);
       body.appendChild(bar);
-      function save(fields) {
+      b.addEventListener('click', function () {
         b.disabled = true;
-        window.T3_store.saveIndexItem(id, fields).then(function (ok) {
+        window.T3_store.saveIndexItem(id, { kids: kids() }).then(function (ok) {
           b.disabled = false;
           if (!ok) { msg.className = 'as-msg'; msg.textContent = 'Not saved — check the connection and try again.'; return; }
           location.href = 'index.html?view=staff';
         });
-      }
-      b.addEventListener('click', function () { save({ kids: kids() }); });
-      hide.addEventListener('click', function () {
-        if (!it.off && !confirm('Hide this paper? No Riser will see it.')) return;
-        save({ off: !it.off });
+      });
+
+      // Delete: for everyone, with every Riser's answers and marks.
+      var del = el('section', 'as-results up-delete', '<h2>Delete this assessment</h2><p class="as-sub">It goes from every Riser, and all their answers, marks and revision plans for it are deleted too. This can’t be undone.</p>');
+      var open = el('button', 'up-delbtn', 'Delete this assessment');
+      open.type = 'button';
+      var box = el('div', 'as-pass');
+      box.hidden = true;
+      box.innerHTML = '<label>Facilitator PIN <input type="password" inputmode="numeric" autocomplete="off" maxlength="8"></label>';
+      var go = el('button', 'up-delbtn is-sure', 'Yes, delete it');
+      go.type = 'button';
+      var dmsg = el('span', 'as-msg');
+      box.appendChild(go); box.appendChild(dmsg);
+      del.appendChild(open); del.appendChild(box);
+      body.appendChild(del);
+      open.addEventListener('click', function () { open.hidden = true; box.hidden = false; box.querySelector('input').focus(); });
+      go.addEventListener('click', function () {
+        sha16('lifehub-t3|pin|' + box.querySelector('input').value.trim()).then(function (h) {
+          if (h !== window.T3_PASS) { dmsg.textContent = 'That PIN isn’t right.'; return; }
+          go.disabled = true;
+          dmsg.textContent = 'Deleting…';
+          window.T3_store.deletePaper(id).then(function (ok) {
+            if (!ok) { go.disabled = false; dmsg.textContent = 'Not all of it was deleted — check the connection and try again.'; return; }
+            location.href = 'index.html?view=staff';
+          });
+        });
       });
     });
   }

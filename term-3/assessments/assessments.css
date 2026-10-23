@@ -162,3 +162,10 @@ p.as-blank { margin: 6px 0 0; font-size: .85rem; }
 .as-qhtml table { border-collapse: collapse; margin: 4px 0 8px; }
 .as-qhtml td, .as-qhtml th { padding: 2px 18px 2px 0; vertical-align: top; }
 .as-qhtml img { max-width: 100%; height: auto; }
+.as-cardwrap { position: relative; display: flex; }
+.as-cardwrap .as-card { flex: 1; padding-bottom: 40px; }
+.as-takeback { position: absolute; right: 12px; bottom: 12px; font: inherit; font-size: .78rem; font-weight: 600; padding: 4px 12px; border-radius: 99px; border: 1px solid var(--border); background: #fff; color: var(--ink-soft); cursor: pointer; }
+.as-takeback:hover { border-color: #a3432b; color: #a3432b; }
+.up-delete { border-color: #f1c7bd; }
+.up-delbtn { font: inherit; font-size: .9rem; font-weight: 600; padding: 9px 18px; border-radius: 10px; border: 1.5px solid #a3432b; background: #fff; color: #a3432b; cursor: pointer; }
+.up-delbtn.is-sure { background: #a3432b; color: #fff; }

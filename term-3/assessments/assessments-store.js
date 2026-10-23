@@ -2,7 +2,10 @@
 
    Kept in the worker under group term-3, kid staff:
      asmt-papers           { items: { <id>: { title, subject, grade, covering,
-                             kids: [slug…], pages, by, at, u, off } } }
+                             kids: [slug…], pages, by, at, u, deleted } } }
+                           A paper written into assessments-data.js can
+                           have an entry too: its kids (once staff take
+                           it back from someone) or deleted.
      asmt-paper-<id>       the paper: details, sections and question numbers,
                            the page each question is on, which pages Risers
                            see, each item's kind and answer fingerprints
@@ -44,6 +47,33 @@
   function saveHtml(id, k, blocks) {
     return window.eot2Save(G, K, 'asmt-html-' + id + '-' + k, { blocks: blocks }).then(function (r) { return r.ok; });
   }
+  // Who has a paper: its entry's kids, or else assessments-data.js.
+  function kidsOf(items, id) {
+    if (items[id] && items[id].kids) return items[id].kids.slice();
+    var A = window.T3_ASSIGNED || {};
+    return Object.keys(A).filter(function (s) { return A[s].indexOf(id) !== -1; });
+  }
+  // Deletes a paper: gone from the list first, then every Riser's answers
+  // and marks for it, and an uploaded paper's own records, are emptied.
+  function deletePaper(id) {
+    return saveIndexItem(id, { deleted: true, kids: [] }).then(function (ok) {
+      if (!ok) return false;
+      var jobs = [];
+      window.EOT2_KIDS.forEach(function (k) {
+        jobs.push(window.eot2Save(k.group, k.slug, 'term3-asmt-' + id, {}));
+        jobs.push(window.eot2Save(k.group, k.slug, 'term3-asmt-' + id + '-marks', {}));
+      });
+      return window.eot2Fetch(G, K, 'asmt-paper-' + id).then(function (r) {
+        var p = r && r.state;
+        if (p && p.id) {
+          (p.pages || []).forEach(function (n) { jobs.push(window.eot2Save(G, K, 'asmt-page-' + id + '-' + n, {})); });
+          for (var i = 0; i < (p.htmlChunks || 0); i++) jobs.push(window.eot2Save(G, K, 'asmt-html-' + id + '-' + i, {}));
+          jobs.push(window.eot2Save(G, K, 'asmt-paper-' + id, {}));
+        }
+        return Promise.all(jobs).then(function (rs) { return rs.every(function (x) { return x.ok; }); });
+      });
+    });
+  }
   function savePaper(paper) {
     return window.eot2Save(G, K, 'asmt-paper-' + paper.id, paper).then(function (r) { return r.ok; });
   }
@@ -79,7 +109,7 @@
   }
 
   window.T3_store = {
-    fetchIndex: fetchIndex, saveIndexItem: saveIndexItem,
+    fetchIndex: fetchIndex, saveIndexItem: saveIndexItem, kidsOf: kidsOf, deletePaper: deletePaper,
     fetchPaper: fetchPaper, savePaper: savePaper,
     fetchPage: fetchPage, savePage: savePage, saveHtml: saveHtml,
     lock: lock, unlock: unlock

@@ -44,14 +44,20 @@
   function day(iso) { return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }); }
   function paperById(id) { return PAPERS.filter(function (p) { return p.id === id; })[0] || null; }
   // A paper's details for lists: its own, or its entry in the uploaded list.
-  function infoById(id) { var p = paperById(id); return p || (UPLOADED[id] && !UPLOADED[id].off ? Object.assign({ id: id }, UPLOADED[id]) : null); }
+  function infoById(id) {
+    var it = UPLOADED[id];
+    if (it && (it.deleted || it.off)) return null;
+    return paperById(id) || (it ? Object.assign({ id: id }, it) : null);
+  }
   function getPaper(id) { return paperById(id) ? Promise.resolve(paperById(id)) : infoById(id) ? window.T3_store.fetchPaper(id) : Promise.resolve(null); }
+  function allIds() {
+    var ids = PAPERS.map(function (p) { return p.id; });
+    Object.keys(UPLOADED).forEach(function (id) { if (ids.indexOf(id) === -1) ids.push(id); });
+    return ids.filter(infoById);
+  }
+  function kidsOf(id) { return window.T3_store.kidsOf(UPLOADED, id); }
   function papersFor(slug) {
-    var ids = (ASSIGNED[slug] || []).slice();
-    Object.keys(UPLOADED).forEach(function (id) {
-      if (!UPLOADED[id].off && (UPLOADED[id].kids || []).indexOf(slug) !== -1 && ids.indexOf(id) === -1) ids.push(id);
-    });
-    return ids.map(infoById).filter(Boolean);
+    return allIds().filter(function (id) { return kidsOf(id).indexOf(slug) !== -1; }).map(infoById);
   }
   function keyOf(id) { return 'term3-asmt-' + id; }
   function marksKeyOf(id) { return 'term3-asmt-' + id + '-marks'; }
@@ -517,13 +523,13 @@
     app.appendChild(add);
     var list = el('div', 'as-list', '<p class="as-sub">Loading…</p>');
     app.appendChild(list);
-    var all = Object.keys(UPLOADED);
+    var all = allIds();
     if (all.length) {
-      var mg = el('div', 'as-manage', '<h2>Uploaded papers</h2>');
-      all.sort(function (a, b) { return (UPLOADED[b].at || '').localeCompare(UPLOADED[a].at || ''); }).forEach(function (id) {
-        var it = UPLOADED[id];
-        var names = (it.kids || []).map(function (s) { var k = window.EOT2_findKid(s); return k ? k.name : s; });
-        var a = el('a', 'as-mrow' + (it.off ? ' is-off' : ''), '<b>' + esc(it.subject ? it.subject + ' — ' : '') + esc(it.title) + '</b><span>' + (it.off ? 'Hidden' : names.length ? esc(names.join(', ')) : 'No one yet') + '</span><em>Change</em>');
+      var mg = el('div', 'as-manage', '<h2>Papers</h2><p class="as-sub">Change who has a paper, or delete it.</p>');
+      all.sort(function (a, b) { return ((UPLOADED[b] || {}).at || '').localeCompare((UPLOADED[a] || {}).at || ''); }).forEach(function (id) {
+        var it = infoById(id);
+        var names = kidsOf(id).map(function (s) { var k = window.EOT2_findKid(s); return k ? k.name : s; });
+        var a = el('a', 'as-mrow', '<b>' + esc(it.subject ? it.subject + ' — ' : '') + esc(it.title) + '</b><span>' + (UPLOADED[id] && UPLOADED[id].at ? 'Uploaded ' + day(UPLOADED[id].at) + ' · ' : '') + (names.length ? esc(names.join(', ')) : 'No one') + '</span><em>Change</em>');
         a.href = 'index.html?view=upload&id=' + encodeURIComponent(id);
         mg.appendChild(a);
       });
@@ -540,10 +546,25 @@
     })).then(function (rows) {
       list.innerHTML = rows.length ? '' : '<p class="as-sub">No assessments set yet.</p>';
       rows.forEach(function (j) {
+        var card = el('div', 'as-cardwrap');
         var a = el('a', 'as-card as-st-' + j.st.id, '<span class="as-card-sub">' + esc(j.kid.name) + '</span><strong>' + esc(j.paper.subject) + ' — ' + esc(j.paper.title) + '</strong>' +
+          (UPLOADED[j.paper.id] && UPLOADED[j.paper.id].at ? '<span class="as-card-cover">Uploaded ' + day(UPLOADED[j.paper.id].at) + '</span>' : '') +
           '<em>' + (j.st.id === 'submitted' ? (j.st.auto ? 'Marked automatically — check and return' : 'Submitted — ready to mark') : j.st.id === 'returned' ? 'Returned — waiting for the revision plan' : j.st.label) + '</em>');
         a.href = 'index.html?view=staff&kid=' + j.kid.slug + '&id=' + j.paper.id;
-        list.appendChild(a);
+        card.appendChild(a);
+        // Take back: the Riser no longer sees it; what they wrote is kept.
+        var tb = el('button', 'as-takeback', 'Take back');
+        tb.type = 'button';
+        tb.addEventListener('click', function () {
+          if (!confirm('Take this paper back from ' + j.kid.name + '? They won’t see it any more. Anything they wrote is kept, and comes back if you send it to them again.')) return;
+          tb.disabled = true;
+          window.T3_store.saveIndexItem(j.paper.id, { kids: kidsOf(j.paper.id).filter(function (s) { return s !== j.kid.slug; }) }).then(function (ok) {
+            if (!ok) { tb.disabled = false; alert('Not saved — check the connection and try again.'); return; }
+            return window.T3_store.fetchIndex().then(function (items) { UPLOADED = items; renderStaffList(); });
+          });
+        });
+        card.appendChild(tb);
+        list.appendChild(card);
       });
     });
   }
