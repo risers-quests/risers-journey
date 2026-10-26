@@ -953,13 +953,19 @@
     // Check-ins start in quest week 1: the week a team chooses its quest
     // is for getting ready. (Records stay keyed by the school week.)
     var qw = questWeek();
-    if (qw && qw.n < 1) {
+    // A Riser trying Term 3 out (assets/brand.js LH_TRIAL), and staff
+    // looking at their team, can open it early to see how it works.
+    var trial = qw && qw.n < 1 && (window.LH_TRIAL || []).some(function (t) {
+      return KID ? ME.toLowerCase() === t : group.kids.some(function (k) { return k.toLowerCase() === t; });
+    });
+    if (qw && qw.n < 1 && !trial) {
       var first = Q.WEEKS[Q.startWeek(meta('started')) - 1];
       wrap.appendChild(el('div', 'pb-intro', '<h2>Check-in</h2><p>Your first check-in is on Wednesday of quest week 1' +
         (first ? ' (' + Q.nice(wedOf(first[0])) + ')' : '') + '. This week, get ready: read the Quest Pack, pick your roles and fill the Backlog with jobs.</p>'));
       return wrap;
     }
-    var label = qw ? 'Quest week ' + qw.n : 'Week ' + w;
+    var label = trial ? 'Quest week 1' : qw ? 'Quest week ' + qw.n : 'Week ' + w;
+    if (trial) wrap.appendChild(el('p', 'pb-ci-trial', '👀 Try-out: opened early so you can see how it works. The real first check-in is on Wednesday of quest week 1.' + (KID ? '' : ' Clear it afterwards on the Try-out page.')));
     wrap.appendChild(el('div', 'pb-intro', '<h2>' + label + ' check-in</h2><p>Wednesday, 30 minutes. <b>Part A</b>: together, ' +
       esc(master() || 'the Quest Master') + ' types (15 min). <b>Part B</b>: on your own computer (15 min).</p>'));
     wrap.appendChild(el('div', 'pb-part-head', '<h3>Part A · Our team <small>(15 minutes)</small></h3><p>Talk together. ' + esc(master() || 'The Quest Master') + ' fills it in.</p>'));
@@ -1062,7 +1068,7 @@
     if (window.T3_reflect) window.T3_reflect(rf, group, KID ? ME : '', w, {
       closed: closed,
       label: label,
-      first: !!qw && qw.n === 1,
+      first: trial || (!!qw && qw.n === 1),
       addTry: function (t) {
         putCard(uid(), { title: '🤝 ' + t, col: 'todo', who: [ME], order: now(), by: ME, kind: 'try' });
         return true;

@@ -1,9 +1,10 @@
 /* Term 3, staff: clear a Riser's try-out data, so Term 3 can be tried out
    before it starts and then begin from blank. Clears, for the Riser chosen:
-   their group's quest (project, roles, board, stand-ups and check-ins,
-   which their whole group shares), their weekly check-in ticks, and their
-   assessment answers, marks and revision plans. Conference notes and
-   everything from Terms 1 and 2 are left alone. */
+   their group's quest (project, roles, board, stand-ups, check-ins and
+   each teammate's team reflections, which their whole group shares),
+   their weekly check-in ticks, and their assessment answers, marks and
+   revision plans. Conference notes and everything from Terms 1 and 2 are
+   left alone. */
 (function () {
   var Q = window.T3Q;
   var app = document.getElementById('app');
@@ -38,7 +39,7 @@
   function questLabel() {
     var k = window.EOT2_findKid(sel.value), g = Q.groupOf(k.name);
     var others = g.kids.filter(function (n) { return n !== k.name; });
-    box.querySelector('.to-quest').textContent = g.name + '’s Term 3 Quest: project, roles, board, stand-ups and check-ins. ' +
+    box.querySelector('.to-quest').textContent = g.name + '’s Term 3 Quest: project, roles, board, stand-ups, check-ins and team reflections. ' +
       'This is shared, so it clears for ' + others.join(' and ') + ' too.';
     go.textContent = 'Clear ' + k.name + '’s try-out data';
   }
@@ -56,6 +57,10 @@
     var now = Date.now();
     if (what.indexOf('quest') !== -1) {
       jobs.push(window.eot2Save('term-3', g.id, 'board', { meta: { _reset: { v: now, u: now } }, cards: {}, standups: {}, checkins: {}, blockers: {}, materials: {} }));
+      // Each teammate's Team Reflection, every week.
+      g.kids.forEach(function (n) {
+        Q.WEEKS.forEach(function (x, i) { jobs.push(window.eot2Save('term-3', n.toLowerCase(), 'reflect-w' + (i + 1), {})); });
+      });
     }
     if (what.indexOf('checkin') !== -1) jobs.push(window.eot2Save(k.group, k.slug, 'term3-agreements', {}));
     if (what.indexOf('schedule') !== -1) jobs.push(window.eot2Save(k.group, k.slug, 'term3-schedule', {}));

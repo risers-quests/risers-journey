@@ -504,3 +504,4 @@ button.qp-ck { font: inherit; text-align: left; border: 2px solid transparent; c
 .rf-own { font: inherit; font-size: .92rem; padding: 9px 12px; border-radius: 10px; border: 1.5px solid var(--border); }
 .rf-staff-status .is-absent { background: #fff0ec; border-color: #f1c7bd; color: #a3432b; }
 @media (max-width: 700px) { .pb-plan { grid-template-columns: 1fr; } }
+.pb-ci-trial { background: #fff8e6; border: 1px dashed #e3c26b; border-radius: 12px; padding: 10px 14px; margin: 0 0 12px; font-size: .88rem; }
