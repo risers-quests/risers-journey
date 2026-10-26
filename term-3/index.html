@@ -57,7 +57,7 @@
   }).then(function (x) {
     var r = x.r;
     if (!r.got.length && !r.tryNext) return;
-    document.getElementById('tw').innerHTML = '<section class="tw-card"><h2>🤝 My teamwork <small>Week ' + x.w + ' check-in</small></h2>' +
+    document.getElementById('tw').innerHTML = '<section class="tw-card"><h2>🤝 My teamwork <small>from the check-in on ' + new Date(+Q.WEEKS[x.w - 1][0].slice(0, 4), +Q.WEEKS[x.w - 1][0].slice(5, 7) - 1, +Q.WEEKS[x.w - 1][0].slice(8) + 2).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) + '</small></h2>' +
       r.got.filter(function (g) { return g.shout; }).map(function (g) { return '<p>⭐ ' + esc(g.shout) + ' <small>' + esc(g.from) + '</small></p>'; }).join('') +
       (r.tryNext ? '<p class="tw-try">My one thing to try: <b>' + esc(r.tryNext) + '</b></p>' : '') + '</section>';
   });

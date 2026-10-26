@@ -176,7 +176,7 @@
     var chose = last[me] && last[me].tryNext;
     var s1 = el('section', 'rf-sec', '<h3><span class="rf-n">1</span> Last week’s feedback</h3>');
     if (!asked.length && !chose) {
-      s1.appendChild(el('p', 'rf-empty', w === 1 ? 'Skip this in Week 1.' : 'Nothing from last week.'));
+      s1.appendChild(el('p', 'rf-empty', opts.first ? 'Skip this in quest week 1.' : 'Nothing from last week.'));
     } else {
       s1.appendChild(el('div', 'rf-asked',
         (asked.length ? '<span>What my teammates asked me to try</span><ul>' + asked.map(function (x) {
@@ -304,7 +304,7 @@
   /* ---------- staff: the whole team ---------- */
 
   function staffView(box, group, w, team, last, opts) {
-    box.appendChild(el('div', 'rf-head', '<h3>Part B · Team reflection, week ' + w + '</h3><p>Each Riser’s own rating beside the average of what their teammates gave them. ● Not yet · ●● Starting · ●●● Getting there · ●●●● Every time.</p>'));
+    box.appendChild(el('div', 'rf-head', '<h3>Part B · Team reflection' + (opts.label ? ', ' + esc(opts.label.toLowerCase()) : '') + '</h3><p>Each Riser’s own rating beside the average of what their teammates gave them. ● Not yet · ●● Starting · ●●● Getting there · ●●●● Every time.</p>'));
     var kids = group.kids;
     box.appendChild(el('div', 'rf-staff-status', kids.map(function (k) {
       var r = team[k] || {};
@@ -348,7 +348,8 @@
   }
 
   // Mounts Part B for week w. me: the signed-in Riser's name, or '' for
-  // staff. opts: { closed, addTry }.
+  // staff. opts: { closed, addTry, label ("Quest week 2"), first (quest
+  // week 1, when there's no last week to look back on) }.
   window.T3_reflect = function (box, group, me, w, opts) {
     opts = opts || {};
     box.classList.add('rf');
