@@ -466,3 +466,41 @@ button.qp-ck { font: inherit; text-align: left; border: 2px solid transparent; c
 .rf-gap { background: #fde6f3; }
 .rf-kid h4 { font-size: 1rem; }
 @media (max-width: 560px) { .rf-lvl { font-size: .72rem; padding: 7px 2px; } }
+
+/* Check-in Part A (board.js) and Part B extras (reflect.js). */
+.pb-part-head, .rf-head { background: #f3f0fb; border: 1px solid #ddd5f3; border-radius: 16px; padding: 14px 16px; margin: 6px 0 12px; }
+.pb-part-head h3, .rf-head h3 { margin: 0 0 4px; font-family: var(--font-head); font-size: 1.15rem; }
+.pb-part-head h3 small, .rf-head h3 small { font-weight: 500; color: var(--ink-faint); font-size: .85rem; }
+.pb-part-head p { margin: 0; color: var(--ink-soft); font-size: .9rem; }
+.pb-ci-block { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+.pb-ci-block > h3 { margin: 0; font-size: 1.02rem; }
+.pb-ci-block .pb-review { margin: 0; }
+.pb-review h4 { margin: 0 0 6px; font-size: .9rem; }
+.pb-ci-q { margin: 0; font-size: .92rem; font-weight: 600; }
+.pb-ci-q small { font-weight: 500; color: var(--ink-faint); margin-left: 6px; }
+.pb-segs { display: flex; flex-wrap: wrap; gap: 6px; }
+.pb-goal { font: inherit; font-size: .92rem; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 10px; background: #fff; max-width: 420px; }
+.pb-ci-tip { margin: 0; font-size: .85rem; color: var(--ink-soft); }
+.pb-ci-tip:empty { display: none; }
+.pb-ci-tip .pq-link { margin-left: 8px; }
+.pb-plan { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pb-plan-col { background: var(--paper-soft); border-radius: 12px; padding: 10px 12px; }
+.pb-plan-col h4 { margin: 0 0 6px; font-size: .85rem; }
+.pb-plan-col h4 em { font-style: normal; color: var(--ink-faint); }
+.pb-plan-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 0; border-top: 1px solid var(--border); font-size: .9rem; }
+.pb-plan-row small { color: var(--ink-faint); }
+.pb-plan-row .pq-seg { flex-shrink: 0; }
+.pb-ci-staff { border-style: dashed; }
+.pb-sign small { display: block; color: var(--ink-faint); font-weight: 400; margin-top: 2px; }
+.pb-ci-closed { background: var(--good-soft); color: var(--good); font-weight: 600; border-radius: 12px; padding: 10px 14px; margin: 0 0 12px; }
+.pb-addjob { align-self: flex-start; margin-top: -2px; font-size: .82rem; }
+.rf-absent { background: #fff0ec; color: #a3432b; font-weight: 600; border-radius: 12px; padding: 10px 14px; margin: 0; }
+.rf-sent { margin: 0; font-weight: 600; color: var(--good); }
+.rf-sent small { font-weight: 500; color: var(--ink-faint); margin-left: 6px; }
+.rf-chose { margin: 8px 0 0; }
+.rf-pick { display: flex; flex-direction: column; gap: 6px; }
+.rf-opt { font: inherit; font-size: .92rem; text-align: left; padding: 9px 12px; border-radius: 10px; border: 1.5px solid var(--border); background: #fff; cursor: pointer; }
+.rf-opt.is-on { border-color: #6b4fbb; background: #f3f0fb; font-weight: 600; }
+.rf-own { font: inherit; font-size: .92rem; padding: 9px 12px; border-radius: 10px; border: 1.5px solid var(--border); }
+.rf-staff-status .is-absent { background: #fff0ec; border-color: #f1c7bd; color: #a3432b; }
+@media (max-width: 700px) { .pb-plan { grid-template-columns: 1fr; } }

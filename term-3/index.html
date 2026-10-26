@@ -14,9 +14,22 @@
 <body>
 <div id="app"></div>
 <script src="assessments/assessments-data.js"></script>
+<script src="../end-of-term-2/shared/eot2-sync.js"></script>
+<script src="../staff/term-3/quest-data.js"></script>
+<script src="../staff/term-3/reflect.js"></script>
+<style>
+.tw-card { background: #fff; border: 1px solid var(--border); border-left: 5px solid #6b4fbb; border-radius: 16px; padding: 14px 18px; margin: 0 0 18px; }
+.tw-card h2 { margin: 0 0 8px; font-family: var(--font-head); font-size: 1.1rem; }
+.tw-card h2 small { font-weight: 500; color: var(--ink-faint); font-size: .85rem; }
+.tw-card p { margin: 6px 0; font-size: .95rem; }
+.tw-card small { color: var(--ink-faint); }
+.tw-try { background: #f3f0fb; border-radius: 10px; padding: 8px 12px; }
+</style>
 <script>
 /* A Riser's Term 3: their group's quest (or one they make up themselves),
-   the weekly check-in, their schedule and their assessments. */
+   the weekly check-in, their schedule and their assessments. Above them,
+   My teamwork: the shout-outs and ideas their team sent them in the
+   latest check-in, and the one thing they chose to try. */
 (function () {
   var kid = null, staff = null;
   try { kid = (localStorage.getItem('imm-l3-kid') || '').toLowerCase(); staff = localStorage.getItem('rj-staff-name'); } catch (e) {}
@@ -30,7 +43,24 @@
     { title: 'Our Own Quest', desc: 'Got your own idea? Make up a quest and send it to a facilitator to OK.', href: 'quest/index.html?own=1', icon: 'quests', tone: 'rose' });
   document.getElementById('app').innerHTML =
     '<header class="hd-welcome"><h1>Term 3</h1><p>26 October – 21 January</p></header>' +
-    '<div class="hd-tiles">' + window.LH_tiles(tiles) + '</div>';
+    '<div id="tw"></div><div class="hd-tiles">' + window.LH_tiles(tiles) + '</div>';
+
+  var Q = window.T3Q, info = window.T3_reflectInfo;
+  var group = Q && Q.groupOf(kid);
+  if (!group || !info) return;
+  var me = group.kids.filter(function (k) { return k.toLowerCase() === kid; })[0];
+  var esc = function (t) { return String(t || '').replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var w = Q.weekOf();
+  // This week's slips once there are any; until then, last week's.
+  info.summary(group, me, w).then(function (r) {
+    return r.got.length || w < 2 ? { r: r, w: w } : info.summary(group, me, w - 1).then(function (r2) { return { r: r2, w: w - 1 }; });
+  }).then(function (x) {
+    var r = x.r;
+    if (!r.got.length && !r.tryNext) return;
+    document.getElementById('tw').innerHTML = '<section class="tw-card"><h2>🤝 My teamwork <small>Week ' + x.w + ' check-in</small></h2>' +
+      r.got.filter(function (g) { return g.shout; }).map(function (g) { return '<p>⭐ ' + esc(g.shout) + ' <small>' + esc(g.from) + '</small></p>'; }).join('') +
+      (r.tryNext ? '<p class="tw-try">My one thing to try: <b>' + esc(r.tryNext) + '</b></p>' : '') + '</section>';
+  });
 })();
 </script>
 </body>

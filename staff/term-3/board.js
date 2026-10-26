@@ -9,10 +9,12 @@
    - Stand-up, on quest days. The Quest Master runs it on Monday and
      Wednesday; on Tuesday each Riser fills in their own card. A Riser
      fills in only their own card; the Quest Master can fill in anyone's.
-   - Check-in, once a week on Wednesday. Only the Quest Master and
-     facilitators fill it in; a facilitator adds a note and marks it seen.
-     Below it, the Team Reflection (reflect.js): each Riser's own
-     reflection and a feedback slip for each teammate.
+     "What will I do today?" can be added to the Board, in Doing.
+   - Check-in, once a week on Wednesday, 30 minutes. Part A, together:
+     the Quest Master fills it in (our week, keep doing, change, the team
+     goal, planning next week from the Backlog, the work goal); a
+     facilitator adds a note and ticks they were there, which closes it.
+     Part B, on their own: each Riser's Team Reflection (reflect.js).
 
    A team chooses its quest one week and starts it the next. Each week the
    team picks a Quest Master in the top line (the turn goes round); once
@@ -832,6 +834,25 @@
         STANDUP_QS.map(function (q) {
           return '<label class="pb-field"><span>' + q.label + '</span><textarea rows="2" data-q="' + q.id + '"' + (edit ? '' : ' readonly') + '>' + esc(rec[q.id] || '') + '</textarea></label>';
         }).join('');
+      // "What will I do today?" can go straight onto the Board, in Doing.
+      if (edit) {
+        var will = card.querySelector('textarea[data-q="will"]');
+        var addJob = el('button', 'pq-link pb-addjob', '+ Add as a job');
+        addJob.type = 'button';
+        addJob.addEventListener('click', function () {
+          var mineNow = cards().filter(function (c) { return owner(c) === k && c.col !== 'done'; }).map(function (c) { return c.title.toLowerCase(); });
+          var lines = will.value.split(/\n+/).map(function (x) { return x.replace(/^[-•*\d.)\s]+/, '').trim(); }).filter(Boolean);
+          var added = 0;
+          lines.forEach(function (t) {
+            if (mineNow.indexOf(t.toLowerCase()) !== -1) return;
+            putCard(uid(), { title: t, col: 'doing', who: [k], order: now(), by: KID ? ME : 'facilitator' });
+            added++;
+          });
+          addJob.textContent = !lines.length ? 'Write what you’ll do first' : added ? '✓ Added to Doing' : '✓ Already on the Board';
+        });
+        will.addEventListener('input', function () { addJob.textContent = '+ Add as a job'; });
+        will.parentNode.after(addJob);
+      }
       if (edit) Array.prototype.forEach.call(card.querySelectorAll('textarea'), function (ta) {
         ta.addEventListener('input', function () {
           var r = Object.assign({}, state.standups[id] || { date: day, kid: k });
@@ -873,51 +894,166 @@
 
   /* ---------- Check-in ---------- */
 
-  var CHECKIN_QS = [
-    { id: 'keep', label: '👍 Keep doing', hint: 'What worked well this week?' },
-    { id: 'change', label: '🔧 Change', hint: 'What will we do differently?' },
-    { id: 'shout', label: '⭐ Shout-outs', hint: 'Who helped, and how?' },
-    { id: 'next', label: '🎯 Next week’s goal', hint: 'One clear goal.' },
-    { id: 'note', label: 'Facilitator note', hint: 'What you noticed, and any help promised.', staff: true }
-  ];
+  var TRACK = [['on', 'On track'], ['bit', 'A bit behind'], ['behind', 'Behind']];
+  var GOAL_DID = [['yes', 'Yes'], ['partly', 'Partly'], ['not', 'Not yet']];
 
+  /* The Wednesday check-in, 30 minutes.
+     Part A · Our team (15 min): the team talks; the Quest Master types.
+     Our week (done, stuck, on track?), keep doing, change, how we worked
+     together (last week's team goal, and next week's), plan next week from
+     the Backlog, and next week's work goal. A facilitator adds a note and
+     ticks that they were there, which closes the check-in.
+     Part B · Me (15 min): each Riser's own reflection (reflect.js). */
   function checkinView() {
     var w = sprint(), id = 'w' + w;
     var rec = state.checkins[id] || {};
+    // The facilitator's note and tick are their own item, so the Quest
+    // Master typing at the same moment can't undo them.
+    var fac = state.checkins[id + '_staff'] || { note: rec.note, signed: rec.signed };
     var edit = !KID || isMaster();
-    var wrap = el('div', 'pb-checkin');
-    wrap.appendChild(el('div', 'pb-intro', '<h2>Week ' + w + ' check-in</h2><p>On Wednesday, at the end of the session. ' +
-      esc(master() || 'The Quest Master') + ' runs it and fills it in. A facilitator joins and listens.</p>'));
-    var done = inCol('done'), stuck = openBlockers();
-    wrap.appendChild(el('div', 'pb-review',
-      '<div><h3>What we finished</h3>' + (done.length ? '<ul>' + done.map(function (c) { return '<li>' + esc(c.title) + ' <small>' + esc(owner(c)) + '</small></li>'; }).join('') + '</ul>' : '<p class="pb-empty">Nothing in Done yet.</p>') + '</div>' +
-      '<div><h3>Still stuck</h3>' + (stuck.length ? '<ul>' + stuck.map(function (x) { return '<li>' + esc(x.what) + '</li>'; }).join('') + '</ul>' : '<p class="pb-empty">Nothing.</p>') + '</div>'));
-    var form = el('div', 'pb-retro');
-    CHECKIN_QS.forEach(function (q) {
-      var can = q.staff ? !KID : edit;
-      if (q.staff && KID && !rec.note) return;
-      var f = el('label', 'pb-field' + (q.staff ? ' pb-note' : ''), '<span>' + q.label + '</span><em>' + (can ? q.hint : '') + '</em><textarea rows="2"' + (can ? '' : ' readonly') + '>' + esc(rec[q.id] || '') + '</textarea>');
-      if (can) f.querySelector('textarea').addEventListener('input', function () {
-        var r = Object.assign({}, state.checkins[id] || {});
-        r[q.id] = this.value; r.u = now();
-        state.checkins[id] = r;
-        changed();
-      });
-      form.appendChild(f);
-    });
-    var sign = el('label', 'pb-sign', '<input type="checkbox"' + (rec.signed ? ' checked' : '') + (KID ? ' disabled' : '') + '> Facilitator was at this check-in');
-    sign.querySelector('input').addEventListener('change', function () {
-      var r = Object.assign({}, state.checkins[id] || {});
-      r.signed = this.checked; r.u = now();
+    var closed = !!fac.signed;
+    var lastGoal = (state.checkins['w' + (w - 1)] || {}).teamGoal;
+    var SHORT = (window.T3_reflectInfo || {}).SHORT || {};
+    function put(fields) {
+      var r = Object.assign({}, state.checkins[id] || {}, fields);
+      r.u = now();
       state.checkins[id] = r;
+      rec = r;
       changed();
+    }
+    function field(key, label, hint) {
+      var f = el('label', 'pb-field', '<span>' + label + '</span><em>' + (edit ? hint : '') + '</em><textarea rows="2"' + (edit ? '' : ' readonly') + '>' + esc(rec[key] || '') + '</textarea>');
+      if (edit) f.querySelector('textarea').addEventListener('input', function () { var o = {}; o[key] = this.value; put(o); });
+      return f;
+    }
+    function segs(key, opts) {
+      var row = el('div', 'pb-segs');
+      opts.forEach(function (o) {
+        var b = el('button', 'pq-seg' + (rec[key] === o[0] ? ' is-on' : ''), esc(o[1]));
+        b.type = 'button';
+        b.disabled = !edit;
+        b.addEventListener('click', function () {
+          var o2 = {}; o2[key] = rec[key] === o[0] ? '' : o[0];
+          put(o2);
+          Array.prototype.forEach.call(row.children, function (x, i) { x.classList.toggle('is-on', rec[key] === opts[i][0]); });
+        });
+        row.appendChild(b);
+      });
+      return row;
+    }
+    function block(title, cls) {
+      var b = el('section', 'pb-ci-block' + (cls ? ' ' + cls : ''), '<h3>' + title + '</h3>');
+      wrap.appendChild(b);
+      return b;
+    }
+
+    var wrap = el('div', 'pb-checkin');
+    wrap.appendChild(el('div', 'pb-intro', '<h2>Week ' + w + ' check-in</h2><p>Wednesday, 30 minutes. <b>Part A</b>: together, ' +
+      esc(master() || 'the Quest Master') + ' types (15 min). <b>Part B</b>: on your own computer (15 min).</p>'));
+    wrap.appendChild(el('div', 'pb-part-head', '<h3>Part A · Our team <small>(15 minutes)</small></h3><p>Talk together. ' + esc(master() || 'The Quest Master') + ' fills it in.</p>'));
+
+    // Our week.
+    var b1 = block('📋 Our week');
+    var done = inCol('done'), stuck = openBlockers();
+    b1.appendChild(el('div', 'pb-review',
+      '<div><h4>What we finished</h4>' + (done.length ? '<ul>' + done.map(function (c) { return '<li>' + esc(c.title) + ' <small>' + esc(owner(c)) + '</small></li>'; }).join('') + '</ul>' : '<p class="pb-empty">Nothing in Done yet.</p>') + '</div>' +
+      '<div><h4>Still stuck</h4>' + (stuck.length ? '<ul>' + stuck.map(function (x) { return '<li>' + esc(x.what) + '</li>'; }).join('') + '</ul>' : '<p class="pb-empty">Nothing.</p>') + '</div>'));
+    var due = deadline();
+    b1.appendChild(el('p', 'pb-ci-q', 'Are we on track for our deadline?' + (due ? ' <small>Ready by ' + Q.nice(due.date) + '</small>' : '')));
+    b1.appendChild(segs('track', TRACK));
+
+    // Keep doing, change.
+    var b2 = block('👍 Keep doing');
+    b2.appendChild(field('keep', 'What helped our quest move forward this week?', 'e.g. We split the jobs on Monday. We tested before painting.'));
+    var b3 = block('🔧 Change');
+    b3.appendChild(field('slow', 'What slowed us down?', 'e.g. We waited for one person to start.'));
+    b3.appendChild(field('change', 'Next week we will…', 'e.g. Anyone can start a job.'));
+
+    // How we worked together: the team goal.
+    var b4 = block('🤝 How we worked together');
+    if (lastGoal && SHORT[lastGoal]) {
+      b4.appendChild(el('p', 'pb-ci-q', 'Last week’s team goal: <b>' + esc(SHORT[lastGoal]) + '</b>. Did we do it?'));
+      b4.appendChild(segs('goalDid', GOAL_DID));
+    }
+    b4.appendChild(el('p', 'pb-ci-q', 'Our team goal for next week'));
+    var sel = el('select', 'pb-goal');
+    sel.disabled = !edit;
+    sel.innerHTML = '<option value="">Choose one…</option>' + Object.keys(SHORT).map(function (n) {
+      return '<option value="' + n + '"' + (+rec.teamGoal === +n ? ' selected' : '') + '>' + esc(SHORT[n]) + '</option>';
+    }).join('');
+    sel.addEventListener('change', function () { put({ teamGoal: +sel.value || '' }); });
+    b4.appendChild(sel);
+    var tip = el('p', 'pb-ci-tip');
+    b4.appendChild(tip);
+    if (window.T3_reflectInfo && w > 1) window.T3_reflectInfo.lowest(group, w - 1).then(function (n) {
+      if (!n) return;
+      tip.innerHTML = '💡 From last week’s slips, our team scored lowest on <b>' + esc(SHORT[n]) + '</b>.';
+      if (edit && +rec.teamGoal !== n) {
+        var use = el('button', 'pq-link', 'Use it');
+        use.type = 'button';
+        use.addEventListener('click', function () { sel.value = String(n); put({ teamGoal: n }); use.remove(); });
+        tip.appendChild(use);
+      }
     });
-    form.appendChild(sign);
-    wrap.appendChild(form);
-    // The SEL side: each Riser's reflection and slips for their teammates.
+
+    // Plan next week from the Backlog.
+    var b5 = block('🗂️ Plan next week');
+    var back = inCol('backlog'), todo = inCol('todo');
+    b5.appendChild(el('p', 'pb-ci-q', 'Move the jobs for next week from Backlog to This week. Each job keeps its owner.'));
+    var plan = el('div', 'pb-plan');
+    var lb = el('div', 'pb-plan-col', '<h4>Backlog <em>' + back.length + '</em></h4>');
+    if (!back.length) lb.appendChild(el('p', 'pb-empty', 'Nothing waiting. Add jobs on the Board.'));
+    back.forEach(function (c) {
+      var row = el('div', 'pb-plan-row', '<span>' + esc(c.title) + (owner(c) ? ' <small>' + esc(owner(c)) + '</small>' : '') + '</span>');
+      if (edit) {
+        var mv = el('button', 'pq-seg', 'This week →');
+        mv.type = 'button';
+        mv.addEventListener('click', function () { putCard(c.id, { col: 'todo', order: now() }); draw(); });
+        row.appendChild(mv);
+      }
+      lb.appendChild(row);
+    });
+    var lt = el('div', 'pb-plan-col', '<h4>This week <em>' + todo.length + '</em></h4>' +
+      (todo.length ? todo.map(function (c) { return '<div class="pb-plan-row"><span>' + esc(c.title) + (owner(c) ? ' <small>' + esc(owner(c)) + '</small>' : '') + '</span></div>'; }).join('') : '<p class="pb-empty">Nothing yet.</p>'));
+    plan.appendChild(lb); plan.appendChild(lt);
+    b5.appendChild(plan);
+
+    var b6 = block('🎯 Next week’s work goal');
+    b6.appendChild(field('next', 'One clear goal for our quest', 'e.g. All six holes built and tested.'));
+
+    // Facilitator: a note, and the tick that closes the check-in.
+    function putFac(fields) {
+      fac = Object.assign({}, fac, fields, { u: now() });
+      state.checkins[id + '_staff'] = fac;
+      changed();
+    }
+    if (!KID || fac.note) {
+      var b7 = block('Facilitator', 'pb-ci-staff');
+      var note = el('label', 'pb-field pb-note', '<span>Facilitator note</span><em>' + (KID ? '' : 'What you noticed, and any help promised.') + '</em><textarea rows="2"' + (KID ? ' readonly' : '') + '>' + esc(fac.note || '') + '</textarea>');
+      if (!KID) note.querySelector('textarea').addEventListener('input', function () { putFac({ note: this.value }); });
+      b7.appendChild(note);
+      if (!KID) {
+        var sign = el('label', 'pb-sign', '<input type="checkbox"' + (closed ? ' checked' : '') + '> Facilitator was at this check-in. <small>Ticking it closes the check-in: anyone who hasn’t sent their slips is marked absent.</small>');
+        sign.querySelector('input').addEventListener('change', function () {
+          if (this.checked && !confirm('Close this week’s check-in? Anyone who hasn’t sent their slips will be marked absent.')) { this.checked = false; return; }
+          putFac({ signed: this.checked, closedAt: this.checked ? new Date().toISOString() : '' });
+          draw();
+        });
+        b7.appendChild(sign);
+      }
+    }
+    if (KID && closed) wrap.appendChild(el('p', 'pb-ci-closed', '✓ This check-in is closed.'));
+
+    // Part B.
     var rf = el('div');
     wrap.appendChild(rf);
-    if (window.T3_reflect) window.T3_reflect(rf, group, KID ? ME : '', w);
+    if (window.T3_reflect) window.T3_reflect(rf, group, KID ? ME : '', w, {
+      closed: closed,
+      addTry: function (t) {
+        putCard(uid(), { title: '🤝 ' + t, col: 'todo', who: [ME], order: now(), by: ME, kind: 'try' });
+        return true;
+      }
+    });
     return wrap;
   }
 
@@ -935,7 +1071,7 @@
       var r = s.standups[day + '_' + k.toLowerCase()];
       return r && (r.did || r.will || r.stuck);
     });
-    var ci = s.checkins['w' + w] || {};
+    var ci = s.checkins['w' + w + '_staff'] || s.checkins['w' + w] || {};
     var b = project(m('project'), s);
     return {
       build: b ? b.title : '', due: b && m('started') ? Q.deadline(m('started'), Q.weeksFor(b)) : null,

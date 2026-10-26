@@ -1,5 +1,5 @@
-/* Term 3 Quests — the weekly Team Reflection, part of the Wednesday
-   check-in (board.js mounts it on the Check-in tab).
+/* Term 3 Quests — the weekly Team Reflection: Part B of the Wednesday
+   check-in (board.js mounts it on the Check-in tab, under Part A).
 
    Each Riser fills in their own:
    1. Last week's feedback: what their teammates asked them to try (from
@@ -10,13 +10,19 @@
       one thing to try next week. "Send my slips" hands them over; a
       teammate sees a slip only once it's sent.
    4. What my team said: the slips sent to them this week.
+   5. My one thing to try next week: picked from what the team asked, or
+      their own, and put on the Board in This week as a 🤝 job.
+   Once sent, slips leave the sender's screen (a parent at home never sees
+   what a child wrote about someone else). When the facilitator closes the
+   check-in, anyone who hasn't sent is marked absent and the sheet locks.
    A Riser's sheet is seen only by them and staff. Staff see the whole
    team: self and teammates' ratings side by side, and every slip.
 
    One record per Riser per week, through the progress Worker: group
    "term-3", kid = the Riser's name in lower case, week "reflect-w<N>":
    { self: { <1-10>: 1-4 }, how, went, slips: { <Teammate>: { <1-10>,
-   shout, next } }, sent, u }. Only the Riser writes their own record. */
+   shout, next } }, sent, tryNext, tryAdded, u }. Only the Riser writes
+   their own record. */
 (function () {
   var SCALE = ['Not yet', 'Starting', 'Getting there', 'Every time'];
   var PARTS = [
@@ -134,12 +140,15 @@
 
   /* ---------- a Riser's own reflection ---------- */
 
-  function kidView(box, group, me, w, team, last) {
+  // opts: closed (the facilitator has closed this week's check-in) and
+  // addTry(text), which puts "my one thing to try" on the Board.
+  function kidView(box, group, me, w, team, last, opts) {
     var key = group.id + '-' + w;
     var mine = team[me] = team[me] || {};
     mine.self = mine.self || {};
     mine.slips = mine.slips || {};
     var mates = group.kids.filter(function (k) { return k !== me; });
+    var closed = !!opts.closed, absent = closed && !mine.sent;
     var status = el('span', 'rf-status');
     var timer = null;
     function changed() {
@@ -154,69 +163,80 @@
         });
       }, 700);
     }
+    function again() { box.innerHTML = ''; kidView(box, group, me, w, team, last, opts); }
     cache[key] = team;
 
-    var head = el('div', 'rf-head', '<h3>🤝 Team reflection</h3><p>Everyone fills in their own. Your sheet is just for you and your facilitator. Your slips go to each teammate when you press <b>Send my slips</b>.</p>');
+    var head = el('div', 'rf-head', '<h3>Part B · Me <small>(15 minutes)</small></h3><p>On your own computer. Your sheet is just for you and your facilitator. Your slips go to each teammate when you press <b>Send</b>.</p>');
     head.appendChild(status);
     box.appendChild(head);
+    if (absent) box.appendChild(el('p', 'rf-absent', 'This check-in is closed, and your slips weren’t sent, so you’re marked absent this week.'));
 
     // 1. Last week's feedback.
     var asked = slipsFor(last, me).filter(function (x) { return x.slip.next; });
+    var chose = last[me] && last[me].tryNext;
     var s1 = el('section', 'rf-sec', '<h3><span class="rf-n">1</span> Last week’s feedback</h3>');
-    if (!asked.length) {
-      s1.appendChild(el('p', 'rf-empty', w === 1 ? 'Skip this in Week 1.' : 'Nothing from last week. This part fills in after your team sends slips.'));
+    if (!asked.length && !chose) {
+      s1.appendChild(el('p', 'rf-empty', w === 1 ? 'Skip this in Week 1.' : 'Nothing from last week.'));
     } else {
-      s1.appendChild(el('div', 'rf-asked', '<span>What my teammates asked me to try</span><ul>' + asked.map(function (x) {
-        return '<li>' + esc(x.slip.next) + ' <small>' + esc(x.from) + '</small></li>';
-      }).join('') + '</ul>'));
-      s1.appendChild(textEl('How did I try to do it this week?', mine.how, false, function (v) { mine.how = v; changed(); }));
+      s1.appendChild(el('div', 'rf-asked',
+        (asked.length ? '<span>What my teammates asked me to try</span><ul>' + asked.map(function (x) {
+          return '<li>' + esc(x.slip.next) + ' <small>' + esc(x.from) + '</small></li>';
+        }).join('') + '</ul>' : '') +
+        (chose ? '<p class="rf-chose">🤝 I chose to try: <b>' + esc(chose) + '</b></p>' : '')));
+      s1.appendChild(textEl('How did I try to do it this week?', mine.how, closed, function (v) { mine.how = v; changed(); }));
       var went = el('div', 'rf-text', '<span>How did it go?</span>');
-      went.appendChild(scaleEl(mine.went || 0, false, function (v) { mine.went = v; changed(); }));
+      went.appendChild(scaleEl(mine.went || 0, closed, function (v) { mine.went = v; changed(); }));
       s1.appendChild(went);
     }
     box.appendChild(s1);
 
     // 2. Self-evaluation.
     var s2 = el('section', 'rf-sec', '<h3><span class="rf-n">2</span> My self-evaluation</h3><p class="rf-hint">Pick one for each.</p>');
-    s2.appendChild(statements(SELF, mine.self, false, function (n, v) { mine.self[n] = v; changed(); }));
+    s2.appendChild(statements(SELF, mine.self, closed, function (n, v) { mine.self[n] = v; changed(); }));
     box.appendChild(s2);
 
-    // 3. Slips.
-    var s3 = el('section', 'rf-sec', '<h3><span class="rf-n">3</span> Slips for my teammates</h3>' +
-      (mine.sent ? '<p class="rf-hint">Sent. Your teammates can read them now.</p>' : '<p class="rf-hint">One for each teammate. Be honest and kind.</p>'));
-    mates.forEach(function (t) {
-      var s = mine.slips[t] = mine.slips[t] || {};
-      var slip = el('div', 'rf-slip', '<h4>To ' + esc(t) + '</h4><p class="rf-hint">This week, ' + esc(t) + ' …</p>');
-      slip.appendChild(statements(PEER, s, !!mine.sent, function (n, v) { s[n] = v; changed(); }));
-      slip.appendChild(textEl('⭐ Shout-out: one thing you did this week that helped our team', s.shout, !!mine.sent, function (v) { s.shout = v; changed(); }));
-      slip.appendChild(textEl('🎯 Next week it would help our team if you could try…', s.next, !!mine.sent, function (v) { s.next = v; changed(); }));
-      s3.appendChild(slip);
-    });
-    if (!mine.sent && mates.length) {
-      var bar = el('div', 'rf-send');
-      var b = el('button', 'pq-btn', 'Send my slips');
-      b.type = 'button';
-      var msg = el('span', 'rf-msg');
-      b.addEventListener('click', function () {
-        var missing = [];
-        mates.forEach(function (t) {
-          var s = mine.slips[t], left = [];
-          var gaps = ALL.filter(function (n) { return !s[n]; }).length;
-          if (gaps) left.push(gaps === 1 ? '1 answer' : gaps + ' answers');
-          if (!String(s.shout || '').trim()) left.push('a shout-out');
-          if (!String(s.next || '').trim()) left.push('something to try');
-          if (left.length) missing.push(t + ' (' + left.join(', ') + ')');
-        });
-        if (missing.length) { msg.textContent = 'Almost there! Still to fill in: ' + missing.join('; ') + '.'; return; }
-        if (!confirm('Send your slips? Your teammates will read them, and you can’t change them after this.')) return;
-        mine.sent = new Date().toISOString();
-        changed();
-        box.innerHTML = '';
-        kidView(box, group, me, w, team, last);
+    // 3. Slips. Once sent they leave this screen: they're for the teammate,
+    // not for anyone looking over the sender's shoulder at home.
+    var s3 = el('section', 'rf-sec', '<h3><span class="rf-n">3</span> Slips for my teammates</h3>');
+    if (mine.sent) {
+      s3.appendChild(el('p', 'rf-sent', '✓ Sent. Your slips are with ' + esc(mates.join(' and ')) + '.'));
+    } else if (absent) {
+      s3.appendChild(el('p', 'rf-empty', 'Not sent this week.'));
+    } else {
+      s3.appendChild(el('p', 'rf-hint', 'One for each teammate. Be honest and kind.'));
+      mates.forEach(function (t) {
+        var s = mine.slips[t] = mine.slips[t] || {};
+        var slip = el('div', 'rf-slip', '<h4>To ' + esc(t) + '</h4><p class="rf-hint">This week, ' + esc(t) + ' …</p>');
+        slip.appendChild(statements(PEER, s, false, function (n, v) { s[n] = v; changed(); }));
+        slip.appendChild(textEl('⭐ Shout-out: one thing you did this week that helped our team', s.shout, false, function (v) { s.shout = v; changed(); }));
+        slip.appendChild(textEl('🎯 Next week it would help our team if you could try…', s.next, false, function (v) { s.next = v; changed(); }));
+        s3.appendChild(slip);
       });
-      bar.appendChild(b);
-      bar.appendChild(msg);
-      s3.appendChild(bar);
+      if (mates.length) {
+        var bar = el('div', 'rf-send');
+        var b = el('button', 'pq-btn', 'Send my slips');
+        b.type = 'button';
+        var msg = el('span', 'rf-msg');
+        b.addEventListener('click', function () {
+          var missing = [];
+          mates.forEach(function (t) {
+            var s = mine.slips[t], left = [];
+            var gaps = ALL.filter(function (n) { return !s[n]; }).length;
+            if (gaps) left.push(gaps === 1 ? '1 answer' : gaps + ' answers');
+            if (!String(s.shout || '').trim()) left.push('a shout-out');
+            if (!String(s.next || '').trim()) left.push('something to try');
+            if (left.length) missing.push(t + ' (' + left.join(', ') + ')');
+          });
+          if (missing.length) { msg.textContent = 'Almost there! Still to fill in: ' + missing.join('; ') + '.'; return; }
+          if (!confirm('Send your slips? Your teammates will read them, and you can’t change them after this.')) return;
+          mine.sent = new Date().toISOString();
+          changed();
+          again();
+        });
+        bar.appendChild(b);
+        bar.appendChild(msg);
+        s3.appendChild(bar);
+      }
     }
     box.appendChild(s3);
 
@@ -234,19 +254,64 @@
       s4.appendChild(c);
     });
     box.appendChild(s4);
+
+    // 5. My one thing to try next week: picked from what the team asked,
+    // or my own, and put on the Board in This week.
+    var s5 = el('section', 'rf-sec', '<h3><span class="rf-n">5</span> My one thing to try next week</h3>');
+    if (mine.tryNext) {
+      s5.appendChild(el('p', 'rf-sent', '🤝 ' + esc(mine.tryNext) + (mine.tryAdded ? ' <small>✓ On the Board in This week</small>' : '')));
+    } else if (closed) {
+      s5.appendChild(el('p', 'rf-empty', 'Not chosen this week.'));
+    } else {
+      var asks = got.map(function (x) { return x.slip.next; }).filter(Boolean);
+      var pick = el('div', 'rf-pick');
+      var choice = '';
+      var own = el('input', 'rf-own');
+      own.placeholder = 'Or write your own';
+      asks.forEach(function (a) {
+        var o = el('button', 'rf-opt', esc(a));
+        o.type = 'button';
+        o.addEventListener('click', function () {
+          choice = a; own.value = '';
+          Array.prototype.forEach.call(pick.querySelectorAll('.rf-opt'), function (x) { x.classList.toggle('is-on', x === o); });
+        });
+        pick.appendChild(o);
+      });
+      own.addEventListener('input', function () {
+        choice = own.value.trim();
+        Array.prototype.forEach.call(pick.querySelectorAll('.rf-opt'), function (x) { x.classList.remove('is-on'); });
+      });
+      s5.appendChild(el('p', 'rf-hint', asks.length ? 'Pick one thing your team asked, or write your own.' : 'Write one thing you’ll try. Your teammates’ ideas show here once they send their slips.'));
+      pick.appendChild(own);
+      s5.appendChild(pick);
+      var add = el('button', 'pq-btn', 'Add to This week');
+      add.type = 'button';
+      var amsg = el('span', 'rf-msg');
+      add.addEventListener('click', function () {
+        if (!choice) { amsg.textContent = 'Pick or write one thing first.'; return; }
+        mine.tryNext = choice;
+        mine.tryAdded = !!(opts.addTry && opts.addTry(choice));
+        changed();
+        again();
+      });
+      var abar = el('div', 'rf-send');
+      abar.appendChild(add); abar.appendChild(amsg);
+      s5.appendChild(abar);
+    }
+    box.appendChild(s5);
   }
 
   /* ---------- staff: the whole team ---------- */
 
-  function staffView(box, group, w, team, last) {
-    box.appendChild(el('div', 'rf-head', '<h3>🤝 Team reflection — week ' + w + '</h3><p>Each Riser’s own rating beside the average of what their teammates gave them. ● Not yet · ●● Starting · ●●● Getting there · ●●●● Every time.</p>'));
+  function staffView(box, group, w, team, last, opts) {
+    box.appendChild(el('div', 'rf-head', '<h3>Part B · Team reflection, week ' + w + '</h3><p>Each Riser’s own rating beside the average of what their teammates gave them. ● Not yet · ●● Starting · ●●● Getting there · ●●●● Every time.</p>'));
     var kids = group.kids;
-    var st = el('div', 'rf-staff-status', kids.map(function (k) {
+    box.appendChild(el('div', 'rf-staff-status', kids.map(function (k) {
       var r = team[k] || {};
+      if (opts.closed && !r.sent) return '<span class="is-absent"><b>' + esc(k) + '</b> absent</span>';
       var selfDone = ALL.filter(function (n) { return r.self && r.self[n]; }).length;
       return '<span><b>' + esc(k) + '</b> ' + (selfDone === 10 ? 'sheet ✓' : selfDone ? 'sheet ' + selfDone + '/10' : 'sheet not started') + ' · ' + (r.sent ? 'slips sent ✓' : 'slips not sent') + '</span>';
-    }).join(''));
-    box.appendChild(st);
+    }).join('')));
     var avg = function (k, n) {
       var vs = slipsFor(team, k).map(function (x) { return +x.slip[n] || 0; }).filter(Boolean);
       return vs.length ? vs.reduce(function (a, b) { return a + b; }, 0) / vs.length : 0;
@@ -268,25 +333,29 @@
     kids.forEach(function (k) {
       var r = team[k] || {};
       var asked = slipsFor(last, k).filter(function (x) { return x.slip.next; });
+      var chose = last[k] && last[k].tryNext;
       var got = slipsFor(team, k);
       var c = el('div', 'rf-got rf-kid', '<h4>' + esc(k) + '</h4>' +
-        (asked.length ? '<p><b>Asked last week to try:</b> ' + asked.map(function (x) { return esc(x.slip.next) + ' <small>(' + esc(x.from) + ')</small>'; }).join('; ') + '</p>' +
+        (asked.length || chose ? (asked.length ? '<p><b>Asked last week to try:</b> ' + asked.map(function (x) { return esc(x.slip.next) + ' <small>(' + esc(x.from) + ')</small>'; }).join('; ') + '</p>' : '') +
+          (chose ? '<p><b>Chose to try:</b> ' + esc(chose) + '</p>' : '') +
           '<p><b>How they tried:</b> ' + (r.how ? esc(r.how) : '<i>not filled in</i>') + (r.went ? ' · <b>It went:</b> ' + SCALE[r.went - 1] : '') + '</p>' : '') +
         (got.length ? got.map(function (x) {
           return '<p class="rf-shout">⭐ ' + esc(x.slip.shout || '') + ' <small>' + esc(x.from) + '</small></p>' + (x.slip.next ? '<p class="rf-try">🎯 Try: ' + esc(x.slip.next) + ' <small>' + esc(x.from) + '</small></p>' : '');
-        }).join('') : '<p class="rf-empty">No slips sent to ' + esc(k) + ' yet.</p>'));
+        }).join('') : '<p class="rf-empty">No slips sent to ' + esc(k) + ' yet.</p>') +
+        (r.tryNext ? '<p class="rf-chose">🤝 Next week ' + esc(k) + ' will try: <b>' + esc(r.tryNext) + '</b></p>' : ''));
       box.appendChild(c);
     });
   }
 
-  // Mounts the reflection for week w. me: the signed-in Riser's name, or
-  // '' for staff.
-  window.T3_reflect = function (box, group, me, w) {
+  // Mounts Part B for week w. me: the signed-in Riser's name, or '' for
+  // staff. opts: { closed, addTry }.
+  window.T3_reflect = function (box, group, me, w, opts) {
+    opts = opts || {};
     box.classList.add('rf');
     var key = group.id + '-' + w;
     function paint(team, last) {
       box.innerHTML = '';
-      if (me) kidView(box, group, me, w, team, last); else staffView(box, group, w, team, last);
+      if (me) kidView(box, group, me, w, team, last, opts); else staffView(box, group, w, team, last, opts);
     }
     // Drawn at once from memory when the board redraws, so nothing typed
     // is lost; then teammates' latest are fetched. A Riser's own record is
@@ -301,10 +370,37 @@
       cache[key] = team;
       cache[key + '-last'] = r[1];
       if (same || !box.isConnected) return;
-      if (had && box.contains(document.activeElement) && document.activeElement.tagName === 'TEXTAREA') return;
+      var a = document.activeElement;
+      if (had && box.contains(a) && /TEXTAREA|INPUT/.test(a.tagName)) return;
       var y = window.scrollY;
       paint(team, r[1]);
       window.scrollTo(0, y);
     });
+  };
+
+  // For the check-in's team goal: the statement the team scored lowest on
+  // in week w's slips (resolves to its number, or 0 with no slips).
+  // For a Riser's dashboard: what their team said to them in week w.
+  window.T3_reflectInfo = {
+    SHORT: SHORT,
+    lowest: function (group, w) {
+      if (w < 1) return Promise.resolve(0);
+      return fetchTeam(group, w).then(function (team) {
+        var best = 0, low = 5;
+        ALL.forEach(function (n) {
+          var vs = [];
+          group.kids.forEach(function (k) { slipsFor(team, k).forEach(function (x) { if (+x.slip[n]) vs.push(+x.slip[n]); }); });
+          if (!vs.length) return;
+          var a = vs.reduce(function (x, y) { return x + y; }, 0) / vs.length;
+          if (a < low) { low = a; best = n; }
+        });
+        return best;
+      });
+    },
+    summary: function (group, me, w) {
+      return fetchTeam(group, w).then(function (team) {
+        return { got: slipsFor(team, me).map(function (x) { return { from: x.from, shout: x.slip.shout, next: x.slip.next }; }), tryNext: (team[me] || {}).tryNext || '' };
+      });
+    }
   };
 })();
