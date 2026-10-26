@@ -11,6 +11,8 @@
      fills in only their own card; the Quest Master can fill in anyone's.
    - Check-in, once a week on Wednesday. Only the Quest Master and
      facilitators fill it in; a facilitator adds a note and marks it seen.
+     Below it, the Team Reflection (reflect.js): each Riser's own
+     reflection and a feedback slip for each teammate.
 
    A team chooses its quest one week and starts it the next. Each week the
    team picks a Quest Master in the top line (the turn goes round); once
@@ -912,6 +914,10 @@
     });
     form.appendChild(sign);
     wrap.appendChild(form);
+    // The SEL side: each Riser's reflection and slips for their teammates.
+    var rf = el('div');
+    wrap.appendChild(rf);
+    if (window.T3_reflect) window.T3_reflect(rf, group, KID ? ME : '', w);
     return wrap;
   }
 
