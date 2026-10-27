@@ -56,7 +56,7 @@
     var jobs = [];
     var now = Date.now();
     if (what.indexOf('quest') !== -1) {
-      jobs.push(window.eot2Save('term-3', g.id, 'board', { meta: { _reset: { v: now, u: now } }, cards: {}, standups: {}, checkins: {}, blockers: {}, materials: {} }));
+      jobs.push(window.eot2Save('term-3', g.id, 'board', { meta: { _reset: { v: now, u: now } }, cards: {}, standups: {}, checkins: {}, blockers: {}, materials: {}, plan: {} }));
       // Each teammate's Team Reflection, every week.
       g.kids.forEach(function (n) {
         Q.WEEKS.forEach(function (x, i) { jobs.push(window.eot2Save('term-3', n.toLowerCase(), 'reflect-w' + (i + 1), {})); });

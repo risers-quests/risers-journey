@@ -16,9 +16,10 @@
    The team ticks the "done" lines on the page as they become true.
    The rules for every quest are in T3_EVERY_RULES. */
 window.T3_EVERY_RULES = [
-  ['🤝', 'Be kind to everyone'],
-  ['👨‍👩‍👧', 'Fine for families to see'],
-  ['🧹', 'Clean up every time']
+  ['🛠️', 'Ask before using tools, and use them safely'],
+  ['🤝', 'Decide together: listen to every idea, and vote if you can’t agree'],
+  ['📋', 'Keep the Board up to date: move your jobs every day'],
+  ['🧹', 'Clean up and put things back every time']
 ];
 
 window.T3_PACKS = {
