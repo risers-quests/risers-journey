@@ -9,9 +9,9 @@
    - Board: Backlog → This week → Doing → Done. Each Riser adds and moves
      only their own jobs (tagged with their name) and sees everyone's. A
      job can be flagged "I'm stuck".
-   - Stand-up, on quest days. The Quest Master runs it on Monday and
-     Wednesday; on Tuesday each Riser fills in their own card. A Riser
-     fills in only their own card; the Quest Master can fill in anyone's.
+   - Stand-up, on quest days. On Monday and Wednesday the Quest Master
+     runs it and types every card (no one else can); on Tuesday each Riser
+     types only their own card. On other days the cards are locked.
      "What will I do today?" can be added to the Board, in Doing.
    - Look Back (the check-in), once a week on Wednesday, 30 minutes. Part 1, together:
      the Quest Master fills it in (our week, keep doing, change, the team
@@ -1070,15 +1070,18 @@
     var wrap = el('div', 'pb-standup');
     var day = today(), dow = new Date().getDay();
     var who = master();
+    var together = dow === 1 || dow === 3;
     var how = dow === 2 ? 'Today you work on your own. Fill in your own card when you start.'
-      : dow === 1 || dow === 3 ? (who ? esc(who) : 'The Quest Master') + ' runs the stand-up at the start of the session.'
+      : together ? (who ? esc(who) : 'The Quest Master') + ' runs the stand-up at the start of the session and types everyone’s card.'
       : 'Stand-ups are on quest days: Monday, Tuesday and Wednesday.';
     wrap.appendChild(el('div', 'pb-intro', '<h2>Stand-up · ' + niceDate(day) + '</h2><p>' + how + '</p>'));
     var grid = el('div', 'pb-su-grid');
     group.kids.forEach(function (k, i) {
       var id = day + '_' + k.toLowerCase();
       var rec = state.standups[id] || {};
-      var edit = !KID || k === ME || isMaster();
+      // Monday and Wednesday: only the Quest Master types, on every card.
+      // Tuesday: each Riser types only their own. Staff can always type.
+      var edit = !KID || (together ? isMaster() : dow === 2 && k === ME);
       var card = el('div', 'pb-su-card' + (edit ? '' : ' is-locked'));
       card.innerHTML = '<h3><span class="pb-av pb-av-' + i + '">' + esc(initial(k)) + '</span>' + esc(k) + '</h3>' +
         STANDUP_QS.map(function (q) {
