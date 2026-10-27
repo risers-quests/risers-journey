@@ -1,5 +1,5 @@
-/* Term 3 Quests — the weekly Team Reflection: Part B of the Wednesday
-   check-in (board.js mounts it on the Check-in tab, under Part A).
+/* Term 3 Quests — the weekly Team Reflection: Part 2 of the Wednesday
+   Look Back (board.js mounts it on the Look Back tab, under Part 1).
 
    Each Riser fills in their own:
    1. Last week's feedback: what their teammates asked them to try (from
@@ -8,14 +8,14 @@
       Getting there / Every time.
    3. A feedback slip for each teammate: the same ten, a shout-out, and
       one thing to try next week.
-   "Submit Part B" (once everything is answered) locks the sheet and hands
+   "Submit Part 2" (once everything is answered) locks the sheet and hands
    the slips over; a teammate sees a slip only once it's submitted.
    4. What my team said: the slips sent to them this week. "I'll try
       this" on one of their teammates' ideas puts it on the Board in This
       week as a 🤝 job: their one thing to try next week.
    Once sent, slips leave the sender's screen (a parent at home never sees
    what a child wrote about someone else). When the facilitator closes the
-   check-in, anyone who hasn't submitted is marked absent and the sheet
+   Look Back, anyone who hasn't submitted is marked absent and the sheet
    locks.
    A Riser's sheet is seen only by them and staff. Staff see the whole
    team: self and teammates' ratings side by side, and every slip.
@@ -142,7 +142,7 @@
 
   /* ---------- a Riser's own reflection ---------- */
 
-  // opts: closed (the facilitator has closed this week's check-in) and
+  // opts: closed (the facilitator has closed this week's Look Back) and
   // addTry(text), which puts "my one thing to try" on the Board.
   function kidView(box, group, me, w, team, last, opts) {
     var key = group.id + '-' + w;
@@ -170,10 +170,10 @@
     function again() { box.innerHTML = ''; kidView(box, group, me, w, team, last, opts); }
     cache[key] = team;
 
-    var head = el('div', 'rf-head', '<h3>Part B · Our teamwork <small>(15 minutes)</small></h3><p>On your own computer. Your sheet is just for you and your facilitator. When you’ve finished, press <b>Submit</b>: your slips go to your teammates.</p>');
+    var head = el('div', 'rf-head', '<h3>Part 2 · Our teamwork <small>(15 minutes)</small></h3><p>On your own computer. Your sheet is just for you and your facilitator. When you’ve finished, press <b>Submit</b>: your slips go to your teammates.</p>');
     head.appendChild(status);
     box.appendChild(head);
-    if (absent) box.appendChild(el('p', 'rf-absent', 'This check-in is closed, and Part B wasn’t submitted, so you’re marked absent this week.'));
+    if (absent) box.appendChild(el('p', 'rf-absent', 'This Look Back is closed, and Part 2 wasn’t submitted, so you’re marked absent this week.'));
 
     // 1. Last week's feedback.
     var asked = slipsFor(last, me).filter(function (x) { return x.slip.next; });
@@ -218,7 +218,7 @@
       });
       // Submit: the whole sheet answered, then the slips go out.
       var bar = el('div', 'rf-send');
-      var b = el('button', 'pq-btn', 'Submit Part B');
+      var b = el('button', 'pq-btn', 'Submit Part 2');
       b.type = 'button';
       var msg = el('span', 'rf-msg');
       b.addEventListener('click', function () {
@@ -235,7 +235,7 @@
           if (left.length) missing.push('Slip for ' + t + ' (' + left.join(', ') + ')');
         });
         if (missing.length) { msg.textContent = 'Almost there! Still to fill in: ' + missing.join('; ') + '.'; return; }
-        if (!confirm('Submit Part B? Your slips go to your teammates, and you can’t change anything after this.')) return;
+        if (!confirm('Submit Part 2? Your slips go to your teammates, and you can’t change anything after this.')) return;
         mine.sent = new Date().toISOString();
         changed();
         again();
@@ -283,7 +283,7 @@
   /* ---------- staff: the whole team ---------- */
 
   function staffView(box, group, w, team, last, opts) {
-    box.appendChild(el('div', 'rf-head', '<h3>Part B · Our teamwork' + (opts.label ? ', ' + esc(opts.label.toLowerCase()) : '') + '</h3><p>Each Riser’s own rating beside the average of what their teammates gave them. ● Not yet · ●● Starting · ●●● Getting there · ●●●● Every time.</p>'));
+    box.appendChild(el('div', 'rf-head', '<h3>Part 2 · Our teamwork' + (opts.label ? ', ' + esc(opts.label.toLowerCase()) : '') + '</h3><p>Each Riser’s own rating beside the average of what their teammates gave them. ● Not yet · ●● Starting · ●●● Getting there · ●●●● Every time.</p>'));
     var kids = group.kids;
     box.appendChild(el('div', 'rf-staff-status', kids.map(function (k) {
       var r = team[k] || {};
@@ -326,7 +326,7 @@
     });
   }
 
-  // Mounts Part B for week w. me: the signed-in Riser's name, or '' for
+  // Mounts Part 2 for week w. me: the signed-in Riser's name, or '' for
   // staff. opts: { closed, addTry, label ("Quest week 2"), first (quest
   // week 1, when there's no last week to look back on) }.
   window.T3_reflect = function (box, group, me, w, opts) {

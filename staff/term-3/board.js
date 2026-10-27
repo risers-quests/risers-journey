@@ -13,11 +13,11 @@
      Wednesday; on Tuesday each Riser fills in their own card. A Riser
      fills in only their own card; the Quest Master can fill in anyone's.
      "What will I do today?" can be added to the Board, in Doing.
-   - Check-in, once a week on Wednesday, 30 minutes. Part A, together:
+   - Look Back (the check-in), once a week on Wednesday, 30 minutes. Part 1, together:
      the Quest Master fills it in (our week, keep doing, change, the team
      goal, planning next week from the Backlog, the work goal); a
      facilitator adds a note and ticks they were there, which closes it.
-     Part B, on their own: each Riser's Team Reflection (reflect.js).
+     Part 2, on their own: each Riser's Team Reflection (reflect.js).
 
    A team chooses its quest one week and starts it the next. The team
    picks a Quest Master for each week in Our Plan (the turn goes round);
@@ -236,7 +236,7 @@
   var approvals = {};
   function approved(b) { var a = approvals[b.id]; return a && a.v === 'yes'; }
 
-  var TABS = [['pack', 'Quest Pack'], ['plan', 'Our Plan'], ['board', 'Board'], ['standup', 'Stand-up'], ['checkin', 'Check-in']];
+  var TABS = [['pack', 'Quest Pack'], ['plan', 'Our Plan'], ['board', 'Board'], ['standup', 'Stand-up'], ['checkin', 'Look Back']];
 
   function draw() {
     var main = app.querySelector('.pb-main');
@@ -533,7 +533,7 @@
       var ticked = p.done.filter(function (d, i) { return meta('done_' + i); }).length;
       var dn = sec('🏁', 'good', 'Done looks like…', ticked + ' of ' + p.done.length + ' ticked');
       dn.insertAdjacentHTML('beforeend', '<div class="qp-bar"><span style="width:' + Math.round(ticked / p.done.length * 100) + '%"></span></div>' +
-        (ticked === p.done.length ? '<p class="qp-all">🎉 Everything is ticked! Show a facilitator at your check-in.</p>' : '') +
+        (ticked === p.done.length ? '<p class="qp-all">🎉 Everything is ticked! Show a facilitator at your Look Back.</p>' : '') +
         '<div class="qp-done">' + p.done.map(function (d, i) {
           var t = meta('done_' + i);
           return '<button type="button" class="qp-ck' + (t ? ' is-on' : '') + '" data-i="' + i + '"><i>' + (t ? '✓' : '') + '</i><span>' + esc(d) + (t && t.by ? '<small>' + esc(t.by) + '</small>' : '') + '</span></button>';
@@ -1142,22 +1142,22 @@
     return wrap;
   }
 
-  /* ---------- Check-in ---------- */
+  /* ---------- Look Back (the check-in) ---------- */
 
   var TRACK = [['on', 'On track'], ['bit', 'A bit behind'], ['behind', 'Behind']];
   var FINISHED = [['yes', 'Yes'], ['partly', 'Partly'], ['no', 'No']];
 
-  /* The Wednesday check-in, 30 minutes, kept short and simple.
-     Part A · Our quest work (15 min): the team talks; the Quest Master
+  /* The Wednesday Look Back, 30 minutes, kept short and simple.
+     Part 1 · Our quest work (15 min): the team talks; the Quest Master
      types. Did we finish what we said we would (and what we finished),
      are we on track, what went well, what we'll do better, and what we'll
      have finished by next Wednesday. Then everyone moves their jobs for
      next week into This week on the Board. A facilitator adds a note and
-     ticks that they were there, which closes the check-in.
+     ticks that they were there, which closes the Look Back.
      The Quest Master presses Submit once everything is answered; until
      then teammates see only that it's being filled in, and after it the
      form is read-only for everyone (staff can reopen it).
-     Part B · Our teamwork (15 min): each Riser's reflection (reflect.js),
+     Part 2 · Our teamwork (15 min): each Riser's reflection (reflect.js),
      which they submit themselves. */
   // The Wednesday of the week that starts on Monday mon (YYYY-MM-DD).
   function wedOf(mon) { var p = mon.split('-'); return new Date(+p[0], +p[1] - 1, +p[2] + 2); }
@@ -1167,7 +1167,7 @@
     // The facilitator's note and tick are their own item, so the Quest
     // Master typing at the same moment can't undo them.
     var fac = state.checkins[id + '_staff'] || { note: rec.note, signed: rec.signed };
-    // Part A is filled in by the Quest Master (or staff) and goes to the
+    // Part 1 is filled in by the Quest Master (or staff) and goes to the
     // team when they press Submit; then it's read-only (staff can reopen).
     var submitted = !!rec.submitted;
     var edit = (!KID || isMaster()) && !submitted;
@@ -1217,23 +1217,23 @@
     });
     if (qw && qw.n < 1 && !trial) {
       var first = Q.WEEKS[Q.startWeek(meta('started')) - 1];
-      wrap.appendChild(el('div', 'pb-intro', '<h2>Check-in</h2><p>Your first check-in is on Wednesday of quest week 1' +
-        (first ? ' (' + Q.nice(wedOf(first[0])) + ')' : '') + '. This week, get ready: read the Quest Pack, pick your roles and fill the Backlog with jobs.</p>'));
+      wrap.appendChild(el('div', 'pb-intro', '<h2>Look Back</h2><p>Your first Look Back is on Wednesday of quest week 1' +
+        (first ? ' (' + Q.nice(wedOf(first[0])) + ')' : '') + '. This week, get ready: read the Quest Pack and fill in Our Plan.</p>'));
       return wrap;
     }
     var label = trial ? 'Quest week 1' : qw ? 'Quest week ' + qw.n : 'Week ' + w;
-    if (trial) wrap.appendChild(el('p', 'pb-ci-trial', '👀 Try-out: opened early so you can see how it works. The real first check-in is on Wednesday of quest week 1.' + (KID ? '' : ' Clear it afterwards on the Try-out page.')));
-    wrap.appendChild(el('div', 'pb-intro', '<h2>' + label + ' check-in</h2><p>Wednesday, 30 minutes. <b>Part A</b>: together, ' +
-      esc(master() || 'the Quest Master') + ' types (15 min). <b>Part B</b>: on your own computer (15 min).</p>'));
-    wrap.appendChild(el('div', 'pb-part-head', '<h3>Part A · Our quest work <small>(15 minutes)</small></h3><p>Talk together. ' + esc(master() || 'The Quest Master') + ' fills it in.</p>'));
+    if (trial) wrap.appendChild(el('p', 'pb-ci-trial', '👀 Try-out: opened early so you can see how it works. The real first Look Back is on Wednesday of quest week 1.' + (KID ? '' : ' Clear it afterwards on the Try-out page.')));
+    wrap.appendChild(el('div', 'pb-intro', '<h2>' + label + ': Look Back</h2><p>Wednesday, 30 minutes. <b>Part 1</b>: together, ' +
+      esc(master() || 'the Quest Master') + ' types (15 min). <b>Part 2</b>: on your own computer (15 min).</p>'));
+    wrap.appendChild(el('div', 'pb-part-head', '<h3>Part 1 · Our quest work <small>(15 minutes)</small></h3><p>Talk together. ' + esc(master() || 'The Quest Master') + ' fills it in.</p>'));
 
     if (KID && !isMaster() && !submitted) {
-      wrap.appendChild(el('p', 'pb-ci-wait', '✍️ ' + esc(master() || 'The Quest Master') + ' is filling in Part A with your team. It shows here once it’s submitted.'));
+      wrap.appendChild(el('p', 'pb-ci-wait', '✍️ ' + esc(master() || 'The Quest Master') + ' is filling in Part 1 with your team. It shows here once it’s submitted.'));
     } else {
       partA();
     }
     function partA() {
-      if (submitted) wrap.appendChild(el('p', 'pb-ci-sent', '✓ Part A submitted' + (rec.submittedBy ? ' by ' + esc(rec.submittedBy) : '') + '.'));
+      if (submitted) wrap.appendChild(el('p', 'pb-ci-sent', '✓ Part 1 submitted' + (rec.submittedBy ? ' by ' + esc(rec.submittedBy) : '') + '.'));
       // Did we finish?
       var b1 = block('✅ Did we finish?');
       var done = inCol('done'), stuck = openBlockers();
@@ -1256,7 +1256,7 @@
       // Submit: everything answered, then it goes to the team.
       if (edit) {
         var bar = el('div', 'pb-ci-submit');
-        var sub = el('button', 'pq-btn', 'Submit Part A');
+        var sub = el('button', 'pq-btn', 'Submit Part 1');
         sub.type = 'button';
         var smsg = el('span', 'rf-msg');
         sub.addEventListener('click', function () {
@@ -1267,14 +1267,14 @@
           if (!String(rec.change || '').trim()) left.push('What will we do better?');
           if (!String(rec.next || '').trim()) left.push('By next Wednesday…');
           if (left.length) { smsg.textContent = 'Still to answer: ' + left.join(', '); return; }
-          if (!confirm('Submit Part A? Your team will see it, and it can’t be changed after this.')) return;
+          if (!confirm('Submit Part 1? Your team will see it, and it can’t be changed after this.')) return;
           put({ submitted: new Date().toISOString(), submittedBy: KID ? ME : staffName() });
           draw();
         });
         bar.appendChild(sub); bar.appendChild(smsg);
         wrap.appendChild(bar);
       } else if (submitted && !KID) {
-        var reopen = el('button', 'pq-link', 'Reopen Part A so it can be changed');
+        var reopen = el('button', 'pq-link', 'Reopen Part 1 so it can be changed');
         reopen.type = 'button';
         reopen.addEventListener('click', function () { put({ submitted: '', submittedBy: '' }); draw(); });
         wrap.appendChild(reopen);
@@ -1293,7 +1293,7 @@
       wrap.appendChild(move);
     }
 
-    // Facilitator: a note, and the tick that closes the check-in.
+    // Facilitator: a note, and the tick that closes the Look Back.
     function putFac(fields) {
       fac = Object.assign({}, fac, fields, { u: now() });
       state.checkins[id + '_staff'] = fac;
@@ -1305,18 +1305,18 @@
       if (!KID) note.querySelector('textarea').addEventListener('input', function () { putFac({ note: this.value }); });
       b7.appendChild(note);
       if (!KID) {
-        var sign = el('label', 'pb-sign', '<input type="checkbox"' + (closed ? ' checked' : '') + '> Facilitator was at this check-in. <small>Ticking it closes the check-in: anyone who hasn’t submitted Part B is marked absent.</small>');
+        var sign = el('label', 'pb-sign', '<input type="checkbox"' + (closed ? ' checked' : '') + '> Facilitator was at this Look Back. <small>Ticking it closes the Look Back: anyone who hasn’t submitted Part 2 is marked absent.</small>');
         sign.querySelector('input').addEventListener('change', function () {
-          if (this.checked && !confirm('Close this week’s check-in? Anyone who hasn’t submitted Part B will be marked absent.')) { this.checked = false; return; }
+          if (this.checked && !confirm('Close this week’s Look Back? Anyone who hasn’t submitted Part 2 will be marked absent.')) { this.checked = false; return; }
           putFac({ signed: this.checked, closedAt: this.checked ? new Date().toISOString() : '' });
           draw();
         });
         b7.appendChild(sign);
       }
     }
-    if (KID && closed) wrap.appendChild(el('p', 'pb-ci-closed', '✓ This check-in is closed.'));
+    if (KID && closed) wrap.appendChild(el('p', 'pb-ci-closed', '✓ This Look Back is closed.'));
 
-    // Part B.
+    // Part 2.
     var rf = el('div');
     wrap.appendChild(rf);
     if (window.T3_reflect) window.T3_reflect(rf, group, KID ? ME : '', w, {
@@ -1365,7 +1365,7 @@
       main.innerHTML = '';
       var list = el('div', 'pb-ov');
       list.appendChild(el('div', 'pb-ov-row pb-ov-headrow',
-        '<span>Team</span><span>This week</span><span>Jobs</span><span>Stuck</span><span>Stand-up today</span><span>Check-in</span>'));
+        '<span>Team</span><span>This week</span><span>Jobs</span><span>Stuck</span><span>Stand-up today</span><span>Look Back</span>'));
       GROUPS.forEach(function (g, i) {
         var a = glance(boards[i], g);
         var pct = a.total ? Math.round(a.got / a.total * 100) : 0;
