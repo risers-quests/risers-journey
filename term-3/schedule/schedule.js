@@ -13,7 +13,8 @@
    Saved under week key term3-schedule as
    { days: { Mon: [{ s, e, t, c }], … }, u, by }  (s, e: minutes after
    midnight; t: what it is; c: colour, empty for the usual colour).
-   Staff, ?view=staff: every Riser and how many blocks changed;
+   Staff, ?view=staff: every Riser and how many blocks changed, and the
+   hours each week in each kind of time (Core Skills, STEM, …);
    ?view=staff&kid=<slug>: that Riser's schedule, to change.
    Add &week=1 for week 1 (26–30 October): it starts from the week 1 plan
    (week1-data.js) instead of the school timetable, is saved under
@@ -587,6 +588,82 @@
     draw();
   }
 
+  /* ---------- staff: hours each week ---------- */
+
+  // How each Riser's week (as it is now, with any changes) splits into
+  // kinds of time, in hours. Learning time comes first; lunch, snack and
+  // early dismissal are listed apart.
+  var KINDS = [
+    { id: 'core', c: 'blue', name: 'Core Skills', note: 'with Progress Board, Skill Builder and Conference', re: /core skills|progress board|skill builder|conference/i },
+    { id: 'neg', c: 'gold', name: 'Negotiable Time', re: /negotiable/i },
+    { id: 'stem', c: 'green', name: 'STEM', re: /stem/i },
+    { id: 'garden', c: 'leaf', name: 'Gardening and Homescience', re: /garden|homescience/i },
+    { id: 'carp', c: 'brown', name: 'Carpentry', re: /carpentry/i },
+    { id: 'sel', c: 'plum', name: 'SEL', note: 'with Daring Discussion and Monday Catch-Up', re: /\bsel\b|daring|catch-up/i },
+    { id: 'global', c: 'teal', name: 'Global Exploration', re: /global/i },
+    { id: 'arts', c: 'purple', name: 'Drama and Music', re: /drama|music/i },
+    { id: 'tamil', c: 'teal', name: 'Tamil', re: /tamil/i },
+    { id: 'recess', c: 'orange', name: 'Riser Recess', re: /recess/i },
+    { id: 'wrap', c: 'red', name: 'Friday: Progress Board and email home', re: /set up progress board|email/i },
+    { id: 'other', c: 'grey', name: 'Other', re: /^/ },
+    { id: 'breaks', c: 'grey', name: 'Lunch and snack', apart: true, re: /lunch|snack/i },
+    { id: 'early', c: 'red', name: 'Early dismissal', apart: true, re: /dismissal/i }
+  ];
+  function kindOf(t) {
+    // The Friday wrap-up says "Progress Board" too, so it's checked first.
+    if (/set up progress board|email/i.test(t)) return 'wrap';
+    var order = ['breaks', 'early', 'core', 'neg', 'stem', 'garden', 'carp', 'sel', 'global', 'arts', 'tamil', 'recess'];
+    for (var i = 0; i < order.length; i++) {
+      var k = KINDS.filter(function (x) { return x.id === order[i]; })[0];
+      if (k.re.test(t)) return k.id;
+    }
+    return 'other';
+  }
+  function hoursOf(days) {
+    var out = {};
+    KINDS.forEach(function (k) { out[k.id] = 0; });
+    DAYS.forEach(function (d) { (days[d] || []).forEach(function (b) { out[kindOf(b.t)] += b.e - b.s; }); });
+    return out;
+  }
+  // 435 minutes is "7¼ h".
+  function hrs(min) {
+    if (!min) return '–';
+    var h = Math.floor(min / 60), q = Math.round((min % 60) / 15);
+    return (h || !q ? h : '') + ['', '¼', '½', '¾'][q] + ' h';
+  }
+  function hoursEl(kids, all) {
+    var per = all.map(hoursOf);
+    var used = KINDS.filter(function (k) { return per.some(function (p) { return p[k.id]; }); });
+    var avg = {};
+    used.forEach(function (k) { avg[k.id] = per.reduce(function (n, p) { return n + p[k.id]; }, 0) / per.length; });
+    var learn = used.filter(function (k) { return !k.apart; }), apart = used.filter(function (k) { return k.apart; });
+    var week = used.reduce(function (n, k) { return n + avg[k.id]; }, 0);
+    var learnTotal = learn.reduce(function (n, k) { return n + avg[k.id]; }, 0);
+    var box = el('section', 'sc-hours');
+    var top = Math.max.apply(null, learn.map(function (k) { return avg[k.id]; }));
+    box.innerHTML = '<h2>⏱️ Hours each week</h2>' +
+      '<p class="sc-note">A school week is ' + hrs(week) + ' (8:45 to 3:00, Monday to Friday). Of that, ' + hrs(learnTotal) + ' is learning time; the rest is lunch, snack and early dismissal. Worked out from each Riser’s schedule as it is now.</p>' +
+      '<h3>An average Riser’s week</h3><div class="sc-hbars">' + learn.map(function (k) {
+        return '<div class="sc-hbar"><span class="sc-hname">' + esc(k.name) + (k.note ? '<small>' + esc(k.note) + '</small>' : '') + '</span>' +
+          '<span class="sc-htrack"><span class="sc-hfill sc-c-' + k.c + '" style="width:' + Math.max(2, Math.round(avg[k.id] / top * 100)) + '%"></span></span>' +
+          '<span class="sc-hval">' + hrs(Math.round(avg[k.id] / 15) * 15) + ' <small>' + Math.round(avg[k.id] / learnTotal * 100) + '%</small></span></div>';
+      }).join('') + '</div>' +
+      (apart.length ? '<p class="sc-note">Not counted above: ' + apart.map(function (k) { return esc(k.name.toLowerCase()) + ' ' + hrs(Math.round(avg[k.id] / 15) * 15); }).join(', ') + '.</p>' : '') +
+      '<h3>Each Riser</h3><div class="sc-htable-wrap"><table class="sc-htable"><thead><tr><th></th>' +
+      kids.map(function (k) { return '<th>' + esc(k.name) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+      learn.map(function (k) {
+        return '<tr><td>' + esc(k.name) + '</td>' + per.map(function (p) {
+          var d = p[k.id] - avg[k.id];
+          return '<td class="' + (d >= 45 ? 'is-more' : d <= -45 ? 'is-less' : '') + '">' + hrs(p[k.id]) + '</td>';
+        }).join('') + '</tr>';
+      }).join('') +
+      '<tr class="sc-htotal"><td>Learning time</td>' + per.map(function (p) {
+        return '<td>' + hrs(learn.reduce(function (n, k) { return n + p[k.id]; }, 0)) + '</td>';
+      }).join('') + '</tr></tbody></table></div>' +
+      '<p class="sc-note"><span class="sc-key is-more"></span> ¾ hour or more above the average &nbsp; <span class="sc-key is-less"></span> ¾ hour or more below it</p>';
+    return box;
+  }
+
   /* ---------- staff: every Riser ---------- */
 
   function staffAll() {
@@ -620,6 +697,7 @@
         paintList(all.map(function (days) { return { days: days, by: 'staff' }; }));
       });
       paintList(states);
+      if (!W1) app.appendChild(hoursEl(kids, states.map(function (st, i) { return st && st.days ? st.days : school(kids[i].slug); })));
     });
   }
 

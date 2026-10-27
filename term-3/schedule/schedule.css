@@ -98,3 +98,27 @@
 .sc-gl-b.is-narrow { padding: 3px; overflow-wrap: anywhere; } .sc-gl-b.is-narrow b { font-size: .64rem; } .sc-gl-b.is-narrow u { font-size: .56rem; }
 .sc-gl-bar { border-left: 4px solid rgba(0, 0, 0, .3); border-radius: 6px; font-size: .68rem; font-weight: 700; line-height: 1.2; padding: 3px 6px; display: flex; align-items: center; overflow: hidden; min-height: 22px; }
 .sc-gl-b:hover { box-shadow: 0 0 0 2px var(--accent); }
+
+/* Staff: hours each week. */
+.sc-hours { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 16px 20px; margin: 22px 0 30px; }
+.sc-hours h2 { margin: 0 0 4px; font-family: var(--font-head); font-size: 1.2rem; }
+.sc-hours h3 { margin: 18px 0 8px; font-size: .95rem; }
+.sc-hbars { display: flex; flex-direction: column; gap: 6px; }
+.sc-hbar { display: grid; grid-template-columns: minmax(150px, 230px) 1fr 82px; gap: 10px; align-items: center; font-size: .9rem; }
+.sc-hname small { display: block; font-size: .72rem; color: var(--ink-faint); }
+.sc-htrack { background: var(--paper-soft); border-radius: 99px; height: 16px; overflow: hidden; }
+.sc-hfill { display: block; height: 100%; border-radius: 99px; filter: saturate(1.6) brightness(.92); }
+.sc-hval { font-weight: 700; text-align: right; white-space: nowrap; }
+.sc-hval small { font-weight: 500; color: var(--ink-faint); margin-left: 2px; }
+.sc-htable-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
+.sc-htable { border-collapse: collapse; width: 100%; font-size: .85rem; }
+.sc-htable th, .sc-htable td { padding: 7px 9px; border-bottom: 1px solid var(--border); text-align: center; white-space: nowrap; }
+.sc-htable td:first-child, .sc-htable th:first-child { text-align: left; position: sticky; left: 0; background: #fff; font-weight: 600; }
+.sc-htable thead th { background: var(--paper-soft); font-size: .8rem; }
+.sc-htable .is-more { background: #dcf0d8; font-weight: 700; }
+.sc-htable .is-less { background: #fde3cc; font-weight: 700; }
+.sc-htotal td { font-weight: 700; background: var(--paper-soft); }
+.sc-key { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; }
+.sc-key.is-more { background: #b9e0b1; }
+.sc-key.is-less { background: #f8c79c; }
+@media (max-width: 600px) { .sc-hbar { grid-template-columns: 1fr 70px; } .sc-htrack { grid-column: 1 / -1; grid-row: 2; } }
