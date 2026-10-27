@@ -7,14 +7,16 @@
    2. My self-evaluation: ten statements, each Not yet / Starting /
       Getting there / Every time.
    3. A feedback slip for each teammate: the same ten, a shout-out, and
-      one thing to try next week. "Send my slips" hands them over; a
-      teammate sees a slip only once it's sent.
+      one thing to try next week.
+   "Submit Part B" (once everything is answered) locks the sheet and hands
+   the slips over; a teammate sees a slip only once it's submitted.
    4. What my team said: the slips sent to them this week. "I'll try
       this" on one of their teammates' ideas puts it on the Board in This
       week as a 🤝 job: their one thing to try next week.
    Once sent, slips leave the sender's screen (a parent at home never sees
    what a child wrote about someone else). When the facilitator closes the
-   check-in, anyone who hasn't sent is marked absent and the sheet locks.
+   check-in, anyone who hasn't submitted is marked absent and the sheet
+   locks.
    A Riser's sheet is seen only by them and staff. Staff see the whole
    team: self and teammates' ratings side by side, and every slip.
 
@@ -149,6 +151,8 @@
     mine.slips = mine.slips || {};
     var mates = group.kids.filter(function (k) { return k !== me; });
     var closed = !!opts.closed, absent = closed && !mine.sent;
+    // Submitted (or closed): the sheet is read-only.
+    var locked = closed || !!mine.sent;
     var status = el('span', 'rf-status');
     var timer = null;
     function changed() {
@@ -166,10 +170,10 @@
     function again() { box.innerHTML = ''; kidView(box, group, me, w, team, last, opts); }
     cache[key] = team;
 
-    var head = el('div', 'rf-head', '<h3>Part B · Our teamwork <small>(15 minutes)</small></h3><p>On your own computer. Your sheet is just for you and your facilitator. Your slips go to each teammate when you press <b>Send</b>.</p>');
+    var head = el('div', 'rf-head', '<h3>Part B · Our teamwork <small>(15 minutes)</small></h3><p>On your own computer. Your sheet is just for you and your facilitator. When you’ve finished, press <b>Submit</b>: your slips go to your teammates.</p>');
     head.appendChild(status);
     box.appendChild(head);
-    if (absent) box.appendChild(el('p', 'rf-absent', 'This check-in is closed, and your slips weren’t sent, so you’re marked absent this week.'));
+    if (absent) box.appendChild(el('p', 'rf-absent', 'This check-in is closed, and Part B wasn’t submitted, so you’re marked absent this week.'));
 
     // 1. Last week's feedback.
     var asked = slipsFor(last, me).filter(function (x) { return x.slip.next; });
@@ -183,25 +187,25 @@
           return '<li>' + esc(x.slip.next) + ' <small>' + esc(x.from) + '</small></li>';
         }).join('') + '</ul>' : '') +
         (chose ? '<p class="rf-chose">🤝 I chose to try: <b>' + esc(chose) + '</b></p>' : '')));
-      s1.appendChild(textEl('How did I try to do it this week?', mine.how, closed, function (v) { mine.how = v; changed(); }));
+      s1.appendChild(textEl('How did I try to do it this week?', mine.how, locked, function (v) { mine.how = v; changed(); }));
       var went = el('div', 'rf-text', '<span>How did it go?</span>');
-      went.appendChild(scaleEl(mine.went || 0, closed, function (v) { mine.went = v; changed(); }));
+      went.appendChild(scaleEl(mine.went || 0, locked, function (v) { mine.went = v; changed(); }));
       s1.appendChild(went);
     }
     box.appendChild(s1);
 
     // 2. Self-evaluation.
     var s2 = el('section', 'rf-sec', '<h3><span class="rf-n">2</span> My self-evaluation</h3><p class="rf-hint">Pick one for each.</p>');
-    s2.appendChild(statements(SELF, mine.self, closed, function (n, v) { mine.self[n] = v; changed(); }));
+    s2.appendChild(statements(SELF, mine.self, locked, function (n, v) { mine.self[n] = v; changed(); }));
     box.appendChild(s2);
 
     // 3. Slips. Once sent they leave this screen: they're for the teammate,
     // not for anyone looking over the sender's shoulder at home.
     var s3 = el('section', 'rf-sec', '<h3><span class="rf-n">3</span> Slips for my teammates</h3>');
     if (mine.sent) {
-      s3.appendChild(el('p', 'rf-sent', '✓ Sent. Your slips are with ' + esc(mates.join(' and ')) + '.'));
+      s3.appendChild(el('p', 'rf-sent', '✓ Submitted. Your slips are with ' + esc(mates.join(' and ')) + '.'));
     } else if (absent) {
-      s3.appendChild(el('p', 'rf-empty', 'Not sent this week.'));
+      s3.appendChild(el('p', 'rf-empty', 'Not submitted this week.'));
     } else {
       s3.appendChild(el('p', 'rf-hint', 'One for each teammate. Be honest and kind.'));
       mates.forEach(function (t) {
@@ -212,31 +216,33 @@
         slip.appendChild(textEl('🎯 Next week it would help our team if you could try…', s.next, false, function (v) { s.next = v; changed(); }));
         s3.appendChild(slip);
       });
-      if (mates.length) {
-        var bar = el('div', 'rf-send');
-        var b = el('button', 'pq-btn', 'Send my slips');
-        b.type = 'button';
-        var msg = el('span', 'rf-msg');
-        b.addEventListener('click', function () {
-          var missing = [];
-          mates.forEach(function (t) {
-            var s = mine.slips[t], left = [];
-            var gaps = ALL.filter(function (n) { return !s[n]; }).length;
-            if (gaps) left.push(gaps === 1 ? '1 answer' : gaps + ' answers');
-            if (!String(s.shout || '').trim()) left.push('a shout-out');
-            if (!String(s.next || '').trim()) left.push('something to try');
-            if (left.length) missing.push(t + ' (' + left.join(', ') + ')');
-          });
-          if (missing.length) { msg.textContent = 'Almost there! Still to fill in: ' + missing.join('; ') + '.'; return; }
-          if (!confirm('Send your slips? Your teammates will read them, and you can’t change them after this.')) return;
-          mine.sent = new Date().toISOString();
-          changed();
-          again();
+      // Submit: the whole sheet answered, then the slips go out.
+      var bar = el('div', 'rf-send');
+      var b = el('button', 'pq-btn', 'Submit Part B');
+      b.type = 'button';
+      var msg = el('span', 'rf-msg');
+      b.addEventListener('click', function () {
+        var missing = [];
+        if (asked.length && (!String(mine.how || '').trim() || !mine.went)) missing.push('Last week’s feedback');
+        var selfGaps = ALL.filter(function (n) { return !mine.self[n]; }).length;
+        if (selfGaps) missing.push('My self-evaluation (' + (selfGaps === 1 ? '1 answer' : selfGaps + ' answers') + ')');
+        mates.forEach(function (t) {
+          var s = mine.slips[t], left = [];
+          var gaps = ALL.filter(function (n) { return !s[n]; }).length;
+          if (gaps) left.push(gaps === 1 ? '1 answer' : gaps + ' answers');
+          if (!String(s.shout || '').trim()) left.push('a shout-out');
+          if (!String(s.next || '').trim()) left.push('something to try');
+          if (left.length) missing.push('Slip for ' + t + ' (' + left.join(', ') + ')');
         });
-        bar.appendChild(b);
-        bar.appendChild(msg);
-        s3.appendChild(bar);
-      }
+        if (missing.length) { msg.textContent = 'Almost there! Still to fill in: ' + missing.join('; ') + '.'; return; }
+        if (!confirm('Submit Part B? Your slips go to your teammates, and you can’t change anything after this.')) return;
+        mine.sent = new Date().toISOString();
+        changed();
+        again();
+      });
+      bar.appendChild(b);
+      bar.appendChild(msg);
+      s3.appendChild(bar);
     }
     box.appendChild(s3);
 
@@ -283,7 +289,7 @@
       var r = team[k] || {};
       if (opts.closed && !r.sent) return '<span class="is-absent"><b>' + esc(k) + '</b> absent</span>';
       var selfDone = ALL.filter(function (n) { return r.self && r.self[n]; }).length;
-      return '<span><b>' + esc(k) + '</b> ' + (selfDone === 10 ? 'sheet ✓' : selfDone ? 'sheet ' + selfDone + '/10' : 'sheet not started') + ' · ' + (r.sent ? 'slips sent ✓' : 'slips not sent') + '</span>';
+      return '<span><b>' + esc(k) + '</b> ' + (r.sent ? 'submitted ✓' : selfDone ? 'filling in (' + selfDone + '/10 self)' : 'not started') + '</span>';
     }).join('')));
     var avg = function (k, n) {
       var vs = slipsFor(team, k).map(function (x) { return +x.slip[n] || 0; }).filter(Boolean);

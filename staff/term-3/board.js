@@ -904,7 +904,11 @@
      have finished by next Wednesday. Then everyone moves their jobs for
      next week into This week on the Board. A facilitator adds a note and
      ticks that they were there, which closes the check-in.
-     Part B · Our teamwork (15 min): each Riser's reflection (reflect.js). */
+     The Quest Master presses Submit once everything is answered; until
+     then teammates see only that it's being filled in, and after it the
+     form is read-only for everyone (staff can reopen it).
+     Part B · Our teamwork (15 min): each Riser's reflection (reflect.js),
+     which they submit themselves. */
   // The Wednesday of the week that starts on Monday mon (YYYY-MM-DD).
   function wedOf(mon) { var p = mon.split('-'); return new Date(+p[0], +p[1] - 1, +p[2] + 2); }
   function checkinView() {
@@ -913,7 +917,10 @@
     // The facilitator's note and tick are their own item, so the Quest
     // Master typing at the same moment can't undo them.
     var fac = state.checkins[id + '_staff'] || { note: rec.note, signed: rec.signed };
-    var edit = !KID || isMaster();
+    // Part A is filled in by the Quest Master (or staff) and goes to the
+    // team when they press Submit; then it's read-only (staff can reopen).
+    var submitted = !!rec.submitted;
+    var edit = (!KID || isMaster()) && !submitted;
     var closed = !!fac.signed;
     var lastGoal = (state.checkins['w' + (w - 1)] || {}).next;
     function put(fields) {
@@ -970,36 +977,71 @@
       esc(master() || 'the Quest Master') + ' types (15 min). <b>Part B</b>: on your own computer (15 min).</p>'));
     wrap.appendChild(el('div', 'pb-part-head', '<h3>Part A · Our quest work <small>(15 minutes)</small></h3><p>Talk together. ' + esc(master() || 'The Quest Master') + ' fills it in.</p>'));
 
-    // Did we finish?
-    var b1 = block('✅ Did we finish?');
-    var done = inCol('done'), stuck = openBlockers();
-    var firstWeek = trial || (qw && qw.n === 1);
-    if (lastGoal && !firstWeek) {
-      b1.appendChild(el('p', 'pb-ci-q', 'Last week we said we’d finish: <b>' + esc(lastGoal) + '</b>'));
-      b1.appendChild(segs('finished', FINISHED));
+    if (KID && !isMaster() && !submitted) {
+      wrap.appendChild(el('p', 'pb-ci-wait', '✍️ ' + esc(master() || 'The Quest Master') + ' is filling in Part A with your team. It shows here once it’s submitted.'));
+    } else {
+      partA();
     }
-    b1.appendChild(el('div', 'pb-ci-done', '<h4>What we finished this week</h4>' + (done.length ? '<ul>' + done.map(function (c) { return '<li>' + esc(c.title) + ' <small>' + esc(owner(c)) + '</small></li>'; }).join('') + '</ul>' : '<p class="pb-empty">Nothing in Done yet.</p>') +
-      (stuck.length ? '<h4>Still stuck</h4><ul>' + stuck.map(function (x) { return '<li>' + esc(x.what) + '</li>'; }).join('') + '</ul>' : '')));
+    function partA() {
+      if (submitted) wrap.appendChild(el('p', 'pb-ci-sent', '✓ Part A submitted' + (rec.submittedBy ? ' by ' + esc(rec.submittedBy) : '') + '.'));
+      // Did we finish?
+      var b1 = block('✅ Did we finish?');
+      var done = inCol('done'), stuck = openBlockers();
+      var firstWeek = trial || (qw && qw.n === 1);
+      if (lastGoal && !firstWeek) {
+        b1.appendChild(el('p', 'pb-ci-q', 'Last week we said we’d finish: <b>' + esc(lastGoal) + '</b>'));
+        b1.appendChild(segs('finished', FINISHED));
+      }
+      b1.appendChild(el('div', 'pb-ci-done', '<h4>What we finished this week</h4>' + (done.length ? '<ul>' + done.map(function (c) { return '<li>' + esc(c.title) + ' <small>' + esc(owner(c)) + '</small></li>'; }).join('') + '</ul>' : '<p class="pb-empty">Nothing in Done yet.</p>') +
+        (stuck.length ? '<h4>Still stuck</h4><ul>' + stuck.map(function (x) { return '<li>' + esc(x.what) + '</li>'; }).join('') + '</ul>' : '')));
 
-    var due = deadline();
-    var b2 = block('⏱️ Are we on track' + (due ? ' for ' + esc(Q.nice(due.date)) : '') + '?');
-    b2.appendChild(segs('track', TRACK));
+      var due = deadline();
+      var b2 = block('⏱️ Are we on track' + (due ? ' for ' + esc(Q.nice(due.date)) : '') + '?');
+      b2.appendChild(segs('track', TRACK));
 
-    block('👍 What went well?').appendChild(field('keep', '', 'e.g. We split the jobs on Monday.'));
-    block('🔧 What will we do better?').appendChild(field('change', '', 'e.g. Start straight away, without waiting for each other.'));
-    block('🎯 By next Wednesday, we will have finished…').appendChild(field('next', '', 'e.g. All six holes built.'));
+      block('👍 What went well?').appendChild(field('keep', '', 'e.g. We split the jobs on Monday.'));
+      block('🔧 What will we do better?').appendChild(field('change', '', 'e.g. Start straight away, without waiting for each other.'));
+      block('🎯 By next Wednesday, we will have finished…').appendChild(field('next', '', 'e.g. All six holes built.'));
 
-    var move = el('div', 'pb-ci-move', '<p><b>Now everyone:</b> move your jobs for next week into <b>This week</b> on the Board.</p>');
-    var go = el('button', 'pq-btn pq-btn-ghost', 'Open the Board');
-    go.type = 'button';
-    go.addEventListener('click', function () {
-      tab = 'board';
-      history.replaceState(null, '', KID ? '?tab=board' : '?group=' + group.id + '&tab=board');
-      draw();
-      window.scrollTo(0, 0);
-    });
-    move.appendChild(go);
-    wrap.appendChild(move);
+      // Submit: everything answered, then it goes to the team.
+      if (edit) {
+        var bar = el('div', 'pb-ci-submit');
+        var sub = el('button', 'pq-btn', 'Submit Part A');
+        sub.type = 'button';
+        var smsg = el('span', 'rf-msg');
+        sub.addEventListener('click', function () {
+          var left = [];
+          if (lastGoal && !firstWeek && !rec.finished) left.push('Did we finish?');
+          if (!rec.track) left.push('Are we on track?');
+          if (!String(rec.keep || '').trim()) left.push('What went well?');
+          if (!String(rec.change || '').trim()) left.push('What will we do better?');
+          if (!String(rec.next || '').trim()) left.push('By next Wednesday…');
+          if (left.length) { smsg.textContent = 'Still to answer: ' + left.join(', '); return; }
+          if (!confirm('Submit Part A? Your team will see it, and it can’t be changed after this.')) return;
+          put({ submitted: new Date().toISOString(), submittedBy: KID ? ME : staffName() });
+          draw();
+        });
+        bar.appendChild(sub); bar.appendChild(smsg);
+        wrap.appendChild(bar);
+      } else if (submitted && !KID) {
+        var reopen = el('button', 'pq-link', 'Reopen Part A so it can be changed');
+        reopen.type = 'button';
+        reopen.addEventListener('click', function () { put({ submitted: '', submittedBy: '' }); draw(); });
+        wrap.appendChild(reopen);
+      }
+
+      var move = el('div', 'pb-ci-move', '<p><b>Now everyone:</b> move your jobs for next week into <b>This week</b> on the Board.</p>');
+      var go = el('button', 'pq-btn pq-btn-ghost', 'Open the Board');
+      go.type = 'button';
+      go.addEventListener('click', function () {
+        tab = 'board';
+        history.replaceState(null, '', KID ? '?tab=board' : '?group=' + group.id + '&tab=board');
+        draw();
+        window.scrollTo(0, 0);
+      });
+      move.appendChild(go);
+      wrap.appendChild(move);
+    }
 
     // Facilitator: a note, and the tick that closes the check-in.
     function putFac(fields) {
@@ -1013,9 +1055,9 @@
       if (!KID) note.querySelector('textarea').addEventListener('input', function () { putFac({ note: this.value }); });
       b7.appendChild(note);
       if (!KID) {
-        var sign = el('label', 'pb-sign', '<input type="checkbox"' + (closed ? ' checked' : '') + '> Facilitator was at this check-in. <small>Ticking it closes the check-in: anyone who hasn’t sent their slips is marked absent.</small>');
+        var sign = el('label', 'pb-sign', '<input type="checkbox"' + (closed ? ' checked' : '') + '> Facilitator was at this check-in. <small>Ticking it closes the check-in: anyone who hasn’t submitted Part B is marked absent.</small>');
         sign.querySelector('input').addEventListener('change', function () {
-          if (this.checked && !confirm('Close this week’s check-in? Anyone who hasn’t sent their slips will be marked absent.')) { this.checked = false; return; }
+          if (this.checked && !confirm('Close this week’s check-in? Anyone who hasn’t submitted Part B will be marked absent.')) { this.checked = false; return; }
           putFac({ signed: this.checked, closedAt: this.checked ? new Date().toISOString() : '' });
           draw();
         });

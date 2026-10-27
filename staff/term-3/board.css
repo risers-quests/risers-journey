@@ -494,3 +494,6 @@ button.qp-ck { font: inherit; text-align: left; border: 2px solid transparent; c
 .pb-ci-move { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; background: #eef6e8; border: 1px solid #cfe3c0; border-radius: 16px; padding: 12px 16px; margin: 0 0 18px; }
 .pb-ci-move p { margin: 0; font-size: .95rem; }
 .rf-tryrow { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.pb-ci-wait { background: #fff8e6; border: 1px dashed #e3c26b; border-radius: 16px; padding: 14px 16px; margin: 0 0 18px; font-size: .95rem; }
+.pb-ci-sent { background: var(--good-soft); color: var(--good); font-weight: 600; border-radius: 12px; padding: 10px 14px; margin: 0 0 12px; }
+.pb-ci-submit { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0 0 14px; }
