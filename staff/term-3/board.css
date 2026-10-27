@@ -22,7 +22,6 @@
 .pb-weeks { display: flex; gap: 6px; }
 .pb-week { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--border); background: #fff; font: inherit; font-weight: 700; cursor: pointer; }
 .pb-week.is-on { background: var(--accent); border-color: var(--accent); color: #fff; }
-.pb-goal { margin-bottom: 12px; }
 .pb-progress { display: flex; align-items: center; gap: 12px; font-size: .85rem; color: var(--ink-soft); }
 .pb-track { flex: 1; height: 10px; border-radius: 99px; background: #edf0ea; overflow: hidden; }
 .pb-track span { display: block; height: 100%; background: var(--brand-green); border-radius: 99px; transition: width .3s ease; }
@@ -290,7 +289,6 @@ a.pb-ov-row:hover { border-color: var(--accent); }
 .pb-card.is-theirs { opacity: .8; }
 .pb-card.is-theirs .pb-card-main { cursor: default; }
 .pb-su-card.is-locked textarea { background: var(--paper-soft); }
-.pb-goal-line { background: var(--accent-soft); border-radius: 12px; padding: 10px 14px; margin: 0 0 12px; font-size: .92rem; }
 .pb-blockers > h2 { font-size: 1rem; margin: 0 0 4px; }
 .pb-line small { font-size: .78rem; color: var(--ink-faint); }
 
@@ -479,17 +477,6 @@ button.qp-ck { font: inherit; text-align: left; border: 2px solid transparent; c
 .pb-ci-q { margin: 0; font-size: .92rem; font-weight: 600; }
 .pb-ci-q small { font-weight: 500; color: var(--ink-faint); margin-left: 6px; }
 .pb-segs { display: flex; flex-wrap: wrap; gap: 6px; }
-.pb-goal { font: inherit; font-size: .92rem; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 10px; background: #fff; max-width: 420px; }
-.pb-ci-tip { margin: 0; font-size: .85rem; color: var(--ink-soft); }
-.pb-ci-tip:empty { display: none; }
-.pb-ci-tip .pq-link { margin-left: 8px; }
-.pb-plan { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.pb-plan-col { background: var(--paper-soft); border-radius: 12px; padding: 10px 12px; }
-.pb-plan-col h4 { margin: 0 0 6px; font-size: .85rem; }
-.pb-plan-col h4 em { font-style: normal; color: var(--ink-faint); }
-.pb-plan-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 0; border-top: 1px solid var(--border); font-size: .9rem; }
-.pb-plan-row small { color: var(--ink-faint); }
-.pb-plan-row .pq-seg { flex-shrink: 0; }
 .pb-ci-staff { border-style: dashed; }
 .pb-sign small { display: block; color: var(--ink-faint); font-weight: 400; margin-top: 2px; }
 .pb-ci-closed { background: var(--good-soft); color: var(--good); font-weight: 600; border-radius: 12px; padding: 10px 14px; margin: 0 0 12px; }
@@ -498,10 +485,12 @@ button.qp-ck { font: inherit; text-align: left; border: 2px solid transparent; c
 .rf-sent { margin: 0; font-weight: 600; color: var(--good); }
 .rf-sent small { font-weight: 500; color: var(--ink-faint); margin-left: 6px; }
 .rf-chose { margin: 8px 0 0; }
-.rf-pick { display: flex; flex-direction: column; gap: 6px; }
-.rf-opt { font: inherit; font-size: .92rem; text-align: left; padding: 9px 12px; border-radius: 10px; border: 1.5px solid var(--border); background: #fff; cursor: pointer; }
-.rf-opt.is-on { border-color: #6b4fbb; background: #f3f0fb; font-weight: 600; }
-.rf-own { font: inherit; font-size: .92rem; padding: 9px 12px; border-radius: 10px; border: 1.5px solid var(--border); }
 .rf-staff-status .is-absent { background: #fff0ec; border-color: #f1c7bd; color: #a3432b; }
-@media (max-width: 700px) { .pb-plan { grid-template-columns: 1fr; } }
 .pb-ci-trial { background: #fff8e6; border: 1px dashed #e3c26b; border-radius: 12px; padding: 10px 14px; margin: 0 0 12px; font-size: .88rem; }
+.pb-ci-done h4 { margin: 4px 0 6px; font-size: .88rem; }
+.pb-ci-done ul { margin: 0 0 6px; padding-left: 18px; font-size: .9rem; }
+.pb-ci-done small { color: var(--ink-faint); }
+.pb-ci-block .pb-field em { margin-top: -4px; }
+.pb-ci-move { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; background: #eef6e8; border: 1px solid #cfe3c0; border-radius: 16px; padding: 12px 16px; margin: 0 0 18px; }
+.pb-ci-move p { margin: 0; font-size: .95rem; }
+.rf-tryrow { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }

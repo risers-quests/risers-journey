@@ -895,15 +895,16 @@
   /* ---------- Check-in ---------- */
 
   var TRACK = [['on', 'On track'], ['bit', 'A bit behind'], ['behind', 'Behind']];
-  var GOAL_DID = [['yes', 'Yes'], ['partly', 'Partly'], ['not', 'Not yet']];
+  var FINISHED = [['yes', 'Yes'], ['partly', 'Partly'], ['no', 'No']];
 
-  /* The Wednesday check-in, 30 minutes.
-     Part A · Our team (15 min): the team talks; the Quest Master types.
-     Our week (done, stuck, on track?), keep doing, change, how we worked
-     together (last week's team goal, and next week's), plan next week from
-     the Backlog, and next week's work goal. A facilitator adds a note and
+  /* The Wednesday check-in, 30 minutes, kept short and simple.
+     Part A · Our quest work (15 min): the team talks; the Quest Master
+     types. Did we finish what we said we would (and what we finished),
+     are we on track, what went well, what we'll do better, and what we'll
+     have finished by next Wednesday. Then everyone moves their jobs for
+     next week into This week on the Board. A facilitator adds a note and
      ticks that they were there, which closes the check-in.
-     Part B · Me (15 min): each Riser's own reflection (reflect.js). */
+     Part B · Our teamwork (15 min): each Riser's reflection (reflect.js). */
   // The Wednesday of the week that starts on Monday mon (YYYY-MM-DD).
   function wedOf(mon) { var p = mon.split('-'); return new Date(+p[0], +p[1] - 1, +p[2] + 2); }
   function checkinView() {
@@ -914,8 +915,7 @@
     var fac = state.checkins[id + '_staff'] || { note: rec.note, signed: rec.signed };
     var edit = !KID || isMaster();
     var closed = !!fac.signed;
-    var lastGoal = (state.checkins['w' + (w - 1)] || {}).teamGoal;
-    var SHORT = (window.T3_reflectInfo || {}).SHORT || {};
+    var lastGoal = (state.checkins['w' + (w - 1)] || {}).next;
     function put(fields) {
       var r = Object.assign({}, state.checkins[id] || {}, fields);
       r.u = now();
@@ -924,7 +924,7 @@
       changed();
     }
     function field(key, label, hint) {
-      var f = el('label', 'pb-field', '<span>' + label + '</span><em>' + (edit ? hint : '') + '</em><textarea rows="2"' + (edit ? '' : ' readonly') + '>' + esc(rec[key] || '') + '</textarea>');
+      var f = el('label', 'pb-field', (label ? '<span>' + label + '</span>' : '') + '<em>' + (edit ? hint : '') + '</em><textarea rows="2"' + (edit ? '' : ' readonly') + '>' + esc(rec[key] || '') + '</textarea>');
       if (edit) f.querySelector('textarea').addEventListener('input', function () { var o = {}; o[key] = this.value; put(o); });
       return f;
     }
@@ -968,76 +968,38 @@
     if (trial) wrap.appendChild(el('p', 'pb-ci-trial', '👀 Try-out: opened early so you can see how it works. The real first check-in is on Wednesday of quest week 1.' + (KID ? '' : ' Clear it afterwards on the Try-out page.')));
     wrap.appendChild(el('div', 'pb-intro', '<h2>' + label + ' check-in</h2><p>Wednesday, 30 minutes. <b>Part A</b>: together, ' +
       esc(master() || 'the Quest Master') + ' types (15 min). <b>Part B</b>: on your own computer (15 min).</p>'));
-    wrap.appendChild(el('div', 'pb-part-head', '<h3>Part A · Our team <small>(15 minutes)</small></h3><p>Talk together. ' + esc(master() || 'The Quest Master') + ' fills it in.</p>'));
+    wrap.appendChild(el('div', 'pb-part-head', '<h3>Part A · Our quest work <small>(15 minutes)</small></h3><p>Talk together. ' + esc(master() || 'The Quest Master') + ' fills it in.</p>'));
 
-    // Our week.
-    var b1 = block('📋 Our week');
+    // Did we finish?
+    var b1 = block('✅ Did we finish?');
     var done = inCol('done'), stuck = openBlockers();
-    b1.appendChild(el('div', 'pb-review',
-      '<div><h4>What we finished</h4>' + (done.length ? '<ul>' + done.map(function (c) { return '<li>' + esc(c.title) + ' <small>' + esc(owner(c)) + '</small></li>'; }).join('') + '</ul>' : '<p class="pb-empty">Nothing in Done yet.</p>') + '</div>' +
-      '<div><h4>Still stuck</h4>' + (stuck.length ? '<ul>' + stuck.map(function (x) { return '<li>' + esc(x.what) + '</li>'; }).join('') + '</ul>' : '<p class="pb-empty">Nothing.</p>') + '</div>'));
-    var due = deadline();
-    b1.appendChild(el('p', 'pb-ci-q', 'Are we on track for our deadline?' + (due ? ' <small>Ready by ' + Q.nice(due.date) + '</small>' : '')));
-    b1.appendChild(segs('track', TRACK));
-
-    // Keep doing, change.
-    var b2 = block('👍 Keep doing');
-    b2.appendChild(field('keep', 'What helped our quest move forward this week?', 'e.g. We split the jobs on Monday. We tested before painting.'));
-    var b3 = block('🔧 Change');
-    b3.appendChild(field('slow', 'What slowed us down?', 'e.g. We waited for one person to start.'));
-    b3.appendChild(field('change', 'Next week we will…', 'e.g. Anyone can start a job.'));
-
-    // How we worked together: the team goal.
-    var b4 = block('🤝 How we worked together');
-    if (lastGoal && SHORT[lastGoal]) {
-      b4.appendChild(el('p', 'pb-ci-q', 'Last week’s team goal: <b>' + esc(SHORT[lastGoal]) + '</b>. Did we do it?'));
-      b4.appendChild(segs('goalDid', GOAL_DID));
+    var firstWeek = trial || (qw && qw.n === 1);
+    if (lastGoal && !firstWeek) {
+      b1.appendChild(el('p', 'pb-ci-q', 'Last week we said we’d finish: <b>' + esc(lastGoal) + '</b>'));
+      b1.appendChild(segs('finished', FINISHED));
     }
-    b4.appendChild(el('p', 'pb-ci-q', 'Our team goal for next week'));
-    var sel = el('select', 'pb-goal');
-    sel.disabled = !edit;
-    sel.innerHTML = '<option value="">Choose one…</option>' + Object.keys(SHORT).map(function (n) {
-      return '<option value="' + n + '"' + (+rec.teamGoal === +n ? ' selected' : '') + '>' + esc(SHORT[n]) + '</option>';
-    }).join('');
-    sel.addEventListener('change', function () { put({ teamGoal: +sel.value || '' }); });
-    b4.appendChild(sel);
-    var tip = el('p', 'pb-ci-tip');
-    b4.appendChild(tip);
-    if (window.T3_reflectInfo && w > 1) window.T3_reflectInfo.lowest(group, w - 1).then(function (n) {
-      if (!n) return;
-      tip.innerHTML = '💡 From last week’s slips, our team scored lowest on <b>' + esc(SHORT[n]) + '</b>.';
-      if (edit && +rec.teamGoal !== n) {
-        var use = el('button', 'pq-link', 'Use it');
-        use.type = 'button';
-        use.addEventListener('click', function () { sel.value = String(n); put({ teamGoal: n }); use.remove(); });
-        tip.appendChild(use);
-      }
-    });
+    b1.appendChild(el('div', 'pb-ci-done', '<h4>What we finished this week</h4>' + (done.length ? '<ul>' + done.map(function (c) { return '<li>' + esc(c.title) + ' <small>' + esc(owner(c)) + '</small></li>'; }).join('') + '</ul>' : '<p class="pb-empty">Nothing in Done yet.</p>') +
+      (stuck.length ? '<h4>Still stuck</h4><ul>' + stuck.map(function (x) { return '<li>' + esc(x.what) + '</li>'; }).join('') + '</ul>' : '')));
 
-    // Plan next week from the Backlog.
-    var b5 = block('🗂️ Plan next week');
-    var back = inCol('backlog'), todo = inCol('todo');
-    b5.appendChild(el('p', 'pb-ci-q', 'Move the jobs for next week from Backlog to This week. Each job keeps its owner.'));
-    var plan = el('div', 'pb-plan');
-    var lb = el('div', 'pb-plan-col', '<h4>Backlog <em>' + back.length + '</em></h4>');
-    if (!back.length) lb.appendChild(el('p', 'pb-empty', 'Nothing waiting. Add jobs on the Board.'));
-    back.forEach(function (c) {
-      var row = el('div', 'pb-plan-row', '<span>' + esc(c.title) + (owner(c) ? ' <small>' + esc(owner(c)) + '</small>' : '') + '</span>');
-      if (edit) {
-        var mv = el('button', 'pq-seg', 'This week →');
-        mv.type = 'button';
-        mv.addEventListener('click', function () { putCard(c.id, { col: 'todo', order: now() }); draw(); });
-        row.appendChild(mv);
-      }
-      lb.appendChild(row);
-    });
-    var lt = el('div', 'pb-plan-col', '<h4>This week <em>' + todo.length + '</em></h4>' +
-      (todo.length ? todo.map(function (c) { return '<div class="pb-plan-row"><span>' + esc(c.title) + (owner(c) ? ' <small>' + esc(owner(c)) + '</small>' : '') + '</span></div>'; }).join('') : '<p class="pb-empty">Nothing yet.</p>'));
-    plan.appendChild(lb); plan.appendChild(lt);
-    b5.appendChild(plan);
+    var due = deadline();
+    var b2 = block('⏱️ Are we on track' + (due ? ' for ' + esc(Q.nice(due.date)) : '') + '?');
+    b2.appendChild(segs('track', TRACK));
 
-    var b6 = block('🎯 Next week’s work goal');
-    b6.appendChild(field('next', 'One clear goal for our quest', 'e.g. All six holes built and tested.'));
+    block('👍 What went well?').appendChild(field('keep', '', 'e.g. We split the jobs on Monday.'));
+    block('🔧 What will we do better?').appendChild(field('change', '', 'e.g. Start straight away, without waiting for each other.'));
+    block('🎯 By next Wednesday, we will have finished…').appendChild(field('next', '', 'e.g. All six holes built.'));
+
+    var move = el('div', 'pb-ci-move', '<p><b>Now everyone:</b> move your jobs for next week into <b>This week</b> on the Board.</p>');
+    var go = el('button', 'pq-btn pq-btn-ghost', 'Open the Board');
+    go.type = 'button';
+    go.addEventListener('click', function () {
+      tab = 'board';
+      history.replaceState(null, '', KID ? '?tab=board' : '?group=' + group.id + '&tab=board');
+      draw();
+      window.scrollTo(0, 0);
+    });
+    move.appendChild(go);
+    wrap.appendChild(move);
 
     // Facilitator: a note, and the tick that closes the check-in.
     function putFac(fields) {
