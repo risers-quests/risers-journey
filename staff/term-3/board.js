@@ -509,7 +509,7 @@
     var b = project(meta('project')), c = CARDS[b.id], p = PACKS[b.id], due = deadline();
     var wrap = el('div', 'qp');
     wrap.appendChild(el('div', 'qp-hero',
-      '<div class="qp-ic">' + (c ? c.icon : b.own ? '💡' : '⭐') + '</div><div><h2>' + esc(b.title) + '</h2><p>' + esc(p ? p.mission : (c ? c.tag : b.what)) + '</p>' +
+      '<div class="qp-ic">' + (c ? c.icon : b.own ? '💡' : '⭐') + '</div><div><h2>' + esc(b.title) + '</h2><p>' + esc(p ? p.goal : (c ? c.tag : b.what)) + '</p>' +
       '<div class="qp-chips"><span>⏱ ' + Q.weeksFor(b) + ' weeks</span>' + (due ? '<span>🎯 Ready by ' + Q.nice(due.date) + '</span>' : '') + '<span>📚 ' + esc(c ? c.learn : b.learn) + '</span></div></div>'));
 
     if (b.own) {
@@ -522,6 +522,9 @@
       wrap.appendChild(el('section', 'qp-sec qp-wait', '<div class="qp-h"><span class="qp-n qp-good">📦</span><h3>Your Quest Pack is on its way</h3></div>' +
         '<p>A facilitator is getting it ready for you: what you must make, when it’s done, the boundaries and the rules. Start <b>Our Plan</b> while you wait.</p>'));
     } else {
+      var wh = sec('👥', 'blue', 'Who it’s for');
+      wh.insertAdjacentHTML('beforeend', '<p class="qp-text">' + esc(p.who) + '</p>');
+      wrap.appendChild(wh);
       var mk = sec('📦', 'green', 'What we must make', p.make.length + ' things');
       mk.insertAdjacentHTML('beforeend', '<div class="qp-make">' + p.make.map(function (m) {
         return '<div class="qp-tile"><span class="e">' + m[0] + '</span><b>' + esc(m[1]) + '</b><span>' + esc(m[2]) + '</span></div>';
@@ -529,7 +532,7 @@
       wrap.appendChild(mk);
       // The team ticks each line when it's true; the bar shows how close they are.
       var ticked = p.done.filter(function (d, i) { return meta('done_' + i); }).length;
-      var dn = sec('🏁', 'good', 'It’s done when…', ticked + ' of ' + p.done.length + ' ticked');
+      var dn = sec('🏁', 'good', 'Done looks like…', ticked + ' of ' + p.done.length + ' ticked');
       dn.insertAdjacentHTML('beforeend', '<div class="qp-bar"><span style="width:' + Math.round(ticked / p.done.length * 100) + '%"></span></div>' +
         (ticked === p.done.length ? '<p class="qp-all">🎉 Everything is ticked! Show a facilitator at your check-in.</p>' : '') +
         '<div class="qp-done">' + p.done.map(function (d, i) {
@@ -537,6 +540,15 @@
           return '<button type="button" class="qp-ck' + (t ? ' is-on' : '') + '" data-i="' + i + '"><i>' + (t ? '✓' : '') + '</i><span>' + esc(d) + (t && t.by ? '<small>' + esc(t.by) + '</small>' : '') + '</span></button>';
         }).join('') + '</div>' +
         (p.notDone ? '<div class="qp-not">✗ <span><b>Not done:</b> ' + esc(p.notDone) + '</span></div>' : ''));
+      // At the end, a facilitator checks it really is done.
+      var chk = meta('doneOk');
+      if (chk) dn.insertAdjacentHTML('beforeend', '<p class="qp-checked">✓ Checked by ' + esc(chk.by) + ': it’s done!</p>');
+      else if (!KID && ticked === p.done.length) {
+        var cb = el('button', 'pq-btn', '✓ I’ve checked it: it’s done');
+        cb.type = 'button';
+        cb.addEventListener('click', function () { setMeta('doneOk', { by: niceName(staffName()), at: new Date().toISOString() }); draw(); });
+        dn.appendChild(cb);
+      } else dn.insertAdjacentHTML('beforeend', '<p class="qp-note">When every box is ticked, a facilitator checks it with you.</p>');
       Array.prototype.forEach.call(dn.querySelectorAll('.qp-ck'), function (bt) {
         bt.addEventListener('click', function () {
           var k = 'done_' + bt.dataset.i;
@@ -559,6 +571,18 @@
           fm.rows.map(function (r) { return '<tr>' + r.map(function (x) { return '<td>' + esc(x) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table></div>');
         wrap.appendChild(fs);
       });
+      var sk = sec('🧠', 'green', 'Skills we’ll build');
+      sk.insertAdjacentHTML('beforeend', '<ul class="qp-list">' + p.skills.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>');
+      wrap.appendChild(sk);
+      var us = sec('📚', 'blue', 'Learning we’ll use', 'from Core Skills');
+      us.insertAdjacentHTML('beforeend', '<div class="qp-uses">' + p.uses.map(function (u) { return '<div><b>' + esc(u[0]) + '</b><span>' + esc(u[1]) + '</span></div>'; }).join('') + '</div>');
+      wrap.appendChild(us);
+      var bu = sec('💰', 'good', 'Budget');
+      bu.insertAdjacentHTML('beforeend', '<p class="qp-text">Spend up to <b>' + rupees(window.T3_BUDGET || 1000) + '</b> on materials. Plan what you need on <b>Our Plan</b>.</p>');
+      wrap.appendChild(bu);
+      var sh = sec('🎤', 'green', 'Showcase', '15–20 minutes');
+      sh.insertAdjacentHTML('beforeend', '<p class="qp-note">Show and talk about:</p><ul class="qp-list">' + (window.T3_EVERY_SHOW || []).concat(p.show || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>');
+      wrap.appendChild(sh);
       var bd = sec('🛑', 'bad', 'Boundaries', 'never cross these');
       bd.insertAdjacentHTML('beforeend', '<p class="qp-note">For our ' + esc(b.title.toLowerCase()) + ':</p>' + tiles(p.bounds, 'qp-nv') +
         '<div class="qp-ask">🙋 Not sure if something is OK? Ask a facilitator <b>before</b> you do it.</div>');
@@ -635,8 +659,11 @@
     var grand = el('p', 'pl-total');
     function paintTotal() {
       var all = parts();
-      grand.innerHTML = '🧾 Whole quest: <b>' + rupees(all.reduce(function (n, x) { return n + partCost(x); }, 0)) + '</b> for materials · ' +
-        all.reduce(function (n, x) { return n + (x.jobs || []).filter(function (j) { return j.t; }).length; }, 0) + ' jobs';
+      var spent = all.reduce(function (n, x) { return n + partCost(x); }, 0), budget = window.T3_BUDGET || 1000;
+      grand.className = 'pl-total' + (spent > budget ? ' is-over' : '');
+      grand.innerHTML = '🧾 Whole quest: <b>' + rupees(spent) + '</b> of our <b>' + rupees(budget) + '</b> budget · ' +
+        all.reduce(function (n, x) { return n + (x.jobs || []).filter(function (j) { return j.t; }).length; }, 0) + ' jobs' +
+        (spent > budget ? '<br>⚠️ That’s ' + rupees(spent - budget) + ' over. Find cheaper materials, or use less.' : '');
     }
 
     // The parts.
@@ -800,6 +827,8 @@
           if (left.length) miss.push(name + ': ' + left.join(', '));
         });
         weeks.forEach(function (w) { if (!String(meta('pgoal_' + w.n, '')).trim()) miss.push('the goal for week ' + w.n); });
+        var spent = all.reduce(function (n, x) { return n + partCost(x); }, 0);
+        if (spent > (window.T3_BUDGET || 1000)) miss.push('bring the cost down to ' + rupees(window.T3_BUDGET || 1000) + ' or less');
         if (miss.length) { msg.textContent = 'Almost there! Still to do: ' + miss.join('; ') + '.'; return; }
         if (!confirm('Send your plan to a facilitator? You can’t change it while they look at it.')) return;
         setMeta('planOk', { st: 'waiting', by: ME, at: new Date().toISOString() });
