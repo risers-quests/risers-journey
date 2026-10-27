@@ -1,6 +1,8 @@
 /* Term 3 Quests — Quest Packs: what a quest is for and what "done" means.
    The team plans how to do it on the Our Plan tab. Very simple words: the
-   challenge is the build, not the reading.
+   challenge is the build, not the reading. Teams choose their own
+   materials, within the budget. Skills and learning are Core Skills put
+   to use: Maths, Science and Language.
 
    T3_PACKS[<project id>] = {
      goal:    one line: what it's for, and who it helps,
@@ -8,8 +10,8 @@
      make:    [[icon, 'big words', 'small words'], …]   up to 6 tiles,
      done:    ['short line', …]                         up to 6,
      notDone: 'one example of not done',
-     skills:  ['new skill', …]                          2 or 3,
-     uses:    [['Subject', 'what we use from it'], …]   learning we apply,
+     skills:  [['Maths' | 'Science' | 'Language', 'what we learn to do'], …],
+     uses:    [['Maths' | 'Science' | 'Language', 'what we already know and use'], …],
      show:    ['what to show or talk about', …]         at the showcase,
      bounds:  [[icon, 'short line'], …]                 for this quest,
      rules:   [[icon, 'short line'], …]                 for this quest,
@@ -59,8 +61,8 @@ window.T3_PACKS = {
       'Still works after 30 games'
     ],
     notDone: 'flat card with a cup at the end.',
-    skills: ['Measure and cut card and wood', 'Design a layout on squared paper', 'Test an idea and make it better'],
-    uses: [['Maths', 'Angles, measuring, adding up scores'], ['Science', 'Forces: how a ball rolls and bounces'], ['English', 'Clear signs and instructions']],
+    skills: [['Maths', 'Draw a course plan to scale'], ['Science', 'Test how angle and force change where a ball goes'], ['Language', 'Write instructions a new player can follow']],
+    uses: [['Maths', 'Measuring in cm and m, angles, adding up scores'], ['Science', 'Forces: push, friction and bounce'], ['Language', 'Short, clear signs and tips']],
     show: ['How the ball bounces off walls (angles)', 'Your hardest hole, and its best score'],
     bounds: [
       ['🪧', 'Kind, fun hole names. Nothing rude or mean.'],
@@ -87,7 +89,7 @@ window.T3_PACKS = {
     goal: 'Make a cosy reading corner that every Riser wants to read in.',
     who: 'Risers and facilitators. Ask at least 5 of them what makes a reading spot cosy.',
     make: [
-      ['🪑', '3 stools', 'Cardboard, strong enough to sit on'],
+      ['🪑', '3 stools', 'Strong enough to sit on'],
       ['🛋️', '1 bench', 'Seats two'],
       ['📚', 'A book display', 'Covers facing out'],
       ['🧸', 'Floor cushions', 'At least 3'],
@@ -101,8 +103,8 @@ window.T3_PACKS = {
       'Still strong after a week of use'
     ],
     notDone: 'a box to sit on that squashes.',
-    skills: ['Build strong shapes from card', 'Plan a space to scale', 'Ask people what they need (a survey)'],
-    uses: [['Maths', 'Measuring, area of the floor, scale drawing'], ['Science', 'Strong shapes: triangles, tubes, folds'], ['English', 'Writing clear rules and a sign']],
+    skills: [['Maths', 'Draw the nook to scale and plan the space'], ['Science', 'Test what makes a seat strong and steady'], ['Language', 'Ask survey questions and report what people said']],
+    uses: [['Maths', 'Measuring, area (length × width), adding up costs'], ['Science', 'Forces and weight, strong shapes'], ['Language', 'Writing clear rules and a sign']],
     show: ['Why your stools don’t squash', 'What Risers told you, and how you used it'],
     bounds: [
       ['🪑', 'Test every seat before anyone sits on it'],
@@ -134,8 +136,8 @@ window.T3_PACKS = {
       'The show runs from start to end'
     ],
     notDone: 'a T-shirt with paper stuck on.',
-    skills: ['Measure a person and cut to size', 'Sew and join materials', 'Plan and run a show'],
-    uses: [['Maths', 'Measuring in cm, adding up lengths'], ['Science', 'Materials: which bend, stretch or tear'], ['English', 'Writing and reading a script aloud']],
+    skills: [['Maths', 'Measure a person and turn it into a pattern'], ['Science', 'Test which materials stretch, bend or tear'], ['Language', 'Write and perform a show script']],
+    uses: [['Maths', 'Measuring in cm, adding lengths, symmetry'], ['Science', 'Properties of materials; reduce, reuse, recycle'], ['Language', 'Describing words, speaking to an audience']],
     show: ['What each outfit is made from', 'How much waste you saved'],
     bounds: [
       ['🧼', 'Only clean waste: no food packets with food in them'],
@@ -167,8 +169,8 @@ window.T3_PACKS = {
       'Teams finish the hunt in about 30 minutes'
     ],
     notDone: 'a drawing that isn’t measured.',
-    skills: ['Measure a big space', 'Draw to scale', 'Use a compass and give directions'],
-    uses: [['Maths', 'Measuring, scale, angles and turns'], ['Geography', 'Compass points, keys and symbols'], ['English', 'Writing clear clues']],
+    skills: [['Maths', 'Turn real distances into a scale map'], ['Science', 'Use a compass to find north'], ['Language', 'Write clues that are tricky but fair']],
+    uses: [['Maths', 'Measuring, scale, angles and turns, coordinates'], ['Science', 'Magnets and the Earth’s magnetic field'], ['Language', 'Direction and position words']],
     show: ['How you made the map to scale', 'The hardest clue'],
     bounds: [
       ['🚫', 'No clues in offices, kitchens or out of bounds places'],
@@ -183,7 +185,7 @@ window.T3_PACKS = {
   },
 
   'sol-gokart': {
-    goal: 'Build a wooden go-kart that steers and brakes, and race it safely on sports day.',
+    goal: 'Build a go-kart that steers and brakes, and race it safely on sports day.',
     who: 'The drivers and sports day crowd. Let 5 people test-drive it on a gentle slope.',
     make: [
       ['🛠️', 'A small model', 'To test the idea first'],
@@ -200,8 +202,8 @@ window.T3_PACKS = {
       'It finishes the race on sports day'
     ],
     notDone: 'a box on wheels with no brake.',
-    skills: ['Use saws and drills safely', 'Join wood strongly', 'Follow and write a safety check'],
-    uses: [['Science', 'Gravity, friction and slopes'], ['Maths', 'Measuring, timing runs, finding the average'], ['English', 'Writing a clear safety checklist']],
+    skills: [['Maths', 'Time runs and find the average'], ['Science', 'Test how slope, weight and friction change speed'], ['Language', 'Write a safety checklist and race rules']],
+    uses: [['Maths', 'Measuring, timing, averages'], ['Science', 'Gravity, friction and forces'], ['Language', 'Instructions and rules']],
     show: ['How the steering and brake work', 'Your fastest safe time'],
     bounds: [
       ['⛑️', 'Helmet on every time you drive'],
@@ -233,8 +235,8 @@ window.T3_PACKS = {
       'A facilitator has checked both ends are tied safely'
     ],
     notDone: 'a string with a cup that gets stuck.',
-    skills: ['Tie strong knots', 'Test with different loads', 'Make something safe for others'],
-    uses: [['Science', 'Slopes, friction and pulleys'], ['Maths', 'Measuring, timing runs, weighing loads'], ['English', 'Writing safety rules']],
+    skills: [['Maths', 'Measure the slope and record times for different loads'], ['Science', 'Test how slope, friction and pulleys change speed'], ['Language', 'Write safety rules and delivery cards']],
+    uses: [['Maths', 'Measuring, timing, weight in grams'], ['Science', 'Gravity, friction, simple machines (pulleys)'], ['Language', 'Instructions and short notes']],
     show: ['How the slope changes the speed', 'Your heaviest safe load'],
     bounds: [
       ['🙅', 'Only things go on the line. Never people or pets.'],
@@ -267,8 +269,8 @@ window.T3_PACKS = {
       'The band plays one song all the way through'
     ],
     notDone: 'a box with one band that only thuds.',
-    skills: ['Tune an instrument', 'Change one thing at a time to test', 'Play together as a band'],
-    uses: [['Science', 'Sound and vibration: longer, tighter, more water'], ['Maths', 'Measuring lengths and amounts of water'], ['Music', 'Rhythm and keeping time']],
+    skills: [['Maths', 'Measure lengths and amounts to make each note'], ['Science', 'Test how length, tightness and water change a note'], ['Language', 'Explain how your instruments work, to an audience']],
+    uses: [['Maths', 'Measuring in cm and ml, patterns'], ['Science', 'Sound, vibration and pitch'], ['Language', 'Explaining clearly, speaking to an audience']],
     show: ['Why a tighter band makes a higher note', 'Play your song'],
     bounds: [
       ['🔊', 'Not too loud: look after everyone’s ears'],
@@ -297,8 +299,8 @@ window.T3_PACKS = {
       'The championship has a winner for distance and time'
     ],
     notDone: 'one plane thrown once.',
-    skills: ['Run a fair test', 'Measure and record results', 'Draw a bar chart'],
-    uses: [['Science', 'Lift, drag and gravity'], ['Maths', 'Measuring in metres, timing, finding the best of 3'], ['English', 'Writing fair rules']],
+    skills: [['Maths', 'Measure flights and draw a bar chart'], ['Science', 'Run a fair test, changing one thing at a time'], ['Language', 'Write predictions and fair rules']],
+    uses: [['Maths', 'Measuring in metres, timing, best of 3'], ['Science', 'Lift, drag and gravity'], ['Language', 'Predicting and explaining']],
     show: ['Your chart, and what it shows', 'Why the winning plane flies best'],
     bounds: [
       ['🙅', 'Never throw at faces'],
@@ -327,8 +329,8 @@ window.T3_PACKS = {
       'Visitors can make the winner from your card'
     ],
     notDone: 'a bowl of slime with no tests.',
-    skills: ['Run a fair test', 'Measure carefully', 'Write a recipe someone else can follow'],
-    uses: [['Science', 'Mixing and how things change'], ['Maths', 'Measuring in ml and cm, bar charts'], ['English', 'Writing clear steps']],
+    skills: [['Maths', 'Measure amounts and chart your results'], ['Science', 'Run a fair test, changing one thing at a time'], ['Language', 'Write a recipe someone else can follow']],
+    uses: [['Maths', 'Measuring in ml and cm, tables and bar charts'], ['Science', 'Mixing and how materials change'], ['Language', 'Instructions in steps']],
     show: ['Which change made the biggest difference', 'Your winning recipe'],
     bounds: [
       ['🧤', 'Gloves on, and wash hands after'],
@@ -358,8 +360,8 @@ window.T3_PACKS = {
       'A team solves the mystery in 20 minutes'
     ],
     notDone: 'a clue that anyone can read without heat.',
-    skills: ['Test and compare', 'Look closely and sort what you see', 'Make a puzzle that is fair'],
-    uses: [['Science', 'How heat changes ink, fingerprint patterns'], ['Maths', 'Tally charts and timing'], ['English', 'Writing clues']],
+    skills: [['Maths', 'Sort fingerprints and make a tally chart'], ['Science', 'Test which ink shows best with heat'], ['Language', 'Write clues that lead to one answer']],
+    uses: [['Maths', 'Tally charts and timing'], ['Science', 'Heat and how materials change'], ['Language', 'Reasoning words: because, so, if']],
     show: ['Why lemon juice shows up with heat', 'Your fingerprint chart'],
     bounds: [
       ['🔥', 'A facilitator does all the heating'],
@@ -388,8 +390,8 @@ window.T3_PACKS = {
       'You can say why your lander worked'
     ],
     notDone: 'an egg wrapped in tissue, dropped once.',
-    skills: ['Design, test and improve', 'Time and record results', 'Plan a safe test'],
-    uses: [['Science', 'Gravity and air resistance'], ['Maths', 'Measuring heights, timing, comparing'], ['English', 'Writing predictions and results']],
+    skills: [['Maths', 'Time falls and compare results'], ['Science', 'Design, test and improve something to slow a fall'], ['Language', 'Write predictions and explain results']],
+    uses: [['Maths', 'Measuring heights, timing, comparing'], ['Science', 'Gravity and air resistance'], ['Language', 'Predicting and explaining']],
     show: ['Why the parachute helps', 'Your best and worst lander'],
     bounds: [
       ['🧗', 'Drops only from a safe spot a facilitator chooses'],
@@ -419,8 +421,8 @@ window.T3_PACKS = {
       'Visitors fly kites at the festival'
     ],
     notDone: 'a kite that spins and falls.',
-    skills: ['Build a light, strong frame', 'Test one change at a time', 'Run an outdoor event'],
-    uses: [['Science', 'Lift, drag and wind'], ['Maths', 'Measuring, symmetry, timing'], ['English', 'Writing judging rules']],
+    skills: [['Maths', 'Use symmetry and measure a frame'], ['Science', 'Test how shape and tail change how it flies'], ['Language', 'Write judging rules and explain your best kite']],
+    uses: [['Maths', 'Measuring, symmetry, angles'], ['Science', 'Lift, drag and wind (forces)'], ['Language', 'Rules and explaining']],
     show: ['Why your best kite flies steadily', 'What the tails changed'],
     bounds: [
       ['⚡', 'Never near power lines or trees'],
@@ -449,8 +451,8 @@ window.T3_PACKS = {
       'The poster still glows after a day'
     ],
     notDone: 'a card with an LED that only works sometimes.',
-    skills: ['Build a simple circuit', 'Draw a circuit plan', 'Find and fix a fault'],
-    uses: [['Science', 'Circuits: a full loop, + and – sides'], ['Maths', 'Measuring and spacing'], ['Art', 'Design and colour']],
+    skills: [['Maths', 'Plan spacing and measure the circuit'], ['Science', 'Build a circuit, and find and fix a fault'], ['Language', 'Write a message and a how-it-works note']],
+    uses: [['Maths', 'Measuring and spacing'], ['Science', 'Electricity: a full loop, + and – sides'], ['Language', 'Writing a greeting, explaining']],
     show: ['How your circuit makes a loop', 'A fault you found and fixed'],
     bounds: [
       ['🔋', 'Only small coin batteries. Never mains power.'],
@@ -464,7 +466,7 @@ window.T3_PACKS = {
   },
 
   'sci-hand': {
-    goal: 'Build a cardboard robot hand that can grab and lift a cup.',
+    goal: 'Build a robot hand that can grab and lift a cup.',
     who: 'Visitors who try the challenge. Let them use it.',
     make: [
       ['✋', 'The robot hand', 'Five fingers that bend'],
@@ -479,8 +481,8 @@ window.T3_PACKS = {
       'Visitors score at least 5 out of 10'
     ],
     notDone: 'a hand shape whose fingers don’t move.',
-    skills: ['Cut and fold card neatly', 'Make moving joints', 'Test and improve a grip'],
-    uses: [['Science', 'Tendons, joints and muscles'], ['Maths', 'Measuring real hands, scoring out of 10'], ['English', 'Labelling a plan']],
+    skills: [['Maths', 'Measure real hands and scale them up'], ['Science', 'Make joints that bend like a real hand'], ['Language', 'Label a plan and explain how it works']],
+    uses: [['Maths', 'Measuring, scaling, scoring out of 10'], ['Science', 'Muscles, tendons and joints'], ['Language', 'Labelling and explaining']],
     show: ['How the strings work like tendons', 'Your challenge scores'],
     bounds: [
       ['✂️', 'Craft knives only with a facilitator'],
@@ -493,10 +495,10 @@ window.T3_PACKS = {
   },
 
   'sci-fort': {
-    goal: 'Build a dome from rolled newspaper, big enough to sit inside.',
+    goal: 'Build a dome big enough to sit inside, that stands on its own.',
     who: 'Risers who visit the fort. Show them round.',
     make: [
-      ['📰', '30+ newspaper sticks', 'Two lengths'],
+      ['📐', 'The pieces', 'Measured and cut to size'],
       ['⛺', 'The dome fort', 'With a door'],
       ['⭐', 'A star ceiling', 'Inside the dome'],
       ['🏋️', 'A weight test', 'How strong is it?']
@@ -508,8 +510,8 @@ window.T3_PACKS = {
       'You can say why triangles make it strong'
     ],
     notDone: 'a dome that falls when you touch it.',
-    skills: ['Build with triangles', 'Count and measure parts', 'Work as a team on a big build'],
-    uses: [['Maths', 'Shapes, measuring, counting joints'], ['Science', 'Why triangles are strong'], ['English', 'Writing a guide for visitors']],
+    skills: [['Maths', 'Work out how many pieces you need and how long each is'], ['Science', 'Test why some shapes are stronger than others'], ['Language', 'Write a guide for visitors']],
+    uses: [['Maths', '2D and 3D shapes, measuring, counting'], ['Science', 'Forces and strong structures'], ['Language', 'Explaining and guiding']],
     show: ['Why triangles make it strong', 'Your weight test'],
     bounds: [
       ['🧗', 'Never climb on the dome'],
@@ -527,7 +529,7 @@ window.T3_PACKS = {
     who: 'The race crowd. Let them pick a winner.',
     make: [
       ['🚤', '2 boats', 'Different hull shapes'],
-      ['♨️', 'A steam boiler', 'Tin and two straws'],
+      ['♨️', 'A steam boiler', 'Heats water to make steam'],
       ['📊', 'A results chart', 'Time across the tub'],
       ['🏁', 'The race', 'Fair for every boat']
     ],
@@ -538,8 +540,8 @@ window.T3_PACKS = {
       'You can say how steam pushes the boat'
     ],
     notDone: 'a boat that only floats.',
-    skills: ['Build a small working machine', 'Run a fair race', 'Work safely with heat'],
-    uses: [['Science', 'Heat, steam and floating'], ['Maths', 'Timing, finding the average'], ['English', 'Writing race rules']],
+    skills: [['Maths', 'Time races and find the average'], ['Science', 'Test how heat and boat shape change speed'], ['Language', 'Write race rules and explain how it works']],
+    uses: [['Maths', 'Timing, averages'], ['Science', 'Heat, steam, floating and sinking'], ['Language', 'Rules and explaining']],
     show: ['How the boiler pushes the boat', 'Which hull won, and why'],
     bounds: [
       ['🔥', 'Only a facilitator lights or moves the tea-light'],
@@ -569,8 +571,8 @@ window.T3_PACKS = {
       'You can say how the panel makes it move'
     ],
     notDone: 'a car that only moves when you push it.',
-    skills: ['Wire a simple circuit', 'Test and compare gears', 'Make it lighter and faster'],
-    uses: [['Science', 'Solar power, circuits and friction'], ['Maths', 'Measuring, timing, speed'], ['English', 'Writing race rules']],
+    skills: [['Maths', 'Measure the track and work out speed'], ['Science', 'Test how gears and weight change speed'], ['Language', 'Write race rules and explain how it works']],
+    uses: [['Maths', 'Measuring, timing, speed = distance ÷ time'], ['Science', 'Energy, circuits and friction'], ['Language', 'Rules and explaining']],
     show: ['How sunlight makes the car move', 'Your fastest time, and which gears'],
     bounds: [
       ['😎', 'Never look at the sun'],
@@ -599,8 +601,8 @@ window.T3_PACKS = {
       'You can say how wind becomes light'
     ],
     notDone: 'blades that spin but no light.',
-    skills: ['Build and test a design', 'Make a fair test', 'Explain energy changes'],
-    uses: [['Science', 'Energy, motors and circuits'], ['Maths', 'Counting spins, charts'], ['English', 'Explaining clearly to visitors']],
+    skills: [['Maths', 'Count spins and chart results'], ['Science', 'Test which blades turn wind into the most light'], ['Language', 'Explain energy changes to visitors']],
+    uses: [['Maths', 'Counting, tables and charts'], ['Science', 'Energy changes and circuits'], ['Language', 'Explaining clearly']],
     show: ['How the wind becomes light', 'Your best blade shape'],
     bounds: [
       ['🌀', 'Hands away from spinning blades'],

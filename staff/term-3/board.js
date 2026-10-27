@@ -2,9 +2,9 @@
 
    - Quest Pack: what we'll make and learn, when it's done, boundaries
      and rules.
-   - Our Plan: the parts of the quest, each broken into jobs (with who
-     does each), its materials (how many, what they cost) and when it's
-     ready; a goal for each quest week. A facilitator OKs it, and its jobs
+   - Our Plan: five steps the team fills in: Quest Masters for each
+     week, the parts, the jobs in each part, a shopping list within the
+     budget, and a goal for each week. A facilitator OKs it, and its jobs
      go onto the Board.
    - Board: Backlog → This week → Doing → Done. Each Riser adds and moves
      only their own jobs (tagged with their name) and sees everyone's. A
@@ -19,15 +19,15 @@
      facilitator adds a note and ticks they were there, which closes it.
      Part B, on their own: each Riser's Team Reflection (reflect.js).
 
-   A team chooses its quest one week and starts it the next. Each week the
-   team picks a Quest Master in the top line (the turn goes round); once
-   picked, only a facilitator can change it that week. The week is always
+   A team chooses its quest one week and starts it the next. The team
+   picks a Quest Master for each week in Our Plan (the turn goes round);
+   the top line shows this week's, and a facilitator can change it there. The week is always
    today's school week.
 
    One shared record per team, saved through the progress Worker under
    group "term-3", kid = the group id, week "board": meta (project,
-   started, master<week>, planOk, pgoal_<n>), cards, standups, checkins,
-   blockers, materials (no longer shown) and plan. Every item carries the time it last changed (u); saving
+   started, master<week>, planOk, pgoal_<n>, noShop), cards, standups,
+   checkins, blockers, materials (no longer shown), plan and shop. Every item carries the time it last changed (u); saving
    fetches the latest copy and keeps the newer version of each, so two
    Risers working at once don't wipe each other's changes. Deleted items
    are kept as { deleted: true }. The page refreshes from other devices
@@ -54,7 +54,7 @@
     return { id: 'own', own: true, cat: o.cat || 'sol', title: o.title, what: o.what, make: o.make, learn: o.learn, lo: o.learn, weeks: +o.weeks || 3, resp: [], st: o.st, note: o.note, by: o.by, okBy: o.okBy };
   }
   var WEEKS = Q.WEEKS.map(function (w, i) { return i + 1; });
-  var MAPS = ['meta', 'cards', 'standups', 'checkins', 'blockers', 'materials', 'plan'];
+  var MAPS = ['meta', 'cards', 'standups', 'checkins', 'blockers', 'materials', 'plan', 'shop'];
 
   // A Riser (term-3/quest/index.html sets PB_KID_MODE) sees only their own
   // group; staff pick any.
@@ -75,7 +75,7 @@
   var state = blank();
   var loaded = false, saving = false, dirty = false, saveTimer = null;
 
-  function blank() { return { meta: {}, cards: {}, standups: {}, checkins: {}, blockers: {}, materials: {}, plan: {} }; }
+  function blank() { return { meta: {}, cards: {}, standups: {}, checkins: {}, blockers: {}, materials: {}, plan: {}, shop: {} }; }
   function now() { return Date.now(); }
   function uid() { return Math.random().toString(36).slice(2, 9); }
   function esc(s) {
@@ -278,15 +278,14 @@
     var w = sprint(), due = deadline(), qw = questWeek();
     var line = el('div', 'pb-line',
       '<span><b>' + (!qw ? 'Week ' + w : qw.n < 1 ? 'Getting ready: your quest starts next week' : 'Quest week ' + qw.n + ' of ' + qw.of + (qw.n > qw.of ? ' (extra time)' : '')) + '</b></span>' +
-      '<span>Quest Master: ' + (KID && master() ? '<b>' + esc(master()) + '</b>' :
+      '<span>Quest Master: ' + (KID ? (master() ? '<b>' + esc(master()) + '</b>' : '<em class="pb-mute">chosen in Our Plan</em>') :
         '<select class="pb-master" aria-label="Quest Master this week"><option value="">Choose…</option>' +
         group.kids.map(function (k) { return '<option' + (master() === k ? ' selected' : '') + '>' + esc(k) + '</option>'; }).join('') + '</select>' +
         (master() ? '' : ' <small>Not had a turn yet: ' + notYet().map(esc).join(', ') + '</small>')) + '</span>' +
       (due ? '<span>Ready by <b>' + Q.nice(due.date) + '</b></span>' : ''));
     var sel = line.querySelector('.pb-master');
     if (sel) sel.addEventListener('change', function () {
-      // Once a Riser picks, it stays for the week; a facilitator can change it.
-      if (KID && !confirm(this.value + ' is Quest Master this week?')) { this.value = ''; return; }
+      // Staff only: the team picks Quest Masters in Our Plan.
       setMeta('master' + w, this.value); draw();
     });
     return line;
@@ -571,11 +570,13 @@
           fm.rows.map(function (r) { return '<tr>' + r.map(function (x) { return '<td>' + esc(x) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table></div>');
         wrap.appendChild(fs);
       });
-      var sk = sec('🧠', 'green', 'Skills we’ll build');
-      sk.insertAdjacentHTML('beforeend', '<ul class="qp-list">' + p.skills.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>');
+      // Core Skills put to use: Maths, Science and Language.
+      var subj = function (list) { return '<div class="qp-uses">' + list.map(function (u) { return '<div><b>' + esc(u[0]) + '</b><span>' + esc(u[1]) + '</span></div>'; }).join('') + '</div>'; };
+      var sk = sec('🧠', 'green', 'Skills we’ll build', 'new things we learn to do');
+      sk.insertAdjacentHTML('beforeend', subj(p.skills));
       wrap.appendChild(sk);
       var us = sec('📚', 'blue', 'Learning we’ll use', 'from Core Skills');
-      us.insertAdjacentHTML('beforeend', '<div class="qp-uses">' + p.uses.map(function (u) { return '<div><b>' + esc(u[0]) + '</b><span>' + esc(u[1]) + '</span></div>'; }).join('') + '</div>');
+      us.insertAdjacentHTML('beforeend', subj(p.uses));
       wrap.appendChild(us);
       var bu = sec('💰', 'good', 'Budget');
       bu.insertAdjacentHTML('beforeend', '<p class="qp-text">Spend up to <b>' + rupees(window.T3_BUDGET || 1000) + '</b> on materials. Plan what you need on <b>Our Plan</b>.</p>');
@@ -601,235 +602,235 @@
 
   /* ---------- Our Plan ---------- */
 
-  /* The team plans its quest together: the parts of what they make, each
-     part broken into jobs (each with who does it), the materials each part
-     needs with how many and what they cost, and when each part will be
-     ready. A timeline has a goal for each quest week up to the deadline.
-     The team sends the plan to a facilitator, who OKs it or asks for
-     changes; once it's OK'd, every job goes onto the Board, in Backlog.
+  /* The team makes its own plan, in five steps, each with a question and
+     a grey example and a ✅ once it's done:
+       1. Quest Masters: who leads each quest week (everyone gets a turn).
+       2. Parts: the parts the team breaks the quest into, who leads each,
+          and the week it will be ready.
+       3. Jobs: the small jobs in each part, and who does each.
+       4. Shopping list: what to buy, how many, the cost and which part
+          it's for, against the budget (T3_BUDGET).
+       5. Timeline: what will be finished by the end of each week.
+     Nothing is filled in for them. Names are tap buttons. Once every step
+     is done the team sends it to a facilitator, who OKs it or asks for
+     changes; on OK, every job goes onto the Board, in Backlog.
      Kept in plan: { <id>: { title, lead, ready (quest week), jobs: [{ id,
-     t, who, card }], mats: [{ id, what, qty, cost }], noMats, order } },
-     week goals in meta pgoal_<n>, and the OK in meta planOk: { st:
-     'waiting' | 'yes' | 'change', note, by, at }. Sending locks the plan
-     for Risers; "Change our plan" opens it again (and it needs OKing
-     again). */
+     t, who, card }], order } }, shop: { <id>: { what, qty, cost, part,
+     order } }, and in meta: master<school week>, pgoal_<n>, noShop and
+     planOk { st: 'waiting' | 'yes' | 'change', note, by, at }. Sending
+     locks the plan for Risers; "Change our plan" opens it again (and it
+     needs OKing again). */
   function questWeeks() {
     var b = project(meta('project'));
     if (!b || !meta('started')) return [];
     var first = Q.startWeek(meta('started')), out = [];
     for (var i = 0; i < Q.weeksFor(b); i++) {
       var w = Q.WEEKS[first - 1 + i];
-      if (w) out.push({ n: i + 1, from: w[0], to: w[1] });
+      if (w) out.push({ n: i + 1, school: first + i, from: w[0], to: w[1] });
     }
     return out;
   }
   function shortDate(iso) { var p = iso.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); }
-  function parts() {
-    return Object.keys(state.plan).map(function (id) { return Object.assign({ id: id }, state.plan[id]); })
+  function listOf(map) {
+    return Object.keys(state[map]).map(function (id) { return Object.assign({ id: id }, state[map][id]); })
       .filter(function (x) { return !x.deleted; }).sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
   }
-  function putPart(id, fields) {
-    state.plan[id] = Object.assign({}, state.plan[id] || {}, fields, { u: now() });
+  function parts() { return listOf('plan'); }
+  function shop() { return listOf('shop'); }
+  function putIn(map, id, fields) {
+    state[map][id] = Object.assign({}, state[map][id] || {}, fields, { u: now() });
     changed();
   }
+  function putPart(id, fields) { putIn('plan', id, fields); }
   function niceName(n) { return n ? n.charAt(0).toUpperCase() + n.slice(1) : n; }
   function rupees(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
-  function partCost(x) { return (x.mats || []).reduce(function (n, m) { return n + (+m.cost || 0); }, 0); }
+  function shopTotal() { return shop().reduce(function (n, x) { return n + (+x.cost || 0); }, 0); }
+  function filled(v) { return String(v == null ? '' : v).trim() !== ''; }
 
   function planView() {
-    var b = project(meta('project')), pk = PACKS[b.id], due = deadline();
     var ok = meta('planOk') || {};
     var edit = !KID || !(ok.st === 'waiting' || ok.st === 'yes');
-    var weeks = questWeeks();
+    var weeks = questWeeks(), due = deadline(), budget = window.T3_BUDGET || 1000;
     var wrap = el('div', 'pl');
-    wrap.appendChild(el('div', 'pb-intro', '<h2>Our plan</h2><p>Plan your quest together. Break it into parts, and each part into jobs. Add the materials each part needs, how many and what they cost, and when it will be ready. Then send it to a facilitator to OK. Once it’s OK’d, your jobs go onto the Board.</p>'));
+    wrap.appendChild(el('div', 'pb-intro', '<h2>Our plan</h2><p>Make your plan together, in 5 steps. When every step has a ✅, send it to a facilitator.</p>'));
     if (ok.st === 'waiting') wrap.appendChild(el('p', 'pl-status is-wait', '⏳ Sent to a facilitator' + (ok.by ? ' by ' + esc(ok.by) : '') + '. Waiting for an OK.'));
     if (ok.st === 'yes') wrap.appendChild(el('p', 'pl-status is-ok', '✓ OK’d by ' + esc(ok.by || 'a facilitator') + '. Your jobs are on the Board.' + (ok.note ? ' <span>“' + esc(ok.note) + '”</span>' : '')));
     if (ok.st === 'change') wrap.appendChild(el('p', 'pl-status is-change', '✏️ A facilitator asked for changes' + (ok.note ? ': <b>' + esc(ok.note) + '</b>' : '.') + ' Change the plan, then send it again.'));
+    var progress = el('p', 'pl-progress');
+    wrap.appendChild(progress);
 
-    var list = parts();
-    var weekOpts = function (sel) {
-      return '<option value="">Choose…</option>' + weeks.map(function (w) {
-        return '<option value="' + w.n + '"' + (+sel === w.n ? ' selected' : '') + '>Week ' + w.n + ' · ' + shortDate(w.from) + '–' + shortDate(w.to) + '</option>';
-      }).join('');
-    };
-    var kidOpts = function (sel, blankLabel) {
-      return '<option value="">' + blankLabel + '</option>' + group.kids.map(function (k) { return '<option' + (sel === k ? ' selected' : '') + '>' + esc(k) + '</option>'; }).join('');
-    };
-    var grand = el('p', 'pl-total');
-    function paintTotal() {
-      var all = parts();
-      var spent = all.reduce(function (n, x) { return n + partCost(x); }, 0), budget = window.T3_BUDGET || 1000;
-      grand.className = 'pl-total' + (spent > budget ? ' is-over' : '');
-      grand.innerHTML = '🧾 Whole quest: <b>' + rupees(spent) + '</b> of our <b>' + rupees(budget) + '</b> budget · ' +
-        all.reduce(function (n, x) { return n + (x.jobs || []).filter(function (j) { return j.t; }).length; }, 0) + ' jobs' +
-        (spent > budget ? '<br>⚠️ That’s ' + rupees(spent - budget) + ' over. Find cheaper materials, or use less.' : '');
+    var list = parts(), items = shop();
+    var checks = [
+      weeks.length && weeks.every(function (w) { return master(w.school); }),
+      list.length && list.every(function (x) { return filled(x.title) && x.lead && x.ready; }),
+      list.length && list.every(function (x) { return (x.jobs || []).length && x.jobs.every(function (j) { return filled(j.t) && j.who; }); }),
+      (meta('noShop') || (items.length && items.every(function (x) { return filled(x.what) && filled(x.qty) && filled(x.cost); }))) && shopTotal() <= budget,
+      weeks.length && weeks.every(function (w) { return filled(meta('pgoal_' + w.n, '')); })
+    ];
+    var doneCount = checks.filter(Boolean).length;
+    progress.innerHTML = '<b>' + doneCount + ' of 5 steps done</b>' + '<span class="pl-dots">' + checks.map(function (c) { return '<i class="' + (c ? 'is-on' : '') + '"></i>'; }).join('') + '</span>';
+
+    function step(n, title, question) {
+      var s = el('section', 'pl-step' + (checks[n - 1] ? ' is-done' : ''), '<h3><span class="pl-sn">' + (checks[n - 1] ? '✅' : n) + '</span>' + title + '</h3><p class="pl-q">' + question + '</p>');
+      wrap.appendChild(s);
+      return s;
     }
+    // Name buttons: tap one (tap again to clear).
+    function names(sel, pick, small) {
+      var row = el('div', 'pl-names' + (small ? ' is-small' : ''));
+      group.kids.forEach(function (k) {
+        var b = el('button', 'pl-name' + (sel === k ? ' is-on' : ''), esc(k));
+        b.type = 'button';
+        b.disabled = !edit;
+        b.addEventListener('click', function () { pick(sel === k ? '' : k); draw(); });
+        row.appendChild(b);
+      });
+      return row;
+    }
+    function weekBtns(sel, pick) {
+      var row = el('div', 'pl-names is-small');
+      weeks.forEach(function (w) {
+        var b = el('button', 'pl-name' + (+sel === w.n ? ' is-on' : ''), 'Week ' + w.n);
+        b.type = 'button';
+        b.disabled = !edit;
+        b.addEventListener('click', function () { pick(+sel === w.n ? '' : w.n); draw(); });
+        row.appendChild(b);
+      });
+      return row;
+    }
+    function text(value, ph, onInput, cls) {
+      if (!edit) return el('span', 'pl-val' + (cls ? ' ' + cls : ''), filled(value) ? esc(value) : '–');
+      var i = el('input', 'pl-in' + (cls ? ' ' + cls : ''));
+      i.value = value == null ? '' : value;
+      i.placeholder = ph;
+      i.addEventListener('input', function () { onInput(i.value); });
+      return i;
+    }
+    function addBtn(label, fn) {
+      var b = el('button', 'pq-link pl-add', label);
+      b.type = 'button';
+      b.addEventListener('click', fn);
+      return b;
+    }
+    function del(fn) {
+      var b = el('button', 'pl-x', '✕');
+      b.type = 'button';
+      b.setAttribute('aria-label', 'Remove');
+      b.addEventListener('click', fn);
+      return b;
+    }
+    function focusLast(sel) { var all = app.querySelectorAll(sel); if (all.length) all[all.length - 1].focus(); }
 
-    // The parts.
-    var box = el('section', 'pl-parts', '<h3>🧩 The parts of our quest</h3>');
-    if (!list.length) box.appendChild(el('p', 'pb-empty', 'No parts yet. Add the first one below' + (pk ? ', or start from your Quest Pack' : '') + '.'));
-    list.forEach(function (x, pi) {
+    // 1. Quest Masters.
+    var s1 = step(1, '👑 Quest Masters', 'Who will be Quest Master each week? Everyone gets a turn.');
+    weeks.forEach(function (w) {
+      var row = el('div', 'pl-line', '<span class="pl-lab">Week ' + w.n + ' <small>' + shortDate(w.from) + '–' + shortDate(w.to) + '</small></span>');
+      row.appendChild(names(master(w.school), function (k) { setMeta('master' + w.school, k); }));
+      s1.appendChild(row);
+    });
+    var turns = group.kids.filter(function (k) { return !weeks.some(function (w) { return master(w.school) === k; }); });
+    if (edit && turns.length && turns.length < group.kids.length && weeks.length >= group.kids.length) s1.appendChild(el('p', 'pl-hint', 'Not had a turn yet: ' + turns.map(esc).join(', ')));
+
+    // 2. Parts.
+    var s2 = step(2, '🧩 Parts', 'Look at “What we must make” in your Quest Pack. Break it into parts. Who leads each part, and which week will it be ready?');
+    list.forEach(function (x, i) {
       var card = el('div', 'pl-part');
-      var costEl = el('span', 'pl-cost');
-      function paintCost() { costEl.textContent = 'Part cost: ' + rupees(partCost(state.plan[x.id] || x)); paintTotal(); }
-      if (!edit) {
-        var w = weeks.filter(function (k) { return k.n === +x.ready; })[0];
-        card.innerHTML = '<h4><span class="pl-num">' + (pi + 1) + '</span>' + esc(x.title) + '</h4>' +
-          '<p class="pl-meta">👤 Leads it: <b>' + esc(x.lead || '–') + '</b> · 📅 Ready by: <b>' + (w ? 'Week ' + w.n : '–') + '</b></p>' +
-          '<div class="pl-cols"><div><h5>🔨 Jobs</h5><ul>' + (x.jobs || []).map(function (j) { return '<li>' + esc(j.t) + ' <small>' + esc(j.who) + '</small></li>'; }).join('') + '</ul></div>' +
-          '<div><h5>🧰 Materials</h5>' + (x.noMats ? '<p class="pb-empty">None needed.</p>' : '<table class="pl-mats"><tr><th>What</th><th>How many</th><th>Cost</th></tr>' + (x.mats || []).map(function (m) {
-            return '<tr><td>' + esc(m.what) + '</td><td>' + esc(m.qty) + '</td><td>' + rupees(+m.cost || 0) + '</td></tr>';
-          }).join('') + '</table>') + '</div></div>';
-        card.appendChild(costEl);
-        paintCost();
-        box.appendChild(card);
-        return;
-      }
-      card.innerHTML = '<div class="pl-head"><span class="pl-num">' + (pi + 1) + '</span><input class="pl-title" placeholder="Name this part, e.g. Hole 1" aria-label="Part name"><button type="button" class="pl-del" aria-label="Remove this part">✕</button></div>' +
-        '<div class="pl-row"><label>👤 Who leads it <select class="pl-lead">' + kidOpts(x.lead, 'Choose…') + '</select></label>' +
-        '<label>📅 Ready by <select class="pl-ready">' + weekOpts(x.ready) + '</select></label></div>';
-      var ti = card.querySelector('.pl-title');
-      ti.value = x.title || '';
-      ti.addEventListener('input', function () { putPart(x.id, { title: ti.value }); });
-      card.querySelector('.pl-lead').addEventListener('change', function () { putPart(x.id, { lead: this.value }); });
-      card.querySelector('.pl-ready').addEventListener('change', function () { putPart(x.id, { ready: +this.value || '' }); });
-      card.querySelector('.pl-del').addEventListener('click', function () {
-        if (confirm('Remove “' + (x.title || 'this part') + '” and its jobs and materials?')) { putPart(x.id, { deleted: true }); draw(); }
-      });
+      var head = el('div', 'pl-line pl-phead', '<span class="pl-num">' + (i + 1) + '</span>');
+      head.appendChild(text(x.title, 'e.g. Test stool', function (v) { putPart(x.id, { title: v }); }, 'pl-ptitle'));
+      if (edit) head.appendChild(del(function () { if (confirm('Remove “' + (x.title || 'this part') + '” and its jobs?')) { putPart(x.id, { deleted: true }); draw(); } }));
+      card.appendChild(head);
+      var r1 = el('div', 'pl-line', '<span class="pl-lab">Leads it</span>');
+      r1.appendChild(names(x.lead, function (k) { putPart(x.id, { lead: k }); }, true));
+      var r2 = el('div', 'pl-line', '<span class="pl-lab">Ready in</span>');
+      r2.appendChild(weekBtns(x.ready, function (n) { putPart(x.id, { ready: n }); }));
+      card.appendChild(r1); card.appendChild(r2);
+      s2.appendChild(card);
+    });
+    if (edit) s2.appendChild(addBtn('+ Add a part', function () { putPart(uid(), { title: '', jobs: [], order: now() }); draw(); focusLast('.pl-ptitle'); }));
 
-      // Jobs: what to do, and who does it.
-      var jobs = el('div', 'pl-list', '<h5>🔨 Jobs <small>Break this part into small jobs. Who does each one?</small></h5>');
+    // 3. Jobs.
+    var s3 = step(3, '🔨 Jobs', 'What small jobs does each part need? Who does each one?');
+    if (!list.length) s3.appendChild(el('p', 'pb-empty', 'Add your parts in step 2 first.'));
+    list.forEach(function (x) {
+      var card = el('div', 'pl-part', '<h4>' + esc(x.title || 'Part') + '</h4>');
       (x.jobs || []).forEach(function (j, ji) {
-        var row = el('div', 'pl-job', '<input placeholder="e.g. Cut 4 planks" aria-label="Job"><select aria-label="Who does it">' + kidOpts(j.who, 'Who?') + '</select><button type="button" class="pl-x" aria-label="Remove">✕</button>');
-        var inp = row.querySelector('input');
-        inp.value = j.t || '';
+        var row = el('div', 'pl-job');
         var upd = function (f) { var js = (state.plan[x.id].jobs || []).slice(); js[ji] = Object.assign({}, js[ji], f); putPart(x.id, { jobs: js }); };
-        inp.addEventListener('input', function () { upd({ t: inp.value }); });
-        row.querySelector('select').addEventListener('change', function () { upd({ who: this.value }); });
-        row.querySelector('.pl-x').addEventListener('click', function () { var js = (state.plan[x.id].jobs || []).slice(); js.splice(ji, 1); putPart(x.id, { jobs: js }); draw(); });
-        jobs.appendChild(row);
+        row.appendChild(text(j.t, 'e.g. Cut the cardboard', function (v) { upd({ t: v }); }, 'pl-jt'));
+        row.appendChild(names(j.who, function (k) { upd({ who: k }); }, true));
+        if (edit) row.appendChild(del(function () { var js = (state.plan[x.id].jobs || []).slice(); js.splice(ji, 1); putPart(x.id, { jobs: js }); draw(); }));
+        card.appendChild(row);
       });
-      var addJob = el('button', 'pq-link pl-add', '+ Add a job');
-      addJob.type = 'button';
-      addJob.addEventListener('click', function () {
+      if (edit) card.appendChild(addBtn('+ Add a job', function () {
         putPart(x.id, { jobs: (state.plan[x.id].jobs || []).concat([{ id: uid(), t: '', who: '' }]) });
-        draw();
-        var ins = app.querySelectorAll('.pl-part')[pi].querySelectorAll('.pl-job input');
-        if (ins.length) ins[ins.length - 1].focus();
+        draw(); focusLast('.pl-part .pl-jt');
+      }));
+      s3.appendChild(card);
+    });
+
+    // 4. Shopping list.
+    var s4 = step(4, '🛒 Shopping list', 'What do you need to buy? How many? What will it cost? Your budget is ' + rupees(budget) + '.');
+    if (!meta('noShop')) {
+      var tbl = el('div', 'pl-shop');
+      tbl.appendChild(el('div', 'pl-srow pl-shead', '<span>What</span><span>How many</span><span>Cost ₹</span><span>For which part</span><span></span>'));
+      items.forEach(function (x) {
+        var row = el('div', 'pl-srow');
+        row.appendChild(text(x.what, 'e.g. Glue sticks', function (v) { putIn('shop', x.id, { what: v }); }, 'pl-sw'));
+        row.appendChild(text(x.qty, 'e.g. 4', function (v) { putIn('shop', x.id, { qty: v }); }));
+        var cost = text(x.cost, 'e.g. 120', function (v) { putIn('shop', x.id, { cost: v === '' ? '' : Math.max(0, +v || 0) }); paintTotal(); });
+        if (edit) { cost.type = 'number'; cost.min = '0'; cost.inputMode = 'numeric'; }
+        row.appendChild(cost);
+        if (edit) {
+          var ps = el('select', 'pl-in');
+          ps.innerHTML = '<option value="">Choose…</option>' + list.map(function (p) { return '<option value="' + p.id + '"' + (x.part === p.id ? ' selected' : '') + '>' + esc(p.title || 'Part') + '</option>'; }).join('') + '<option value="all"' + (x.part === 'all' ? ' selected' : '') + '>Everything</option>';
+          ps.addEventListener('change', function () { putIn('shop', x.id, { part: ps.value }); });
+          row.appendChild(ps);
+          row.appendChild(del(function () { putIn('shop', x.id, { deleted: true }); draw(); }));
+        } else {
+          var pp = list.filter(function (p) { return p.id === x.part; })[0];
+          row.appendChild(el('span', 'pl-val', x.part === 'all' ? 'Everything' : pp ? esc(pp.title) : '–'));
+          row.appendChild(el('span'));
+        }
+        tbl.appendChild(row);
       });
-      jobs.appendChild(addJob);
-      card.appendChild(jobs);
-
-      // Materials: what, how many, what it costs.
-      var mats = el('div', 'pl-list', '<h5>🧰 Materials <small>What, how many, and about how much it costs.</small></h5>');
-      var none = el('label', 'pl-none', '<input type="checkbox"' + (x.noMats ? ' checked' : '') + '> This part needs no materials');
-      none.querySelector('input').addEventListener('change', function () { putPart(x.id, { noMats: this.checked }); draw(); });
-      if (!x.noMats) {
-        (x.mats || []).forEach(function (m, mi) {
-          var row = el('div', 'pl-mat', '<input class="pl-what" placeholder="e.g. Plywood sheet" aria-label="Material"><input class="pl-qty" placeholder="How many" aria-label="How many"><span class="pl-rs">₹<input class="pl-amt" type="number" min="0" inputmode="numeric" placeholder="Cost" aria-label="Cost in rupees"></span><button type="button" class="pl-x" aria-label="Remove">✕</button>');
-          row.querySelector('.pl-what').value = m.what || '';
-          row.querySelector('.pl-qty').value = m.qty || '';
-          row.querySelector('.pl-amt').value = m.cost === undefined ? '' : m.cost;
-          var upd = function (f) { var ms = (state.plan[x.id].mats || []).slice(); ms[mi] = Object.assign({}, ms[mi], f); putPart(x.id, { mats: ms }); };
-          row.querySelector('.pl-what').addEventListener('input', function () { upd({ what: this.value }); });
-          row.querySelector('.pl-qty').addEventListener('input', function () { upd({ qty: this.value }); });
-          row.querySelector('.pl-amt').addEventListener('input', function () { upd({ cost: this.value === '' ? undefined : +this.value }); paintCost(); });
-          row.querySelector('.pl-x').addEventListener('click', function () { var ms = (state.plan[x.id].mats || []).slice(); ms.splice(mi, 1); putPart(x.id, { mats: ms }); draw(); });
-          mats.appendChild(row);
-        });
-        var addMat = el('button', 'pq-link pl-add', '+ Add a material');
-        addMat.type = 'button';
-        addMat.addEventListener('click', function () {
-          putPart(x.id, { mats: (state.plan[x.id].mats || []).concat([{ id: uid(), what: '', qty: '' }]) });
-          draw();
-          var ins = app.querySelectorAll('.pl-part')[pi].querySelectorAll('.pl-what');
-          if (ins.length) ins[ins.length - 1].focus();
-        });
-        mats.appendChild(addMat);
-      }
-      mats.appendChild(none);
-      card.appendChild(mats);
-      card.appendChild(costEl);
-      paintCost();
-      box.appendChild(card);
-    });
-    if (edit) {
-      var add = el('div', 'pl-addpart');
-      var bt = el('button', 'pq-btn', '+ Add a part');
-      bt.type = 'button';
-      var addPart = function (title) {
-        var id = uid();
-        putPart(id, { title: title || '', jobs: [{ id: uid(), t: '', who: '' }], mats: [{ id: uid(), what: '', qty: '' }], order: now() });
-        draw();
-      };
-      bt.addEventListener('click', function () { addPart(''); });
-      add.appendChild(bt);
-      // A start from the Quest Pack's "What we must make".
-      var have = list.map(function (x) { return (x.title || '').toLowerCase(); });
-      var left = pk ? pk.make.filter(function (m) { return have.indexOf(m[1].toLowerCase()) === -1; }) : [];
-      if (left.length) {
-        var from = el('div', 'pl-from', '<span>From your Quest Pack:</span>');
-        left.forEach(function (m) {
-          var c = el('button', 'pq-seg', m[0] + ' ' + esc(m[1]));
-          c.type = 'button';
-          c.addEventListener('click', function () { addPart(m[1]); });
-          from.appendChild(c);
-        });
-        add.appendChild(from);
-      }
-      box.appendChild(add);
+      s4.appendChild(tbl);
+      if (edit) s4.appendChild(addBtn('+ Add something to buy', function () { putIn('shop', uid(), { what: '', qty: '', cost: '', order: now() }); draw(); focusLast('.pl-sw'); }));
     }
-    box.appendChild(grand);
+    var total = el('p', 'pl-total');
+    function paintTotal() {
+      var spent = shopTotal();
+      total.className = 'pl-total' + (spent > budget ? ' is-over' : '');
+      total.innerHTML = '🧾 Total: <b>' + rupees(spent) + '</b> of ' + rupees(budget) + (spent > budget ? ' · ⚠️ ' + rupees(spent - budget) + ' over. Find cheaper things, or buy less.' : ' · ' + rupees(budget - spent) + ' left');
+    }
     paintTotal();
-    wrap.appendChild(box);
+    if (!meta('noShop')) s4.appendChild(total);
+    if (edit || meta('noShop')) {
+      var none = el('label', 'pl-none', '<input type="checkbox"' + (meta('noShop') ? ' checked' : '') + (edit ? '' : ' disabled') + '> We don’t need to buy anything');
+      none.querySelector('input').addEventListener('change', function () { setMeta('noShop', this.checked); draw(); });
+      s4.appendChild(none);
+    }
 
-    // The timeline: a goal for each quest week, and the parts due then.
-    var tl = el('section', 'pl-time', '<h3>📅 Our timeline</h3><p class="pq-sub">What will we have finished by the end of each week?' + (due ? ' Everything must be ready by <b>' + Q.nice(due.date) + '</b>.' : '') + '</p>');
+    // 5. Timeline.
+    var s5 = step(5, '📅 Our timeline', 'What will you have finished by the end of each week?' + (due ? ' Everything must be ready by <b>' + Q.nice(due.date) + '</b>.' : ''));
     weeks.forEach(function (w, i) {
-      var dueHere = list.filter(function (x) { return +x.ready === w.n; });
-      var row = el('div', 'pl-week', '<div class="pl-wk"><b>Week ' + w.n + '</b><small>' + shortDate(w.from) + '–' + shortDate(w.to) + '</small>' + (i === weeks.length - 1 ? '<em>🎉 Ready by ' + (due ? esc(Q.nice(due.date)) : 'the end') + '</em>' : '') + '</div>');
+      var row = el('div', 'pl-week', '<div class="pl-wk"><b>Week ' + w.n + '</b><small>' + shortDate(w.from) + '–' + shortDate(w.to) + '</small>' + (i === weeks.length - 1 && due ? '<em>🎉 Ready by ' + esc(Q.nice(due.date)) + '</em>' : '') + '</div>');
       var right = el('div');
-      if (edit) {
-        var t = el('textarea');
-        t.rows = 2;
-        t.placeholder = 'By the end of week ' + w.n + ' we will have…';
-        t.value = meta('pgoal_' + w.n, '');
-        t.addEventListener('input', function () { setMeta('pgoal_' + w.n, t.value); });
-        right.appendChild(t);
-      } else {
-        right.appendChild(el('p', 'pl-goal', esc(meta('pgoal_' + w.n, '')) || '<i>–</i>'));
-      }
-      right.appendChild(el('p', 'pl-due', dueHere.length ? 'Ready this week: ' + dueHere.map(function (x) { return '<b>' + esc(x.title || 'part') + '</b>'; }).join(', ') : 'No parts ready this week.'));
+      right.appendChild(text(meta('pgoal_' + w.n, ''), 'e.g. All 3 stools built and tested', function (v) { setMeta('pgoal_' + w.n, v); }, 'pl-goal'));
+      var these = list.filter(function (x) { return +x.ready === w.n; });
+      if (these.length) right.appendChild(el('p', 'pl-due', 'Your parts for this week: ' + these.map(function (x) { return '<b>' + esc(x.title || 'part') + '</b>'; }).join(', ')));
       row.appendChild(right);
-      tl.appendChild(row);
+      s5.appendChild(row);
     });
-    wrap.appendChild(tl);
 
-    // Send to a facilitator, change it, or (staff) OK it.
+    // Send, change, or (staff) OK.
     var bar = el('div', 'pl-send');
     var msg = el('span', 'rf-msg');
     if (KID && edit) {
       var send = el('button', 'pq-btn', 'Send our plan to a facilitator');
       send.type = 'button';
+      send.disabled = doneCount < 5;
+      bar.appendChild(el('p', 'pq-sub', doneCount < 5 ? 'Finish all 5 steps to send it.' : 'All 5 steps done!'));
       send.addEventListener('click', function () {
-        var miss = [], all = parts();
-        if (!all.length) miss.push('add at least one part');
-        all.forEach(function (x, i) {
-          var name = x.title || 'Part ' + (i + 1), left = [];
-          if (!x.title) left.push('a name');
-          if (!x.lead) left.push('who leads it');
-          if (!x.ready) left.push('when it’s ready');
-          var js = (x.jobs || []);
-          if (!js.length || js.some(function (j) { return !String(j.t || '').trim() || !j.who; })) left.push('jobs, each with who does it');
-          var ms = x.mats || [];
-          if (!x.noMats && (!ms.length || ms.some(function (m) { return !String(m.what || '').trim() || !String(m.qty || '').trim() || m.cost === undefined || m.cost === ''; }))) left.push('materials, each with how many and cost');
-          if (left.length) miss.push(name + ': ' + left.join(', '));
-        });
-        weeks.forEach(function (w) { if (!String(meta('pgoal_' + w.n, '')).trim()) miss.push('the goal for week ' + w.n); });
-        var spent = all.reduce(function (n, x) { return n + partCost(x); }, 0);
-        if (spent > (window.T3_BUDGET || 1000)) miss.push('bring the cost down to ' + rupees(window.T3_BUDGET || 1000) + ' or less');
-        if (miss.length) { msg.textContent = 'Almost there! Still to do: ' + miss.join('; ') + '.'; return; }
         if (!confirm('Send your plan to a facilitator? You can’t change it while they look at it.')) return;
         setMeta('planOk', { st: 'waiting', by: ME, at: new Date().toISOString() });
         draw();
@@ -857,7 +858,7 @@
         var n = 0;
         parts().forEach(function (x) {
           var js = (x.jobs || []).map(function (j) {
-            if (j.card || !String(j.t || '').trim()) return j;
+            if (j.card || !filled(j.t)) return j;
             var cid = uid();
             putCard(cid, { title: (x.title ? x.title + ': ' : '') + j.t.trim(), col: 'backlog', who: [j.who || ''], order: now() + n++, by: 'facilitator', part: x.id });
             return Object.assign({}, j, { card: cid });
@@ -874,7 +875,7 @@
         setMeta('planOk', { st: 'change', by: niceName(staffName()), note: note.value.trim(), at: new Date().toISOString() });
         draw();
       });
-      bar.appendChild(el('p', 'pq-sub', ok.st === 'waiting' ? 'The team has sent this plan. OK it, or ask for changes.' : ok.st === 'yes' ? 'OK’d. If the team adds jobs and you OK it again, the new jobs go onto the Board too.' : 'The team hasn’t sent this plan yet. You can still change it, or OK it.'));
+      bar.appendChild(el('p', 'pq-sub', (ok.st === 'waiting' ? 'The team has sent this plan. OK it, or ask for changes.' : ok.st === 'yes' ? 'OK’d. If the team adds jobs and you OK it again, the new jobs go onto the Board too.' : 'The team hasn’t sent this plan yet.') + ' ' + doneCount + ' of 5 steps done.'));
       bar.appendChild(note);
       bar.appendChild(yes);
       bar.appendChild(no);
