@@ -40,6 +40,7 @@
     paper: '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h6M9 16h4"/>',
     clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
     check: '<rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="m8 12.5 2.8 2.8L16.5 9"/>',
+    link: '<path d="M10 13.5a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1.2 1.2"/><path d="M14 10.5a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1.2-1.2"/>',
     logout: '<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5M5 12h11"/>',
   };
   function svg(name, cls) {
@@ -72,7 +73,8 @@
     { label: 'Home', href: root + 'staff/index.html', icon: 'home', match: new RegExp('^' + new URL(root, location.href).pathname + 'staff/(index\\.html)?$') },
     { label: 'Term 3', href: root + 'staff/term-3/index.html', icon: 'skills', short: 'Term 3', match: /\/term-3\// },
     { label: 'Term 2', href: root + 'staff/term-2/index.html', icon: 'term', short: 'Term 2', match: /\/(staff\/term-2|end-of-term-2|staff\/quests)\// },
-    { label: 'Term 1', href: root + 'staff/term-1/index.html', icon: 'conf', short: 'Term 1', match: /\/(staff\/term-1|term-1-conference)\// }
+    { label: 'Term 1', href: root + 'staff/term-1/index.html', icon: 'conf', short: 'Term 1', match: /\/(staff\/term-1|term-1-conference)\// },
+    { label: 'Risers’ links', href: root + 'staff/links/index.html', icon: 'link', short: 'Links', match: /\/staff\/links\// }
   ] : [
     { label: 'Home', href: root + 'index.html', icon: 'home', match: /\/(index\.html)?$/, exact: true },
     { label: 'Term 3', href: root + 'term-3/index.html', icon: 'skills', short: 'Term 3', match: /\/term-3\// },
