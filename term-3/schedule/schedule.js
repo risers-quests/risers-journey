@@ -402,9 +402,9 @@
   // week 1 schedule (all[i]), so changes made either way show in both.
   // The same activity at overlapping or touching times is one block,
   // labelled with who is in it, in the same colours as the Riser's
-  // schedule; music and Tamil are a bar for each time, with names, and
-  // stay fixed. Tap a block to change its name, times or
-  // who is in it, or delete it; Add a block; Undo; Start everyone again.
+  // schedule; music and Tamil are a bar for each time, with names. Tap a
+  // block or bar to change its name, times or who is in it, or delete it;
+  // Add a block; Undo; Start everyone again.
   // A change is saved into each Riser's week 1 schedule it touches; new
   // or moved times fit around that Riser's music and Tamil.
   function glance(box, kids, all, saved) {
@@ -430,7 +430,8 @@
         (all[i][d] || []).forEach(function (b) {
           if (OUT.test(b.t)) {
             var same = bars.filter(function (x) { return x.t === b.t && x.s === b.s && x.e === b.e; })[0];
-            if (same) same.names.push(k.name); else bars.push({ s: b.s, e: b.e, t: b.t, names: [k.name] });
+            if (same) { same.names.push(k.name); same.kids.push(k.slug); same.src.push({ i: i, b: b }); }
+            else bars.push({ d: d, s: b.s, e: b.e, t: b.t, names: [k.name], kids: [k.slug], src: [{ i: i, b: b }] });
             return;
           }
           blocks.push({ d: d, s: b.s, e: b.e, t: b.t, kids: [k.slug], src: [{ i: i, b: b }] });
@@ -457,7 +458,7 @@
         '<div class="sc-tools"><button type="button" class="sc-btn sc-gl-add">+ Add a block</button>' +
         '<button type="button" class="sc-btn sc-gl-undo"' + (past.length ? '' : ' disabled') + '>Undo</button>' +
         '<button type="button" class="sc-btn sc-ghost sc-gl-reset">Start everyone again from the week 1 plan</button></div>' +
-        '<p class="sc-note">Tap a block to change it, change who is in it, or delete it. Music and Tamil (the bars under each day) stay where they are.</p>' +
+        '<p class="sc-note">Tap any block, or a music or Tamil bar, to change it, change who is in it, or delete it.</p>' +
         '<div class="sc-gl-scroll"><div class="sc-gl" style="grid-template-columns:110px repeat(' + cols + ',minmax(0,1fr))">';
       for (var m = START; m < END; m += STEP) html += '<div class="sc-gl-t" style="grid-column:' + ((m - START) / STEP + 2) + '">' + hm(m) + '</div>';
       var row = 2;
@@ -480,13 +481,15 @@
             '<u>' + hm(b.s) + '–' + hm(b.e) + '</u><b>' + esc(b.t) + '</b>' + (w && c2 - c1 > 1 ? '<i>' + esc(w) + '</i>' : '') + '</button>';
         });
         bars.forEach(function (b) {
-          html += '<div class="sc-gl-bar sc-c-' + colourOf(b) + '" style="grid-row:' + (row + lanes + b.lane) + ';grid-column:' + ((b.s - START) / STEP + 2) + '/' + ((b.e - START) / STEP + 2) + '">' +
-            esc(b.names.join(', ')) + ' – ' + esc(b.t) + ' · ' + hm(b.s) + '–' + hm(b.e) + '</div>';
+          var ci = clusters.push(b) - 1;
+          html += '<button type="button" data-ci="' + ci + '" class="sc-gl-bar sc-c-' + colourOf(b.src[0].b) + '" style="grid-row:' + (row + lanes + b.lane) + ';grid-column:' + ((b.s - START) / STEP + 2) + '/' + ((b.e - START) / STEP + 2) + '"' +
+            ' aria-label="' + esc(b.names.join(', ') + ' – ' + b.t + ', ' + DAY_NAMES[d] + ' ' + hm(b.s) + '–' + hm(b.e) + '. Tap to change.') + '">' +
+            esc(b.names.join(', ')) + ' – ' + esc(b.t) + ' · ' + hm(b.s) + '–' + hm(b.e) + '</button>';
         });
         row += lanes + blanes;
       });
       box.innerHTML = html + '</div></div><p class="sc-note">Thursday and Friday are placeholders (To be planned) until they are planned. Open a Riser below to change just their week 1.</p>';
-      Array.prototype.forEach.call(box.querySelectorAll('.sc-gl-b'), function (bt) {
+      Array.prototype.forEach.call(box.querySelectorAll('.sc-gl-b, .sc-gl-bar'), function (bt) {
         bt.addEventListener('click', function () { var c = clusters[+bt.dataset.ci]; sheet(c, c.d); });
       });
       box.querySelector('.sc-gl-add').addEventListener('click', function () { sheet(null, 'Mon'); });

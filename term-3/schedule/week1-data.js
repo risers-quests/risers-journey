@@ -1,7 +1,7 @@
 /* Term 3 — the week 1 plan (26–30 October), Monday to Friday, for each
-   Riser. Music and Tamil are where they always are. Thursday and Friday
-   are placeholders for now: To be planned, around Snack, Lunch, music
-   and Tamil. Times are minutes after midnight: [start, end, what].
+   Riser. Music is where it always is, and Tuesday's Tamil too. Thursday
+   and Friday are placeholders for now: To be planned, around Snack,
+   Lunch and music. Times are minutes after midnight: [start, end, what].
    The staff Schedules page starts each Riser's week 1 from this; staff can
    then change it, the same way as the usual week. */
 (function () {
@@ -74,10 +74,10 @@
   var school = window.T3_TIMETABLE || {};
 
   // Thursday and Friday, until they are planned: the school day's Snack
-  // and Lunch, and the Riser's music and Tamil from the school timetable.
+  // and Lunch, and the Riser's music from the school timetable.
   window.T3_WEEK1_TBP = 'To be planned';
   function later(k, day) {
-    var gaps = ((school[k] || {})[day] || []).filter(function (b) { return /music|tamil/i.test(b[2]); });
+    var gaps = ((school[k] || {})[day] || []).filter(function (b) { return /music/i.test(b[2]); });
     var cut = function (from, to) {
       return around(from, to, window.T3_WEEK1_TBP, gaps.filter(function (g) { return g[0] < to && g[1] > from; }));
     };
