@@ -122,3 +122,35 @@
 .sc-key.is-more { background: #b9e0b1; }
 .sc-key.is-less { background: #f8c79c; }
 @media (max-width: 600px) { .sc-hbar { grid-template-columns: 1fr 70px; } .sc-htrack { grid-column: 1 / -1; grid-row: 2; } }
+
+/* Printing: small desk cards (schedule.js printOut). */
+.sc-size { display: flex; align-items: baseline; gap: 6px; padding: 4px 0; font-size: .92rem; }
+.sc-size small { color: var(--ink-faint); }
+.sc-printout { display: none; }
+@media print {
+  body > *:not(.sc-printout) { display: none !important; }
+  body { background: #fff !important; margin: 0; }
+  .sc-printout { display: block; font-family: Inter, Arial, sans-serif; color: #1e2a33; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .sc-pp { box-sizing: border-box; overflow: hidden; break-after: page; page-break-after: always; display: flex; flex-direction: column; }
+  .sc-pp:last-child { break-after: auto; page-break-after: auto; }
+  .sc-pp-head { display: flex; align-items: baseline; justify-content: space-between; gap: 4mm; }
+  .sc-pp-head b { font-size: 13pt; }
+  .sc-pp-head span { font-size: 8pt; color: #555; }
+  .sc-pp-grid { display: grid; gap: 0 1mm; }
+  .sc-pp-day { font-size: 7pt; font-weight: 700; text-align: center; }
+  .sc-pp-body { position: relative; }
+  .sc-pp-col { background-image: linear-gradient(#cfd6dc 0.2mm, transparent 0.2mm); border-bottom: 0.2mm solid #cfd6dc; }
+  .sc-pp-t { position: absolute; right: 1mm; transform: translateY(-50%); font-size: 5pt; color: #777; line-height: 1; }
+  .sc-pp-t.is-hour { font-weight: 700; color: #333; }
+  .sc-pp-t:first-child { transform: none; }
+  .sc-pp-b { position: absolute; box-sizing: border-box; border-left: 0.8mm solid rgba(0, 0, 0, .3); border-bottom: 0.4mm solid #fff; border-right: 0.4mm solid #fff; border-radius: 0.8mm; padding: 0.3mm 0.8mm; overflow: hidden; line-height: 1.1; display: flex; flex-direction: column; justify-content: center; }
+  .sc-pp-b b { font-size: 6pt; }
+  .sc-pp-b i { font-style: normal; font-size: 5pt; opacity: .8; }
+  .sc-pp-b.is-short { flex-direction: row; align-items: center; gap: 1mm; }
+  .sc-printout.is-small .sc-pp-head b { font-size: 10pt; }
+  .sc-printout.is-small .sc-pp-head span { font-size: 6pt; }
+  .sc-printout.is-small .sc-pp-day { font-size: 5.5pt; }
+  .sc-printout.is-small .sc-pp-t { font-size: 3.8pt; }
+  .sc-printout.is-small .sc-pp-b b { font-size: 4.6pt; }
+  .sc-printout.is-small .sc-pp-b i { font-size: 3.8pt; }
+}

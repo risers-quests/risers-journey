@@ -127,7 +127,8 @@
     var tools = el('div', 'sc-tools',
       '<button type="button" class="sc-btn sc-add">+ Add a block</button>' +
       '<button type="button" class="sc-btn sc-undo" disabled>Undo</button>' +
-      '<button type="button" class="sc-btn sc-ghost sc-reset">Start again from ' + FROM + '</button>');
+      '<button type="button" class="sc-btn sc-ghost sc-reset">Start again from ' + FROM + '</button>' +
+      '<button type="button" class="sc-btn sc-ghost sc-print">Print</button>');
     if (EDIT) app.appendChild(tools);
     var tabs = el('div', 'sc-tabs');
     app.appendChild(tabs);
@@ -165,6 +166,7 @@
       days = school(kid.slug);
       changed();
     });
+    tools.querySelector('.sc-print').addEventListener('click', function () { printCards([{ name: kid.name, days: days }]); });
     window.addEventListener('resize', function () { paint(); });
 
     // Blocks at the same time sit side by side: each gets a lane.
@@ -387,6 +389,72 @@
       if (EDIT) status('Saved', 'is-ok'); else { var st = app.querySelector('.sc-status'); if (st) st.remove(); }
       paint();
     });
+  }
+
+  /* ---------- printing: a small desk card for each Riser ---------- */
+
+  // A5 or A6, landscape: the Riser's name, the week, Monday to Friday, with
+  // a line and a time at every 15 minutes so every start and end lines up.
+  var SIZES = [
+    { id: 'a5', name: 'A5 landscape', note: '21 × 14.8 cm, half of A4', w: 210, h: 148 },
+    { id: 'a6', name: 'A6 landscape', note: '14.8 × 10.5 cm, a quarter of A4', w: 148, h: 105 }
+  ];
+  function printCards(cards) {
+    var box = el('div', 'sc-modal');
+    box.innerHTML = '<form class="sc-modal-card" role="dialog" aria-label="Print">' +
+      '<h2>Print ' + (cards.length > 1 ? cards.length + ' schedules' : esc(cards[0].name) + '’s schedule') + '</h2>' +
+      '<div class="sc-field"><span>Size</span>' + SIZES.map(function (z, i) {
+        return '<label class="sc-size"><input type="radio" name="sz" value="' + z.id + '"' + (i ? '' : ' checked') + '> <b>' + z.name + '</b> <small>' + z.note + '</small></label>';
+      }).join('') + '</div>' +
+      '<p class="sc-note">One page for each Riser. In the print box, choose the same paper size, and turn on background graphics for the colours.</p>' +
+      '<div class="sc-modal-btns"><span></span><button type="button" class="sc-btn sc-ghost sc-cancel">Cancel</button><button type="submit" class="sc-btn sc-save">Print</button></div></form>';
+    function close() { box.remove(); }
+    box.addEventListener('click', function (e) { if (e.target === box) close(); });
+    box.querySelector('.sc-cancel').addEventListener('click', close);
+    box.querySelector('form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var z = SIZES.filter(function (x) { return x.id === box.querySelector('input[name=sz]:checked').value; })[0];
+      close();
+      printOut(cards, z);
+    });
+    document.body.appendChild(box);
+  }
+  function printOut(cards, z) {
+    var old = document.querySelector('.sc-printout');
+    if (old) old.remove();
+    var small = z.id === 'a6', pad = small ? 4 : 5, head = small ? 6 : 8, dayH = small ? 3.5 : 4.5, axis = small ? 7 : 9;
+    var H = z.h - 2 * pad - head - dayH, k = H / (END - START);
+    var out = el('div', 'sc-printout' + (small ? ' is-small' : ''));
+    cards.forEach(function (c) {
+      var page = el('div', 'sc-pp');
+      page.style.width = z.w + 'mm'; page.style.height = z.h + 'mm'; page.style.padding = pad + 'mm';
+      var html = '<div class="sc-pp-head" style="height:' + head + 'mm"><b>' + esc(c.name) + '</b><span>' + (W1 ? 'Week 1 · 26–30 October' : 'My week · Term 3') + '</span></div>' +
+        '<div class="sc-pp-grid" style="grid-template-columns:' + axis + 'mm repeat(5, 1fr)">';
+      // Time axis: a label at every 15 minutes.
+      html += '<div><div style="height:' + dayH + 'mm"></div><div class="sc-pp-body" style="height:' + H + 'mm">';
+      for (var m = START; m <= END; m += STEP) html += '<span class="sc-pp-t' + (m % 60 ? '' : ' is-hour') + '" style="top:' + ((m - START) * k) + 'mm">' + hm(m) + '</span>';
+      html += '</div></div>';
+      DAYS.forEach(function (d) {
+        var list = (c.days[d] || []).slice().sort(function (a, b) { return a.s - b.s; });
+        // Things at the same time sit side by side.
+        var ends = [], lane = list.map(function (b) { var l = 0; while (ends[l] !== undefined && ends[l] > b.s) l++; ends[l] = b.e; return l; });
+        html += '<div><div class="sc-pp-day" style="height:' + dayH + 'mm">' + DAY_NAMES[d] + '</div><div class="sc-pp-body sc-pp-col" style="height:' + H + 'mm;background-size:100% ' + (STEP * k) + 'mm">';
+        list.forEach(function (b, i) {
+          var of = 1;
+          list.forEach(function (x, j) { if (x.s < b.e && x.e > b.s) of = Math.max(of, lane[j] + 1); });
+          html += '<div class="sc-pp-b sc-c-' + colourOf(b) + (b.e - b.s <= 15 ? ' is-short' : '') + '" style="top:' + ((b.s - START) * k) + 'mm;height:' + ((b.e - b.s) * k) + 'mm;left:' + (lane[i] / of * 100) + '%;width:' + (100 / of) + '%">' +
+            '<b>' + esc(b.t) + '</b><i>' + span(b) + '</i></div>';
+        });
+        html += '</div></div>';
+      });
+      page.innerHTML = html + '</div>';
+      out.appendChild(page);
+    });
+    document.body.appendChild(out);
+    var st = document.getElementById('sc-page-size') || document.head.appendChild(el('style'));
+    st.id = 'sc-page-size';
+    st.textContent = '@page { size: ' + z.w + 'mm ' + z.h + 'mm; margin: 0; }';
+    setTimeout(function () { window.print(); }, 50);
   }
 
   // Usual week or week 1, for staff.
@@ -690,6 +758,14 @@
       (W1 ? '<p>Week 1 (26–30 October), starting from the week 1 plan: Monday to Wednesday are the launch days; Thursday and Friday are placeholders for now. Only staff see and change it.</p></div>'
         : '<p>Each Riser’s week, starting from the school timetable. Only staff can change a schedule; Risers see theirs on their Term 3 page.</p></div>')));
     app.appendChild(weekSwitch('index.html?view=staff'));
+    var current = null;
+    var printAll = el('button', 'sc-btn sc-ghost sc-print-all', 'Print everyone’s ' + (W1 ? 'week 1' : 'schedule'));
+    printAll.type = 'button';
+    printAll.disabled = true;
+    printAll.addEventListener('click', function () {
+      printCards(kids.map(function (k, i) { return { name: k.name, days: current[i] }; }));
+    });
+    app.appendChild(el('div', 'sc-tools')).appendChild(printAll);
     var glanceBox = el('div', 'sc-glance');
     if (W1) app.appendChild(glanceBox);
     var list = el('div', 'sc-kids', '<p class="sc-note">Loading…</p>');
@@ -710,7 +786,10 @@
     }
     Promise.all(kids.map(function (k) { return window.eot2Fetch(k.group, k.slug, KEY); })).then(function (rs) {
       var states = rs.map(function (r, i) { var st = r && r.state; if (st && st.days) upgrade(st.days, kids[i].slug); return st; });
-      if (W1) glance(glanceBox, kids, states.map(function (st, i) { return st && st.days ? st.days : school(kids[i].slug); }), function (all) {
+      current = states.map(function (st, i) { return st && st.days ? st.days : school(kids[i].slug); });
+      printAll.disabled = false;
+      if (W1) glance(glanceBox, kids, current, function (all) {
+        current = all;
         paintList(all.map(function (days) { return { days: days, by: 'staff' }; }));
       });
       paintList(states);
