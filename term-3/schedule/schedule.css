@@ -155,16 +155,17 @@
   .sc-printout.is-small .sc-pp-t { font-size: 5.6pt; }
   .sc-printout.is-small .sc-pp-b b { font-size: 7pt; }
   .sc-printout.is-small .sc-pp-b i { font-size: 5.6pt; }
-  /* Brighter colours on paper: the same hues as the screen, stronger. */
-  .sc-printout .sc-c-gold { background: #ffd970; color: #4a3500; }
-  .sc-printout .sc-c-blue { background: #a9c8f5; color: #0d2a5c; }
-  .sc-printout .sc-c-green { background: #a8dd9e; color: #143d0f; }
-  .sc-printout .sc-c-plum { background: #f2b0d0; color: #551236; }
-  .sc-printout .sc-c-purple { background: #cbb6f5; color: #351a6b; }
-  .sc-printout .sc-c-teal { background: #95e0d0; color: #0b4a3e; }
-  .sc-printout .sc-c-brown { background: #ddc0a3; color: #4a2f17; }
-  .sc-printout .sc-c-leaf { background: #c5e09a; color: #2f4a0a; }
-  .sc-printout .sc-c-orange { background: #ffc08a; color: #6e3205; }
-  .sc-printout .sc-c-red { background: #f6a9a2; color: #6e1a13; }
-  .sc-printout .sc-c-grey { background: #d6dde3; color: #2e3a44; }
+  /* Paper colours: one calm set, a step stronger than the screen, each
+     with a darker edge in its own colour. */
+  .sc-printout .sc-c-gold { background: #f5dc9a; color: #4d3a06; border-left-color: #d9ad3c; }
+  .sc-printout .sc-c-blue { background: #bfd3f2; color: #14315f; border-left-color: #6f93cf; }
+  .sc-printout .sc-c-green { background: #c4e3bb; color: #1d4a17; border-left-color: #79b56c; }
+  .sc-printout .sc-c-plum { background: #efc6da; color: #5a1d3d; border-left-color: #cc7ea3; }
+  .sc-printout .sc-c-purple { background: #d6caf2; color: #3a2470; border-left-color: #9c86d6; }
+  .sc-printout .sc-c-teal { background: #b8e3d9; color: #0f4d41; border-left-color: #5fb3a0; }
+  .sc-printout .sc-c-brown { background: #e6d2bf; color: #4d3420; border-left-color: #b8916c; }
+  .sc-printout .sc-c-leaf { background: #d5e6b8; color: #33500f; border-left-color: #94b75a; }
+  .sc-printout .sc-c-orange { background: #f8d0b0; color: #6b3410; border-left-color: #e09160; }
+  .sc-printout .sc-c-red { background: #f2c3be; color: #6e211a; border-left-color: #d47b72; }
+  .sc-printout .sc-c-grey { background: #e0e5e9; color: #33404a; border-left-color: #a7b2bb; }
 }
