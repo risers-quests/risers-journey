@@ -54,3 +54,17 @@
 .ci-staff { color: var(--ink-soft); }
 .ci-hint { font-size: .85rem; color: var(--ink-soft); margin: 0 0 10px; }
 .ci-saved { font-size: .82rem; color: var(--ink-faint); min-height: 1.2em; margin: 8px 0 0; }
+.ci-note { flex-basis: 100%; }
+.ci-note:empty { display: none; }
+.ci-note label { display: block; }
+.ci-note span { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 3px; }
+.ci-note em { font-style: normal; text-transform: none; letter-spacing: 0; font-weight: 600; color: #a3432b; }
+.ci-note textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: .9rem; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 10px; resize: vertical; }
+.ci-note textarea:focus { outline: none; border-color: var(--accent); }
+.ci-note p { margin: 0; font-size: .9rem; color: var(--ink-soft); background: var(--paper-soft); border-radius: 10px; padding: 8px 10px; }
+.ci-note-bar { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+.ci-note-save { font: inherit; font-size: .85rem; font-weight: 700; padding: 6px 16px; border-radius: 99px; border: 0; background: var(--accent); color: #fff; cursor: pointer; }
+.ci-note-save:disabled { opacity: .45; cursor: default; }
+.ci-note-bar small { font-size: .8rem; color: var(--good); }
+.ci-note-bar small.is-need { color: #a3432b; }
+.ci-has-note { font-style: normal; color: var(--ink-soft); margin-left: 1px; }

@@ -6,11 +6,13 @@
    - Riser's page (their parents use it with them): the agreement, then
      one row per school week. A week opens on its first day; in an open
      week the parents and the child each mark their own part "Done" or
-     "Not this week". Saved under week key term3-agreements as
-     { weeks: { <first day>: { parent: { v: 'yes'|'no', at }, child: … } } }.
+     "Not this week", with a comment that must be written before the tick
+     is saved: what was done, or why not. Saved under week key
+     term3-agreements as
+     { weeks: { <first day>: { parent: { v: 'yes'|'no', note, at }, child: … } } }.
    - Staff's own part is ticked by staff on ?view=staff&kid=<slug> and
      kept in its own record, term3-agreements-staff, as { weeks: { <first
-     day>: { v, at, by } } }, so a family's save and a staff save never
+     day>: { v, note, at, by } } }, so a family's save and a staff save never
      overwrite each other. Families see staff's ticks, read only.
    - Staff, ?view=staff: every Riser by week. ?view=staff&kid=<slug>:
      one Riser's agreement and weeks, with Edit wording; the family's
@@ -161,6 +163,14 @@
     var rec = state.weeks[start] || {};
     return rec[id] ? rec[id].v : id === 'parent' ? rec.v : undefined;
   }
+  // The comment that goes with a tick: what was done, or why not.
+  function noteOf(state, start, id, staffWeeks) {
+    if (id === 'staff') return ((staffWeeks || {})[start] || {}).note || '';
+    var rec = state.weeks[start] || {};
+    return (rec[id] && rec[id].note) || '';
+  }
+  var NOTE_LABEL = { yes: 'What was done?', no: 'Comments' };
+  var NOTE_HINT = { yes: 'Write what was done this week.', no: 'Why not, and what happens next?' };
 
   // The weeks, one row each. editable: the sides ticked here (the rest
   // show their tick, read only).
@@ -177,41 +187,79 @@
           var line = el('div', 'ci-side', '<span class="ci-who">' + esc(p.label) + '</span>');
           var ctl = el('div', 'ci-ctl');
           var v = mark(state, w.start, p.id, staffWeeks);
+          var noteBox = el('div', 'ci-note');
           if (editable.indexOf(p.id) === -1) {
             ctl.appendChild(el('span', 'ci-mark ci-mark-' + (v || 'none'), v === 'yes' ? '✓ Done' : v === 'no' ? 'Not this week' : 'Not ticked'));
+            var said = noteOf(state, w.start, p.id, staffWeeks);
+            if (v && said) noteBox.innerHTML = '<span>' + NOTE_LABEL[v] + '</span><p>' + text(said) + '</p>';
           } else {
+            // A tick is saved only with its comment. draft: the choice being
+            // made (not saved yet); undefined while nothing is being changed.
+            var draft;
+            var put = function (val, note) {
+              if (p.id === 'staff') {
+                if (val) staffWeeks[w.start] = { v: val, note: note, at: new Date().toISOString(), by: staffName() };
+                else delete staffWeeks[w.start];
+                onChange(w.start);
+                return;
+              }
+              var rec = state.weeks[w.start] || {};
+              if (rec.v && !rec.parent) { rec.parent = { v: rec.v, at: rec.at }; delete rec.v; delete rec.at; }
+              if (val) rec[p.id] = { v: val, note: note, at: new Date().toISOString() }; else delete rec[p.id];
+              if (Object.keys(rec).length) state.weeks[w.start] = rec; else delete state.weeks[w.start];
+              onChange();
+            };
             [['yes', '✓ Done'], ['no', 'Not this week']].forEach(function (o) {
               var b = el('button', 'ci-btn ci-btn-' + o[0], o[1]);
               b.type = 'button';
               b.dataset.v = o[0];
               b.addEventListener('click', function () {
-                if (p.id === 'staff') {
-                  if (mark(state, w.start, 'staff', staffWeeks) === o[0]) delete staffWeeks[w.start];
-                  else staffWeeks[w.start] = { v: o[0], at: new Date().toISOString(), by: staffName() };
-                  paint();
-                  onChange(w.start);
-                  return;
-                }
-                var rec = state.weeks[w.start] || {};
-                if (rec.v && !rec.parent) { rec.parent = { v: rec.v, at: rec.at }; delete rec.v; delete rec.at; }
-                if (mark(state, w.start, p.id) === o[0]) delete rec[p.id];
-                else rec[p.id] = { v: o[0], at: new Date().toISOString() };
-                if (Object.keys(rec).length) state.weeks[w.start] = rec; else delete state.weeks[w.start];
+                var saved = mark(state, w.start, p.id, staffWeeks), cur = draft || saved;
+                // Tapping the chosen one again takes the tick away.
+                if (cur === o[0]) {
+                  draft = undefined;
+                  if (saved === o[0]) put(null);
+                } else draft = o[0];
                 paint();
-                onChange();
+                var ta = noteBox.querySelector('textarea');
+                if (ta && draft) ta.focus();
               });
               ctl.appendChild(b);
             });
             var paint = function () {
-              var cur = mark(state, w.start, p.id, staffWeeks);
+              var saved = mark(state, w.start, p.id, staffWeeks), savedNote = noteOf(state, w.start, p.id, staffWeeks);
+              var cur = draft || saved;
               Array.prototype.forEach.call(ctl.children, function (x) {
                 x.classList.toggle('is-on', x.dataset.v === cur);
                 x.setAttribute('aria-pressed', x.dataset.v === cur);
               });
+              noteBox.innerHTML = '';
+              if (!cur) return;
+              var pending = !!draft && draft !== saved;
+              noteBox.innerHTML = '<label><span>' + NOTE_LABEL[cur] + ' <em>required</em></span>' +
+                '<textarea rows="2" placeholder="' + NOTE_HINT[cur] + '">' + esc(pending ? '' : savedNote) + '</textarea></label>' +
+                '<div class="ci-note-bar"><button type="button" class="ci-note-save">Save</button><small></small></div>';
+              var ta = noteBox.querySelector('textarea'), bt = noteBox.querySelector('.ci-note-save'), msg = noteBox.querySelector('small');
+              var check = function () {
+                var t = ta.value.trim(), same = !pending && t === savedNote.trim();
+                bt.disabled = !t || same;
+                msg.textContent = !t ? (pending ? 'Write a comment to save this tick.' : 'A comment is needed: this tick has none yet.') : same ? 'Saved' : '';
+                msg.className = !t ? 'is-need' : '';
+              };
+              ta.addEventListener('input', check);
+              bt.addEventListener('click', function () {
+                var t = ta.value.trim();
+                if (!t) return;
+                put(cur, t);
+                draft = undefined;
+                paint();
+              });
+              check();
             };
             paint();
           }
           line.appendChild(ctl);
+          line.appendChild(noteBox);
           sides.appendChild(line);
         });
       }
@@ -338,13 +386,13 @@
             if (!isOpen(w)) return '<td class="ci-cell' + (isNow(w) ? ' is-now' : '') + '"></td>';
             var st = { weeks: r.weeks };
             return '<td class="ci-cell' + (isNow(w) ? ' is-now' : '') + '">' + [['parent', 'P'], ['child', 'C'], ['staff', 'S']].map(function (p) {
-              var v = mark(st, w.start, p[0], r.staffWeeks);
-              return '<span class="ci-pc ci-cell-' + (v || 'none') + '"><small>' + p[1] + '</small>' + (v === 'yes' ? '✓' : v === 'no' ? '✗' : '–') + '</span>';
+              var v = mark(st, w.start, p[0], r.staffWeeks), n = v ? noteOf(st, w.start, p[0], r.staffWeeks) : '';
+              return '<span class="ci-pc ci-cell-' + (v || 'none') + '"' + (n ? ' title="' + esc(n) + '"' : '') + '><small>' + p[1] + '</small>' + (v === 'yes' ? '✓' : v === 'no' ? '✗' : '–') + (n ? '<i class="ci-has-note">•</i>' : '') + '</span>';
             }).join('') + '</td>';
           }).join('') + '</tr>';
       }).join('');
       wrap.innerHTML = '<table class="ci-table"><thead>' + head + '</thead><tbody>' + bodyRows + '</tbody></table>' +
-        '<p class="ci-key"><b>P</b> Parents <b>C</b> Child <b>S</b> Staff &nbsp;&middot;&nbsp; <span class="ci-cell-yes">✓</span> Done <span class="ci-cell-no">✗</span> Not this week <span class="ci-cell-none">–</span> Not ticked</p>';
+        '<p class="ci-key"><b>P</b> Parents <b>C</b> Child <b>S</b> Staff &nbsp;&middot;&nbsp; <span class="ci-cell-yes">✓</span> Done <span class="ci-cell-no">✗</span> Not this week <span class="ci-cell-none">–</span> Not ticked &nbsp;&middot;&nbsp; <span>•</span> has a comment: point at it to read it, or open the Riser</p>';
     });
   }
 
