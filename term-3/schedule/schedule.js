@@ -393,11 +393,12 @@
 
   /* ---------- printing: a small desk card for each Riser ---------- */
 
-  // A5 or A6, landscape: the Riser's name, the week, Monday to Friday, with
-  // a line and a time at every 15 minutes so every start and end lines up.
+  // Three to an A4 sheet (strips to cut apart) or one to an A5: the Riser's
+  // name, the week, Monday to Friday, with a time at every 15 minutes down
+  // the side so every start and end lines up.
   var SIZES = [
-    { id: 'a5', name: 'A5 landscape', note: '21 × 14.8 cm, half of A4', w: 210, h: 148 },
-    { id: 'a6', name: 'A6 landscape', note: '14.8 × 10.5 cm, a quarter of A4', w: 148, h: 105 }
+    { id: 'a4x3', name: '3 Risers on each A4 sheet', note: 'cut into strips of 21 × 9.9 cm', w: 210, h: 297, cw: 210, ch: 99, per: 3, small: true },
+    { id: 'a5', name: '1 Riser on each A5 sheet', note: '21 × 14.8 cm, landscape', w: 210, h: 148, cw: 210, ch: 148, per: 1 }
   ];
   function printCards(cards) {
     var box = el('div', 'sc-modal');
@@ -406,7 +407,7 @@
       '<div class="sc-field"><span>Size</span>' + SIZES.map(function (z, i) {
         return '<label class="sc-size"><input type="radio" name="sz" value="' + z.id + '"' + (i ? '' : ' checked') + '> <b>' + z.name + '</b> <small>' + z.note + '</small></label>';
       }).join('') + '</div>' +
-      '<p class="sc-note">One page for each Riser. In the print box, choose the same paper size, and turn on background graphics for the colours.</p>' +
+      '<p class="sc-note">In the print box, choose the same paper size (A4 or A5), and turn on background graphics for the colours.</p>' +
       '<div class="sc-modal-btns"><span></span><button type="button" class="sc-btn sc-ghost sc-cancel">Cancel</button><button type="submit" class="sc-btn sc-save">Print</button></div></form>';
     function close() { box.remove(); }
     box.addEventListener('click', function (e) { if (e.target === box) close(); });
@@ -422,12 +423,18 @@
   function printOut(cards, z) {
     var old = document.querySelector('.sc-printout');
     if (old) old.remove();
-    var small = z.id === 'a6', pad = small ? 4 : 5, head = small ? 6 : 8, dayH = small ? 3.5 : 4.5, axis = small ? 7 : 9;
-    var H = z.h - 2 * pad - head - dayH, k = H / (END - START);
-    var out = el('div', 'sc-printout' + (small ? ' is-small' : ''));
-    cards.forEach(function (c) {
-      var page = el('div', 'sc-pp');
-      page.style.width = z.w + 'mm'; page.style.height = z.h + 'mm'; page.style.padding = pad + 'mm';
+    var small = !!z.small, pad = small ? 4 : 5, head = small ? 6 : 8, dayH = small ? 3.5 : 4.5, axis = small ? 7 : 9;
+    var H = z.ch - 2 * pad - head - dayH, k = H / (END - START);
+    var out = el('div', 'sc-printout' + (small ? ' is-small' : '')), sheet = null;
+    cards.forEach(function (c, ci) {
+      // A new sheet every z.per cards; the cards stack down it.
+      if (ci % z.per === 0) {
+        sheet = el('div', 'sc-sheet');
+        sheet.style.width = z.w + 'mm'; sheet.style.height = z.h + 'mm';
+        out.appendChild(sheet);
+      }
+      var page = el('div', 'sc-pp' + (z.per > 1 ? ' is-strip' : ''));
+      page.style.width = z.cw + 'mm'; page.style.height = z.ch + 'mm'; page.style.padding = pad + 'mm';
       var html = '<div class="sc-pp-head" style="height:' + head + 'mm"><b>' + esc(c.name) + '</b><span>' + (W1 ? 'Week 1 · 26–30 October' : 'My week · Term 3') + '</span></div>' +
         '<div class="sc-pp-grid" style="grid-template-columns:' + axis + 'mm repeat(5, 1fr)">';
       // Time axis: a label at every 15 minutes.
@@ -448,7 +455,7 @@
         html += '</div></div>';
       });
       page.innerHTML = html + '</div>';
-      out.appendChild(page);
+      sheet.appendChild(page);
     });
     document.body.appendChild(out);
     var st = document.getElementById('sc-page-size') || document.head.appendChild(el('style'));

@@ -131,8 +131,10 @@
   body > *:not(.sc-printout) { display: none !important; }
   body { background: #fff !important; margin: 0; }
   .sc-printout { display: block; font-family: Inter, Arial, sans-serif; color: #1e2a33; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .sc-pp { box-sizing: border-box; overflow: hidden; break-after: page; page-break-after: always; display: flex; flex-direction: column; }
-  .sc-pp:last-child { break-after: auto; page-break-after: auto; }
+  .sc-sheet { overflow: hidden; break-after: page; page-break-after: always; }
+  .sc-sheet:last-child { break-after: auto; page-break-after: auto; }
+  .sc-pp { box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column; }
+  .sc-pp.is-strip + .sc-pp.is-strip { border-top: 0.3mm dashed #999; }
   .sc-pp-head { display: flex; align-items: baseline; justify-content: space-between; gap: 4mm; }
   .sc-pp-head b { font-size: 13pt; }
   .sc-pp-head span { font-size: 8pt; color: #555; }
@@ -147,10 +149,10 @@
   .sc-pp-b b { font-size: 6pt; }
   .sc-pp-b i { font-style: normal; font-size: 5pt; opacity: .8; }
   .sc-pp-b.is-short { flex-direction: row; align-items: center; gap: 1mm; }
-  .sc-printout.is-small .sc-pp-head b { font-size: 10pt; }
+  .sc-printout.is-small .sc-pp-head b { font-size: 11pt; }
   .sc-printout.is-small .sc-pp-head span { font-size: 6pt; }
-  .sc-printout.is-small .sc-pp-day { font-size: 5.5pt; }
-  .sc-printout.is-small .sc-pp-t { font-size: 3.8pt; }
-  .sc-printout.is-small .sc-pp-b b { font-size: 4.6pt; }
-  .sc-printout.is-small .sc-pp-b i { font-size: 3.8pt; }
+  .sc-printout.is-small .sc-pp-day { font-size: 6.5pt; }
+  .sc-printout.is-small .sc-pp-t { font-size: 4.4pt; }
+  .sc-printout.is-small .sc-pp-b b { font-size: 5.4pt; }
+  .sc-printout.is-small .sc-pp-b i { font-size: 4.4pt; }
 }
