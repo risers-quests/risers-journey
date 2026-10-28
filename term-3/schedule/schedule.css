@@ -136,23 +136,35 @@
   .sc-pp { box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column; }
   .sc-pp.is-strip + .sc-pp.is-strip { border-top: 0.3mm dashed #999; }
   .sc-pp-head { display: flex; align-items: baseline; justify-content: space-between; gap: 4mm; }
-  .sc-pp-head b { font-size: 13pt; }
-  .sc-pp-head span { font-size: 8pt; color: #555; }
+  .sc-pp-head b { font-size: 16pt; }
+  .sc-pp-head span { font-size: 9pt; color: #444; font-weight: 600; }
   .sc-pp-grid { display: grid; gap: 0 1mm; }
-  .sc-pp-day { font-size: 7pt; font-weight: 700; text-align: center; }
+  .sc-pp-day { font-size: 9pt; font-weight: 800; text-align: center; }
   .sc-pp-body { position: relative; }
   .sc-pp-col { background-image: linear-gradient(#cfd6dc 0.2mm, transparent 0.2mm); border-bottom: 0.2mm solid #cfd6dc; }
-  .sc-pp-t { position: absolute; right: 1mm; transform: translateY(-50%); font-size: 5pt; color: #777; line-height: 1; }
-  .sc-pp-t.is-hour { font-weight: 700; color: #333; }
+  .sc-pp-t { position: absolute; right: 1mm; transform: translateY(-50%); font-size: 6pt; color: #555; line-height: 1; }
+  .sc-pp-t.is-hour { font-weight: 800; color: #111; }
   .sc-pp-t:first-child { transform: none; }
-  .sc-pp-b { position: absolute; box-sizing: border-box; border-left: 0.8mm solid rgba(0, 0, 0, .3); border-bottom: 0.4mm solid #fff; border-right: 0.4mm solid #fff; border-radius: 0.8mm; padding: 0.3mm 0.8mm; overflow: hidden; line-height: 1.1; display: flex; flex-direction: column; justify-content: center; }
-  .sc-pp-b b { font-size: 6pt; }
-  .sc-pp-b i { font-style: normal; font-size: 5pt; opacity: .8; }
-  .sc-pp-b.is-short { flex-direction: row; align-items: center; gap: 1mm; }
-  .sc-printout.is-small .sc-pp-head b { font-size: 11pt; }
-  .sc-printout.is-small .sc-pp-head span { font-size: 6pt; }
-  .sc-printout.is-small .sc-pp-day { font-size: 6.5pt; }
-  .sc-printout.is-small .sc-pp-t { font-size: 4.4pt; }
-  .sc-printout.is-small .sc-pp-b b { font-size: 5.4pt; }
-  .sc-printout.is-small .sc-pp-b i { font-size: 4.4pt; }
+  .sc-pp-b { position: absolute; box-sizing: border-box; border-left: 1mm solid rgba(0, 0, 0, .35); border-bottom: 0.4mm solid #fff; border-right: 0.4mm solid #fff; border-radius: 0.8mm; padding: 0.3mm 1mm; overflow: hidden; line-height: 1.1; display: flex; flex-direction: column; justify-content: center; }
+  .sc-pp-b b { font-size: 8pt; font-weight: 800; }
+  .sc-pp-b i { font-style: normal; font-size: 6.5pt; font-weight: 600; }
+  .sc-pp-b.is-short { flex-direction: row; align-items: center; gap: 1.2mm; }
+  .sc-printout.is-small .sc-pp-head b { font-size: 14pt; }
+  .sc-printout.is-small .sc-pp-head span { font-size: 8pt; }
+  .sc-printout.is-small .sc-pp-day { font-size: 8pt; }
+  .sc-printout.is-small .sc-pp-t { font-size: 5.6pt; }
+  .sc-printout.is-small .sc-pp-b b { font-size: 7pt; }
+  .sc-printout.is-small .sc-pp-b i { font-size: 5.6pt; }
+  /* Brighter colours on paper: the same hues as the screen, stronger. */
+  .sc-printout .sc-c-gold { background: #ffd970; color: #4a3500; }
+  .sc-printout .sc-c-blue { background: #a9c8f5; color: #0d2a5c; }
+  .sc-printout .sc-c-green { background: #a8dd9e; color: #143d0f; }
+  .sc-printout .sc-c-plum { background: #f2b0d0; color: #551236; }
+  .sc-printout .sc-c-purple { background: #cbb6f5; color: #351a6b; }
+  .sc-printout .sc-c-teal { background: #95e0d0; color: #0b4a3e; }
+  .sc-printout .sc-c-brown { background: #ddc0a3; color: #4a2f17; }
+  .sc-printout .sc-c-leaf { background: #c5e09a; color: #2f4a0a; }
+  .sc-printout .sc-c-orange { background: #ffc08a; color: #6e3205; }
+  .sc-printout .sc-c-red { background: #f6a9a2; color: #6e1a13; }
+  .sc-printout .sc-c-grey { background: #d6dde3; color: #2e3a44; }
 }

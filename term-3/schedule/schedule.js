@@ -423,7 +423,7 @@
   function printOut(cards, z) {
     var old = document.querySelector('.sc-printout');
     if (old) old.remove();
-    var small = !!z.small, pad = small ? 4 : 5, head = small ? 6 : 8, dayH = small ? 3.5 : 4.5, axis = small ? 7 : 9;
+    var small = !!z.small, pad = small ? 3 : 5, head = small ? 6.5 : 9, dayH = small ? 4 : 5, axis = small ? 8 : 10;
     var H = z.ch - 2 * pad - head - dayH, k = H / (END - START);
     var out = el('div', 'sc-printout' + (small ? ' is-small' : '')), sheet = null;
     cards.forEach(function (c, ci) {
