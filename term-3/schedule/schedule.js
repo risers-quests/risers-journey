@@ -77,6 +77,19 @@
     });
     return days;
   }
+  // A saved week 1 made before Thursday and Friday had a plan holds the
+  // school timetable for those days: show the plan's placeholders instead.
+  function upgrade(days, slug) {
+    if (!W1 || !days) return days;
+    var t = (window.T3_TIMETABLE || {})[slug] || {}, plan = school(slug);
+    ['Thu', 'Fri'].forEach(function (d) {
+      var a = (t[d] || []).map(function (x) { return x[0] + '|' + x[1] + '|' + x[2]; }).join(',');
+      var b = (days[d] || []).map(function (x) { return x.s + '|' + x.e + '|' + x.t; }).join(',');
+      if (a === b) days[d] = plan[d];
+    });
+    return days;
+  }
+
   // How many blocks differ from the school timetable (or the week 1 plan).
   function changes(days, slug) {
     var base = school(slug), n = 0;
@@ -369,6 +382,7 @@
       if (r && r.state && r.state.days) {
         days = {};
         DAYS.forEach(function (d) { days[d] = (r.state.days[d] || []).filter(function (b) { return b && b.e > b.s; }); });
+        upgrade(days, kid.slug);
       }
       if (EDIT) status('Saved', 'is-ok'); else { var st = app.querySelector('.sc-status'); if (st) st.remove(); }
       paint();
@@ -384,7 +398,7 @@
 
   /* ---------- staff: week 1 at a glance ---------- */
 
-  // Monday to Wednesday of week 1 for everyone, built from each Riser's
+  // Monday to Friday of week 1 for everyone, built from each Riser's
   // week 1 schedule (all[i]), so changes made either way show in both.
   // The same activity at overlapping or touching times is one block,
   // labelled with who is in it, in the same colours as the Riser's
@@ -394,7 +408,7 @@
   // A change is saved into each Riser's week 1 schedule it touches; new
   // or moved times fit around that Riser's music and Tamil.
   function glance(box, kids, all, saved) {
-    var GDAYS = ['Mon', 'Tue', 'Wed'], OUT = /music|tamil/i, n = kids.length;
+    var GDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'], OUT = /music|tamil/i, n = kids.length;
     var past = [], clusters = [];
 
     function who(set) {
@@ -471,7 +485,7 @@
         });
         row += lanes + blanes;
       });
-      box.innerHTML = html + '</div></div><p class="sc-note">Thursday and Friday are each Riser’s school timetable. Open a Riser below to change their week 1, including Thursday and Friday.</p>';
+      box.innerHTML = html + '</div></div><p class="sc-note">Thursday and Friday are placeholders (To be planned) until they are planned. Open a Riser below to change just their week 1.</p>';
       Array.prototype.forEach.call(box.querySelectorAll('.sc-gl-b'), function (bt) {
         bt.addEventListener('click', function () { var c = clusters[+bt.dataset.ci]; sheet(c, c.d); });
       });
@@ -670,7 +684,7 @@
     app.innerHTML = '';
     app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/term-3/index.html">&larr; Term 3</a>'));
     app.appendChild(el('header', 'hd-page-head', '<div><p class="hd-eyebrow">Term 3</p><h1>Schedules</h1>' +
-      (W1 ? '<p>Week 1 (26–30 October), starting from the week 1 plan: Monday to Wednesday are the launch days, Thursday and Friday the school timetable. Only staff see and change it.</p></div>'
+      (W1 ? '<p>Week 1 (26–30 October), starting from the week 1 plan: Monday to Wednesday are the launch days; Thursday and Friday are placeholders for now. Only staff see and change it.</p></div>'
         : '<p>Each Riser’s week, starting from the school timetable. Only staff can change a schedule; Risers see theirs on their Term 3 page.</p></div>')));
     app.appendChild(weekSwitch('index.html?view=staff'));
     var glanceBox = el('div', 'sc-glance');
@@ -692,7 +706,7 @@
       });
     }
     Promise.all(kids.map(function (k) { return window.eot2Fetch(k.group, k.slug, KEY); })).then(function (rs) {
-      var states = rs.map(function (r) { return r && r.state; });
+      var states = rs.map(function (r, i) { var st = r && r.state; if (st && st.days) upgrade(st.days, kids[i].slug); return st; });
       if (W1) glance(glanceBox, kids, states.map(function (st, i) { return st && st.days ? st.days : school(kids[i].slug); }), function (all) {
         paintList(all.map(function (days) { return { days: days, by: 'staff' }; }));
       });

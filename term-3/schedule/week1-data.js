@@ -1,6 +1,7 @@
-/* Term 3 — the week 1 plan (26–30 October), Monday to Wednesday, for
-   each Riser. Music is where it always is; Thursday and Friday are the
-   school timetable. Times are minutes after midnight: [start, end, what].
+/* Term 3 — the week 1 plan (26–30 October), Monday to Friday, for each
+   Riser. Music and Tamil are where they always are. Thursday and Friday
+   are placeholders for now: To be planned, around Snack, Lunch, music
+   and Tamil. Times are minutes after midnight: [start, end, what].
    The staff Schedules page starts each Riser's week 1 from this; staff can
    then change it, the same way as the usual week. */
 (function () {
@@ -71,8 +72,21 @@
   };
 
   var school = window.T3_TIMETABLE || {};
+
+  // Thursday and Friday, until they are planned: the school day's Snack
+  // and Lunch, and the Riser's music and Tamil from the school timetable.
+  window.T3_WEEK1_TBP = 'To be planned';
+  function later(k, day) {
+    var gaps = ((school[k] || {})[day] || []).filter(function (b) { return /music|tamil/i.test(b[2]); });
+    var cut = function (from, to) {
+      return around(from, to, window.T3_WEEK1_TBP, gaps.filter(function (g) { return g[0] < to && g[1] > from; }));
+    };
+    return cut(t(8, 45), t(10, 15)).concat([[t(10, 15), t(10, 30), 'Snack']], cut(t(10, 30), t(12, 15)),
+      [[t(12, 15), t(1, 0), 'Lunch']], cut(t(1, 0), t(3, 0)));
+  }
+
   window.T3_WEEK1 = {};
   Object.keys(school).forEach(function (k) {
-    window.T3_WEEK1[k] = { Mon: mon(k), Tue: tue(k), Wed: wed(k), Thu: school[k].Thu, Fri: school[k].Fri };
+    window.T3_WEEK1[k] = { Mon: mon(k), Tue: tue(k), Wed: wed(k), Thu: later(k, 'Thu'), Fri: later(k, 'Fri') };
   });
 })();
