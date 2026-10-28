@@ -1,21 +1,28 @@
-/* Term 3 Check-in — each week, the family ticks whether they did what
-   they agreed at the Term 2 Conference (the "Parent will…" and "Child
-   will…" parts of the MOM's Part 2 idea, as submitted).
+/* Term 3 Check-in — each week, the family and staff tick whether they
+   did what they agreed at the Term 2 Conference (the "Parent will…",
+   "Child will…" and "Teacher will…" parts of the MOM's Part 2 idea, as
+   submitted).
 
    - Riser's page (their parents use it with them): the agreement, then
      one row per school week. A week opens on its first day; in an open
      week the parents and the child each mark their own part "Done" or
      "Not this week". Saved under week key term3-agreements as
      { weeks: { <first day>: { parent: { v: 'yes'|'no', at }, child: … } } }.
+   - Staff's own part is ticked by staff on ?view=staff&kid=<slug> and
+     kept in its own record, term3-agreements-staff, as { weeks: { <first
+     day>: { v, at, by } } }, so a family's save and a staff save never
+     overwrite each other. Families see staff's ticks, read only.
    - Staff, ?view=staff: every Riser by week. ?view=staff&kid=<slug>:
-     one Riser's agreement and weeks, read only, with Edit wording.
+     one Riser's agreement and weeks, with Edit wording; the family's
+     ticks are read only there.
 
    The agreement is shown tidied (capitals, spacing, a lone "i", full
    stops), or as
-   staff reworded it here (state.text[i] = { idea, parent, child }). The
+   staff reworded it here (state.text[i] = { idea, parent, child, staff }). The
    conference notes themselves are never changed. */
 (function () {
   var KEY = 'term3-agreements';
+  var STAFF_KEY = 'term3-agreements-staff';
   var MOM_KEY = 'term2-mom';
   var app = document.getElementById('app');
   var params = new URLSearchParams(location.search);
@@ -73,13 +80,14 @@
   function agreements(mom, state, name) {
     var sub = mom && mom.p2_sub;
     var edits = (state && state.text) || [];
-    return ((sub && sub.p2_ideas) || []).filter(function (i) { return filled(i.parent) || filled(i.child); }).map(function (i, n) {
+    return ((sub && sub.p2_ideas) || []).filter(function (i) { return filled(i.parent) || filled(i.child) || filled(i.staff); }).map(function (i, n) {
       var e = edits[n] || {};
       return {
         idea: filled(e.idea) ? e.idea : tidy(i.idea, name),
         parent: filled(e.parent) ? e.parent : tidy(i.parent, name),
         child: filled(e.child) ? e.child : tidy(i.child, name),
-        edited: !!(e.idea || e.parent || e.child)
+        staff: filled(e.staff) ? e.staff : tidy(i.staff, name),
+        edited: !!(e.idea || e.parent || e.child || e.staff)
       };
     });
   }
@@ -88,7 +96,8 @@
       return '<div class="ci-agree">' +
         (filled(i.idea) ? '<p class="ci-idea"><span>Our idea</span>' + text(i.idea) + '</p>' : '') +
         (filled(i.parent) ? '<p class="ci-part"><span>What we, as parents, agreed to do</span>' + text(i.parent) + '</p>' : '') +
-        (filled(i.child) ? '<p class="ci-child"><span>What ' + esc(kid.name) + ' agreed to do</span>' + text(i.child) + '</p>' : '') + '</div>';
+        (filled(i.child) ? '<p class="ci-child"><span>What ' + esc(kid.name) + ' agreed to do</span>' + text(i.child) + '</p>' : '') +
+        (filled(i.staff) ? '<p class="ci-staff"><span>What staff agreed to do</span>' + text(i.staff) + '</p>' : '') + '</div>';
     }).join('');
   }
 
@@ -99,7 +108,7 @@
     app.innerHTML = '';
     app.appendChild(el('div', 'eot2-crumb', '<a href="../index.html">&larr; Term 3</a>'));
     app.appendChild(el('div', 'eot2-form-header',
-      '<div><h1>Term 3 Check-in</h1><div class="eot2-sub">Each week, parents and child each tick whether they did their part of what you agreed at the Term 2 Conference.</div></div>' +
+      '<div><h1>Term 3 Check-in</h1><div class="eot2-sub">Each week, parents, child and staff each tick whether they did their part of what you agreed at the Term 2 Conference.</div></div>' +
       '<div class="eot2-status eot2-status-offline" id="save-status">Loading&hellip;</div>'));
     var status = document.getElementById('save-status');
     function setStatus(mode, t) { status.className = 'eot2-status eot2-status-' + mode; status.textContent = t; }
@@ -108,10 +117,12 @@
 
     Promise.all([
       window.eot2Fetch(kid.group, kid.slug, MOM_KEY),
-      window.eot2Fetch(kid.group, kid.slug, KEY)
+      window.eot2Fetch(kid.group, kid.slug, KEY),
+      window.eot2Fetch(kid.group, kid.slug, STAFF_KEY)
     ]).then(function (r) {
       var state = (r[1] && r[1].state) || {};
       state.weeks = state.weeks || {};
+      var staffWeeks = ((r[2] && r[2].state) || {}).weeks || {};
       var list = agreements(r[0] && r[0].state, state, kid.name);
       setStatus('saved', 'Saved');
       if (!list.length) {
@@ -130,25 +141,30 @@
           });
         }, 400);
       }
-      body.appendChild(weeksEl(state, false, save, whoFor(list, kid)));
+      body.appendChild(weeksEl(state, staffWeeks, ['parent', 'child'], save, whoFor(list, kid)));
     });
   }
 
-  // Who ticks: the parents' part and the child's part, each on its own.
+  // Who ticks: the parents' part, the child's part and staff's part, each
+  // on its own.
   function whoFor(list, kid) {
     var who = [];
     if (!list.length || list.some(function (x) { return filled(x.parent); })) who.push({ id: 'parent', label: 'Parents' });
     if (!list.length || list.some(function (x) { return filled(x.child); })) who.push({ id: 'child', label: kid.name });
+    if (list.some(function (x) { return filled(x.staff); })) who.push({ id: 'staff', label: 'Staff' });
     return who;
   }
   // One week's tick for one side. Older records held a single tick ({ v })
-  // for the parents.
-  function mark(state, start, id) {
+  // for the parents. Staff's ticks are their own record (staffWeeks).
+  function mark(state, start, id, staffWeeks) {
+    if (id === 'staff') return ((staffWeeks || {})[start] || {}).v;
     var rec = state.weeks[start] || {};
     return rec[id] ? rec[id].v : id === 'parent' ? rec.v : undefined;
   }
 
-  function weeksEl(state, readOnly, onChange, who) {
+  // The weeks, one row each. editable: the sides ticked here (the rest
+  // show their tick, read only).
+  function weeksEl(state, staffWeeks, editable, onChange, who) {
     var box = el('div', 'ci-weeks');
     WEEKS.forEach(function (w) {
       var row = el('div', 'ci-week' + (isNow(w) ? ' is-now' : '') + (isOpen(w) ? '' : ' is-later'));
@@ -160,8 +176,8 @@
         who.forEach(function (p) {
           var line = el('div', 'ci-side', '<span class="ci-who">' + esc(p.label) + '</span>');
           var ctl = el('div', 'ci-ctl');
-          var v = mark(state, w.start, p.id);
-          if (readOnly) {
+          var v = mark(state, w.start, p.id, staffWeeks);
+          if (editable.indexOf(p.id) === -1) {
             ctl.appendChild(el('span', 'ci-mark ci-mark-' + (v || 'none'), v === 'yes' ? '✓ Done' : v === 'no' ? 'Not this week' : 'Not ticked'));
           } else {
             [['yes', '✓ Done'], ['no', 'Not this week']].forEach(function (o) {
@@ -169,6 +185,13 @@
               b.type = 'button';
               b.dataset.v = o[0];
               b.addEventListener('click', function () {
+                if (p.id === 'staff') {
+                  if (mark(state, w.start, 'staff', staffWeeks) === o[0]) delete staffWeeks[w.start];
+                  else staffWeeks[w.start] = { v: o[0], at: new Date().toISOString(), by: staffName() };
+                  paint();
+                  onChange(w.start);
+                  return;
+                }
                 var rec = state.weeks[w.start] || {};
                 if (rec.v && !rec.parent) { rec.parent = { v: rec.v, at: rec.at }; delete rec.v; delete rec.at; }
                 if (mark(state, w.start, p.id) === o[0]) delete rec[p.id];
@@ -180,7 +203,7 @@
               ctl.appendChild(b);
             });
             var paint = function () {
-              var cur = mark(state, w.start, p.id);
+              var cur = mark(state, w.start, p.id, staffWeeks);
               Array.prototype.forEach.call(ctl.children, function (x) {
                 x.classList.toggle('is-on', x.dataset.v === cur);
                 x.setAttribute('aria-pressed', x.dataset.v === cur);
@@ -209,16 +232,31 @@
     app.appendChild(body);
     Promise.all([
       window.eot2Fetch(kid.group, kid.slug, MOM_KEY),
-      window.eot2Fetch(kid.group, kid.slug, KEY)
+      window.eot2Fetch(kid.group, kid.slug, KEY),
+      window.eot2Fetch(kid.group, kid.slug, STAFF_KEY)
     ]).then(function (r) {
       var mom = r[0] && r[0].state;
       var state = (r[1] && r[1].state) || {};
       state.weeks = state.weeks || {};
+      var staffWeeks = ((r[2] && r[2].state) || {}).weeks || {};
+      var status = el('p', 'ci-saved');
+      // Staff's tick for one week, onto the newest copy of their record.
+      function saveStaff(start) {
+        status.textContent = 'Saving…';
+        window.eot2Fetch(kid.group, kid.slug, STAFF_KEY).then(function (d) {
+          var latest = ((d && d.state) || {}).weeks || {};
+          if (staffWeeks[start]) latest[start] = staffWeeks[start]; else delete latest[start];
+          staffWeeks = latest;
+          return window.eot2Save(kid.group, kid.slug, STAFF_KEY, { weeks: latest });
+        }).then(function (res) {
+          status.textContent = res && res.ok ? 'Saved' : 'Not saved — check the connection and try again.';
+        });
+      }
       function draw() {
         var list = agreements(mom, state, kid.name);
         body.innerHTML = '';
         if (!list.length) {
-          body.appendChild(el('p', 'ci-wait', 'No parent agreement yet. It comes from the submitted Minutes of Meeting, Part 2.'));
+          body.appendChild(el('p', 'ci-wait', 'No agreement yet. It comes from the submitted Minutes of Meeting, Part 2.'));
         } else {
           body.insertAdjacentHTML('beforeend', agreementHtml(list, kid));
           var bar = el('div', 'ci-editbar', list.some(function (x) { return x.edited; }) ? '<span>Reworded for this page. The conference notes are unchanged.</span>' : '');
@@ -228,7 +266,10 @@
           bar.appendChild(edit);
           body.appendChild(bar);
         }
-        body.appendChild(weeksEl(state, true, null, whoFor(list, kid)));
+        var who = whoFor(list, kid);
+        if (who.some(function (x) { return x.id === 'staff'; })) body.appendChild(el('p', 'ci-hint', 'Tick staff’s part each week. The family ticks theirs on their own page.'));
+        body.appendChild(weeksEl(state, staffWeeks, ['staff'], saveStaff, who));
+        body.appendChild(status);
       }
       function editor(list) {
         body.innerHTML = '<p class="ci-wait">Polish the wording families see here. The conference notes stay as they are.</p>';
@@ -237,11 +278,13 @@
           var idea = el('textarea', 'eot2-textarea'); idea.rows = 3; idea.value = x.idea || '';
           var parent = el('textarea', 'eot2-textarea'); parent.rows = 3; parent.value = x.parent || '';
           var child = el('textarea', 'eot2-textarea'); child.rows = 3; child.value = x.child || '';
+          var staff = el('textarea', 'eot2-textarea'); staff.rows = 3; staff.value = x.staff || '';
           box.appendChild(el('span', '', 'Our idea')); box.appendChild(idea);
           box.appendChild(el('span', '', 'What we, as parents, agreed to do')); box.appendChild(parent);
           box.appendChild(el('span', '', 'What ' + esc(kid.name) + ' agreed to do')); box.appendChild(child);
+          box.appendChild(el('span', '', 'What staff agreed to do')); box.appendChild(staff);
           body.appendChild(box);
-          return { idea: idea, parent: parent, child: child };
+          return { idea: idea, parent: parent, child: child, staff: staff };
         });
         var acts = el('div', 'ci-editbar');
         var save = el('button', 'eot2-btn', 'Save');
@@ -266,7 +309,7 @@
           });
         }
         save.addEventListener('click', function () {
-          store(fields.map(function (f) { return { idea: f.idea.value.trim(), parent: f.parent.value.trim(), child: f.child.value.trim() }; }));
+          store(fields.map(function (f) { return { idea: f.idea.value.trim(), parent: f.parent.value.trim(), child: f.child.value.trim(), staff: f.staff.value.trim() }; }));
         });
         reset.addEventListener('click', function () { store(null); });
         cancel.addEventListener('click', draw);
@@ -278,12 +321,12 @@
   function renderStaffAll() {
     app.innerHTML = '';
     app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/term-3/index.html">&larr; Term 3</a>'));
-    app.appendChild(el('div', 'eot2-head', '<h1>Term 3 Check-ins</h1><p>Each week, parents and their child each tick whether they did their part of the Term 2 Conference agreement. 26 Oct – 21 Jan, with the December holidays off.</p>'));
+    app.appendChild(el('div', 'eot2-head', '<h1>Term 3 Check-ins</h1><p>Each week, parents, their child and staff each tick whether they did their part of the Term 2 Conference agreement. 26 Oct – 21 Jan, with the December holidays off.</p>'));
     var wrap = el('div', 'ci-table-wrap', '<p class="ci-wait">Loading…</p>');
     app.appendChild(wrap);
     Promise.all(window.EOT2_KIDS.map(function (k) {
-      return Promise.all([window.eot2Fetch(k.group, k.slug, MOM_KEY), window.eot2Fetch(k.group, k.slug, KEY)])
-        .then(function (r) { return { kid: k, agreed: agreements(r[0] && r[0].state, r[1] && r[1].state, k.name).length > 0, weeks: ((r[1] && r[1].state) || {}).weeks || {} }; });
+      return Promise.all([window.eot2Fetch(k.group, k.slug, MOM_KEY), window.eot2Fetch(k.group, k.slug, KEY), window.eot2Fetch(k.group, k.slug, STAFF_KEY)])
+        .then(function (r) { return { kid: k, agreed: agreements(r[0] && r[0].state, r[1] && r[1].state, k.name).length > 0, weeks: ((r[1] && r[1].state) || {}).weeks || {}, staffWeeks: ((r[2] && r[2].state) || {}).weeks || {} }; });
     })).then(function (rows) {
       var head = '<tr><th>Riser</th><th>Agreement</th>' + WEEKS.map(function (w) {
         return '<th class="' + (isNow(w) ? 'is-now' : '') + '" title="' + range(w) + '">W' + w.n + '<small>' + fmt(w.start) + '</small></th>';
@@ -294,16 +337,18 @@
           WEEKS.map(function (w) {
             if (!isOpen(w)) return '<td class="ci-cell' + (isNow(w) ? ' is-now' : '') + '"></td>';
             var st = { weeks: r.weeks };
-            return '<td class="ci-cell' + (isNow(w) ? ' is-now' : '') + '">' + [['parent', 'P'], ['child', 'C']].map(function (p) {
-              var v = mark(st, w.start, p[0]);
+            return '<td class="ci-cell' + (isNow(w) ? ' is-now' : '') + '">' + [['parent', 'P'], ['child', 'C'], ['staff', 'S']].map(function (p) {
+              var v = mark(st, w.start, p[0], r.staffWeeks);
               return '<span class="ci-pc ci-cell-' + (v || 'none') + '"><small>' + p[1] + '</small>' + (v === 'yes' ? '✓' : v === 'no' ? '✗' : '–') + '</span>';
             }).join('') + '</td>';
           }).join('') + '</tr>';
       }).join('');
       wrap.innerHTML = '<table class="ci-table"><thead>' + head + '</thead><tbody>' + bodyRows + '</tbody></table>' +
-        '<p class="ci-key"><b>P</b> Parents <b>C</b> Child &nbsp;&middot;&nbsp; <span class="ci-cell-yes">✓</span> Done <span class="ci-cell-no">✗</span> Not this week <span class="ci-cell-none">–</span> Not ticked</p>';
+        '<p class="ci-key"><b>P</b> Parents <b>C</b> Child <b>S</b> Staff &nbsp;&middot;&nbsp; <span class="ci-cell-yes">✓</span> Done <span class="ci-cell-no">✗</span> Not this week <span class="ci-cell-none">–</span> Not ticked</p>';
     });
   }
+
+  function staffName() { try { return localStorage.getItem('rj-staff-name') || ''; } catch (e) { return ''; } }
 
   if (params.get('view') === 'staff') {
     var staff = null;

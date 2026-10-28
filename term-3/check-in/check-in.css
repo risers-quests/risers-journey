@@ -51,3 +51,6 @@
 .ci-key b { margin-left: 6px; color: var(--ink-soft); }
 .ci-key b:first-child { margin-left: 0; }
 @media (max-width: 560px) { .ci-sides { width: 100%; } .ci-side { justify-content: space-between; } .ci-who { text-align: left; } }
+.ci-staff { color: var(--ink-soft); }
+.ci-hint { font-size: .85rem; color: var(--ink-soft); margin: 0 0 10px; }
+.ci-saved { font-size: .82rem; color: var(--ink-faint); min-height: 1.2em; margin: 8px 0 0; }
