@@ -169,3 +169,38 @@ p.as-blank { margin: 6px 0 0; font-size: .85rem; }
 .up-delete { border-color: #f1c7bd; }
 .up-delbtn { font: inherit; font-size: .9rem; font-weight: 600; padding: 9px 18px; border-radius: 10px; border: 1.5px solid #a3432b; background: #fff; color: #a3432b; cursor: pointer; }
 .up-delbtn.is-sure { background: #a3432b; color: #fff; }
+
+/* Questions to rework: the button, and the A4 printout (assessments.js reworkPrint). */
+.as-rework { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: 14px 0 24px; padding: 14px 16px; background: #fff; border: 1px solid var(--border); border-radius: 14px; }
+.as-rework .eot2-btn { width: auto; padding: 10px 20px; }
+.as-rework-opt { display: flex; align-items: center; gap: 6px; font-size: .9rem; color: var(--ink-soft); }
+.as-printout { display: none; }
+@media print {
+  @page { size: A4 portrait; margin: 14mm; }
+  body > *:not(.as-printout) { display: none !important; }
+  body { background: #fff !important; margin: 0; }
+  .as-printout { display: block; font-family: Inter, Arial, sans-serif; color: #1e2a33; font-size: 11pt; line-height: 1.5; }
+  .as-pr-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 10mm; border-bottom: 0.4mm solid #1e2a33; padding-bottom: 3mm; margin-bottom: 3mm; }
+  .as-pr-head > div:first-child b { display: block; font-size: 14pt; }
+  .as-pr-head > div:first-child span { font-size: 10pt; color: #555; }
+  .as-pr-name { display: flex; flex-direction: column; gap: 1mm; text-align: right; font-size: 10.5pt; }
+  .as-pr-name span { color: #1e2a33; }
+  .as-pr-list { margin: 0 0 4mm; font-size: 10.5pt; }
+  .as-pr-q { break-inside: avoid; page-break-inside: avoid; padding: 3mm 0 2mm; border-top: 0.2mm solid #ccc; }
+  .as-pr-qhead { display: flex; gap: 3mm; }
+  .as-pr-qhead > b { min-width: 7mm; }
+  .as-pr-qhead div { flex: 1; }
+  .as-pr-part { margin-left: 10mm; break-inside: avoid; page-break-inside: avoid; }
+  .as-pr-part p { margin: 1.5mm 0; }
+  .as-pr-opts { display: flex; flex-wrap: wrap; gap: 2mm 8mm; margin: 1.5mm 0 1.5mm 10mm; }
+  .as-pr-first { margin: 1mm 0 1mm 10mm; font-size: 9.5pt; color: #555; }
+  .as-pr-first span { font-style: italic; }
+  .as-pr-lines { margin: 1mm 0 0 10mm; }
+  .as-pr-lines i { display: block; height: 9mm; border-bottom: 0.25mm solid #9aa5ae; }
+  .as-pr-page { break-inside: avoid; page-break-inside: avoid; margin-bottom: 5mm; }
+  .as-pr-img { display: block; width: 100%; max-height: 240mm; object-fit: contain; border: 0.2mm solid #ccc; }
+  .as-pr-work { break-before: page; page-break-before: always; }
+  .as-pr-work h3 { font-size: 13pt; margin: 0 0 2mm; }
+  .as-printout .as-fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; line-height: 1.1; font-size: .9em; }
+  .as-printout .as-fr span:first-child { border-bottom: 0.25mm solid currentColor; }
+}

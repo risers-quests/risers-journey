@@ -7,7 +7,9 @@
      staff return it: the marked paper (a tick or a circle on
      each question number, and on each part letter), My Results (right
      out of total for each section) and What I've Learnt, which they fill
-     in and submit.
+     in and submit. After that, Print questions to rework prints only the
+     ones marked wrong, with room to work each again (also on the staff
+     page for that paper).
    - Staff, ?view=staff: every Riser's papers and status.
      ?view=staff&kid=<slug>&id=<paper>: check the marks, with the answer
      key (from the private staff site, or locked in an uploaded paper),
@@ -281,6 +283,108 @@
     return box;
   }
 
+  /* ---------- printing the questions to rework ---------- */
+
+  // The items marked wrong, by question: [{ q, wrong: [item…] }].
+  function wrongByQuestion(paper, marks) {
+    var out = [];
+    paper.sections.forEach(function (s) {
+      s.qs.forEach(function (q) {
+        var wrong = items(q).filter(function (i) { return marks[i] === 'w'; });
+        if (wrong.length) out.push({ q: q, wrong: wrong });
+      });
+    });
+    return out;
+  }
+
+  function reworkButton(paper, kid, ans, marks) {
+    var wrong = wrongByQuestion(paper, marks);
+    var box = el('div', 'as-rework');
+    if (!wrong.length) { box.innerHTML = '<p class="as-sub">Every question is right, so there’s nothing to rework.</p>'; return box; }
+    var n = wrong.reduce(function (t, w) { return t + w.wrong.length; }, 0);
+    var b = el('button', 'eot2-btn', 'Print questions to rework (' + n + ')');
+    b.type = 'button';
+    var first = el('label', 'as-rework-opt', '<input type="checkbox"> Show the first answer under each one');
+    var msg = el('span', 'as-msg');
+    b.addEventListener('click', function () {
+      b.disabled = true;
+      msg.textContent = 'Getting it ready…';
+      reworkPrint(paper, kid, ans, wrong, first.querySelector('input').checked).then(function () { b.disabled = false; msg.textContent = ''; });
+    });
+    box.appendChild(b);
+    box.appendChild(first);
+    box.appendChild(msg);
+    return box;
+  }
+
+  // A4 pages: the paper's name, the Riser's name and the date, then each
+  // question marked wrong (only the wrong parts of a question with parts),
+  // with lines to work it again. A PDF paper has its questions only as
+  // page pictures: the pages with wrong questions print instead, with the
+  // ones to redo named above each, then the lines.
+  function reworkPrint(paper, kid, ans, wrong, showFirst) {
+    var answers = ans.answers || {};
+    var asText = !paper.uploaded || paper.html;
+    var lines = function (k) { var h = '<div class="as-pr-lines">'; for (var i = 0; i < k; i++) h += '<i></i>'; return h + '</div>'; };
+    var firstOf = function (id, q) {
+      if (!showFirst) return '';
+      var a = answers[id];
+      if (q && q.options && a) a = '(' + a + ') ' + (q.options[LETTERS.indexOf(a)] || '');
+      return '<p class="as-pr-first"><b>First answer:</b> ' + (filled(a) ? math(a) : '<span>none</span>') + '</p>';
+    };
+    var all = [];
+    wrong.forEach(function (w) { all = all.concat(w.wrong); });
+    var html = '<div class="as-pr-head"><div><b>' + esc([paper.subject, paper.title].filter(Boolean).join(' — ')) + '</b><span>Questions to rework</span></div>' +
+      '<div class="as-pr-name"><span><b>Name:</b> ' + esc(kid.name) + '</span><span><b>Date:</b> ____________</span></div></div>' +
+      '<p class="as-pr-list"><b>To redo:</b> ' + all.map(function (i) { return 'Q' + label(i); }).join(', ') + '</p>';
+    var jobs = [];
+    if (asText) {
+      wrong.forEach(function (w) {
+        var q = w.q;
+        html += '<div class="as-pr-q"><div class="as-pr-qhead"><b>' + q.n + '.</b>' +
+          (q.text ? '<div>' + math(q.text) + '</div>' : paper.html && paper.html[q.n] ? '<div class="as-qhtml">' + paper.html[q.n] + '</div>' : '<div>Question ' + q.n + '</div>') + '</div>';
+        if (q.parts) {
+          q.parts.filter(function (p) { return w.wrong.indexOf(q.n + p.l) !== -1; }).forEach(function (p) {
+            html += '<div class="as-pr-part"><p><b>(' + p.l + ')</b> ' + math(p.text || '') + '</p>' + firstOf(q.n + p.l) + lines(3) + '</div>';
+          });
+        } else {
+          if (q.options) html += '<p class="as-pr-opts">' + q.options.map(function (o, i) { return '<span><b>(' + LETTERS[i] + ')</b> ' + math(o || '') + '</span>'; }).join('') + '</p>';
+          html += firstOf(String(q.n), q) + lines(q.options ? 2 : q.work ? 6 : 4);
+        }
+        html += '</div>';
+      });
+    } else {
+      // Pages with a wrong question on them, in order, each once.
+      var byPage = {};
+      wrong.forEach(function (w) { (byPage[w.q.page] = byPage[w.q.page] || []).push(w); });
+      Object.keys(byPage).map(Number).sort(function (a, b) { return a - b; }).forEach(function (pg) {
+        var ws = byPage[pg], ids = [];
+        ws.forEach(function (w) { ids = ids.concat(w.wrong); });
+        html += '<div class="as-pr-page"><p class="as-pr-list"><b>On this page, redo:</b> ' + ids.map(function (i) { return 'Q' + label(i); }).join(', ') + '</p>' +
+          '<img class="as-pr-img" data-page="' + pg + '" alt="Page ' + pg + '"></div>';
+        jobs.push(window.T3_store.fetchPage(paper.id, pg).then(function (src) { return { pg: pg, src: src }; }));
+      });
+      html += '<div class="as-pr-work"><h3>My rework</h3>' + all.map(function (i) {
+        return '<div class="as-pr-q"><div class="as-pr-qhead"><b>Q' + label(i) + '</b></div>' + firstOf(i) + lines(4) + '</div>';
+      }).join('') + '</div>';
+    }
+    return Promise.all(jobs).then(function (pics) {
+      var old = document.querySelector('.as-printout');
+      if (old) old.remove();
+      var out = el('div', 'as-printout', html);
+      pics.forEach(function (p) {
+        var img = out.querySelector('img[data-page="' + p.pg + '"]');
+        if (img && p.src) img.src = p.src; else if (img) img.replaceWith(el('p', 'as-wait', 'Page ' + p.pg + ' didn’t load.'));
+      });
+      document.body.appendChild(out);
+      // Wait for the pictures before printing.
+      var imgsIn = Array.prototype.slice.call(out.querySelectorAll('img'));
+      return Promise.all(imgsIn.map(function (im) {
+        return im.complete ? null : new Promise(function (r) { im.onload = im.onerror = r; });
+      })).then(function () { setTimeout(function () { window.print(); }, 50); });
+    });
+  }
+
   function saver(kid, key, state, setStatus) {
     var timer = null;
     return function (now) {
@@ -357,6 +461,7 @@
         body.appendChild(rv);
         if (ans._reviewed) {
           body.appendChild(el('p', 'as-done', 'Sent ' + day(ans._reviewed) + '. Well done!'));
+          body.appendChild(reworkButton(paper, kid, ans, marks));
         } else {
           body.appendChild(submitBar('Send my revision plan', function () {
             ans._reviewed = new Date().toISOString();
@@ -690,7 +795,10 @@
         bar.appendChild(el('div', 'as-wait', ans._reviewed
           ? 'What I’ve Learnt, filled in by ' + esc(kid.name) + ' on ' + day(ans._reviewed) + ' (read only):'
           : esc(kid.name) + ' hasn’t filled in What I’ve Learnt yet. It shows here, read only, once they send it.'));
-        if (ans._reviewed) bar.appendChild(reviewEl(paper, ans, true));
+        if (ans._reviewed) {
+          bar.appendChild(reviewEl(paper, ans, true));
+          if (mk._returned) bar.appendChild(reworkButton(paper, kid, ans, mk.marks));
+        }
       }
       draw();
       refresh();
