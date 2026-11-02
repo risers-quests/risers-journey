@@ -151,7 +151,7 @@
       // An uploaded paper reads lettered blanks ("(a) … ____") as choices:
       // give each letter its own box. Saved as "(a) …" lines in one answer,
       // which staff mark by hand.
-      if (q && q.options && /_{3,}/.test(qh)) {
+      if (q && q.options && writtenParts(qh)) {
         var got = {};
         String(answers[id] || '').split('\n').forEach(function (line) { var m = /^\(([a-h])\)\s*(.*)$/.exec(line.trim()); if (m) got[m[1]] = m[2]; });
         if (mode === 'answer') {
@@ -258,6 +258,20 @@
       return m;
     }
   }
+  // Is an uploaded question that was read as multiple choice really
+  // lettered parts to write? Yes if it has blanks (____), or if each
+  // lettered item starts its own line and it doesn't ask to circle,
+  // choose or tick one.
+  function writtenParts(qh) {
+    if (!qh) return false;
+    if (/_{3,}/.test(qh)) return true;
+    var text = qh.replace(/<br\s*\/?>/gi, '\n').replace(/<\/(p|div|li|tr)>/gi, '\n').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ');
+    if (/\b(circle|choose|tick|select|correct (option|answer)|which (one|of))\b/i.test(text)) return false;
+    var lines = text.split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
+    var lettered = lines.filter(function (l) { return /^\([a-h]\)/i.test(l); });
+    return lettered.length >= 2 && lettered.every(function (l) { return (l.match(/\([a-h]\)/gi) || []).length === 1; });
+  }
+
   // The number or letter, ticked or circled once marked.
   function numHtml(label, mark, mode, part) {
     var show = (mode === 'marked' || mode === 'mark') && mark;
