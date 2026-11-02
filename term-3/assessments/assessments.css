@@ -211,3 +211,6 @@ p.as-blank { margin: 6px 0 0; font-size: .85rem; }
 .as-numans { max-width: 260px; }
 .as-mset { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
 .as-mset-l { font-weight: 700; color: var(--ink-soft); min-width: 64px; padding-top: 8px; }
+.as-pmark { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 6px; }
+.as-pmark .as-written { flex: 1; min-width: 180px; }
+.as-mset .as-markbtns { margin: 0; }

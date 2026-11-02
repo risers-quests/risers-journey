@@ -51,7 +51,7 @@
     if (it && (it.deleted || it.off)) return null;
     return paperById(id) || (it ? Object.assign({ id: id }, it) : null);
   }
-  function getPaper(id) { return paperById(id) ? Promise.resolve(paperById(id)) : infoById(id) ? window.T3_store.fetchPaper(id) : Promise.resolve(null); }
+  function getPaper(id) { return paperById(id) ? Promise.resolve(paperById(id)) : infoById(id) ? window.T3_store.fetchPaper(id).then(splitLetters) : Promise.resolve(null); }
   function allIds() {
     var ids = PAPERS.map(function (p) { return p.id; });
     Object.keys(UPLOADED).forEach(function (id) { if (ids.indexOf(id) === -1) ids.push(id); });
@@ -65,7 +65,30 @@
   function marksKeyOf(id) { return 'term3-asmt-' + id + '-marks'; }
   var LETTERS = 'abcdefgh';
 
-  function items(q) { return q.parts ? q.parts.map(function (p) { return q.n + p.l; }) : [String(q.n)]; }
+  // What is marked: each part, each letter of a question split by
+  // splitLetters, or the question.
+  function items(q) {
+    return q.parts ? q.parts.map(function (p) { return q.n + p.l; })
+      : q.markLetters ? q.markLetters.map(function (l) { return q.n + l; }) : [String(q.n)];
+  }
+  // What is answered: a split question keeps one answer.
+  function answerItems(q) { return q.parts ? q.parts.map(function (p) { return q.n + p.l; }) : [String(q.n)]; }
+  // An uploaded question read as choices that is really lettered parts
+  // (blanks, or written parts) or several sets of choices is marked a
+  // letter at a time: q.markLetters, and q.markLabels for the sets.
+  function splitLetters(paper) {
+    if (!paper || !paper.uploaded || !paper.html) return paper;
+    paper.sections.forEach(function (s) {
+      s.qs.forEach(function (q) {
+        var h = String(paper.html[q.n] || '');
+        if (!q.options || !h) return;
+        if (writtenParts(h)) { q.markLetters = q.options.map(function (o, i) { return LETTERS[i]; }); return; }
+        var g = choiceGroups(h);
+        if (g.length >= 2) { q.markLetters = g.map(function (x, i) { return LETTERS[i]; }); q.markLabels = g.map(function (x) { return x.label; }); }
+      });
+    });
+    return paper;
+  }
   function allItems(paper) {
     var out = [];
     paper.sections.forEach(function (s) { s.qs.forEach(function (q) { out = out.concat(items(q)); }); });
@@ -118,8 +141,8 @@
       s.qs.forEach(function (q) {
         if (paper.uploaded) pagesTo(q.page, sec);
         var qd = el('div', 'as-q');
-        var whole = !q.parts;
-        if (whole) qd.dataset.item = String(q.n);
+        var whole = !q.parts && !q.markLetters;
+        if (!q.parts) qd.dataset.item = String(q.n);
         // A question with lettered parts is marked on its letters only.
         qd.appendChild(el('div', 'as-qhead', numHtml(q.n + '.', whole ? marks[String(q.n)] : '', mode) +
           (q.text ? '<p class="as-qtext">' + math(q.text) + '</p>'
@@ -136,7 +159,7 @@
           });
         } else {
           qd.appendChild(answerEl(String(q.n), q, mode));
-          if (mode === 'mark') qd.appendChild(markEl(String(q.n)));
+          if (mode === 'mark' && !q.markLetters) qd.appendChild(markEl(String(q.n)));
         }
         sec.appendChild(qd);
       });
@@ -171,7 +194,15 @@
             boxes.appendChild(row);
           });
           wrap.appendChild(boxes);
-        } else wrap.appendChild(el('p', 'as-written' + (filled(answers[id]) ? '' : ' as-blank'), filled(answers[id]) ? esc(answers[id]).replace(/\n/g, '<br>') : 'No answer'));
+        } else {
+          q.options.forEach(function (o, i) {
+            var l = LETTERS[i], row = el('div', 'as-pmark');
+            row.dataset.item = q.n + l;
+            row.innerHTML = numHtml('(' + l + ')', marks[q.n + l], mode, true) + '<p class="as-written' + (filled(got[l]) ? '' : ' as-blank') + '">' + (filled(got[l]) ? esc(got[l]) : 'No answer') + '</p>';
+            if (mode === 'mark') row.appendChild(markEl(q.n + l));
+            wrap.appendChild(row);
+          });
+        }
         return wrap;
       }
       // Two or more sets of choices in one question (each from (a) again):
@@ -180,8 +211,9 @@
       if (groups.length >= 2) {
         var picked = {};
         String(answers[id] || '').split('\n').forEach(function (line) { var m = /^\((\w+)\)\s*([a-h])$/.exec(line.trim()); if (m) picked[m[1]] = m[2]; });
-        groups.forEach(function (g) {
-          var row = el('div', 'as-mset', '<span class="as-mset-l">Part (' + esc(g.label) + ')</span>');
+        groups.forEach(function (g, gi) {
+          var row = el('div', 'as-mset', '<span class="as-mset-l">' + (mode === 'answer' ? 'Part (' + esc(g.label) + ')' : numHtml('Part (' + esc(g.label) + ')', marks[q.n + LETTERS[gi]], mode, true)) + '</span>');
+          row.dataset.item = q.n + LETTERS[gi];
           var opts2 = el('div', 'as-opts');
           for (var i = 0; i < g.n; i++) (function (l) {
             var bt = el('button', 'as-opt' + (picked[g.label] === l ? ' is-on' : ''), '<b>(' + l + ')</b>');
@@ -198,6 +230,7 @@
             opts2.appendChild(bt);
           })(LETTERS[i]);
           row.appendChild(opts2);
+          if (mode === 'mark') row.appendChild(markEl(q.n + LETTERS[gi]));
           wrap.appendChild(row);
         });
         if (mode !== 'answer' && !answers[id]) wrap.appendChild(el('p', 'as-blank', 'No answer'));
@@ -606,7 +639,9 @@
   }
 
   function blanksOf(paper, ans) {
-    return allItems(paper).filter(function (i) { return !filled((ans.answers || {})[i]); });
+    var out = [];
+    paper.sections.forEach(function (s) { s.qs.forEach(function (q) { out = out.concat(answerItems(q)); }); });
+    return out.filter(function (i) { return !filled((ans.answers || {})[i]); });
   }
   function label(id) { var m = /^(\d+)([a-z]?)$/.exec(id); return m[1] + (m[2] ? '(' + m[2] + ')' : ''); }
   function jumpTo(id) {
@@ -627,6 +662,7 @@
         s.qs.forEach(function (q) {
           var a = (ans.answers || {})[String(q.n)];
           if (q.options && filled(a) && !/^[a-h]$/.test(String(a).trim())) delete marks[String(q.n)];
+          if (q.markLetters) items(q).forEach(function (i) { delete marks[i]; });
         });
       });
       return window.eot2Save(kid.group, kid.slug, marksKeyOf(paper.id), { marks: marks, auto: true, _marked: new Date().toISOString(), by: 'auto' })
