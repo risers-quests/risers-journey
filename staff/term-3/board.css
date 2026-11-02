@@ -383,8 +383,10 @@ button.qp-ck { font: inherit; text-align: left; border: 2px solid transparent; c
 .pb-ideas-btn { align-self: flex-start; font: inherit; font-size: .82rem; font-weight: 600; background: none; border: 0; color: #9a6a1c; cursor: pointer; padding: 2px 0; }
 .pb-idea { display: flex; justify-content: space-between; gap: 8px; align-items: center; text-align: left; font: inherit; font-size: .84rem; background: #fffbea; border: 1px dashed #e5c97a; border-radius: 10px; padding: 7px 10px; cursor: pointer; color: var(--ink); }
 .pb-idea b { color: var(--accent); white-space: nowrap; }
-.pb-sos { font: inherit; font-size: .75rem; font-weight: 700; border: 1.5px solid #e8b4a4; background: #fff4f0; color: #a3432b; border-radius: 99px; padding: 3px 9px; cursor: pointer; }
-.pb-sos.is-on { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+.pb-sos { font: inherit; font-size: .75rem; font-weight: 600; border: 1px solid var(--border); background: transparent; color: var(--ink-faint); border-radius: 99px; padding: 3px 9px; cursor: pointer; }
+.pb-sos:hover { color: #a3432b; border-color: #e8b4a4; }
+/* A job that is stuck: the button shows it, in red, until it's sorted. */
+.pb-sos.is-on { font-weight: 700; background: #fff4f0; border-color: #e8b4a4; color: #a3432b; }
 @media (max-width: 640px) { .qp-look { grid-template-columns: 1fr; } }
 .pb-moves { align-items: center; gap: 6px; }
 

@@ -971,7 +971,7 @@
           '</button>' +
           (own ? '<div class="pb-moves">' +
             (ci > 0 ? '<button type="button" class="pb-move" data-d="-1" aria-label="Move back">&larr;</button>' : '<span></span>') +
-            (col.id !== 'done' ? '<button type="button" class="pb-sos' + (card.stuck ? ' is-on' : '') + '">' + (card.stuck ? '✓ Sorted?' : '🆘 Stuck') + '</button>' : '') +
+            (col.id !== 'done' ? '<button type="button" class="pb-sos' + (card.stuck ? ' is-on' : '') + '">' + (card.stuck ? '🚩 Stuck · sorted?' : 'Stuck?') + '</button>' : '') +
             (ci < COLS.length - 1 ? '<button type="button" class="pb-move" data-d="1" aria-label="Move on">&rarr;</button>' : '') +
           '</div>' : '');
         if (own) {
