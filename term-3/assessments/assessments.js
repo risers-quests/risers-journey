@@ -102,7 +102,10 @@
     paper.sections.forEach(function (s) {
       s.qs.forEach(function (q) {
         var h = String(paper.html[q.n] || '');
-        if (!q.options || !h) return;
+        if (!h) return;
+        var ap = assertParts(h);
+        if (ap.length) { q.assertLetters = ap; q.markLetters = ap; return; }
+        if (!q.options) return;
         if (writtenParts(h)) { q.markLetters = q.options.map(function (o, i) { return LETTERS[i]; }); return; }
         var g = choiceGroups(h);
         if (g.length >= 2) { q.markLetters = g.map(function (x, i) { return LETTERS[i]; }); q.markLabels = g.map(function (x) { return x.label; }); }
@@ -195,6 +198,33 @@
       // An uploaded paper reads lettered blanks ("(a) … ____") as choices:
       // give each letter its own box. Saved as "(a) …" lines in one answer,
       // which staff mark by hand.
+      // Assertion–Reason with parts: a number box for each part.
+      if (q && q.assertLetters) {
+        var codes = codesOf(answers[id], q.assertLetters);
+        q.assertLetters.forEach(function (l) {
+          var row = el('div', 'as-pmark');
+          row.dataset.item = q.n + l;
+          if (mode === 'answer') {
+            row.innerHTML = '<b>Part (' + l + ')</b>';
+            var inp = el('input', 'as-input as-numans');
+            inp.type = 'text'; inp.inputMode = 'numeric'; inp.maxLength = 1; inp.autocomplete = 'off';
+            inp.placeholder = 'Type the number (1, 2, 3, 4)';
+            inp.value = codes[l] || '';
+            inp.addEventListener('input', function () {
+              codes[l] = inp.value.trim();
+              answers[id] = q.assertLetters.map(function (x) { return codes[x] ? '(' + x + ') ' + codes[x] : ''; }).filter(Boolean).join('\n');
+              hooks.change();
+            });
+            row.appendChild(inp);
+          } else {
+            row.innerHTML = numHtml('Part (' + l + ')', markOf(marks, q.n + l), mode, true) + '<p class="as-written' + (codes[l] ? '' : ' as-blank') + '">' + (codes[l] ? esc(codes[l]) : 'No answer') + '</p>';
+            if (mode === 'mark') row.appendChild(markBox(q.n + l));
+          }
+          wrap.appendChild(row);
+        });
+        if (mode === 'mark') wrap.appendChild(keyLine(q));
+        return wrap;
+      }
       if (q && q.options && writtenParts(qh)) {
         var got = {};
         String(answers[id] || '').split('\n').forEach(function (line) { var m = /^\(([a-h])\)\s*(.*)$/.exec(line.trim()); if (m) got[m[1]] = m[2]; });
@@ -370,6 +400,28 @@
       return m;
     }
   }
+  // Assertion–Reason in lettered parts: "(a) Assertion … (b) Assertion …"
+  // with codes (1) … (4). Returns the part letters, or [].
+  function assertParts(qh) {
+    if (!qh) return [];
+    var text = qh.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ');
+    if (!/\(1\)/.test(text) || !/\(2\)/.test(text)) return [];
+    var out = [], re = /\(([a-h])\)\s*Assertion/gi, m;
+    while ((m = re.exec(text))) if (out.indexOf(m[1].toLowerCase()) === -1) out.push(m[1].toLowerCase());
+    return out.length >= 2 ? out : [];
+  }
+  // Each part's code from the saved answer: "(a) 2" lines, or else the
+  // numbers 1–4 in the order written ("2 3", "2, 3").
+  function codesOf(a, letters) {
+    var got = {}, t = String(a || '');
+    t.split('\n').forEach(function (line) { var m = /^\(([a-h])\)\s*([1-4])\b/.exec(line.trim()); if (m) got[m[1]] = m[2]; });
+    if (!Object.keys(got).length) {
+      var ds = t.match(/(^|[^\d(])([1-4])(?![\d)])/g) || [];
+      ds.map(function (x) { return x.replace(/\D/g, ''); }).forEach(function (d, i) { if (letters[i]) got[letters[i]] = d; });
+    }
+    return got;
+  }
+
   // Is an uploaded question that was read as multiple choice really
   // lettered parts to write? Yes if it has blanks (____), or if each
   // lettered item starts its own line and it doesn't ask to circle,
