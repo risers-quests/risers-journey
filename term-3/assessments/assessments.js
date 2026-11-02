@@ -147,6 +147,56 @@
 
     function answerEl(id, q, mode) {
       var wrap = el('div', 'as-ans');
+      var qh = q && paper.uploaded && paper.html ? String(paper.html[q.n] || '') : '';
+      // An uploaded paper reads lettered blanks ("(a) … ____") as choices:
+      // give each letter its own box. Saved as "(a) …" lines in one answer,
+      // which staff mark by hand.
+      if (q && q.options && /_{3,}/.test(qh)) {
+        var got = {};
+        String(answers[id] || '').split('\n').forEach(function (line) { var m = /^\(([a-h])\)\s*(.*)$/.exec(line.trim()); if (m) got[m[1]] = m[2]; });
+        if (mode === 'answer') {
+          var boxes = el('div', 'as-blanks');
+          var write = function () {
+            answers[id] = q.options.map(function (o, i) { var v = boxes.querySelectorAll('input')[i].value.trim(); return v ? '(' + LETTERS[i] + ') ' + v : ''; }).filter(Boolean).join('\n');
+            var holder = boxes.closest('[data-item]');
+            if (holder && filled(answers[id])) holder.classList.remove('as-missing');
+            hooks.change();
+          };
+          q.options.forEach(function (o, i) {
+            var row = el('label', 'as-blank-row', '<b>(' + LETTERS[i] + ')</b><input type="text" class="as-input" autocomplete="off">');
+            var inp = row.querySelector('input');
+            inp.value = got[LETTERS[i]] || '';
+            inp.setAttribute('aria-label', 'Blank (' + LETTERS[i] + ')');
+            inp.addEventListener('input', write);
+            boxes.appendChild(row);
+          });
+          wrap.appendChild(boxes);
+        } else wrap.appendChild(el('p', 'as-written' + (filled(answers[id]) ? '' : ' as-blank'), filled(answers[id]) ? esc(answers[id]).replace(/\n/g, '<br>') : 'No answer'));
+        return wrap;
+      }
+      // Numbered options, "(1) … (4)" (like Assertion and Reason): tap one.
+      var nums = q && !q.options && !q.parts && qh ? (qh.match(/\((\d)\)/g) || []).map(function (x) { return x.charAt(1); }) : [];
+      nums = nums.filter(function (x, i) { return nums.indexOf(x) === i; });
+      if (nums.length >= 2 && nums[0] === '1') {
+        var nb = el('div', 'as-opts');
+        nums.forEach(function (x) {
+          var bt = el('button', 'as-opt' + (answers[id] === x ? ' is-on' : ''), '<b>(' + x + ')</b>');
+          bt.type = 'button';
+          bt.disabled = mode !== 'answer';
+          bt.addEventListener('click', function () {
+            answers[id] = answers[id] === x ? '' : x;
+            Array.prototype.forEach.call(nb.children, function (y, j) { y.classList.toggle('is-on', answers[id] === nums[j]); });
+            var holder = nb.closest('[data-item]');
+            if (holder && answers[id]) holder.classList.remove('as-missing');
+            hooks.change();
+          });
+          nb.appendChild(bt);
+        });
+        wrap.appendChild(nb);
+        if (mode !== 'answer' && !answers[id]) wrap.appendChild(el('p', 'as-blank', 'No answer'));
+        if (mode === 'mark' && hooks.key && hooks.key[id]) wrap.appendChild(el('p', 'as-key', '<b>Key:</b> ' + esc(hooks.key[id])));
+        return wrap;
+      }
       if (q && q.options) {
         var opts = el('div', 'as-opts');
         q.options.forEach(function (o, i) {
@@ -164,25 +214,8 @@
           opts.appendChild(b);
         });
         wrap.appendChild(opts);
-        // An uploaded paper can take a fill-in question for a choice one
-        // (its blanks are lettered too), so the Riser can type instead.
         var typed = filled(answers[id]) && !/^[a-h]$/.test(answers[id]);
-        if (paper.uploaded && mode === 'answer') {
-          var tb = el('textarea', 'as-input as-typed');
-          tb.rows = 2;
-          tb.placeholder = 'Or type your answer here (for blanks: (a) …, (b) …)';
-          tb.setAttribute('aria-label', 'Type your answer');
-          tb.value = typed ? answers[id] : '';
-          tb.addEventListener('input', function () {
-            answers[id] = tb.value;
-            Array.prototype.forEach.call(opts.children, function (x) { x.classList.remove('is-on'); });
-            var holder = tb.closest('[data-item]');
-            if (holder && filled(tb.value)) holder.classList.remove('as-missing');
-            hooks.change();
-          });
-          opts.addEventListener('click', function () { if (/^[a-h]?$/.test(answers[id] || '')) tb.value = ''; });
-          wrap.appendChild(tb);
-        } else if (typed) wrap.appendChild(el('p', 'as-written', esc(answers[id]).replace(/\n/g, '<br>')));
+        if (typed && mode !== 'answer') wrap.appendChild(el('p', 'as-written', esc(answers[id]).replace(/\n/g, '<br>')));
         if (mode !== 'answer' && !answers[id]) wrap.appendChild(el('p', 'as-blank', 'No answer'));
       } else if (mode === 'answer') {
         if (q && q.work) wrap.appendChild(inputBox(id + 'w', 3, 'Working (optional)'));
