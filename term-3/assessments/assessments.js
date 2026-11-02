@@ -300,27 +300,31 @@
     return lettered.length >= 2 && lettered.every(function (l) { return (l.match(/\([a-h]\)/gi) || []).length === 1; });
   }
 
-  // Sets of choices in one question, read line by line: lines with two
-  // or more lettered options make up a set; a line with one letter and a
-  // question before them ("(a) By volume …") names the set; otherwise
-  // sets are named by (i), (ii) … before them, or 1, 2 ….
+  // Sets of choices in one question, read from the order of the letters
+  // (so the paper's layout doesn't matter): a run (a) (b) (c) … is a set
+  // of choices; a letter followed straight away by "(a)" names the next
+  // set ("(a) By volume … (a) 1:8 (b) 2:1 …" is Part (a)); otherwise a
+  // set is named by an (i), (ii) … before it, or 1, 2 ….
   function choiceGroups(qh) {
     if (!qh || writtenParts(qh)) return [];
-    var lines = qh.replace(/<br\s*\/?>/gi, '\n').replace(/<\/(p|div|li|tr)>/gi, '\n').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ')
-      .split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
-    var sets = [], cur = null, name = '';
-    lines.forEach(function (l) {
-      var ls = (l.match(/\(([a-h])\)/gi) || []).map(function (x) { return x.charAt(1).toLowerCase(); });
-      if (ls.length >= 2) {
-        if (!cur) { cur = { label: name, n: 0 }; sets.push(cur); name = ''; }
-        ls.forEach(function (x) { cur.n = Math.max(cur.n, LETTERS.indexOf(x) + 1); });
-        return;
-      }
-      cur = null;
-      var one = /^\(([a-h])\)/i.exec(l), rom = /^\((i{1,3}|iv|vi{0,3}|ix|x)\)/i.exec(l);
-      if (rom) name = rom[1].toLowerCase(); else if (one) name = one[1].toLowerCase();
-    });
-    sets.forEach(function (x, i) { if (!x.label) x.label = String(i + 1); });
+    var text = qh.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ');
+    var marks = [], re = /\(([a-h])\)/gi, m;
+    while ((m = re.exec(text))) marks.push({ l: m[1].toLowerCase(), at: m.index });
+    var sets = [], i = 0, name = '', from = 0;
+    while (i < marks.length) {
+      if (marks[i].l === 'a' || (i + 1 < marks.length && marks[i + 1].l === 'a')) {
+        // A name for the next set: a letter right before an "(a)".
+        if (i + 1 < marks.length && marks[i + 1].l === 'a' && (marks[i].l !== 'a' || (i + 2 < marks.length && marks[i + 2].l === 'b'))) {
+          name = marks[i].l; from = marks[i].at; i++; continue;
+        }
+        var n = 1, j = i + 1;
+        while (j < marks.length && marks[j].l === LETTERS[n]) { n++; j++; }
+        if (!name) { var rom = text.slice(from, marks[i].at).match(/\((i{1,3}|iv|vi{0,3}|ix|x)\)/gi); if (rom) name = rom[rom.length - 1].replace(/[()]/g, '').toLowerCase(); }
+        sets.push({ label: name, n: Math.max(n, 2) });
+        name = ''; from = j < marks.length ? marks[j - 1].at : text.length; i = j;
+      } else i++;
+    }
+    sets.forEach(function (x, k) { if (!x.label) x.label = String(k + 1); });
     return sets.length >= 2 ? sets : [];
   }
 
