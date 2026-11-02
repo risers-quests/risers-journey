@@ -134,7 +134,9 @@
     qs.forEach(function (q) {
       var kt = norm(key[q.n] || '');
       q.parts = null;
-      if (/^\(a\)/i.test(kt) && /\(b\)/i.test(kt) && !q.choices) {
+      // A key with answers for (a) and (b) means parts, even when the
+      // question letters its blanks like choices (fill in the blanks).
+      if (/^\(a\)/i.test(kt) && /\(b\)/i.test(kt)) {
         var bits = kt.split(/\(([a-h])\)/i);
         q.parts = [];
         for (var i = 1; i < bits.length; i += 2) {

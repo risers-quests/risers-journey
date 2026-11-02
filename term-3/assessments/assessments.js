@@ -164,6 +164,25 @@
           opts.appendChild(b);
         });
         wrap.appendChild(opts);
+        // An uploaded paper can take a fill-in question for a choice one
+        // (its blanks are lettered too), so the Riser can type instead.
+        var typed = filled(answers[id]) && !/^[a-h]$/.test(answers[id]);
+        if (paper.uploaded && mode === 'answer') {
+          var tb = el('textarea', 'as-input as-typed');
+          tb.rows = 2;
+          tb.placeholder = 'Or type your answer here (for blanks: (a) …, (b) …)';
+          tb.setAttribute('aria-label', 'Type your answer');
+          tb.value = typed ? answers[id] : '';
+          tb.addEventListener('input', function () {
+            answers[id] = tb.value;
+            Array.prototype.forEach.call(opts.children, function (x) { x.classList.remove('is-on'); });
+            var holder = tb.closest('[data-item]');
+            if (holder && filled(tb.value)) holder.classList.remove('as-missing');
+            hooks.change();
+          });
+          opts.addEventListener('click', function () { if (/^[a-h]?$/.test(answers[id] || '')) tb.value = ''; });
+          wrap.appendChild(tb);
+        } else if (typed) wrap.appendChild(el('p', 'as-written', esc(answers[id]).replace(/\n/g, '<br>')));
         if (mode !== 'answer' && !answers[id]) wrap.appendChild(el('p', 'as-blank', 'No answer'));
       } else if (mode === 'answer') {
         if (q && q.work) wrap.appendChild(inputBox(id + 'w', 3, 'Working (optional)'));
@@ -499,6 +518,14 @@
   // the Riser sees them once staff return it. Resolves true once saved.
   function markAndSave(kid, paper, ans) {
     return window.T3_autoMark(paper, ans.answers || {}, items).then(function (marks) {
+      // A typed answer to a choice question can't be marked from the key:
+      // leave it for staff.
+      paper.sections.forEach(function (s) {
+        s.qs.forEach(function (q) {
+          var a = (ans.answers || {})[String(q.n)];
+          if (q.options && filled(a) && !/^[a-h]$/.test(String(a).trim())) delete marks[String(q.n)];
+        });
+      });
       return window.eot2Save(kid.group, kid.slug, marksKeyOf(paper.id), { marks: marks, auto: true, _marked: new Date().toISOString(), by: 'auto' })
         .then(function (r) { return r.ok; });
     }, function () { return false; });
