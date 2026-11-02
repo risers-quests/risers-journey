@@ -7,9 +7,9 @@
      staff return it: the marked paper (a tick or a circle on
      each question number, and on each part letter), My Results (right
      out of total for each section) and What I've Learnt, which they fill
-     in and submit. After that, Print questions to rework prints only the
-     ones marked wrong, with room to work each again (also on the staff
-     page for that paper).
+     in and submit. After that, Rework: the questions marked wrong open
+     again to answer; staff then send the key for them, and the Riser
+     corrects their work (reworkEl, staffReworkEl).
    - Staff, ?view=staff: every Riser's papers and status.
      ?view=staff&kid=<slug>&id=<paper>: check the marks, with the answer
      key (from the private staff site, or locked in an uploaded paper),
@@ -140,7 +140,9 @@
   }
 
   function status(ans, mk) {
-    if (ans && ans._reviewed) return { id: 'done', label: 'Revision plan done' };
+    if (ans && ans._corrected) return { id: 'done', label: 'Rework corrected' };
+    if (ans && ans._reworked) return mk && mk._keySent ? { id: 'keysent', label: 'Answer key sent' } : { id: 'reworked', label: 'Rework sent' };
+    if (ans && ans._reviewed) return { id: 'reviewed', label: 'Revision plan done' };
     if (mk && mk._returned) return { id: 'returned', label: 'Marked' };
     if (ans && ans._submitted) return { id: 'submitted', label: 'Submitted', auto: !!(mk && mk.auto) };
     if (ans && ans.answers && Object.keys(ans.answers).some(function (k) { return filled(ans.answers[k]); })) return { id: 'started', label: 'Started' };
@@ -597,7 +599,7 @@
     return box;
   }
 
-  /* ---------- printing the questions to rework ---------- */
+  /* ---------- the wrong questions ---------- */
 
   // The items marked wrong, by question: [{ q, wrong: [item…] }].
   function wrongByQuestion(paper, marks) {
@@ -611,92 +613,109 @@
     return out;
   }
 
-  function reworkButton(paper, kid, ans, marks) {
-    var wrong = wrongByQuestion(paper, marks);
-    var box = el('div', 'as-rework');
-    if (!wrong.length) { box.innerHTML = '<p class="as-sub">Every question is right, so there’s nothing to rework.</p>'; return box; }
-    var n = wrong.reduce(function (t, w) { return t + w.wrong.length; }, 0);
-    var b = el('button', 'eot2-btn', 'Print questions to rework (' + n + ')');
-    b.type = 'button';
-    var first = el('label', 'as-rework-opt', '<input type="checkbox"> Show the first answer under each one');
-    var msg = el('span', 'as-msg');
-    b.addEventListener('click', function () {
-      b.disabled = true;
-      msg.textContent = 'Getting it ready…';
-      reworkPrint(paper, kid, ans, wrong, first.querySelector('input').checked).then(function () { b.disabled = false; msg.textContent = ''; });
+  // A question's own text, or its page picture, for showing it again.
+  function questionHtmlEl(paper, q) {
+    var box = el('div', 'as-qtext as-qhtml');
+    if (q.text) box.innerHTML = math(q.text);
+    else if (paper.html && paper.html[q.n]) box.innerHTML = paper.html[q.n];
+    else if (paper.uploaded && q.page) box.appendChild(pageImg(paper, q.page));
+    else box.textContent = 'Question ' + q.n;
+    return box;
+  }
+  function wrongLabels(q, w) {
+    return w.wrong.map(function (i) { var l = label(i); return l.indexOf(String(q.n)) === 0 ? l.slice(String(q.n).length).trim() : l; }).filter(Boolean);
+  }
+  // The key text for a question (its own line, or its parts').
+  function keyTextFor(q, key) {
+    if (!key) return '';
+    if (key[String(q.n)]) return key[String(q.n)];
+    return items(q).map(function (i) { return key[i] ? '(' + i.slice(String(q.n).length) + ') ' + key[i] : ''; }).filter(Boolean).join('  ');
+  }
+
+  /* ---------- rework: the wrong questions again ---------- */
+
+  // After the revision plan the Riser answers the wrong questions again
+  // (ans.rework[n]) and sends it (ans._reworked). Staff send the key for
+  // those questions (mk.keyFor[n], mk._keySent); the Riser corrects their
+  // work with it and says so (ans._corrected).
+  function reworkEl(paper, kid, ans, mk, save, redraw) {
+    var wrong = wrongByQuestion(paper, mk.marks || {});
+    var box = el('section', 'as-rwk', '<h2>Rework</h2>');
+    if (!wrong.length) { box.insertAdjacentHTML('beforeend', '<p class="as-sub">Every question is right, so there’s nothing to rework. Well done!</p>'); return box; }
+    var rw = ans.rework = ans.rework || {}, keyFor = mk._keySent ? (mk.keyFor || {}) : null;
+    var canWrite = !ans._reworked || (keyFor && !ans._corrected);
+    box.insertAdjacentHTML('beforeend', '<p class="as-sub">' + (ans._corrected ? 'You corrected your rework on ' + day(ans._corrected) + '. Well done!'
+      : keyFor ? 'Your facilitator sent the answer key. Check each answer against it and correct your work, then press I’ve corrected my work.'
+      : ans._reworked ? 'Sent to your facilitator on ' + day(ans._reworked) + '. They will send you the answer key to check it.'
+      : 'Try the questions you got wrong again. Answer each one, then send your rework to your facilitator.') + '</p>');
+    wrong.forEach(function (w) {
+      var q = w.q, card = el('div', 'as-rwq');
+      card.appendChild(el('div', 'as-rwhead', '<b>' + q.n + '.</b><span>Redo' + (q.parts || q.markLetters ? ': ' + esc(wrongLabels(q, w).join(', ')) : ' this question') + '</span>'));
+      card.appendChild(questionHtmlEl(paper, q));
+      if (canWrite) {
+        var ta = el('textarea', 'as-input');
+        ta.rows = 3;
+        ta.placeholder = 'My answer, worked again';
+        ta.value = rw[q.n] || '';
+        ta.addEventListener('input', function () { rw[q.n] = ta.value; save(); });
+        card.appendChild(ta);
+      } else card.appendChild(el('p', 'as-written' + (filled(rw[q.n]) ? '' : ' as-blank'), filled(rw[q.n]) ? esc(rw[q.n]).replace(/\n/g, '<br>') : 'No answer'));
+      if (keyFor) card.appendChild(el('p', 'as-key', '<b>Key:</b> ' + (filled(keyFor[q.n]) ? esc(keyFor[q.n]) : 'ask your facilitator about this one.')));
+      box.appendChild(card);
     });
-    box.appendChild(b);
-    box.appendChild(first);
-    box.appendChild(msg);
+    if (!ans._reworked) {
+      box.appendChild(submitBar('Send my rework', function () {
+        var blank = wrong.filter(function (w) { return !filled(rw[w.q.n]); });
+        if (blank.length) { alert('Answer every question first: ' + blank.map(function (w) { return 'Q' + w.q.n; }).join(', ') + '.'); return null; }
+        ans._reworked = new Date().toISOString();
+        return save(true);
+      }, redraw, function () { delete ans._reworked; }));
+    } else if (keyFor && !ans._corrected) {
+      box.appendChild(submitBar('I’ve corrected my work', function () { ans._corrected = new Date().toISOString(); return save(true); }, redraw, function () { delete ans._corrected; }));
+    }
     return box;
   }
 
-  // A4 pages: the paper's name, the Riser's name and the date, then each
-  // question marked wrong (only the wrong parts of a question with parts),
-  // with lines to work it again. A PDF paper has its questions only as
-  // page pictures: the pages with wrong questions print instead, with the
-  // ones to redo named above each, then the lines.
-  function reworkPrint(paper, kid, ans, wrong, showFirst) {
-    var answers = ans.answers || {};
-    var asText = !paper.uploaded || paper.html;
-    var lines = function (k) { var h = '<div class="as-pr-lines">'; for (var i = 0; i < k; i++) h += '<i></i>'; return h + '</div>'; };
-    var firstOf = function (id, q) {
-      if (!showFirst) return '';
-      var a = answers[id];
-      if (q && q.options && a) a = '(' + a + ') ' + (q.options[LETTERS.indexOf(a)] || '');
-      return '<p class="as-pr-first"><b>First answer:</b> ' + (filled(a) ? math(a) : '<span>none</span>') + '</p>';
-    };
-    var all = [];
-    wrong.forEach(function (w) { all = all.concat(w.wrong); });
-    var html = '<div class="as-pr-head"><div><b>' + esc([paper.subject, paper.title].filter(Boolean).join(' — ')) + '</b><span>Questions to rework</span></div>' +
-      '<div class="as-pr-name"><span><b>Name:</b> ' + esc(kid.name) + '</span><span><b>Date:</b> ____________</span></div></div>' +
-      '<p class="as-pr-list"><b>To redo:</b> ' + all.map(function (i) { return 'Q' + label(i); }).join(', ') + '</p>';
-    var jobs = [];
-    if (asText) {
-      wrong.forEach(function (w) {
-        var q = w.q;
-        html += '<div class="as-pr-q"><div class="as-pr-qhead"><b>' + q.n + '.</b>' +
-          (q.text ? '<div>' + math(q.text) + '</div>' : paper.html && paper.html[q.n] ? '<div class="as-qhtml">' + paper.html[q.n] + '</div>' : '<div>Question ' + q.n + '</div>') + '</div>';
-        if (q.parts) {
-          q.parts.filter(function (p) { return w.wrong.indexOf(q.n + p.l) !== -1; }).forEach(function (p) {
-            html += '<div class="as-pr-part"><p><b>(' + p.l + ')</b> ' + math(p.text || '') + '</p>' + firstOf(q.n + p.l) + lines(3) + '</div>';
-          });
-        } else {
-          if (q.options) html += '<p class="as-pr-opts">' + q.options.map(function (o, i) { return '<span><b>(' + LETTERS[i] + ')</b> ' + math(o || '') + '</span>'; }).join('') + '</p>';
-          html += firstOf(String(q.n), q) + lines(q.options ? 2 : q.work ? 6 : 4);
-        }
-        html += '</div>';
-      });
-    } else {
-      // Pages with a wrong question on them, in order, each once.
-      var byPage = {};
-      wrong.forEach(function (w) { (byPage[w.q.page] = byPage[w.q.page] || []).push(w); });
-      Object.keys(byPage).map(Number).sort(function (a, b) { return a - b; }).forEach(function (pg) {
-        var ws = byPage[pg], ids = [];
-        ws.forEach(function (w) { ids = ids.concat(w.wrong); });
-        html += '<div class="as-pr-page"><p class="as-pr-list"><b>On this page, redo:</b> ' + ids.map(function (i) { return 'Q' + label(i); }).join(', ') + '</p>' +
-          '<img class="as-pr-img" data-page="' + pg + '" alt="Page ' + pg + '"></div>';
-        jobs.push(window.T3_store.fetchPage(paper.id, pg).then(function (src) { return { pg: pg, src: src }; }));
-      });
-      html += '<div class="as-pr-work"><h3>My rework</h3>' + all.map(function (i) {
-        return '<div class="as-pr-q"><div class="as-pr-qhead"><b>Q' + label(i) + '</b></div>' + firstOf(i) + lines(4) + '</div>';
-      }).join('') + '</div>';
-    }
-    return Promise.all(jobs).then(function (pics) {
-      var old = document.querySelector('.as-printout');
-      if (old) old.remove();
-      var out = el('div', 'as-printout', html);
-      pics.forEach(function (p) {
-        var img = out.querySelector('img[data-page="' + p.pg + '"]');
-        if (img && p.src) img.src = p.src; else if (img) img.replaceWith(el('p', 'as-wait', 'Page ' + p.pg + ' didn’t load.'));
-      });
-      document.body.appendChild(out);
-      // Wait for the pictures before printing.
-      var imgsIn = Array.prototype.slice.call(out.querySelectorAll('img'));
-      return Promise.all(imgsIn.map(function (im) {
-        return im.complete ? null : new Promise(function (r) { im.onload = im.onerror = r; });
-      })).then(function () { setTimeout(function () { window.print(); }, 50); });
+  // Staff: the Riser's rework, the key beside it, and Send the answer key.
+  function staffReworkEl(paper, kid, ans, mk, getKey, save, redraw) {
+    var wrong = wrongByQuestion(paper, mk.marks || {}), rw = ans.rework || {}, key = getKey();
+    var drafts = staffReworkEl.drafts = staffReworkEl.drafts || {};
+    var box = el('section', 'as-rwk', '<h2>Rework</h2>');
+    if (!ans._reworked) { box.insertAdjacentHTML('beforeend', '<p class="as-sub">' + esc(kid.name) + ' hasn’t sent their rework of the wrong questions yet.</p>'); return box; }
+    box.insertAdjacentHTML('beforeend', '<p class="as-sub">Sent by ' + esc(kid.name) + ' on ' + day(ans._reworked) + '.' +
+      (mk._keySent ? ' You sent the answer key on ' + day(mk._keySent) + '.' + (ans._corrected ? ' They corrected their work on ' + day(ans._corrected) + '.' : '') : '') + '</p>');
+    wrong.forEach(function (w) {
+      var q = w.q, card = el('div', 'as-rwq');
+      card.appendChild(el('div', 'as-rwhead', '<b>' + q.n + '.</b><span>Redo' + (q.parts || q.markLetters ? ': ' + esc(wrongLabels(q, w).join(', ')) : '') + '</span>'));
+      card.appendChild(el('p', 'as-written' + (filled(rw[q.n]) ? '' : ' as-blank'), filled(rw[q.n]) ? esc(rw[q.n]).replace(/\n/g, '<br>') : 'No answer'));
+      if (mk._keySent) {
+        var kt = (mk.keyFor || {})[q.n];
+        card.appendChild(el('p', 'as-key', '<b>Key sent:</b> ' + (filled(kt) ? esc(kt) : '—')));
+      } else {
+        // The key to send for this question: from the answer key, and
+        // staff can change or type it.
+        var kin = el('textarea', 'as-input as-keyin');
+        kin.rows = 2;
+        kin.placeholder = 'Key for Q' + q.n + ' (what ' + kid.name + ' will see)';
+        kin.value = drafts[q.n] != null ? drafts[q.n] : keyTextFor(q, key);
+        kin.addEventListener('input', function () { drafts[q.n] = kin.value; });
+        card.appendChild(el('span', 'as-keylbl', 'Key to send'));
+        card.appendChild(kin);
+      }
+      box.appendChild(card);
     });
+    if (!mk._keySent && !key) box.appendChild(el('p', 'as-note', paper.enc ? 'Enter the facilitator PIN at the top to fill these in from the answer key, or type them.' : 'The answer key couldn’t be loaded, so type the key for each question.'));
+    if (!mk._keySent) {
+      box.appendChild(submitBar('Send the answer key to ' + kid.name, function () {
+        var vals = Array.prototype.map.call(box.querySelectorAll('.as-keyin'), function (x) { return x.value.trim(); });
+        if (vals.some(function (v) { return !v; })) { alert('Fill in the key for every question first.'); return null; }
+        mk.keyFor = {};
+        wrong.forEach(function (w, i) { mk.keyFor[w.q.n] = vals[i]; });
+        mk._keySent = new Date().toISOString();
+        return save(true);
+      }, redraw, function () { delete mk._keySent; delete mk.keyFor; }));
+    }
+    return box;
   }
 
   function saver(kid, key, state, setStatus) {
@@ -736,7 +755,7 @@
       rows.forEach(function (r) {
         var a = el('a', 'as-card as-st-' + r.st.id, '<span class="as-card-sub">' + esc(r.paper.subject) + '</span><strong>' + esc(r.paper.title) + '</strong>' +
           (r.paper.covering ? '<span class="as-card-cover">' + esc(r.paper.covering) + '</span>' : '') +
-          '<em>' + (r.st.id === 'returned' ? 'Marked — fill in What I’ve Learnt' : r.st.id === 'submitted' ? 'Sent — your facilitator is checking it' : r.st.label) + '</em>');
+          '<em>' + (r.st.id === 'returned' ? 'Marked — fill in What I’ve Learnt' : r.st.id === 'reviewed' ? 'Rework the questions you got wrong' : r.st.id === 'reworked' ? 'Rework sent — waiting for the answer key' : r.st.id === 'keysent' ? 'Answer key here — correct your work' : r.st.id === 'submitted' ? 'Sent — your facilitator is checking it' : r.st.label) + '</em>');
         a.href = 'index.html?id=' + r.paper.id;
         list.appendChild(a);
       });
@@ -776,7 +795,7 @@
         body.appendChild(rv);
         if (ans._reviewed) {
           body.appendChild(el('p', 'as-done', 'Sent ' + day(ans._reviewed) + '. Well done!'));
-          body.appendChild(reworkButton(paper, kid, ans, marks));
+          body.appendChild(reworkEl(paper, kid, ans, mk, save, function () { renderKidPaper(kid, paper); }));
         } else {
           body.appendChild(submitBar('Send my revision plan', function () {
             ans._reviewed = new Date().toISOString();
@@ -981,7 +1000,7 @@
         var card = el('div', 'as-cardwrap');
         var a = el('a', 'as-card as-st-' + j.st.id, '<span class="as-card-sub">' + esc(j.kid.name) + '</span><strong>' + esc(j.paper.subject) + ' — ' + esc(j.paper.title) + '</strong>' +
           (UPLOADED[j.paper.id] && UPLOADED[j.paper.id].at ? '<span class="as-card-cover">Uploaded ' + day(UPLOADED[j.paper.id].at) + '</span>' : '') +
-          '<em>' + (j.st.id === 'submitted' ? (j.st.auto ? 'Marked automatically — check and return' : 'Submitted — ready to mark') : j.st.id === 'returned' ? 'Returned — waiting for the revision plan' : j.st.label) + '</em>');
+          '<em>' + (j.st.id === 'submitted' ? (j.st.auto ? 'Marked automatically — check and return' : 'Submitted — ready to mark') : j.st.id === 'returned' ? 'Returned — waiting for the revision plan' : j.st.id === 'reviewed' ? 'Waiting for the rework' : j.st.id === 'reworked' ? 'Rework sent — send the answer key' : j.st.id === 'keysent' ? 'Key sent — waiting for corrections' : j.st.label) + '</em>');
         a.href = 'index.html?view=staff&kid=' + j.kid.slug + '&id=' + j.paper.id;
         card.appendChild(a);
         // Take back: the Riser no longer sees it; what they wrote is kept.
@@ -1152,7 +1171,7 @@
           : esc(kid.name) + ' hasn’t filled in What I’ve Learnt yet. It shows here, read only, once they send it.'));
         if (ans._reviewed) {
           bar.appendChild(reviewEl(paper, ans, true));
-          if (mk._returned) bar.appendChild(reworkButton(paper, kid, ans, mk.marks));
+          if (mk._returned) bar.appendChild(staffReworkEl(paper, kid, ans, mk, function () { return key; }, save, drawKeep));
         }
       }
       draw();
