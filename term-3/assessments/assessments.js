@@ -181,7 +181,7 @@
         var picked = {};
         String(answers[id] || '').split('\n').forEach(function (line) { var m = /^\((\w+)\)\s*([a-h])$/.exec(line.trim()); if (m) picked[m[1]] = m[2]; });
         groups.forEach(function (g) {
-          var row = el('div', 'as-mset', '<span class="as-mset-l">(' + esc(g.label) + ')</span>');
+          var row = el('div', 'as-mset', '<span class="as-mset-l">Part (' + esc(g.label) + ')</span>');
           var opts2 = el('div', 'as-opts');
           for (var i = 0; i < g.n; i++) (function (l) {
             var bt = el('button', 'as-opt' + (picked[g.label] === l ? ' is-on' : ''), '<b>(' + l + ')</b>');
@@ -300,21 +300,28 @@
     return lettered.length >= 2 && lettered.every(function (l) { return (l.match(/\([a-h]\)/gi) || []).length === 1; });
   }
 
-  // Sets of choices in one question: each "(a)" starts a set; its label
-  // is the (i)/(ii)… or number just before it, else 1, 2, 3.
+  // Sets of choices in one question, read line by line: lines with two
+  // or more lettered options make up a set; a line with one letter and a
+  // question before them ("(a) By volume …") names the set; otherwise
+  // sets are named by (i), (ii) … before them, or 1, 2 ….
   function choiceGroups(qh) {
     if (!qh || writtenParts(qh)) return [];
-    var text = qh.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ');
-    var at = [], re = /\(a\)/gi, m;
-    while ((m = re.exec(text))) at.push(m.index);
-    if (at.length < 2) return [];
-    return at.map(function (pos, i) {
-      var chunk = text.slice(pos, i + 1 < at.length ? at[i + 1] : text.length), n = 0;
-      while (new RegExp('\\(' + LETTERS[n] + '\\)', 'i').test(chunk) && n < 8) n++;
-      var before = text.slice(i ? at[i - 1] : 0, pos), lab = before.match(/\((i{1,3}|iv|v|vi{0,3})\)|\b(\d+)[.)]\s/gi);
-      var label = lab ? lab[lab.length - 1].replace(/[^ivx\d]/gi, '') : String(i + 1);
-      return { label: label, n: Math.max(n, 2) };
+    var lines = qh.replace(/<br\s*\/?>/gi, '\n').replace(/<\/(p|div|li|tr)>/gi, '\n').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ')
+      .split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
+    var sets = [], cur = null, name = '';
+    lines.forEach(function (l) {
+      var ls = (l.match(/\(([a-h])\)/gi) || []).map(function (x) { return x.charAt(1).toLowerCase(); });
+      if (ls.length >= 2) {
+        if (!cur) { cur = { label: name, n: 0 }; sets.push(cur); name = ''; }
+        ls.forEach(function (x) { cur.n = Math.max(cur.n, LETTERS.indexOf(x) + 1); });
+        return;
+      }
+      cur = null;
+      var one = /^\(([a-h])\)/i.exec(l), rom = /^\((i{1,3}|iv|vi{0,3}|ix|x)\)/i.exec(l);
+      if (rom) name = rom[1].toLowerCase(); else if (one) name = one[1].toLowerCase();
     });
+    sets.forEach(function (x, i) { if (!x.label) x.label = String(i + 1); });
+    return sets.length >= 2 ? sets : [];
   }
 
   // The number or letter, ticked or circled once marked.
