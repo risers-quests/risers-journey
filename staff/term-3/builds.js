@@ -174,10 +174,10 @@
   }
 
   app.innerHTML = '';
-  app.appendChild(el('div', 'dash-crumb', '<a href="index.html">&larr; Term 3</a>'));
+  app.appendChild(el('div', 'dash-crumb', '<a href="board.html">&larr; Quest boards</a>'));
   app.appendChild(el('header', 'hd-page-head pb-head', '<div><p class="hd-eyebrow">Term 3</p><h1>Term 3 Quests</h1>' +
     '<p>Approve each project before Risers can choose it. Each group sees only approved projects at its own levels, and more than one group can choose the same project.</p></div>' +
-    '<a class="bl-boards" href="board.html">Project boards &rarr;</a>'));
+    '<a class="bl-boards" href="board.html">&larr; Quest boards</a>'));
   app.appendChild(el('div', 'bl-body', '<p>Loading…</p>'));
   Promise.all(Q.GROUPS.map(function (g) {
     return window.eot2Fetch('term-3', g.id, 'board').then(function (d) {

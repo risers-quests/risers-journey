@@ -203,10 +203,12 @@
 
   function render() {
     app.innerHTML = '';
-    app.appendChild(el('div', 'dash-crumb', KID ? '<a href="../index.html">&larr; Term 3</a>' : '<a href="quests.html">&larr; Term 3 Quests</a>'));
+    app.appendChild(el('div', 'dash-crumb', KID ? '<a href="../index.html">&larr; Term 3</a>' : '<a href="index.html">&larr; Term 3</a>'));
     app.appendChild(el('header', 'hd-page-head pb-head',
       '<div><p class="hd-eyebrow">Term 3 Quest' + (KID ? ' &middot; ' + group.name + ': ' + group.kids.join(', ') : 's') + '</p><h1>' + (KID ? 'Our quest' : 'Quest boards') + '</h1></div>' +
       '<span class="pb-status">Loading…</span>'));
+    // Staff: the project list and approvals are a side page.
+    if (!KID) app.querySelector('.pb-head').appendChild(el('a', 'bl-boards', 'All projects &amp; approvals &rarr;')).href = 'quests.html';
     if (!KID) {
       var picker = el('div', 'pb-groups');
       var all = el('a', 'pb-group pb-group-all' + (OVERVIEW ? ' is-on' : ''), '<strong>All teams</strong><span>Overview</span>');
