@@ -537,7 +537,10 @@ button.qp-ck { font: inherit; text-align: left; border: 2px solid transparent; c
 .pl-x { font: inherit; border: 0; background: none; color: var(--ink-faint); cursor: pointer; padding: 4px 8px; }
 .pl-add { align-self: flex-start; font-size: .88rem; }
 .pl-shop { display: flex; flex-direction: column; gap: 6px; }
-.pl-srow { display: grid; grid-template-columns: 2fr 1fr 1fr 1.4fr 30px; gap: 6px; align-items: center; }
+.pl-srow { display: grid; grid-template-columns: 2fr .8fr .8fr 1.3fr 1.7fr 30px; gap: 6px; align-items: center; }
+.pl-link { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pl-linka { font-size: .8rem; font-weight: 600; color: var(--accent-dark); text-decoration: none; white-space: nowrap; }
+.pl-linka:hover { text-decoration: underline; }
 .pl-shead span { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-faint); }
 .pl-srow .pl-in { width: 100%; }
 .pl-total { margin: 0; font-size: .95rem; }
@@ -558,7 +561,7 @@ button.qp-ck { font: inherit; text-align: left; border: 2px solid transparent; c
   .pl-week { grid-template-columns: 1fr; gap: 4px; }
   .pl-srow { grid-template-columns: 1fr 1fr; }
   .pl-shead { display: none; }
-  .pl-srow .pl-sw { grid-column: 1 / -1; }
+  .pl-srow .pl-sw, .pl-srow .pl-link { grid-column: 1 / -1; }
 }
 
 /* Quest Pack: who it's for, skills, learning, budget, showcase. */

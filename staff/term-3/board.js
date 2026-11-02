@@ -772,7 +772,7 @@
     var s4 = step(4, '🛒 Shopping list', 'What do you need to buy? How many? What will it cost? Your budget is ' + rupees(budget) + '.');
     if (!meta('noShop')) {
       var tbl = el('div', 'pl-shop');
-      tbl.appendChild(el('div', 'pl-srow pl-shead', '<span>What</span><span>How many</span><span>Cost ₹</span><span>For which part</span><span></span>'));
+      tbl.appendChild(el('div', 'pl-srow pl-shead', '<span>What</span><span>How many</span><span>Cost ₹</span><span>For which part</span><span>Amazon link</span><span></span>'));
       items.forEach(function (x) {
         var row = el('div', 'pl-srow');
         row.appendChild(text(x.what, 'e.g. Glue sticks', function (v) { putIn('shop', x.id, { what: v }); }, 'pl-sw'));
@@ -780,15 +780,38 @@
         var cost = text(x.cost, 'e.g. 120', function (v) { putIn('shop', x.id, { cost: v === '' ? '' : Math.max(0, +v || 0) }); paintTotal(); });
         if (edit) { cost.type = 'number'; cost.min = '0'; cost.inputMode = 'numeric'; }
         row.appendChild(cost);
+        // Amazon: a link pasted in, or a search for the item to find one.
+        var linkCell = function () {
+          var cell = el('div', 'pl-link');
+          var safe = /^https?:\/\//i.test(x.link || '') ? x.link : '';
+          var search = 'https://www.amazon.in/s?k=' + encodeURIComponent(x.what || '');
+          if (edit) {
+            var li = el('input', 'pl-in');
+            li.type = 'url';
+            li.value = x.link || '';
+            li.placeholder = 'Paste the Amazon link';
+            li.addEventListener('input', function () { putIn('shop', x.id, { link: li.value.trim() }); });
+            li.addEventListener('change', function () { draw(); });
+            cell.appendChild(li);
+          }
+          var a = el('a', 'pl-linka', safe ? 'Open ↗' : filled(x.what) ? '🔎 Search Amazon' : '');
+          a.href = safe || search;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          if (safe || filled(x.what)) cell.appendChild(a); else if (!edit) cell.appendChild(el('span', 'pl-val', '–'));
+          return cell;
+        };
         if (edit) {
           var ps = el('select', 'pl-in');
           ps.innerHTML = '<option value="">Choose…</option>' + list.map(function (p) { return '<option value="' + p.id + '"' + (x.part === p.id ? ' selected' : '') + '>' + esc(p.title || 'Part') + '</option>'; }).join('') + '<option value="all"' + (x.part === 'all' ? ' selected' : '') + '>Everything</option>';
           ps.addEventListener('change', function () { putIn('shop', x.id, { part: ps.value }); });
           row.appendChild(ps);
+          row.appendChild(linkCell());
           row.appendChild(del(function () { putIn('shop', x.id, { deleted: true }); draw(); }));
         } else {
           var pp = list.filter(function (p) { return p.id === x.part; })[0];
           row.appendChild(el('span', 'pl-val', x.part === 'all' ? 'Everything' : pp ? esc(pp.title) : '–'));
+          row.appendChild(linkCell());
           row.appendChild(el('span'));
         }
         tbl.appendChild(row);
