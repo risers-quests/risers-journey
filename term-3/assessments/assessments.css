@@ -200,4 +200,6 @@ p.as-blank { margin: 6px 0 0; font-size: .85rem; }
 .as-tval { color: #1f3a8a; font-family: 'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive; font-size: .92rem; display: flex; gap: 4px; align-items: flex-start; overflow-wrap: anywhere; }
 .as-tcell .as-markbtns { flex-wrap: wrap; gap: 4px; }
 .as-tcell .as-mbtn { padding: 3px 8px; font-size: .78rem; }
-.as-keylbl { font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint); }
+.as-fullkey { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 4px; }
+.as-fullkey h3 { margin: 0 0 6px; font-size: 1rem; }
+.as-fullkey p { margin: 0 0 4px; font-size: .92rem; }

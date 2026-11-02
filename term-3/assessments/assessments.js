@@ -670,7 +670,13 @@
         ans._reworked = new Date().toISOString();
         return save(true);
       }, redraw, function () { delete ans._reworked; }));
-    } else if (keyFor && !ans._corrected) {
+    }
+    if (keyFor) {
+      var all = el('div', 'as-fullkey', '<h3>Answer key</h3>');
+      paper.sections.forEach(function (sec) { sec.qs.forEach(function (q) { if (filled(keyFor[q.n])) all.appendChild(el('p', '', '<b>' + q.n + '.</b> ' + esc(keyFor[q.n]))); }); });
+      box.appendChild(all);
+    }
+    if (ans._reworked && keyFor && !ans._corrected) {
       box.appendChild(submitBar('I’ve corrected my work', function () { ans._corrected = new Date().toISOString(); return save(true); }, redraw, function () { delete ans._corrected; }));
     }
     return box;
@@ -679,7 +685,6 @@
   // Staff: the Riser's rework, the key beside it, and Send the answer key.
   function staffReworkEl(paper, kid, ans, mk, getKey, save, redraw) {
     var wrong = wrongByQuestion(paper, mk.marks || {}), rw = ans.rework || {}, key = getKey();
-    var drafts = staffReworkEl.drafts = staffReworkEl.drafts || {};
     var box = el('section', 'as-rwk', '<h2>Rework</h2>');
     if (!ans._reworked) { box.insertAdjacentHTML('beforeend', '<p class="as-sub">' + esc(kid.name) + ' hasn’t sent their rework of the wrong questions yet.</p>'); return box; }
     box.insertAdjacentHTML('beforeend', '<p class="as-sub">Sent by ' + esc(kid.name) + ' on ' + day(ans._reworked) + '.' +
@@ -688,29 +693,18 @@
       var q = w.q, card = el('div', 'as-rwq');
       card.appendChild(el('div', 'as-rwhead', '<b>' + q.n + '.</b><span>Redo' + (q.parts || q.markLetters ? ': ' + esc(wrongLabels(q, w).join(', ')) : '') + '</span>'));
       card.appendChild(el('p', 'as-written' + (filled(rw[q.n]) ? '' : ' as-blank'), filled(rw[q.n]) ? esc(rw[q.n]).replace(/\n/g, '<br>') : 'No answer'));
-      if (mk._keySent) {
-        var kt = (mk.keyFor || {})[q.n];
-        card.appendChild(el('p', 'as-key', '<b>Key sent:</b> ' + (filled(kt) ? esc(kt) : '—')));
-      } else {
-        // The key to send for this question: from the answer key, and
-        // staff can change or type it.
-        var kin = el('textarea', 'as-input as-keyin');
-        kin.rows = 2;
-        kin.placeholder = 'Key for Q' + q.n + ' (what ' + kid.name + ' will see)';
-        kin.value = drafts[q.n] != null ? drafts[q.n] : keyTextFor(q, key);
-        kin.addEventListener('input', function () { drafts[q.n] = kin.value; });
-        card.appendChild(el('span', 'as-keylbl', 'Key to send'));
-        card.appendChild(kin);
-      }
+      var kt = mk._keySent ? (mk.keyFor || {})[q.n] : keyTextFor(q, key);
+      if (filled(kt)) card.appendChild(el('p', 'as-key', '<b>Key:</b> ' + esc(kt)));
       box.appendChild(card);
     });
-    if (!mk._keySent && !key) box.appendChild(el('p', 'as-note', paper.enc ? 'Enter the facilitator PIN at the top to fill these in from the answer key, or type them.' : 'The answer key couldn’t be loaded, so type the key for each question.'));
+    if (!mk._keySent && !key) box.appendChild(el('p', 'as-note', paper.enc ? 'Enter the facilitator PIN at the top to load the answer key, then send it.' : 'The answer key couldn’t be loaded from the staff site, so it can’t be sent yet.'));
     if (!mk._keySent) {
+      // The whole answer key: every question's line.
       box.appendChild(submitBar('Send the answer key to ' + kid.name, function () {
-        var vals = Array.prototype.map.call(box.querySelectorAll('.as-keyin'), function (x) { return x.value.trim(); });
-        if (vals.some(function (v) { return !v; })) { alert('Fill in the key for every question first.'); return null; }
+        var k = getKey();
+        if (!k) { alert(paper.enc ? 'Enter the facilitator PIN at the top first, to load the answer key.' : 'The answer key couldn’t be loaded, so it can’t be sent.'); return null; }
         mk.keyFor = {};
-        wrong.forEach(function (w, i) { mk.keyFor[w.q.n] = vals[i]; });
+        paper.sections.forEach(function (sec) { sec.qs.forEach(function (q) { var t = keyTextFor(q, k); if (filled(t)) mk.keyFor[q.n] = t; }); });
         mk._keySent = new Date().toISOString();
         return save(true);
       }, redraw, function () { delete mk._keySent; delete mk.keyFor; }));
