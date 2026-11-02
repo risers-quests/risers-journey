@@ -174,6 +174,35 @@
         } else wrap.appendChild(el('p', 'as-written' + (filled(answers[id]) ? '' : ' as-blank'), filled(answers[id]) ? esc(answers[id]).replace(/\n/g, '<br>') : 'No answer'));
         return wrap;
       }
+      // Two or more sets of choices in one question (each from (a) again):
+      // a row of buttons for each set. Saved as "(i) b" lines, for staff.
+      var groups = q && q.options ? choiceGroups(qh) : [];
+      if (groups.length >= 2) {
+        var picked = {};
+        String(answers[id] || '').split('\n').forEach(function (line) { var m = /^\((\w+)\)\s*([a-h])$/.exec(line.trim()); if (m) picked[m[1]] = m[2]; });
+        groups.forEach(function (g) {
+          var row = el('div', 'as-mset', '<span class="as-mset-l">(' + esc(g.label) + ')</span>');
+          var opts2 = el('div', 'as-opts');
+          for (var i = 0; i < g.n; i++) (function (l) {
+            var bt = el('button', 'as-opt' + (picked[g.label] === l ? ' is-on' : ''), '<b>(' + l + ')</b>');
+            bt.type = 'button';
+            bt.disabled = mode !== 'answer';
+            bt.addEventListener('click', function () {
+              picked[g.label] = picked[g.label] === l ? '' : l;
+              Array.prototype.forEach.call(opts2.children, function (x, j) { x.classList.toggle('is-on', picked[g.label] === LETTERS[j]); });
+              answers[id] = groups.map(function (x) { return picked[x.label] ? '(' + x.label + ') ' + picked[x.label] : ''; }).filter(Boolean).join('\n');
+              var holder = opts2.closest('[data-item]');
+              if (holder && answers[id]) holder.classList.remove('as-missing');
+              hooks.change();
+            });
+            opts2.appendChild(bt);
+          })(LETTERS[i]);
+          row.appendChild(opts2);
+          wrap.appendChild(row);
+        });
+        if (mode !== 'answer' && !answers[id]) wrap.appendChild(el('p', 'as-blank', 'No answer'));
+        return wrap;
+      }
       // Numbered options, "(1) … (4)" (like Assertion and Reason): a small
       // box to type the number.
       var nums = q && !q.options && !q.parts && qh ? (qh.match(/\((\d)\)/g) || []).map(function (x) { return x.charAt(1); }) : [];
@@ -269,6 +298,23 @@
     var lines = text.split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
     var lettered = lines.filter(function (l) { return /^\([a-h]\)/i.test(l); });
     return lettered.length >= 2 && lettered.every(function (l) { return (l.match(/\([a-h]\)/gi) || []).length === 1; });
+  }
+
+  // Sets of choices in one question: each "(a)" starts a set; its label
+  // is the (i)/(ii)… or number just before it, else 1, 2, 3.
+  function choiceGroups(qh) {
+    if (!qh || writtenParts(qh)) return [];
+    var text = qh.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ');
+    var at = [], re = /\(a\)/gi, m;
+    while ((m = re.exec(text))) at.push(m.index);
+    if (at.length < 2) return [];
+    return at.map(function (pos, i) {
+      var chunk = text.slice(pos, i + 1 < at.length ? at[i + 1] : text.length), n = 0;
+      while (new RegExp('\\(' + LETTERS[n] + '\\)', 'i').test(chunk) && n < 8) n++;
+      var before = text.slice(i ? at[i - 1] : 0, pos), lab = before.match(/\((i{1,3}|iv|v|vi{0,3})\)|\b(\d+)[.)]\s/gi);
+      var label = lab ? lab[lab.length - 1].replace(/[^ivx\d]/gi, '') : String(i + 1);
+      return { label: label, n: Math.max(n, 2) };
+    });
   }
 
   // The number or letter, ticked or circled once marked.
