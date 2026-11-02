@@ -202,6 +202,7 @@
             if (mode === 'mark') row.appendChild(markEl(q.n + l));
             wrap.appendChild(row);
           });
+          if (mode === 'mark') wrap.appendChild(keyLine(q));
         }
         return wrap;
       }
@@ -234,6 +235,7 @@
           wrap.appendChild(row);
         });
         if (mode !== 'answer' && !answers[id]) wrap.appendChild(el('p', 'as-blank', 'No answer'));
+        if (mode === 'mark') wrap.appendChild(keyLine(q));
         return wrap;
       }
       // Numbered options, "(1) … (4)" (like Assertion and Reason): a small
@@ -288,6 +290,14 @@
       if (mode === 'mark' && paper.kinds && paper.kinds[id] === 'staff') wrap.appendChild(el('p', 'as-key as-key-staff', 'Not marked automatically: mark this one yourself.'));
       if (mode === 'mark' && hooks.key && hooks.key[id]) wrap.appendChild(el('p', 'as-key', '<b>Key:</b> ' + esc(hooks.key[id])));
       return wrap;
+    }
+
+    // A split question's key: the question's own key line (or its letters'),
+    // or, while the key is locked, a reminder.
+    function keyLine(q) {
+      var k = hooks.key || null;
+      var t = k && (k[String(q.n)] || items(q).map(function (i) { return k[i] ? '(' + i.slice(String(q.n).length) + ') ' + k[i] : ''; }).filter(Boolean).join('  '));
+      return el('p', 'as-key', t ? '<b>Key:</b> ' + esc(t) : k ? '<b>Key:</b> not in the answer key — mark this one yourself.' : '<b>Key:</b> enter the facilitator PIN above to see it.');
     }
 
     function inputBox(id, rows, label) {
