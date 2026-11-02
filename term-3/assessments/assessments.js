@@ -174,27 +174,26 @@
         } else wrap.appendChild(el('p', 'as-written' + (filled(answers[id]) ? '' : ' as-blank'), filled(answers[id]) ? esc(answers[id]).replace(/\n/g, '<br>') : 'No answer'));
         return wrap;
       }
-      // Numbered options, "(1) … (4)" (like Assertion and Reason): tap one.
+      // Numbered options, "(1) … (4)" (like Assertion and Reason): a small
+      // box to type the number.
       var nums = q && !q.options && !q.parts && qh ? (qh.match(/\((\d)\)/g) || []).map(function (x) { return x.charAt(1); }) : [];
       nums = nums.filter(function (x, i) { return nums.indexOf(x) === i; });
-      if (nums.length >= 2 && nums[0] === '1') {
-        var nb = el('div', 'as-opts');
-        nums.forEach(function (x) {
-          var bt = el('button', 'as-opt' + (answers[id] === x ? ' is-on' : ''), '<b>(' + x + ')</b>');
-          bt.type = 'button';
-          bt.disabled = mode !== 'answer';
-          bt.addEventListener('click', function () {
-            answers[id] = answers[id] === x ? '' : x;
-            Array.prototype.forEach.call(nb.children, function (y, j) { y.classList.toggle('is-on', answers[id] === nums[j]); });
-            var holder = nb.closest('[data-item]');
-            if (holder && answers[id]) holder.classList.remove('as-missing');
-            hooks.change();
-          });
-          nb.appendChild(bt);
+      if (nums.length >= 2 && nums[0] === '1' && mode === 'answer') {
+        var nin = el('input', 'as-input as-numans');
+        nin.type = 'text';
+        nin.inputMode = 'numeric';
+        nin.autocomplete = 'off';
+        nin.maxLength = 2;
+        nin.placeholder = 'Type the number (' + nums.join(', ') + ')';
+        nin.setAttribute('aria-label', 'Type the number');
+        nin.value = answers[id] || '';
+        nin.addEventListener('input', function () {
+          answers[id] = nin.value.trim();
+          var holder = nin.closest('[data-item]');
+          if (holder && answers[id]) holder.classList.remove('as-missing');
+          hooks.change();
         });
-        wrap.appendChild(nb);
-        if (mode !== 'answer' && !answers[id]) wrap.appendChild(el('p', 'as-blank', 'No answer'));
-        if (mode === 'mark' && hooks.key && hooks.key[id]) wrap.appendChild(el('p', 'as-key', '<b>Key:</b> ' + esc(hooks.key[id])));
+        wrap.appendChild(nin);
         return wrap;
       }
       if (q && q.options) {
