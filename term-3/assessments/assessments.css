@@ -221,3 +221,10 @@ p.as-blank { margin: 6px 0 0; font-size: .85rem; }
 .as-msplit > span { font-size: .78rem; font-weight: 700; color: var(--ink-faint); }
 .as-splitsel { font: inherit; font-size: .78rem; color: var(--ink-soft); border: 1px solid var(--border); border-radius: 8px; padding: 2px 6px; background: #fff; }
 .as-q > .as-mbox, .as-part > .as-mbox { align-items: flex-start; }
+.as-tgrid { display: grid; gap: 6px; margin: 10px 0; }
+.as-th { font-size: .8rem; font-weight: 700; color: var(--ink-soft); padding: 4px 2px; }
+.as-trow { align-self: center; }
+.as-tcell { border: 1px dashed #d8d2bd; background: #fbfaf4; border-radius: 10px; padding: 6px 8px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.as-tval { color: #1f3a8a; font-family: 'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive; font-size: .92rem; display: flex; gap: 4px; align-items: flex-start; overflow-wrap: anywhere; }
+.as-tcell .as-markbtns { flex-wrap: wrap; gap: 4px; }
+.as-tcell .as-mbtn { padding: 3px 8px; font-size: .78rem; }

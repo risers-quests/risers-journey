@@ -103,6 +103,12 @@
       s.qs.forEach(function (q) {
         var h = String(paper.html[q.n] || '');
         if (!h) return;
+        var tb = tableOf(h);
+        if (tb && !q.options && !q.parts) {
+          q.table = tb; q.markLetters = [];
+          tb.rows.forEach(function (r, ri) { tb.cols.forEach(function (c, ci) { q.markLetters.push('t' + (ri + 1) + (ci + 1)); }); });
+          return;
+        }
         var ap = assertParts(h);
         if (ap.length) { q.assertLetters = ap; q.markLetters = ap; return; }
         if (!q.options) return;
@@ -184,6 +190,7 @@
         } else {
           qd.appendChild(answerEl(String(q.n), q, mode));
           if (mode === 'mark' && !q.markLetters) qd.appendChild(markBox(String(q.n)));
+          if (q.table && mode !== 'answer') qd.appendChild(tableMarks(q));
         }
         sec.appendChild(qd);
       });
@@ -201,6 +208,7 @@
       // Assertion–Reason with parts: a number box for each part.
       if (q && q.assertLetters) {
         var codes = codesOf(answers[id], q.assertLetters);
+        if (mode !== 'answer' && filled(answers[id]) && !Object.keys(codes).length) wrap.appendChild(el('p', 'as-written', '<span>As written</span>' + esc(answers[id]).replace(/\n/g, '<br>')));
         q.assertLetters.forEach(function (l) {
           var row = el('div', 'as-pmark');
           row.dataset.item = q.n + l;
@@ -351,6 +359,27 @@
       return el('p', 'as-key', t ? '<b>Key:</b> ' + esc(t) : k ? '<b>Key:</b> not in the answer key — mark this one yourself.' : '<b>Key:</b> enter the facilitator PIN above to see it.');
     }
 
+    // A table question, marked a cell at a time.
+    function tableMarks(q) {
+      var tb = q.table, cells = cellsOf(answers[String(q.n)], tb);
+      var g = el('div', 'as-tgrid');
+      g.style.gridTemplateColumns = 'minmax(120px, 1.2fr) repeat(' + tb.cols.length + ', minmax(0, 1fr))';
+      g.appendChild(el('div', 'as-th', ''));
+      tb.cols.forEach(function (c) { g.appendChild(el('div', 'as-th', esc(c))); });
+      tb.rows.forEach(function (r, ri) {
+        g.appendChild(el('div', 'as-th as-trow', esc(r)));
+        tb.cols.forEach(function (c, ci) {
+          var id = q.n + 't' + (ri + 1) + (ci + 1);
+          var cell = el('div', 'as-tcell');
+          cell.dataset.item = id;
+          cell.innerHTML = '<div class="as-tval">' + numHtml('', markOf(marks, id), mode, true) + (filled(cells['t' + (ri + 1) + (ci + 1)]) ? esc(cells['t' + (ri + 1) + (ci + 1)]) : '<span class="as-blank">—</span>') + '</div>';
+          if (mode === 'mark') cell.appendChild(markEl(id));
+          g.appendChild(cell);
+        });
+      });
+      return g;
+    }
+
     function inputBox(id, rows, label) {
       var ta = el('textarea', 'as-input');
       ta.rows = rows;
@@ -400,6 +429,33 @@
       return m;
     }
   }
+  // A question with a table to complete: its column heads (after the
+  // first) and row labels. Each cell is marked on its own.
+  function tableOf(qh) {
+    if (!/<table/i.test(qh) || !window.DOMParser) return null;
+    var t = new DOMParser().parseFromString(qh, 'text/html').querySelector('table');
+    var trs = t ? Array.prototype.slice.call(t.querySelectorAll('tr')) : [];
+    if (trs.length < 2) return null;
+    var txt = function (c) { return c.textContent.replace(/\s+/g, ' ').trim(); };
+    var cols = Array.prototype.slice.call(trs[0].children).slice(1).map(txt);
+    var rows = trs.slice(1).map(function (tr) { return tr.children[0] ? txt(tr.children[0]) : ''; }).filter(Boolean);
+    return cols.length && rows.length ? { cols: cols, rows: rows } : null;
+  }
+  // The Riser's answer to a table question, cell by cell where it can be
+  // read: lines or pieces led by i), ii) … (or 1., 2.) are rows, in order
+  // across the columns.
+  function cellsOf(a, tb) {
+    var out = {}, rows = {}, re = /(?:^|\s)\(?(i{1,3}|iv|v|vi{0,3}|ix|x|\d{1,2})[).:]\s*/gi, t = String(a || ''), m, marks = [];
+    var R = { i: 1, ii: 2, iii: 3, iv: 4, v: 5, vi: 6, vii: 7, viii: 8, ix: 9, x: 10 };
+    while ((m = re.exec(t))) marks.push({ n: R[m[1].toLowerCase()] || +m[1], at: m.index, end: re.lastIndex });
+    marks.forEach(function (x, i) {
+      var v = t.slice(x.end, i + 1 < marks.length ? marks[i + 1].at : t.length).trim();
+      if (x.n >= 1 && x.n <= tb.rows.length) (rows[x.n] = rows[x.n] || []).push(v);
+    });
+    Object.keys(rows).forEach(function (r) { rows[r].forEach(function (v, c) { if (c < tb.cols.length) out['t' + r + (c + 1)] = v; }); });
+    return out;
+  }
+
   // Assertion–Reason in lettered parts: "(a) Assertion … (b) Assertion …"
   // with codes (1) … (4). Returns the part letters, or [].
   function assertParts(qh) {
@@ -416,7 +472,7 @@
     var got = {}, t = String(a || '');
     t.split('\n').forEach(function (line) { var m = /^\(([a-h])\)\s*([1-4])\b/.exec(line.trim()); if (m) got[m[1]] = m[2]; });
     if (!Object.keys(got).length) {
-      var ds = t.match(/(^|[^\d(])([1-4])(?![\d)])/g) || [];
+      var ds = t.replace(/\([a-h]\)/gi, ' ').match(/(^|\D)([1-4])(?!\d)/g) || [];
       ds.map(function (x) { return x.replace(/\D/g, ''); }).forEach(function (d, i) { if (letters[i]) got[letters[i]] = d; });
     }
     return got;
