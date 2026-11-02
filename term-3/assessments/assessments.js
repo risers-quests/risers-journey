@@ -632,6 +632,7 @@
         body.appendChild(paperEl(paper, ans, {}, 'read'));
         return;
       }
+      if (ans._reopened) body.appendChild(el('div', 'as-banner', '<strong>Your facilitator sent this back to you.</strong> <span>Check your answers, change any you need to, then submit again.</span>'));
       body.appendChild(el('p', 'as-note', esc(paper.note) + (paper.uploaded ? '' : ' Type fractions like 2/3 (always in simplest form), and mixed numbers like 4 1/6.')));
       body.appendChild(paperEl(paper, ans, {}, 'answer', { change: function () { save(); } }));
       body.appendChild(submitPanel(kid, paper, ans, save));
@@ -901,7 +902,7 @@
       }
       body.innerHTML = '';
       if (!ans._submitted) {
-        body.appendChild(el('p', 'as-wait', kid.name + ' hasn’t submitted this yet. It can be marked once it’s submitted.'));
+        body.appendChild(el('p', 'as-wait', ans._reopened ? 'Sent back to ' + kid.name + ' on ' + day(ans._reopened) + '. It comes back here, marked again, when they submit.' : kid.name + ' hasn’t submitted this yet. It can be marked once it’s submitted.'));
         return;
       }
       body.insertAdjacentHTML('beforeend', headerHtml(paper, kid, day(ans._submitted)));
@@ -913,6 +914,32 @@
         markAndSave(kid, paper, ans).then(function (ok) { if (ok) renderStaffMark(kid, paper); });
         return;
       }
+      // Send it back: the Riser can change their answers and submit again.
+      // Their answers stay; marks so far are cleared.
+      var reopen = el('div', 'as-reopen', '<span>Need ' + esc(kid.name) + ' to change something first?</span>');
+      var rb = el('button', 'eot2-btn eot2-btn-secondary', 'Send back to ' + esc(kid.name));
+      rb.type = 'button';
+      var rmsg = el('span', 'as-msg');
+      rb.addEventListener('click', function () {
+        if (!confirm('Send this back to ' + kid.name + '? They can change their answers and submit again. Everything they wrote is kept; any marks so far are cleared.')) return;
+        rb.disabled = true;
+        rmsg.textContent = 'Sending…';
+        window.eot2Fetch(kid.group, kid.slug, keyOf(paper.id)).then(function (d) {
+          var latest = (d && d.state) || ans;
+          delete latest._submitted; delete latest._pass; delete latest._reviewed;
+          latest._reopened = new Date().toISOString();
+          return window.eot2Save(kid.group, kid.slug, keyOf(paper.id), latest);
+        }).then(function (r) {
+          if (!r || !r.ok) throw new Error('save');
+          return window.eot2Save(kid.group, kid.slug, marksKeyOf(paper.id), {});
+        }).then(function (r) {
+          if (!r || !r.ok) throw new Error('save');
+          renderStaffMark(kid, paper);
+        }).catch(function () { rb.disabled = false; rmsg.textContent = 'Not sent — check the connection and try again.'; });
+      });
+      reopen.appendChild(rb);
+      reopen.appendChild(rmsg);
+      body.appendChild(reopen);
       if (ans._pass) body.appendChild(el('p', 'as-note as-note-pass', 'Submitted with a facilitator pass. Left blank: ' + ans._pass.blank.map(label).map(function (x) { return 'Q' + x; }).join(', ') + '.'));
       var save = saver(kid, marksKeyOf(paper.id), mk, function (m, t) { st.set(m, m === 'saved' && mk._returned ? 'Returned · saved' : t); });
       var tally = el('div', 'as-tally');

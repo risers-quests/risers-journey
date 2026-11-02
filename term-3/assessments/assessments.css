@@ -214,3 +214,5 @@ p.as-blank { margin: 6px 0 0; font-size: .85rem; }
 .as-pmark { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 6px; }
 .as-pmark .as-written { flex: 1; min-width: 180px; }
 .as-mset .as-markbtns { margin: 0; }
+.as-reopen { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0 0 14px; font-size: .9rem; color: var(--ink-soft); }
+.as-reopen .eot2-btn { width: auto; padding: 8px 18px; }
