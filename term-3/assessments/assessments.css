@@ -216,3 +216,8 @@ p.as-blank { margin: 6px 0 0; font-size: .85rem; }
 .as-mset .as-markbtns { margin: 0; }
 .as-reopen { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0 0 14px; font-size: .9rem; color: var(--ink-soft); }
 .as-reopen .eot2-btn { width: auto; padding: 8px 18px; }
+.as-mbox { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.as-msplit { display: flex; align-items: center; gap: 8px; }
+.as-msplit > span { font-size: .78rem; font-weight: 700; color: var(--ink-faint); }
+.as-splitsel { font: inherit; font-size: .78rem; color: var(--ink-soft); border: 1px solid var(--border); border-radius: 8px; padding: 2px 6px; background: #fff; }
+.as-q > .as-mbox, .as-part > .as-mbox { align-items: flex-start; }

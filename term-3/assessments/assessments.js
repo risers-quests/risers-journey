@@ -68,8 +68,29 @@
   // What is marked: each part, each letter of a question split by
   // splitLetters, or the question.
   function items(q) {
-    return q.parts ? q.parts.map(function (p) { return q.n + p.l; })
-      : q.markLetters ? q.markLetters.map(function (l) { return q.n + l; }) : [String(q.n)];
+    return expand(q.parts ? q.parts.map(function (p) { return q.n + p.l; })
+      : q.markLetters ? q.markLetters.map(function (l) { return q.n + l; }) : [String(q.n)]);
+  }
+  // Staff can mark any item in several marks (a table's rows, a part's two
+  // blanks): SPLIT[item] = n, kept in the marks record as split. Its marks
+  // are item_1 … item_n.
+  var SPLIT = {};
+  function expand(ids) {
+    var out = [];
+    ids.forEach(function (id) {
+      var n = SPLIT[id] || 1;
+      if (n < 2) out.push(id); else for (var k = 1; k <= n; k++) out.push(id + '_' + k);
+    });
+    return out;
+  }
+  // An item's overall mark: its own, or, when split, right only if every
+  // mark is right.
+  function markOf(marks, id) {
+    var n = SPLIT[id] || 1;
+    if (n < 2) return marks[id];
+    var all = [];
+    for (var k = 1; k <= n; k++) all.push(marks[id + '_' + k]);
+    return all.some(function (x) { return x === 'w'; }) ? 'w' : all.every(function (x) { return x === 'r'; }) ? 'r' : '';
   }
   // What is answered: a split question keeps one answer.
   function answerItems(q) { return q.parts ? q.parts.map(function (p) { return q.n + p.l; }) : [String(q.n)]; }
@@ -144,22 +165,22 @@
         var whole = !q.parts && !q.markLetters;
         if (!q.parts) qd.dataset.item = String(q.n);
         // A question with lettered parts is marked on its letters only.
-        qd.appendChild(el('div', 'as-qhead', numHtml(q.n + '.', whole ? marks[String(q.n)] : '', mode) +
+        qd.appendChild(el('div', 'as-qhead', numHtml(q.n + '.', whole ? markOf(marks, String(q.n)) : '', mode) +
           (q.text ? '<p class="as-qtext">' + math(q.text) + '</p>'
             : paper.html && paper.html[q.n] ? '<div class="as-qtext as-qhtml">' + paper.html[q.n] + '</div>'
             : '<p class="as-qtext"><span class="as-qref">Question ' + q.n + '</span></p>')));
         if (q.parts) {
           q.parts.forEach(function (p) {
             var id = q.n + p.l;
-            var row = el('div', 'as-part', '<div class="as-plabel">' + numHtml('(' + p.l + ')', marks[id], mode, true) + '<span>' + math(p.text || '') + '</span></div>');
+            var row = el('div', 'as-part', '<div class="as-plabel">' + numHtml('(' + p.l + ')', markOf(marks, id), mode, true) + '<span>' + math(p.text || '') + '</span></div>');
             row.dataset.item = id;
             row.appendChild(answerEl(id, null, mode));
-            if (mode === 'mark') row.appendChild(markEl(id));
+            if (mode === 'mark') row.appendChild(markBox(id));
             qd.appendChild(row);
           });
         } else {
           qd.appendChild(answerEl(String(q.n), q, mode));
-          if (mode === 'mark' && !q.markLetters) qd.appendChild(markEl(String(q.n)));
+          if (mode === 'mark' && !q.markLetters) qd.appendChild(markBox(String(q.n)));
         }
         sec.appendChild(qd);
       });
@@ -198,8 +219,8 @@
           q.options.forEach(function (o, i) {
             var l = LETTERS[i], row = el('div', 'as-pmark');
             row.dataset.item = q.n + l;
-            row.innerHTML = numHtml('(' + l + ')', marks[q.n + l], mode, true) + '<p class="as-written' + (filled(got[l]) ? '' : ' as-blank') + '">' + (filled(got[l]) ? esc(got[l]) : 'No answer') + '</p>';
-            if (mode === 'mark') row.appendChild(markEl(q.n + l));
+            row.innerHTML = numHtml('(' + l + ')', markOf(marks, q.n + l), mode, true) + '<p class="as-written' + (filled(got[l]) ? '' : ' as-blank') + '">' + (filled(got[l]) ? esc(got[l]) : 'No answer') + '</p>';
+            if (mode === 'mark') row.appendChild(markBox(q.n + l));
             wrap.appendChild(row);
           });
           if (mode === 'mark') wrap.appendChild(keyLine(q));
@@ -213,7 +234,7 @@
         var picked = {};
         String(answers[id] || '').split('\n').forEach(function (line) { var m = /^\((\w+)\)\s*([a-h])$/.exec(line.trim()); if (m) picked[m[1]] = m[2]; });
         groups.forEach(function (g, gi) {
-          var row = el('div', 'as-mset', '<span class="as-mset-l">' + (mode === 'answer' ? 'Part (' + esc(g.label) + ')' : numHtml('Part (' + esc(g.label) + ')', marks[q.n + LETTERS[gi]], mode, true)) + '</span>');
+          var row = el('div', 'as-mset', '<span class="as-mset-l">' + (mode === 'answer' ? 'Part (' + esc(g.label) + ')' : numHtml('Part (' + esc(g.label) + ')', markOf(marks, q.n + LETTERS[gi]), mode, true)) + '</span>');
           row.dataset.item = q.n + LETTERS[gi];
           var opts2 = el('div', 'as-opts');
           for (var i = 0; i < g.n; i++) (function (l) {
@@ -231,7 +252,7 @@
             opts2.appendChild(bt);
           })(LETTERS[i]);
           row.appendChild(opts2);
-          if (mode === 'mark') row.appendChild(markEl(q.n + LETTERS[gi]));
+          if (mode === 'mark') row.appendChild(markBox(q.n + LETTERS[gi]));
           wrap.appendChild(row);
         });
         if (mode !== 'answer' && !answers[id]) wrap.appendChild(el('p', 'as-blank', 'No answer'));
@@ -315,6 +336,26 @@
       return ta;
     }
 
+    // Right / Wrong for an item, or one row of them for each of its marks,
+    // and how many marks it is worth.
+    function markBox(id) {
+      var n = SPLIT[id] || 1, box = el('div', 'as-mbox');
+      if (n < 2) box.appendChild(markEl(id));
+      else for (var k = 1; k <= n; k++) {
+        var r = el('div', 'as-msplit', '<span>Mark ' + k + '</span>');
+        r.appendChild(markEl(id + '_' + k));
+        box.appendChild(r);
+      }
+      if (hooks.setSplit) {
+        var sel = el('select', 'as-splitsel');
+        sel.setAttribute('aria-label', 'How many marks');
+        for (var m = 1; m <= 8; m++) sel.innerHTML += '<option value="' + m + '"' + (m === n ? ' selected' : '') + '>' + m + (m > 1 ? ' marks' : ' mark') + '</option>';
+        sel.addEventListener('change', function () { hooks.setSplit(id, +sel.value); });
+        box.appendChild(sel);
+      }
+      return box;
+    }
+
     function markEl(id) {
       var m = el('div', 'as-markbtns');
       [['r', '✓ Right'], ['w', '◯ Wrong']].forEach(function (o) {
@@ -335,9 +376,9 @@
   // choose or tick one.
   function writtenParts(qh) {
     if (!qh) return false;
-    if (/_{3,}/.test(qh)) return true;
     var text = qh.replace(/<br\s*\/?>/gi, '\n').replace(/<\/(p|div|li|tr)>/gi, '\n').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ');
     if (/\b(circle|choose|tick|select|correct (option|answer)|which (one|of))\b/i.test(text)) return false;
+    if (/_{3,}/.test(qh)) return true;
     var lines = text.split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
     var lettered = lines.filter(function (l) { return /^\([a-h]\)/i.test(l); });
     return lettered.length >= 2 && lettered.every(function (l) { return (l.match(/\([a-h]\)/gi) || []).length === 1; });
@@ -608,6 +649,7 @@
       var ans = (r[0] && r[0].state) || {};
       var mk = (r[1] && r[1].state) || {};
       var marks = mk._returned ? (mk.marks || {}) : {};
+      SPLIT = mk._returned ? (mk.split || {}) : {};
       var save = saver(kid, keyOf(paper.id), ans, st.set);
       st.set('saved', ans._submitted ? 'Submitted' : 'Saved');
       body.innerHTML = '';
@@ -654,7 +696,7 @@
     paper.sections.forEach(function (s) { s.qs.forEach(function (q) { out = out.concat(answerItems(q)); }); });
     return out.filter(function (i) { return !filled((ans.answers || {})[i]); });
   }
-  function label(id) { var m = /^(\d+)([a-z]?)$/.exec(id); return m[1] + (m[2] ? '(' + m[2] + ')' : ''); }
+  function label(id) { var m = /^(\d+)([a-z]?)(?:_(\d+))?$/.exec(id); return m ? m[1] + (m[2] ? '(' + m[2] + ')' : '') + (m[3] ? ' mark ' + m[3] : '') : id; }
   function jumpTo(id) {
     var t = document.querySelector('[data-item="' + id + '"]');
     if (!t) return;
@@ -965,7 +1007,9 @@
 
       function draw() {
         paperBox.innerHTML = '';
-        paperBox.appendChild(paperEl(paper, ans, mk.marks, 'mark', { key: key, change: function () { save(); drawKeep(); } }));
+        SPLIT = mk.split = mk.split || {};
+        paperBox.appendChild(paperEl(paper, ans, mk.marks, 'mark', { key: key, change: function () { save(); drawKeep(); },
+          setSplit: function (id, n) { if (n > 1) mk.split[id] = n; else delete mk.split[id]; save(); drawKeep(); } }));
       }
       // Redraw without losing the scroll position.
       function drawKeep() { var y = window.scrollY; draw(); refresh(); window.scrollTo(0, y); }
