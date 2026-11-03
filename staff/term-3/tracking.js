@@ -38,7 +38,9 @@
       ['needed', 'Support needed', 220], ['offered', 'Support offered', 220], ['happened', 'What happened?', 200]] },
     workbooks: { title: 'Subject workbooks', cols: [['subject', 'Subject', 150], ['grade', 'Grade', 70], ['link', 'Table of contents link', 380]] }
   };
-  var ORDER = ['assessments', 'observations', 'tables', 'spelling', 'workbooks'];
+  // observations.html shows only the observations; tracking.html the rest.
+  var OBS = window.TK_VIEW === 'obs';
+  var ORDER = OBS ? ['observations'] : ['assessments', 'tables', 'spelling', 'workbooks'];
   // An observation filled in from an assessment entry: these come from it.
   var AUTO_COLS = ['date', 'area', 'observation'];
 
@@ -90,8 +92,13 @@
 
   app.innerHTML = '';
   app.appendChild(el('div', 'dash-crumb', '<a href="index.html">&larr; Term 3</a>'));
-  app.appendChild(el('header', 'hd-page-head', '<div><p class="hd-eyebrow">Term 3 · Staff only</p><h1>Assessment Tracking</h1>' +
-    '<p>Each Riser’s assessments, times tables, spelling and workbooks. Type in any box to change it; it saves as you go.</p></div>'));
+  app.appendChild(el('header', 'hd-page-head pb-head', OBS
+    ? '<div><p class="hd-eyebrow">Term 3 · Staff only</p><h1>Core Skills Observations</h1>' +
+      '<p>Each Riser’s observations, the support needed and offered, and what happened. Assessment entries in Assessment Tracking add theirs here by themselves.</p></div>' +
+      '<a class="tk-btn tk-link" href="tracking.html?kid=' + kid.slug + '">Assessment Tracking &rarr;</a>'
+    : '<div><p class="hd-eyebrow">Term 3 · Staff only</p><h1>Assessment Tracking</h1>' +
+      '<p>Each Riser’s assessments, times tables, spelling and workbooks. Type in any box to change it; it saves as you go.</p></div>' +
+      '<a class="tk-btn tk-link" href="observations.html?kid=' + kid.slug + '">Observations &rarr;</a>'));
   var top = el('div', 'tk-top');
   var status = el('span', 'tk-msg');
   var imp = el('button', 'tk-btn', 'Import spreadsheet');
@@ -114,7 +121,7 @@
     KIDS.forEach(function (k) {
       var b = el('button', 'tk-kid' + (k.slug === kid.slug ? ' is-on' : ''), esc(k.name));
       b.type = 'button';
-      b.addEventListener('click', function () { if (k.slug === kid.slug) return; kid = k; history.replaceState(null, '', '?kid=' + k.slug); open(); });
+      b.addEventListener('click', function () { if (k.slug === kid.slug) return; kid = k; history.replaceState(null, '', '?kid=' + k.slug); var ln = app.querySelector('.tk-link'); if (ln) ln.href = ln.href.replace(/kid=\w+/, 'kid=' + k.slug); open(); });
       picker.appendChild(b);
     });
   }
