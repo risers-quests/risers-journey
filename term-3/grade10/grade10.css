@@ -32,3 +32,4 @@
 .g10-tab.is-on { background: var(--ink); color: #fff; }
 .g10-pill { display: inline-block; font-size: .78rem; font-weight: 700; border-radius: 99px; padding: 3px 10px; background: var(--paper-soft); color: var(--ink-soft); }
 .g10-pill.is-ok { background: var(--good-soft); color: var(--good); }
+.g10-cond { margin: 0 0 6px; font-size: .8rem; font-weight: 700; color: #2b6cb0; }

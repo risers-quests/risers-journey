@@ -31,7 +31,18 @@
   function fetchApproval() {
     return window.eot2Fetch('term-3', 'staff', APPROVAL).then(function (r) { return (r && r.state) || { approved: false, kids: ['benjamin'] }; });
   }
-  function allQs() { var out = []; G.sections.forEach(function (s) { out = out.concat(s.qs); }); return out; }
+  // Questions shown for these answers: a 'when' section or question only
+  // once the big question points its way (in preview, every one).
+  function shows(item, a, all) {
+    if (!item.when || all) return true;
+    if (!a.route) return false;
+    return (a.route === G.NO) === (item.when === 'noexam');
+  }
+  function allQs(a) {
+    var out = [];
+    G.sections.forEach(function (s) { if (shows(s, a)) out = out.concat(s.qs.filter(function (q) { return shows(q, a); })); });
+    return out;
+  }
 
   // The questions; mode 'answer' (typing), 'read' (answers shown) or
   // 'preview' (staff trying it, nothing saved).
@@ -40,8 +51,11 @@
   function formEl(ans, mode, onChange) {
     var a = ans.answers = ans.answers || {};
     var box = el('div');
-    G.sections.forEach(function (s, si) {
-      var sec = el('section', 'g10-sec', '<h2>' + (si + 1) + '. ' + esc(s.title) + '</h2>');
+    var n = 0, conds = [];
+    G.sections.forEach(function (s) {
+      if (mode === 'read' && !shows(s, a)) return;
+      var sec = el('section', 'g10-sec', '<h2>' + (s.when ? '' : (++n) + '. ') + esc(nm(s.title)) + '</h2>');
+      if (s.when) { conds.push({ el: sec, item: s }); if (mode === 'preview') sec.insertAdjacentHTML('afterbegin', '<p class="g10-cond">Shown only if they answer the big question ' + (s.when === 'noexam' ? '“No”' : '“Yes” or “Not decided”') + '</p>'); }
       s.qs.forEach(function (q) {
         var row = el('div', 'g10-q', '<p>' + esc(nm(q.text)) + (q.optional ? ' <small>(optional)</small>' : '') + '</p>' + (q.hint && mode !== 'read' ? '<p class="g10-hint">' + esc(nm(q.hint)) + '</p>' : ''));
         row.dataset.q = q.id;
@@ -73,6 +87,7 @@
                 x.classList.toggle('is-on', is); x.setAttribute('aria-pressed', is);
               });
               row.classList.remove('is-missing');
+              if (q.id === 'route') refresh();
               onChange();
             });
             opts.appendChild(b);
@@ -91,6 +106,9 @@
       });
       box.appendChild(sec);
     });
+    // Show the sections for the answer to the big question.
+    function refresh() { conds.forEach(function (c) { c.el.hidden = !shows(c.item, a, mode === 'preview'); }); }
+    refresh();
     return box;
   }
 
@@ -137,7 +155,7 @@
       send.type = 'button';
       var msg = el('span', 'g10-msg');
       send.addEventListener('click', function () {
-        var miss = allQs().filter(function (q) { return !q.optional && !filled(ans.answers[q.id]); });
+        var miss = allQs(ans.answers).filter(function (q) { return !q.optional && !filled(ans.answers[q.id]); });
         Array.prototype.forEach.call(document.querySelectorAll('.g10-q'), function (x) { x.classList.toggle('is-missing', miss.some(function (q) { return q.id === x.dataset.q; })); });
         if (miss.length) {
           msg.textContent = 'Please answer ' + (miss.length === 1 ? 'the question' : 'the ' + miss.length + ' questions') + ' outlined in red first.';
