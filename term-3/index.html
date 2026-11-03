@@ -45,6 +45,13 @@
     '<header class="hd-welcome"><h1>Term 3</h1><p>26 October – 21 January</p></header>' +
     '<div id="tw"></div><div class="hd-tiles">' + window.LH_tiles(tiles) + '</div>';
 
+  // Thinking about 10th Grade: only once staff OK it for this Riser.
+  if (window.eot2Fetch) window.eot2Fetch('term-3', 'staff', 'grade10-approval').then(function (r) {
+    var ap = r && r.state;
+    if (!ap || !ap.approved || (ap.kids || []).indexOf(kid) === -1) return;
+    document.querySelector('.hd-tiles').insertAdjacentHTML('beforeend', window.LH_tiles([{ title: 'Thinking about 10th Grade', desc: 'Tell us what you think about the 10th grade exams and how you’d like to do them.', href: 'grade10/index.html', icon: 'paper', tone: 'amber' }]));
+  });
+
   var Q = window.T3Q, info = window.T3_reflectInfo;
   var group = Q && Q.groupOf(kid);
   if (!group || !info) return;
