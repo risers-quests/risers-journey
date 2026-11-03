@@ -120,6 +120,24 @@
   // (obs.auto = the entry's id) kept in step with it: date, area and what
   // happened. Every entry, imported ones too, except one whose observation
   // staff deleted (obsOff). Returns true if rows were added or gone.
+  // Times-table tests written as assessments ("Times Table" subject) belong
+  // in Times tables: move them, keeping date, tables, score and remarks.
+  function moveTables(r) {
+    var moved = false;
+    r.tables = r.tables || [];
+    for (var i = (r.assessments || []).length - 1; i >= 0; i--) {
+      var a = r.assessments[i];
+      if (!/^\s*times?\s*tables?\s*$/i.test(a.subject || '')) continue;
+      var m = /^\s*([\d.]+)\s*\/\s*([\d.]+)\s*$/.exec(a.score || '');
+      r.tables.push({ date: a.scheduled || a.requested || '', covered: a.section || '', correct: m ? m[1] : '', total: m ? m[2] : '',
+        mins: '', remarks: [a.feedback, a.comments].filter(function (x) { return String(x || '').trim(); }).join(' ') + (!m && String(a.score || '').trim() ? ' (score: ' + a.score.trim() + ')' : '') });
+      r.assessments.splice(i, 1);
+      moved = true;
+    }
+    if (moved) r.tables.sort(function (x, y) { return (isoOfText(x.date) || x.date || '').localeCompare(isoOfText(y.date) || y.date || ''); });
+    return moved;
+  }
+
   function syncObs(r) {
     var obs = r.observations = r.observations || [], moved = false, live = {};
     (r.assessments || []).forEach(function (a) {
@@ -200,6 +218,7 @@
     window.eot2Fetch(kid.group, kid.slug, KEY).then(function (r) {
       rec = Object.assign(blank(), (r && r.state) || {});
       var before = JSON.stringify(rec);
+      moveTables(rec);
       syncObs(rec);
       setStatus(r && r.state && r.state.u ? 'Saved' : '', 'is-ok');
       draw();
@@ -421,6 +440,7 @@
           // Observations already here are kept; the assessments' own are made
           // when the Riser is next opened.
           data[s].assessments.forEach(function (a) { a.id = uid(); });
+          moveTables(data[s]);
           var old = rs[slugs.indexOf(s)] && rs[slugs.indexOf(s)].state;
           return window.eot2Save(k.group, k.slug, KEY, Object.assign(blank(), data[s], { observations: (old && old.observations) || [], u: Date.now(), by: STAFF }));
         })).then(function (res) {
