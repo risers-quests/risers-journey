@@ -216,18 +216,19 @@
             ro.textContent = c[0] === 'date' ? dmy(row.date) : row[c[0]] || '';
             td.appendChild(ro);
             if (c[0] === 'date') td.appendChild(el('span', 'tk-tag', 'From the tracker'));
-          } else if (name === 'observations' && c[0] === 'date') {
+          } else if (c[0] === 'date' || c[0] === 'requested' || c[0] === 'scheduled') {
             // Day/month/year, picked from a calendar.
             var pick = el('label', 'tk-date');
-            var shown = el('span', '', row.date ? esc(dmy(row.date)) : 'Pick a date');
-            if (!row.date) shown.className = 'tk-date-none';
+            var shown = el('span', '', row[c[0]] ? esc(dmy(row[c[0]])) : 'Pick a date');
+            if (!row[c[0]]) shown.className = 'tk-date-none';
             var cal = el('input');
             cal.type = 'date';
-            cal.value = isoOfText(row.date);
-            cal.setAttribute('aria-label', 'Date');
+            cal.value = isoOfText(row[c[0]]);
+            cal.setAttribute('aria-label', c[1]);
             cal.addEventListener('change', function () {
               if (!cal.value) return;
-              row.date = cal.value;
+              row[c[0]] = cal.value;
+              (row._paint || []).forEach(function (f) { f(); });
               shown.textContent = dmy(cal.value);
               shown.className = '';
               save();
