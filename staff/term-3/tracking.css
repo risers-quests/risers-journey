@@ -34,3 +34,12 @@
 .tk-date::after { content: '📅'; font-size: .85rem; }
 .tk-date input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: 0; padding: 0; }
 .tk-date-none { color: var(--ink-faint); }
+.tk-mini { font: inherit; font-size: .72rem; font-weight: 600; margin-left: 8px; padding: 3px 9px; border-radius: 99px; border: 1px solid var(--border); background: #fff; color: var(--ink-soft); cursor: pointer; vertical-align: middle; }
+.tk-mini:hover { color: #a3432b; border-color: #e8b4a4; }
+.tk-colx { font: inherit; font-size: .7rem; border: 0; background: none; color: var(--ink-faint); cursor: pointer; padding: 0 2px; }
+.tk-colx:hover { color: #a3432b; }
+.tk-newcol { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
+.tk-newcol input, .tk-newcol select, .tk-newsec input { font: inherit; font-size: .85rem; padding: 6px 9px; border: 1px solid var(--border); border-radius: 8px; background: #fff; }
+.tk-newcol .tk-add { padding: 6px 4px; }
+.tk-newsec { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 4px 0 6px; }
+.tk-newsec input { min-width: 240px; }

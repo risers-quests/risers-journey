@@ -10,6 +10,9 @@
    the newest copy first only to keep staff from losing a newer save made
    elsewhere; the whole record is then written.
 
+   custom: { <section id>: [rows] } for sections staff add (see DEFS);
+   added columns are kept in the rows under their own ids.
+
    observations: [{ date, area, observation, needed, offered, happened, auto }]
    — auto is the id of the assessment entry it was made from (syncObs).
 
@@ -40,7 +43,43 @@
   };
   // observations.html shows only the observations; tracking.html the rest.
   var OBS = window.TK_VIEW === 'obs';
-  var ORDER = OBS ? ['observations'] : ['assessments', 'tables', 'spelling', 'workbooks'];
+  var BASE = OBS ? ['observations'] : ['assessments', 'tables', 'spelling', 'workbooks'];
+  // Sections only some Risers have.
+  var ONLY = { spelling: ['elyon', 'gabby', 'eva'] };
+
+  // Staff's own sections and columns, the same for every Riser (group
+  // term-3, kid staff, week tracking-sections):
+  //   { sections: [{ id, title, page: 'tracking' | 'obs', cols: [{ id, label, type }] }],
+  //     extra: { <built-in section>: [{ id, label, type }] } }  type: 'text' | 'date'
+  // A custom section's rows are kept in the Riser's record under custom[id].
+  var DEFS_KEY = 'tracking-sections', DEFS = { sections: [], extra: {} };
+  function order() {
+    return BASE.filter(function (n) { return !ONLY[n] || ONLY[n].indexOf(kid.slug) !== -1; })
+      .concat(DEFS.sections.filter(function (d) { return d.page === (OBS ? 'obs' : 'tracking'); }).map(function (d) { return d.id; }));
+  }
+  function defOf(name) { return DEFS.sections.filter(function (d) { return d.id === name; })[0] || null; }
+  function listOf(name) {
+    var d = defOf(name), extra = (DEFS.extra[name] || []).map(function (c) { return [c.id, c.label, 160, c.type, true]; });
+    if (d) return { title: d.title, custom: true, cols: d.cols.map(function (c) { return [c.id, c.label, 160, c.type, true]; }) };
+    return { title: LISTS[name].title, cols: LISTS[name].cols.concat(extra) };
+  }
+  function rowsOf(name) {
+    if (!defOf(name)) return (rec[name] = rec[name] || []);
+    rec.custom = rec.custom || {};
+    return (rec.custom[name] = rec.custom[name] || []);
+  }
+  function saveDefs(change, done) {
+    setStatus('Saving…');
+    window.eot2Fetch('term-3', 'staff', DEFS_KEY).then(function (r) {
+      var latest = (r && r.state) || { sections: [], extra: {} };
+      latest.sections = latest.sections || []; latest.extra = latest.extra || {};
+      change(latest);
+      return window.eot2Save('term-3', 'staff', DEFS_KEY, latest).then(function (res) {
+        setStatus(res.ok ? 'Saved' : 'Not saved — check the connection', res.ok ? 'is-ok' : 'is-bad');
+        if (res.ok) { DEFS = latest; draw(); if (done) done(); }
+      });
+    });
+  }
   // An observation filled in from an assessment entry: these come from it.
   var AUTO_COLS = ['date', 'area', 'observation'];
 
@@ -147,6 +186,16 @@
 
   function open() {
     drawPicker();
+    if (!open.defs) {
+      open.defs = true;
+      body.innerHTML = '<p class="tk-empty">Loading…</p>';
+      window.eot2Fetch('term-3', 'staff', DEFS_KEY).then(function (r) {
+        var s = (r && r.state) || {};
+        DEFS = { sections: s.sections || [], extra: s.extra || {} };
+        open();
+      });
+      return;
+    }
     body.innerHTML = '<p class="tk-empty">Loading…</p>';
     window.eot2Fetch(kid.group, kid.slug, KEY).then(function (r) {
       rec = Object.assign(blank(), (r && r.state) || {});
@@ -173,7 +222,18 @@
 
   function draw() {
     body.innerHTML = '';
-    ORDER.forEach(function (name) { body.appendChild(section(name)); });
+    order().forEach(function (name) { body.appendChild(section(name)); });
+    // + Add a section, for every Riser.
+    var f = el('form', 'tk-newsec', '<input type="text" maxlength="60" placeholder="New section, e.g. Reading log" aria-label="New section name"><button type="submit" class="tk-btn">+ Add a section</button>');
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var t = f.querySelector('input').value.trim();
+      if (!t) { f.querySelector('input').focus(); return; }
+      var id = 'c-' + uid();
+      saveDefs(function (d) { d.sections.push({ id: id, title: t, page: OBS ? 'obs' : 'tracking', cols: [{ id: 'date', label: 'Date', type: 'date' }, { id: 'c1', label: 'Notes', type: 'text' }] }); });
+    });
+    body.appendChild(f);
+    body.appendChild(el('p', 'tk-note', 'Sections and columns you add show for every Riser; the rows are each Riser’s own.'));
   }
   function drawSection(name) {
     var old = body.querySelector('section[data-list="' + name + '"]');
@@ -188,11 +248,34 @@
   }
   function section(name) {
     {
-      var L = LISTS[name], rows = rec[name] = rec[name] || [];
-      var sec = el('section', 'tk-sec', '<h2>' + L.title + '</h2>' + (name === 'observations' ? '<p class="tk-note">An assessment entry with a score or feedback adds its observation here by itself, and keeps it up to date. Fill in the support and what happened.</p>' : ''));
+      var L = listOf(name), rows = rowsOf(name);
+      var sec = el('section', 'tk-sec', '<h2>' + esc(L.title) + (L.custom ? ' <button type="button" class="tk-mini tk-rename">Rename</button><button type="button" class="tk-mini tk-remove">Remove section</button>' : '') + '</h2>' + (name === 'observations' ? '<p class="tk-note">An assessment entry with a score or feedback adds its observation here by itself, and keeps it up to date. Fill in the support and what happened.</p>' : ''));
       sec.dataset.list = name;
       var wrap = el('div', 'tk-wrap'), t = el('table', 'tk-table');
-      t.innerHTML = '<thead><tr>' + L.cols.map(function (c) { return '<th>' + c[1] + '</th>'; }).join('') + '<th></th></tr></thead>';
+      t.innerHTML = '<thead><tr>' + L.cols.map(function (c) { return '<th>' + esc(c[1]) + (c[4] ? ' <button type="button" class="tk-colx" data-col="' + c[0] + '" aria-label="Remove the ' + esc(c[1]) + ' column">✕</button>' : '') + '</th>'; }).join('') + '<th></th></tr></thead>';
+      // Remove a column staff added (for every Riser).
+      Array.prototype.forEach.call(t.querySelectorAll('.tk-colx'), function (b) {
+        b.addEventListener('click', function () {
+          var col = L.cols.filter(function (c) { return c[0] === b.dataset.col; })[0];
+          if (!confirm('Remove the “' + col[1] + '” column from ' + L.title + ' for every Riser?')) return;
+          saveDefs(function (d) {
+            var list = L.custom ? (d.sections.filter(function (x) { return x.id === name; })[0] || {}).cols : d.extra[name];
+            if (!list) return;
+            for (var k = list.length - 1; k >= 0; k--) if (list[k].id === b.dataset.col) list.splice(k, 1);
+          });
+        });
+      });
+      if (L.custom) {
+        sec.querySelector('.tk-rename').addEventListener('click', function () {
+          var t2 = prompt('New name for this section:', L.title);
+          if (!t2 || !t2.trim()) return;
+          saveDefs(function (d) { d.sections.forEach(function (x) { if (x.id === name) x.title = t2.trim(); }); });
+        });
+        sec.querySelector('.tk-remove').addEventListener('click', function () {
+          if (!confirm('Remove the “' + L.title + '” section for every Riser? What’s been written in it is kept, but won’t show.')) return;
+          saveDefs(function (d) { d.sections = d.sections.filter(function (x) { return x.id !== name; }); });
+        });
+      }
       var tb = el('tbody');
       rows.forEach(function (row, i) {
         var tr = el('tr');
@@ -216,7 +299,7 @@
             ro.textContent = c[0] === 'date' ? dmy(row.date) : row[c[0]] || '';
             td.appendChild(ro);
             if (c[0] === 'date') td.appendChild(el('span', 'tk-tag', 'From the tracker'));
-          } else if (c[0] === 'date' || c[0] === 'requested' || c[0] === 'scheduled') {
+          } else if (c[3] === 'date' || (!c[4] && (c[0] === 'date' || c[0] === 'requested' || c[0] === 'scheduled'))) {
             // Day/month/year, picked from a calendar.
             var pick = el('label', 'tk-date');
             var shown = el('span', '', row[c[0]] ? esc(dmy(row[c[0]])) : 'Pick a date');
@@ -279,13 +362,27 @@
       add.type = 'button';
       add.addEventListener('click', function () {
         var r = {};
-        if (name !== 'workbooks') r[name === 'assessments' ? 'scheduled' : 'date'] = new Date().toISOString().slice(0, 10);
+        if (!L.custom && name !== 'workbooks') r[name === 'assessments' ? 'scheduled' : 'date'] = new Date().toISOString().slice(0, 10);
+        if (L.custom && L.cols.some(function (c) { return c[3] === 'date'; })) r[L.cols.filter(function (c) { return c[3] === 'date'; })[0][0]] = new Date().toISOString().slice(0, 10);
         if (name === 'assessments') r.id = uid();
         rows.push(r); save(); draw();
         var ins = body.querySelector('section[data-list="' + name + '"]').querySelectorAll('tbody tr:last-child .tk-in');
         if (ins[0]) ins[0].focus();
       });
       sec.appendChild(add);
+      // + Add a column, for every Riser.
+      var cf = el('form', 'tk-newcol', '<input type="text" maxlength="40" placeholder="New column" aria-label="New column name"><select aria-label="Column type"><option value="text">Text</option><option value="date">Date</option></select><button type="submit" class="tk-add">+ Add a column</button>');
+      cf.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var lab = cf.querySelector('input').value.trim(), type = cf.querySelector('select').value;
+        if (!lab) { cf.querySelector('input').focus(); return; }
+        var id = 'x-' + uid();
+        saveDefs(function (d) {
+          if (L.custom) d.sections.forEach(function (x) { if (x.id === name) x.cols.push({ id: id, label: lab, type: type }); });
+          else (d.extra[name] = d.extra[name] || []).push({ id: id, label: lab, type: type });
+        });
+      });
+      sec.appendChild(cf);
       return sec;
     }
   }
