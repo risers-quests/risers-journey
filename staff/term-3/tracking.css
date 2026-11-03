@@ -25,3 +25,6 @@
 .tk-msg.is-ok { color: var(--good); }
 .tk-msg.is-bad { color: #a3432b; }
 .tk-empty { color: var(--ink-faint); font-size: .88rem; margin: 0; }
+.tk-note { margin: -4px 0 10px; font-size: .85rem; color: var(--ink-soft); }
+.tk-ro { font-size: .88rem; line-height: 1.35; padding: 6px 7px; white-space: pre-wrap; color: var(--ink); }
+.tk-tag { display: inline-block; margin: 0 0 4px 7px; font-size: .68rem; font-weight: 700; color: #2b6cb0; background: #e7f0fb; border-radius: 99px; padding: 1px 7px; }

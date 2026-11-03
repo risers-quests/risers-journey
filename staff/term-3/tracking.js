@@ -10,8 +10,12 @@
    the newest copy first only to keep staff from losing a newer save made
    elsewhere; the whole record is then written.
 
-   Import spreadsheet reads the Assessment Tracking workbook in the browser
-   (SheetJS) into these records, so the marks never sit in the site's code. */
+   observations: [{ date, area, observation, needed, offered, happened, auto }]
+   — auto is the id of the assessment entry it was made from (syncObs).
+
+   Import spreadsheet reads the Assessment Tracking workbook, or the Core
+   Skills Observations workbook, in the browser (SheetJS) into these
+   records, so the marks never sit in the site's code. */
 (function () {
   var KEY = 'term3-tracking';
   var XLSX_URL = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
@@ -30,9 +34,13 @@
       ['date', 'Date', 110], ['covered', 'Tables covered', 170], ['correct', 'Correct', 70], ['total', 'Total', 70], ['%', 'Score %'],
       ['mins', 'Time (mins)', 70], ['avg', 'Avg / question (sec)'], ['remarks', 'Remarks / feedback', 260]] },
     spelling: { title: 'Spelling', cols: [['week', 'Week', 90], ['date', 'Date', 110], ['score', 'Score', 80], ['%', '%']] },
+    observations: { title: 'Observations', cols: [['date', 'Date', 110], ['area', 'Area', 170], ['observation', 'Observation', 320],
+      ['needed', 'Support needed', 220], ['offered', 'Support offered', 220], ['happened', 'What happened?', 200]] },
     workbooks: { title: 'Subject workbooks', cols: [['subject', 'Subject', 150], ['grade', 'Grade', 70], ['link', 'Table of contents link', 380]] }
   };
-  var ORDER = ['assessments', 'tables', 'spelling', 'workbooks'];
+  var ORDER = ['assessments', 'observations', 'tables', 'spelling', 'workbooks'];
+  // An observation filled in from an assessment entry: these come from it.
+  var AUTO_COLS = ['date', 'area', 'observation'];
 
   function el(tag, cls, html) {
     var e = document.createElement(tag);
@@ -45,7 +53,31 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  function blank() { return { workbooks: [], assessments: [], tables: [], spelling: [] }; }
+  function blank() { return { workbooks: [], assessments: [], observations: [], tables: [], spelling: [] }; }
+  function uid() { return Math.random().toString(36).slice(2, 10); }
+
+  // Every assessment entry with a score or feedback has an observation
+  // (obs.auto = the entry's id) kept in step with it: date, area and what
+  // happened. Entries from before this (noObs) and ones whose observation
+  // staff deleted are left alone. Returns true if rows were added or gone.
+  function syncObs(r) {
+    var obs = r.observations = r.observations || [], moved = false, live = {};
+    (r.assessments || []).forEach(function (a) {
+      if (!a.id) { a.id = uid(); a.noObs = true; }
+      if (a.noObs || !(String(a.score || '').trim() || String(a.feedback || '').trim())) return;
+      live[a.id] = 1;
+      var o = obs.filter(function (x) { return x.auto === a.id; })[0];
+      if (!o) { o = { auto: a.id }; obs.push(o); moved = true; }
+      var p = pct(a.score);
+      o.date = a.scheduled || a.requested || '';
+      o.area = [a.subject, a.section].filter(function (x) { return String(x || '').trim(); }).join(' — ') + ' (assessment)';
+      o.observation = 'Assessment' + (String(a.score || '').trim() ? ': scored ' + a.score.trim() + (p !== '' ? ' (' + p + '%)' : '') + '.' : '.') +
+        (String(a.feedback || '').trim() ? ' Areas for revision: ' + a.feedback.trim() + '.' : '') +
+        (String(a.comments || '').trim() ? ' ' + a.comments.trim() : '');
+    });
+    for (var i = obs.length - 1; i >= 0; i--) if (obs[i].auto && !live[obs[i].auto]) { obs.splice(i, 1); moved = true; }
+    return moved;
+  }
   // "38/40" → 95, or "" when it isn't a score.
   function pct(a, b) {
     if (b === undefined) { var m = /^\s*([\d.]+)\s*\/\s*([\d.]+)\s*$/.exec(a || ''); if (!m) return ''; a = m[1]; b = m[2]; }
@@ -92,12 +124,16 @@
     body.innerHTML = '<p class="tk-empty">Loading…</p>';
     window.eot2Fetch(kid.group, kid.slug, KEY).then(function (r) {
       rec = Object.assign(blank(), (r && r.state) || {});
+      var before = JSON.stringify(rec);
+      syncObs(rec);
       setStatus(r && r.state && r.state.u ? 'Saved' : '', 'is-ok');
       draw();
+      if (JSON.stringify(rec) !== before && r && r.state) save();
     });
   }
 
   function save() {
+    if (syncObs(rec)) drawSection('observations'); else paintAuto();
     setStatus('Saving…');
     if (timer) clearTimeout(timer);
     var who = kid, mine = rec;
@@ -111,9 +147,24 @@
 
   function draw() {
     body.innerHTML = '';
-    ORDER.forEach(function (name) {
+    ORDER.forEach(function (name) { body.appendChild(section(name)); });
+  }
+  function drawSection(name) {
+    var old = body.querySelector('section[data-list="' + name + '"]');
+    if (old) old.replaceWith(section(name));
+  }
+  // Auto observations show their text read only: bring it up to date.
+  function paintAuto() {
+    Array.prototype.forEach.call(body.querySelectorAll('[data-auto]'), function (x) {
+      var o = (rec.observations || []).filter(function (r) { return r.auto === x.dataset.auto; })[0];
+      if (o) x.textContent = o[x.dataset.col] || '';
+    });
+  }
+  function section(name) {
+    {
       var L = LISTS[name], rows = rec[name] = rec[name] || [];
-      var sec = el('section', 'tk-sec', '<h2>' + L.title + '</h2>');
+      var sec = el('section', 'tk-sec', '<h2>' + L.title + '</h2>' + (name === 'observations' ? '<p class="tk-note">An assessment entry with a score or feedback adds its observation here by itself, and keeps it up to date. Fill in the support and what happened.</p>' : ''));
+      sec.dataset.list = name;
       var wrap = el('div', 'tk-wrap'), t = el('table', 'tk-table');
       t.innerHTML = '<thead><tr>' + L.cols.map(function (c) { return '<th>' + c[1] + '</th>'; }).join('') + '<th></th></tr></thead>';
       var tb = el('tbody');
@@ -132,6 +183,13 @@
             paint();
             row._paint = (row._paint || []).concat(paint);
             td.appendChild(calc);
+          } else if (row.auto && AUTO_COLS.indexOf(c[0]) !== -1) {
+            var ro = el('div', 'tk-ro');
+            ro.dataset.auto = row.auto; ro.dataset.col = c[0];
+            ro.style.minWidth = (c[2] || 90) + 'px';
+            ro.textContent = row[c[0]] || '';
+            td.appendChild(ro);
+            if (c[0] === 'date') td.appendChild(el('span', 'tk-tag', 'From the tracker'));
           } else {
             // A box that grows to fit what's in it.
             var inp = el('textarea', 'tk-in');
@@ -161,6 +219,8 @@
         del.setAttribute('aria-label', 'Delete this row');
         del.addEventListener('click', function () {
           if (!confirm('Delete this row?')) return;
+          // Deleting an automatic observation: don't add it back.
+          if (row.auto) (rec.assessments || []).forEach(function (a) { if (a.id === row.auto) a.noObs = true; });
           rows.splice(i, 1); save(); draw();
         });
         var td = el('td'); td.appendChild(del); tr.appendChild(td);
@@ -173,14 +233,15 @@
       add.type = 'button';
       add.addEventListener('click', function () {
         var r = {};
-        if (name === 'assessments' || name === 'tables' || name === 'spelling') r[name === 'assessments' ? 'scheduled' : 'date'] = new Date().toISOString().slice(0, 10);
+        if (name !== 'workbooks') r[name === 'assessments' ? 'scheduled' : 'date'] = new Date().toISOString().slice(0, 10);
+        if (name === 'assessments') r.id = uid();
         rows.push(r); save(); draw();
-        var ins = body.querySelectorAll('section')[ORDER.indexOf(name)].querySelectorAll('tbody tr:last-child .tk-in');
+        var ins = body.querySelector('section[data-list="' + name + '"]').querySelectorAll('tbody tr:last-child .tk-in');
         if (ins[0]) ins[0].focus();
       });
       sec.appendChild(add);
-      body.appendChild(sec);
-    });
+      return sec;
+    }
   }
   // Keep the paint helpers out of what is saved.
   var stringify = JSON.stringify;
@@ -197,10 +258,15 @@
     if (!f) return;
     setStatus('Reading the spreadsheet…');
     loadXlsx().then(function (XLSX) {
-      return f.arrayBuffer().then(function (buf) { return readBook(XLSX.read(buf, { type: 'array', cellDates: true })); });
-    }).then(function (data) {
-      var slugs = Object.keys(data);
+      return f.arrayBuffer().then(function (buf) {
+        var wb = XLSX.read(buf, { type: 'array', cellDates: true });
+        var o = readObs(wb);
+        return Object.keys(o).length ? { obs: true, data: o } : { obs: false, data: readBook(wb) };
+      });
+    }).then(function (got) {
+      var data = got.data, slugs = Object.keys(data);
       if (!slugs.length) { setStatus('Couldn’t find any Risers in that file.', 'is-bad'); return; }
+      if (got.obs) return importObs(data, slugs);
       return Promise.all(slugs.map(function (s) { var k = window.EOT2_findKid(s); return window.eot2Fetch(k.group, k.slug, KEY); })).then(function (rs) {
         var have = slugs.filter(function (s, i) { return rs[i] && rs[i].state && rs[i].state.u; });
         var msg = 'Import tracking for ' + slugs.length + ' Risers from this spreadsheet?' +
@@ -209,7 +275,11 @@
         setStatus('Saving…');
         return Promise.all(slugs.map(function (s) {
           var k = window.EOT2_findKid(s);
-          return window.eot2Save(k.group, k.slug, KEY, Object.assign(blank(), data[s], { u: Date.now(), by: STAFF }));
+          // Assessments from the spreadsheet are past ones: no observations
+          // are made for them. Observations already here are kept.
+          data[s].assessments.forEach(function (a) { a.id = uid(); a.noObs = true; });
+          var old = rs[slugs.indexOf(s)] && rs[slugs.indexOf(s)].state;
+          return window.eot2Save(k.group, k.slug, KEY, Object.assign(blank(), data[s], { observations: (old && old.observations) || [], u: Date.now(), by: STAFF }));
         })).then(function (res) {
           var bad = res.filter(function (r) { return !r.ok; }).length;
           setStatus(bad ? bad + ' not saved — check the connection and import again.' : 'Imported ' + slugs.length + ' Risers.', bad ? 'is-bad' : 'is-ok');
@@ -218,6 +288,78 @@
       });
     }).catch(function () { setStatus('Couldn’t read that file. Is it the Assessment Tracking spreadsheet (.xlsx)?', 'is-bad'); });
   });
+
+  // Observations from the spreadsheet replace the ones typed for those
+  // Risers; the ones made from assessment entries stay.
+  function importObs(data, slugs) {
+    var n = 0;
+    slugs.forEach(function (s) { n += data[s].length; });
+    if (!confirm('Import ' + n + ' observations for ' + slugs.length + ' Risers?\n\nThis replaces the observations already typed here for them. The ones made from assessment entries stay.')) { setStatus(''); return; }
+    setStatus('Saving…');
+    return Promise.all(slugs.map(function (s) {
+      var k = window.EOT2_findKid(s);
+      return window.eot2Fetch(k.group, k.slug, KEY).then(function (r) {
+        var cur = Object.assign(blank(), (r && r.state) || {});
+        cur.observations = data[s].concat(cur.observations.filter(function (o) { return o.auto; }));
+        syncObs(cur);
+        cur.u = Date.now(); cur.by = STAFF;
+        return window.eot2Save(k.group, k.slug, KEY, cur);
+      });
+    })).then(function (res) {
+      var bad = res.filter(function (r) { return !r.ok; }).length;
+      setStatus(bad ? bad + ' not saved — check the connection and import again.' : 'Imported ' + n + ' observations for ' + slugs.length + ' Risers.', bad ? 'is-bad' : 'is-ok');
+      open();
+    });
+  }
+
+  // The observations workbook: side-by-side blocks headed by a Riser's
+  // name (Date, Area, Observation, Support Needed, Support Offered), or
+  // sheets with a Child column. Returns { slug: [observation…] }.
+  function readObs(wb) {
+    var X = window.XLSX, out = {};
+    function d(v) {
+      if (v instanceof Date) return v.getFullYear() + '-' + ('0' + (v.getMonth() + 1)).slice(-2) + '-' + ('0' + v.getDate()).slice(-2);
+      return v == null ? '' : String(v).trim();
+    }
+    function slugOf(name) {
+      var n = String(name || '').trim().toLowerCase();
+      var k = KIDS.filter(function (x) { return x.name.toLowerCase() === n || (n.indexOf(x.name.toLowerCase()) === 0 && n.length > x.name.length); })[0];
+      return k ? k.slug : '';
+    }
+    var key = function (h) {
+      h = String(h || '').toLowerCase();
+      return /^date/.test(h) ? 'date' : /^area/.test(h) ? 'area' : /observation/.test(h) ? 'observation' : /needed/.test(h) ? 'needed' : /offered/.test(h) ? 'offered' : /happen/.test(h) ? 'happened' : /^child/.test(h) ? 'child' : '';
+    };
+    wb.SheetNames.forEach(function (sn) {
+      var rows = X.utils.sheet_to_json(wb.Sheets[sn], { header: 1, raw: true, defval: null, blankrows: false });
+      var hi = -1;
+      rows.some(function (r, i) { if (r.some(function (v) { return key(v) === 'observation'; })) { hi = i; return true; } return false; });
+      if (hi === -1) return;
+      var head = rows[hi], cols = head.map(key);
+      if (cols.indexOf('child') !== -1) {
+        rows.slice(hi + 1).forEach(function (r) {
+          var s = slugOf(r[cols.indexOf('child')]); if (!s) return;
+          var o = {};
+          cols.forEach(function (c, j) { if (c && c !== 'child') o[c] = d(r[j]); });
+          if (o.observation || o.date) (out[s] = out[s] || []).push(o);
+        });
+        return;
+      }
+      // Blocks: each Date column starts one; the name is above it.
+      cols.forEach(function (c, j) {
+        if (c !== 'date') return;
+        var s = '';
+        for (var up = hi - 1; up >= 0 && !s; up--) s = slugOf(rows[up][j]);
+        if (!s) return;
+        rows.slice(hi + 1).forEach(function (r) {
+          var o = {};
+          for (var x = j; x < cols.length && (x === j || cols[x] !== 'date'); x++) if (cols[x]) o[cols[x]] = d(r[x]);
+          if (o.observation || o.area) (out[s] = out[s] || []).push(o);
+        });
+      });
+    });
+    return out;
+  }
 
   function loadXlsx() {
     if (window.XLSX) return Promise.resolve(window.XLSX);
