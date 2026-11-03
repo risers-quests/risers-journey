@@ -1,12 +1,13 @@
-/* Thinking about 10th Grade — a questionnaire for older Risers
-   (questions in grade10-data.js).
+/* 10th Grade: Parents' Questionnaire — parents fill it in, on their
+   child's Term 3 page, before the meeting about 10th grade (questions in
+   grade10-data.js, {name} = the child).
 
-   - Staff, ?view=staff: OK it and choose which Risers see it (approval
+   - Staff, ?view=staff: OK it and choose which families see it (approval
      record: group term-3, kid staff, week grade10-approval, as
      { approved, kids: [slug…], by, at }), preview it, and read each
-     Riser's answers. Until it's OK'd no Riser sees it.
-   - Riser: only once it's OK'd and they are chosen; answers save as they
-     type, then Send it to a facilitator. Saved under week key
+     family's answers. Until it's OK'd no family sees it.
+   - The family (signed in as their child): only once it's OK'd and the
+     child is chosen; answers save as they type, then Send. Saved under week key
      term3-grade10 as { answers: { <id>: text | choice | [choices],
      <id>_why: text }, _sent }. */
 (function () {
@@ -34,13 +35,15 @@
 
   // The questions; mode 'answer' (typing), 'read' (answers shown) or
   // 'preview' (staff trying it, nothing saved).
+  var NAME = 'your child';
+  function nm(t) { return String(t || '').replace(/\{name\}/g, NAME); }
   function formEl(ans, mode, onChange) {
     var a = ans.answers = ans.answers || {};
     var box = el('div');
     G.sections.forEach(function (s, si) {
       var sec = el('section', 'g10-sec', '<h2>' + (si + 1) + '. ' + esc(s.title) + '</h2>');
       s.qs.forEach(function (q) {
-        var row = el('div', 'g10-q', '<p>' + esc(q.text) + (q.optional ? ' <small>(optional)</small>' : '') + '</p>' + (q.hint && mode !== 'read' ? '<p class="g10-hint">' + esc(q.hint) + '</p>' : ''));
+        var row = el('div', 'g10-q', '<p>' + esc(nm(q.text)) + (q.optional ? ' <small>(optional)</small>' : '') + '</p>' + (q.hint && mode !== 'read' ? '<p class="g10-hint">' + esc(nm(q.hint)) + '</p>' : ''));
         row.dataset.q = q.id;
         if (mode === 'read') {
           var v = a[q.id];
@@ -49,7 +52,7 @@
         } else if (q.kind === 'text') {
           var ta = el('textarea');
           ta.value = a[q.id] || '';
-          ta.setAttribute('aria-label', q.text);
+          ta.setAttribute('aria-label', nm(q.text));
           ta.addEventListener('input', function () { a[q.id] = ta.value; row.classList.remove('is-missing'); onChange(); });
           row.appendChild(ta);
         } else {
@@ -91,12 +94,13 @@
     return box;
   }
 
-  /* ---------- Riser ---------- */
+  /* ---------- the family ---------- */
 
   function renderKid(kid) {
+    NAME = kid.name;
     app.innerHTML = '';
     app.appendChild(el('div', 'eot2-crumb', '<a href="../index.html">&larr; Term 3</a>'));
-    var head = el('div', 'eot2-form-header', '<div><h1>' + esc(G.title) + '</h1><div class="eot2-sub">For ' + esc(kid.name) + '</div></div>');
+    var head = el('div', 'eot2-form-header', '<div><h1>' + esc(G.title) + '</h1><div class="eot2-sub">For ' + esc(kid.name) + '’s parents, before the meeting</div></div>');
     var status = el('div', 'eot2-status eot2-status-offline', 'Loading…');
     head.appendChild(status);
     app.appendChild(head);
@@ -109,7 +113,7 @@
       var ans = (r[1] && r[1].state) || {};
       setStatus('saved', ans._sent ? 'Sent' : 'Saved');
       if (ans._sent) {
-        body.appendChild(el('p', 'g10-intro', 'Thank you! You sent this on ' + day(ans._sent) + '. A facilitator will talk it through with you.'));
+        body.appendChild(el('p', 'g10-intro', 'Thank you! You sent this on ' + day(ans._sent) + '. We will go through it with you at the meeting.'));
         body.appendChild(formEl(ans, 'read'));
         return;
       }
@@ -126,10 +130,10 @@
           }, now ? 0 : 700);
         });
       }
-      body.appendChild(el('p', 'g10-intro', esc(G.intro)));
+      body.appendChild(el('p', 'g10-intro', esc(nm(G.intro))));
       body.appendChild(formEl(ans, 'answer', function () { save(); }));
       var bar = el('div', 'g10-bar');
-      var send = el('button', 'eot2-btn', 'Send to a facilitator');
+      var send = el('button', 'eot2-btn', 'Send before the meeting');
       send.type = 'button';
       var msg = el('span', 'g10-msg');
       send.addEventListener('click', function () {
@@ -162,7 +166,7 @@
     try { STAFF = localStorage.getItem('rj-staff-name') || ''; } catch (e) {}
     app.innerHTML = '';
     app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/term-3/index.html">&larr; Term 3</a>'));
-    app.appendChild(el('div', 'eot2-head', '<h1>' + esc(G.title) + '</h1><p>A questionnaire for older Risers about taking the 10th grade exams: how they feel, their plans, and how they would do it. Risers only see it once it’s OK’d here.</p>'));
+    app.appendChild(el('div', 'eot2-head', '<h1>' + esc(G.title) + '</h1><p>Parents fill this in before the meeting about their child’s 10th grade exams: how they feel, their plans, and how they would like to do it. Families only see it once it’s OK’d here; they find it on their child’s Term 3 page.</p>'));
     var body = el('div', 'g10-body', '<p class="g10-intro">Loading…</p>');
     app.appendChild(body);
     var kids = window.EOT2_KIDS.slice().sort(function (a, b) { return a.name.localeCompare(b.name); });
@@ -173,8 +177,8 @@
       // Approval and who sees it.
       var card = el('section', 'g10-staff');
       function paintCard() {
-        card.innerHTML = '<h2>' + (ap.approved ? 'OK’d' + (ap.by ? ' by ' + esc(ap.by) : '') + (ap.at ? ' on ' + day(ap.at) : '') + ': these Risers can see it' : 'Not OK’d yet: no Riser can see it') + '</h2>' +
-          '<p>Choose who it’s for, then OK it. They’ll find it on their Term 3 page.</p>';
+        card.innerHTML = '<h2>' + (ap.approved ? 'OK’d' + (ap.by ? ' by ' + esc(ap.by) : '') + (ap.at ? ' on ' + day(ap.at) : '') + ': these families can see it' : 'Not OK’d yet: no family can see it') + '</h2>' +
+          '<p>Choose whose parents it’s for, then OK it. They’ll find it on their child’s Term 3 page.</p>';
         var list = el('div', 'g10-kids');
         kids.forEach(function (k) {
           var lb = el('label', '', '<input type="checkbox"' + (ap.kids.indexOf(k.slug) !== -1 ? ' checked' : '') + '> ' + esc(k.name));
@@ -187,14 +191,14 @@
         });
         card.appendChild(list);
         var bar = el('div', 'g10-bar');
-        var b = el('button', ap.approved ? 'eot2-btn eot2-btn-secondary' : 'eot2-btn', ap.approved ? 'Hide it again' : 'OK it and show it to them');
+        var b = el('button', ap.approved ? 'eot2-btn eot2-btn-secondary' : 'eot2-btn', ap.approved ? 'Hide it again' : 'OK it and show it to these families');
         b.type = 'button';
         var msg = el('span', 'g10-msg');
         b.addEventListener('click', function () {
-          if (!ap.approved && !ap.kids.length) { msg.textContent = 'Choose at least one Riser first.'; return; }
+          if (!ap.approved && !ap.kids.length) { msg.textContent = 'Choose at least one family first.'; return; }
           ap.approved = !ap.approved;
           ap.by = STAFF; ap.at = new Date().toISOString();
-          store(ap.approved ? 'Shown to ' + ap.kids.length + ' Riser' + (ap.kids.length > 1 ? 's' : '') + '.' : 'Hidden.');
+          store(ap.approved ? 'Shown to ' + ap.kids.length + ' famil' + (ap.kids.length > 1 ? 'ies' : 'y') + '.' : 'Hidden.');
         });
         bar.appendChild(b); bar.appendChild(msg);
         card.appendChild(bar);
@@ -210,7 +214,7 @@
       }
       body.appendChild(card);
       paintCard();
-      // Preview, and each chosen Riser's answers.
+      // Preview, and each chosen family's answers.
       var tabs = el('div', 'g10-tabs'), view = el('div');
       body.appendChild(tabs);
       body.appendChild(view);
@@ -226,11 +230,13 @@
         });
         view.innerHTML = '';
         if (shown === 'preview') {
-          view.appendChild(el('p', 'g10-intro', 'This is what Risers see. Try it out here; nothing is saved. <br>' + esc(G.intro)));
+          NAME = 'your child';
+          view.appendChild(el('p', 'g10-intro', 'This is what parents see (with their child’s name). Try it out here; nothing is saved. <br>' + esc(nm(G.intro))));
           view.appendChild(formEl({}, 'preview', function () {}));
           return;
         }
         var i = kids.map(function (k) { return k.slug; }).indexOf(shown), a = answers[i];
+        NAME = kids[i].name;
         view.appendChild(el('p', '', a._sent ? '<span class="g10-pill is-ok">Sent ' + day(a._sent) + '</span>' : a.answers && Object.keys(a.answers).length ? '<span class="g10-pill">Started, not sent yet</span>' : '<span class="g10-pill">Not started</span>'));
         view.appendChild(formEl(a, 'read'));
       }
