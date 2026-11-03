@@ -562,14 +562,25 @@
           blk.style.width = 'calc(' + (100 / of) + '% - 4px)';
           body.appendChild(blk);
         });
-        if (nowMin >= START && nowMin <= END) { var line = el('div', 'sc-nowline'); line.style.top = (nowMin - START) * PX + 'px'; body.appendChild(line); }
+        if (nowMin >= START && nowMin <= END) { var line = el('div', 'sc-nowline' + (i ? '' : ' is-first')); line.style.top = (nowMin - START) * PX + 'px'; body.appendChild(line); }
         col.appendChild(body);
         grid.appendChild(col);
       });
+      // The time, on the line by the clock.
+      if (nowMin >= START && nowMin <= END) {
+        var tag = el('span', 'sc-nowtag', hm(nowMin));
+        tag.style.top = (nowMin - START) * PX + 'px';
+        ab.appendChild(tag);
+      }
       scroll.appendChild(grid);
       box.appendChild(scroll);
     }
     paint();
+    // Keep the line on the time: redraw each minute while today is shown.
+    setInterval(function () {
+      if (!document.hidden && isoOf(d) === isoOf(new Date())) { var x = scrollLeft(); paint(); scrollLeft(x); }
+    }, 60000);
+    function scrollLeft(x) { var s = box.querySelector('.sc-today-scroll'); if (!s) return 0; if (x !== undefined) s.scrollLeft = x; return s.scrollLeft; }
   }
 
   /* ---------- staff: facilitators ---------- */

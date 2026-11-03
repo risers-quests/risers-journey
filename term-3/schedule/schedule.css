@@ -183,4 +183,5 @@
 .sc-kidhead { display: block; color: var(--ink); text-decoration: none; }
 .sc-kidhead:hover { color: var(--accent-dark); text-decoration: underline; }
 .sc-blk.is-now { box-shadow: 0 0 0 2px var(--accent); }
-.sc-nowline { position: absolute; left: 0; right: 0; height: 2px; background: #d0342c; z-index: 4; pointer-events: none; }
+.sc-nowline { position: absolute; left: -3px; right: -3px; height: 2px; margin-top: -1px; background: #2b6cb0; opacity: .85; z-index: 4; pointer-events: none; }
+.sc-nowtag { position: absolute; right: 0; transform: translateY(-50%); z-index: 5; font-size: .66rem; font-weight: 700; color: #fff; background: #2b6cb0; border-radius: 99px; padding: 1px 5px; }
