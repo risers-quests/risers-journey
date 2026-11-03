@@ -68,6 +68,23 @@
   // week early. Staff clear their try-out data on Term 3 → Try-out data.
   window.LH_TRIAL = ['benjamin'];
 
+  // Each term's pages, listed under it in the side panel (subs).
+  var SUBS = isStaff ? {
+    'Term 3': [
+      ['Quest boards', 'staff/term-3/board.html'], ['Own Quest Ideas', 'staff/term-3/quests.html#own-ideas'],
+      ['Weekly Check-ins', 'term-3/check-in/index.html?view=staff'], ['Schedules', 'term-3/schedule/index.html?view=staff'],
+      ['Assessment Tracking', 'staff/term-3/tracking.html'], ['Observations', 'staff/term-3/observations.html'],
+      ['Assessments', 'term-3/assessments/index.html?view=staff'], ['10th Grade questionnaire', 'term-3/grade10/index.html?view=staff'],
+      ['Try-out data', 'staff/term-3/try-out.html']],
+    'Term 2': [['Term 2 Conference', 'end-of-term-2/staff/index.html'], ['Term 2 Quests', 'staff/quests/index.html']],
+    'Term 1': [['Term 1 Conference', 'term-1-conference/index.html?view=staff']]
+  } : {
+    'Term 3': [['Term 3 Quest', 'term-3/quest/index.html'], ['Our Own Quest', 'term-3/quest/index.html?own=1'],
+      ['Weekly Check-in', 'term-3/check-in/index.html'], ['My Schedule', 'term-3/schedule/index.html'], ['Assessments', 'term-3/assessments/index.html']],
+    'Term 2': [['Term 2 Conference', 'end-of-term-2/index.html'], ['Term 2 Quests', 'dashboard/index.html']],
+    'Term 1': [['Term 1 Conference', 'term-1-conference/index.html']]
+  };
+
   var NAV = isStaff ? [
     // Only the staff Home itself (not end-of-term-2/staff/ and the like).
     { label: 'Home', href: root + 'staff/index.html', icon: 'home', match: new RegExp('^' + new URL(root, location.href).pathname + 'staff/(index\\.html)?$') },
@@ -109,9 +126,30 @@
       var inner = svg(item.icon) + '<span>' + (compact && item.short ? item.short : item.label) + '</span>' +
         (item.soon ? '<em>Soon</em>' : '');
       if (item.soon) return '<span class="' + cls + '">' + inner + '</span>';
-      return '<a class="' + cls + '" href="' + item.href + '"' +
+      var subs = !compact && SUBS[item.label];
+      var link = '<a class="' + cls + '" href="' + item.href + '"' +
         (isActive(item) ? ' aria-current="page"' : '') + '>' + inner + '</a>';
+      if (!subs) return link;
+      // A term with its pages: open when you're in that term; ▸ opens the others.
+      var open = isActive(item);
+      return '<div class="lh-nav-group' + (open ? ' is-open' : '') + '"><div class="lh-nav-row">' + link +
+        '<button type="button" class="lh-nav-toggle" aria-label="Show ' + item.label + ' pages" aria-expanded="' + open + '">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>' +
+        '<div class="lh-nav-subs">' + subs.map(function (x) {
+          var on = isHere(root + x[1]);
+          return '<a class="lh-nav-sub' + (on ? ' is-active' : '') + '" href="' + root + x[1] + '"' + (on ? ' aria-current="page"' : '') + '>' + x[0] + '</a>';
+        }).join('') + '</div></div>';
     }).join('');
+  }
+  // The page a sub link goes to: same path, and its view if it names one.
+  function isHere(href) {
+    var u = new URL(href, location.href), here = location.pathname.replace(/\/index\.html$/, '/'), there = u.pathname.replace(/\/index\.html$/, '/');
+    if (here !== there) return false;
+    var want = u.searchParams, have = new URLSearchParams(location.search);
+    var ok = true;
+    want.forEach(function (v, k) { if (have.get(k) !== v) ok = false; });
+    if (!u.searchParams.has('own') && have.has('own')) ok = false;
+    return ok && (!u.hash || u.hash === location.hash);
   }
 
   function logout(e) {
@@ -166,6 +204,12 @@
     main.insertAdjacentHTML('beforeend', footer);
 
     Array.prototype.forEach.call(shell.querySelectorAll('.lh-logout'), function (a) { a.addEventListener('click', logout); });
+    Array.prototype.forEach.call(shell.querySelectorAll('.lh-nav-toggle'), function (b) {
+      b.addEventListener('click', function () {
+        var g = b.closest('.lh-nav-group'), open = g.classList.toggle('is-open');
+        b.setAttribute('aria-expanded', open);
+      });
+    });
     // Pages' own in-page "Log out" links re-render a sign-in card without
     // a reload; send them through the same full logout so the shell resets.
     document.addEventListener('click', function (e) {
