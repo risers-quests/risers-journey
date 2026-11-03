@@ -28,6 +28,8 @@
   var params = new URLSearchParams(location.search);
   // Week 1 has its own plan and its own saved copy (staff only).
   var W1 = params.get('week') === '1';
+  // Staff: each facilitator's week, worked out from the Risers' schedules.
+  var FAC = params.get('fac') === '1';
   if (W1) KEY = 'term3-schedule-w1';
   var FROM = W1 ? 'the week 1 plan' : 'the school timetable';
 
@@ -467,8 +469,101 @@
   // Usual week or week 1, for staff.
   function weekSwitch(href) {
     return el('div', 'sc-weeks',
-      '<a class="sc-week' + (W1 ? '' : ' is-on') + '" href="' + href + '">Usual week</a>' +
-      '<a class="sc-week' + (W1 ? ' is-on' : '') + '" href="' + href + '&week=1">Week 1 · 26–30 Oct</a>');
+      '<a class="sc-week' + (W1 || FAC ? '' : ' is-on') + '" href="' + href + '">Usual week</a>' +
+      '<a class="sc-week' + (W1 ? ' is-on' : '') + '" href="' + href + '&week=1">Week 1 · 26–30 Oct</a>' +
+      (/kid=/.test(href) ? '' : '<a class="sc-week' + (FAC ? ' is-on' : '') + '" href="' + href + '&fac=1">Facilitators</a>'));
+  }
+
+  /* ---------- staff: facilitators ---------- */
+
+  // Each facilitator's usual week: every Riser's block they run (see
+  // facilitators-data.js), the same activity at the same time as one block
+  // with the Risers' names. Read only: change a Riser's schedule and this
+  // follows.
+  function facilitators() {
+    var F = window.T3_FACILITATORS;
+    app.innerHTML = '';
+    app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/term-3/index.html">&larr; Term 3</a>'));
+    app.appendChild(el('header', 'hd-page-head', '<div><p class="hd-eyebrow">Term 3</p><h1>Facilitators’ schedules</h1>' +
+      '<p>Worked out from each Riser’s usual week: change a Riser’s schedule and these follow. Music, Tamil, STEM, Drama and Carpentry are run by others.</p></div>'));
+    app.appendChild(weekSwitch('index.html?view=staff'));
+    var tools = el('div', 'sc-tools');
+    var pr = el('button', 'sc-btn sc-ghost', 'Print all three');
+    pr.type = 'button'; pr.disabled = true;
+    tools.appendChild(pr);
+    app.appendChild(tools);
+    var box = el('div', '', '<p class="sc-note">Loading…</p>');
+    app.appendChild(box);
+    var kids = window.EOT2_KIDS.slice().sort(function (a, b) { return a.name.localeCompare(b.name); });
+    Promise.all(kids.map(function (k) { return window.eot2Fetch(k.group, k.slug, KEY); })).then(function (rs) {
+      var weeks = {};
+      F.names.forEach(function (n) { weeks[n] = {}; DAYS.forEach(function (d) { weeks[n][d] = []; }); });
+      kids.forEach(function (k, i) {
+        var days = rs[i] && rs[i].state && rs[i].state.days ? rs[i].state.days : school(k.slug);
+        DAYS.forEach(function (d) {
+          (days[d] || []).forEach(function (b) {
+            F.who(b.t, k.slug, d).forEach(function (n) {
+              if (F.days[n] && F.days[n].indexOf(d) === -1) return;
+              var t = /core skills|progress board/i.test(b.t) ? 'Core Skills' : b.t;
+              var same = weeks[n][d].filter(function (x) { return x.t === t && x.s === b.s && x.e === b.e; })[0];
+              if (same) same.kids.push(k.name); else weeks[n][d].push({ s: b.s, e: b.e, t: t, c: '', kids: [k.name] });
+            });
+          });
+        });
+      });
+      var named = function (b) { return b.kids.length === kids.length ? 'Everyone' : b.kids.join(', '); };
+      box.innerHTML = '';
+      F.names.forEach(function (n) {
+        var sec = el('section', 'sc-fac', '<h2>' + esc(n) + '</h2>');
+        var grid = el('div', 'sc-grid');
+        var axis = el('div', 'sc-axis');
+        axis.appendChild(el('div', 'sc-dayhead', ''));
+        var ab = el('div', 'sc-col-body');
+        ab.style.height = (END - START) * PX + 'px';
+        for (var m = START; m <= END; m += STEP) {
+          if (m % 30 && m !== START) continue;
+          var lab = el('span', 'sc-tick', hm(m));
+          lab.style.top = (m - START) * PX + 'px';
+          ab.appendChild(lab);
+        }
+        axis.appendChild(ab);
+        grid.appendChild(axis);
+        DAYS.forEach(function (d) {
+          var col = el('div', 'sc-col');
+          col.appendChild(el('div', 'sc-dayhead', DAY_NAMES[d]));
+          var body = el('div', 'sc-col-body');
+          body.style.height = (END - START) * PX + 'px';
+          var off = F.days[n] && F.days[n].indexOf(d) === -1;
+          if (off) body.appendChild(el('div', 'sc-off', 'Not working'));
+          var list = weeks[n][d].sort(function (a, b) { return a.s - b.s || a.e - b.e; });
+          var ends = [], lane = list.map(function (b) { var l = 0; while (ends[l] !== undefined && ends[l] > b.s) l++; ends[l] = b.e; return l; });
+          list.forEach(function (b, i) {
+            var of = 1;
+            list.forEach(function (x, j) { if (x.s < b.e && x.e > b.s) of = Math.max(of, lane[j] + 1); });
+            var blk = el('div', 'sc-blk is-fixed sc-c-' + colourOf(b) + (b.e - b.s <= 15 ? ' is-short' : ''),
+              '<span class="sc-blk-t">' + esc(b.t) + '</span><span class="sc-blk-time">' + span(b) + '</span><span class="sc-blk-time">' + esc(named(b)) + '</span>');
+            blk.title = b.t + ', ' + span(b) + ': ' + named(b);
+            blk.style.top = (b.s - START) * PX + 'px';
+            blk.style.height = Math.max((b.e - b.s) * PX - 2, 12) + 'px';
+            blk.style.left = 'calc(' + (lane[i] / of * 100) + '% + 2px)';
+            blk.style.width = 'calc(' + (100 / of) + '% - 4px)';
+            body.appendChild(blk);
+          });
+          col.appendChild(body);
+          grid.appendChild(col);
+        });
+        sec.appendChild(grid);
+        box.appendChild(sec);
+      });
+      pr.disabled = false;
+      pr.addEventListener('click', function () {
+        printCards(F.names.map(function (n) {
+          var days = {};
+          DAYS.forEach(function (d) { days[d] = weeks[n][d].map(function (b) { return { s: b.s, e: b.e, t: b.t + ' · ' + named(b), c: colourOf(b) }; }); });
+          return { name: n, days: days };
+        }));
+      });
+    });
   }
 
   /* ---------- staff: week 1 at a glance ---------- */
@@ -809,7 +904,7 @@
     try { staff = localStorage.getItem('rj-staff-name'); } catch (e) {}
     if (!staff) { location.replace('../../index.html'); return; }
     var k = params.get('kid') && window.EOT2_findKid(params.get('kid'));
-    if (k) editor(k, 'staff', '<a href="index.html?view=staff">&larr; Schedules</a>'); else staffAll();
+    if (k) editor(k, 'staff', '<a href="index.html?view=staff">&larr; Schedules</a>'); else if (FAC) facilitators(); else staffAll();
     return;
   }
   var kid = window.EOT2_signedInKid();

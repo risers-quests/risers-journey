@@ -169,3 +169,7 @@
   .sc-printout .sc-c-red { background: #f2c3be; color: #6e211a; border-left-color: #d47b72; }
   .sc-printout .sc-c-grey { background: #e0e5e9; color: #33404a; border-left-color: #a7b2bb; }
 }
+.sc-fac { margin: 0 0 22px; }
+.sc-fac h2 { font-size: 1.15rem; margin: 0 0 8px; }
+.sc-fac .sc-blk { cursor: default; }
+.sc-off { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--ink-faint); background: repeating-linear-gradient(45deg, #f6f7f8, #f6f7f8 8px, #eef0f2 8px, #eef0f2 16px); border-radius: 8px; }
