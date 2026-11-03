@@ -173,3 +173,14 @@
 .sc-fac h2 { font-size: 1.15rem; margin: 0 0 8px; }
 .sc-fac .sc-blk { cursor: default; }
 .sc-off { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--ink-faint); background: repeating-linear-gradient(45deg, #f6f7f8, #f6f7f8 8px, #eef0f2 8px, #eef0f2 16px); border-radius: 8px; }
+.sc-today { margin: 0 0 22px; }
+.sc-today-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.sc-today-head h2 { margin: 0; font-size: 1.15rem; }
+.sc-today-head h2 small { font-size: .8rem; font-weight: 600; color: var(--ink-faint); }
+.sc-today-head .sc-btn { padding: 6px 14px; }
+.sc-today-scroll { overflow-x: auto; }
+.sc-grid-today { min-width: 1200px; }
+.sc-kidhead { display: block; color: var(--ink); text-decoration: none; }
+.sc-kidhead:hover { color: var(--accent-dark); text-decoration: underline; }
+.sc-blk.is-now { box-shadow: 0 0 0 2px var(--accent); }
+.sc-nowline { position: absolute; left: 0; right: 0; height: 2px; background: #d0342c; z-index: 4; pointer-events: none; }

@@ -474,6 +474,104 @@
       (/kid=/.test(href) ? '' : '<a class="sc-week' + (FAC ? ' is-on' : '') + '" href="' + href + '&fac=1">Facilitators</a>'));
   }
 
+  /* ---------- staff: everyone's day ---------- */
+
+  // One school day for every Riser, side by side: today, or the next
+  // school day at a weekend; ‹ › move a day. Week 1 days (26–30 Oct) come
+  // from the week 1 plans; the holidays and days outside term say so.
+  var TERM = { from: '2026-10-26', to: '2027-01-21', hols: ['2026-12-19', '2027-01-04'], w1: ['2026-10-26', '2026-10-30'] };
+  function isoOf(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  function todayView(box, kids, usual) {
+    var d = new Date(); d.setHours(0, 0, 0, 0);
+    while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1);
+    var w1 = null;
+    function paint() {
+      var iso = isoOf(d), dk = DAYS[d.getDay() - 1];
+      var isW1 = iso >= TERM.w1[0] && iso <= TERM.w1[1];
+      if (isW1 && !w1) {
+        box.innerHTML = '<p class="sc-note">Loading…</p>';
+        Promise.all(kids.map(function (k) { return window.eot2Fetch(k.group, k.slug, 'term3-schedule-w1'); })).then(function (rs) {
+          w1 = rs.map(function (r, i) {
+            var plan = (window.T3_WEEK1 || {})[kids[i].slug] || {}, out = {};
+            DAYS.forEach(function (x) { out[x] = r && r.state && r.state.days && r.state.days[x] ? r.state.days[x] : (plan[x] || []).map(function (b) { return { s: b[0], e: b[1], t: b[2], c: '' }; }); });
+            return out;
+          });
+          paint();
+        });
+        return;
+      }
+      var when = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+      var isToday = iso === isoOf(new Date());
+      box.innerHTML = '';
+      var head = el('div', 'sc-today-head');
+      var prev = el('button', 'sc-btn sc-ghost', '‹'), next = el('button', 'sc-btn sc-ghost', '›');
+      prev.type = next.type = 'button';
+      prev.setAttribute('aria-label', 'Day before'); next.setAttribute('aria-label', 'Next day');
+      var step = function (n) { do { d.setDate(d.getDate() + n); } while (d.getDay() === 0 || d.getDay() === 6); paint(); };
+      prev.addEventListener('click', function () { step(-1); });
+      next.addEventListener('click', function () { step(1); });
+      head.appendChild(prev);
+      head.appendChild(el('h2', '', (isToday ? 'Today · ' : '') + esc(when) + (isW1 ? ' <small>week 1 plan</small>' : '')));
+      head.appendChild(next);
+      if (!isToday) {
+        var back = el('button', 'sc-btn sc-ghost', 'Today');
+        back.type = 'button';
+        back.addEventListener('click', function () { d = new Date(); d.setHours(0, 0, 0, 0); while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1); paint(); });
+        head.appendChild(back);
+      }
+      box.appendChild(head);
+      if (iso < TERM.from || iso > TERM.to || (iso >= TERM.hols[0] && iso <= TERM.hols[1])) {
+        box.appendChild(el('p', 'sc-note', iso >= TERM.hols[0] && iso <= TERM.hols[1] ? 'School holidays (19 Dec – 4 Jan).' : 'Outside Term 3.'));
+        return;
+      }
+      var src = isW1 ? w1 : usual;
+      var scroll = el('div', 'sc-today-scroll');
+      var grid = el('div', 'sc-grid sc-grid-today');
+      grid.style.gridTemplateColumns = '46px repeat(' + kids.length + ', minmax(96px, 1fr))';
+      var axis = el('div', 'sc-axis');
+      axis.appendChild(el('div', 'sc-dayhead', ''));
+      var ab = el('div', 'sc-col-body');
+      ab.style.height = (END - START) * PX + 'px';
+      for (var m = START; m <= END; m += STEP) {
+        if (m % 30 && m !== START) continue;
+        var lab = el('span', 'sc-tick', hm(m));
+        lab.style.top = (m - START) * PX + 'px';
+        ab.appendChild(lab);
+      }
+      axis.appendChild(ab);
+      grid.appendChild(axis);
+      var nowMin = isToday ? new Date().getHours() * 60 + new Date().getMinutes() : -1;
+      kids.forEach(function (k, i) {
+        var col = el('div', 'sc-col');
+        var h = el('a', 'sc-dayhead sc-kidhead', esc(k.name));
+        h.href = 'index.html?view=staff&kid=' + k.slug + (isW1 ? '&week=1' : '');
+        col.appendChild(h);
+        var body = el('div', 'sc-col-body');
+        body.style.height = (END - START) * PX + 'px';
+        var list = ((src[i] || {})[dk] || []).slice().sort(function (a, b) { return a.s - b.s; });
+        var ends = [], lane = list.map(function (b) { var l = 0; while (ends[l] !== undefined && ends[l] > b.s) l++; ends[l] = b.e; return l; });
+        list.forEach(function (b, j) {
+          var of = 1;
+          list.forEach(function (x, n) { if (x.s < b.e && x.e > b.s) of = Math.max(of, lane[n] + 1); });
+          var blk = el('div', 'sc-blk is-fixed sc-c-' + colourOf(b) + (b.e - b.s <= 15 ? ' is-short' : '') + (nowMin >= b.s && nowMin < b.e ? ' is-now' : ''),
+            '<span class="sc-blk-t">' + esc(b.t || 'Untitled') + '</span><span class="sc-blk-time">' + span(b) + '</span>');
+          blk.title = k.name + ': ' + b.t + ', ' + span(b);
+          blk.style.top = (b.s - START) * PX + 'px';
+          blk.style.height = Math.max((b.e - b.s) * PX - 2, 12) + 'px';
+          blk.style.left = 'calc(' + (lane[j] / of * 100) + '% + 2px)';
+          blk.style.width = 'calc(' + (100 / of) + '% - 4px)';
+          body.appendChild(blk);
+        });
+        if (nowMin >= START && nowMin <= END) { var line = el('div', 'sc-nowline'); line.style.top = (nowMin - START) * PX + 'px'; body.appendChild(line); }
+        col.appendChild(body);
+        grid.appendChild(col);
+      });
+      scroll.appendChild(grid);
+      box.appendChild(scroll);
+    }
+    paint();
+  }
+
   /* ---------- staff: facilitators ---------- */
 
   // Each facilitator's usual week: every Riser's block they run (see
@@ -858,7 +956,7 @@
     app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/term-3/index.html">&larr; Term 3</a>'));
     app.appendChild(el('header', 'hd-page-head', '<div><p class="hd-eyebrow">Term 3</p><h1>Schedules</h1>' +
       (W1 ? '<p>Week 1 (26–30 October), starting from the week 1 plan: Monday to Wednesday are the launch days; Thursday and Friday are placeholders for now. Only staff see and change it.</p></div>'
-        : '<p>Each Riser’s week, starting from the school timetable. Only staff can change a schedule; Risers see theirs on their Term 3 page.</p></div>')));
+        : '<p>Everyone’s day at a glance. Tap a name to see and change that Riser’s week. Only staff can change a schedule; Risers see theirs on their Term 3 page.</p></div>')));
     app.appendChild(weekSwitch('index.html?view=staff'));
     var current = null;
     var printAll = el('button', 'sc-btn sc-ghost sc-print-all', 'Print everyone’s ' + (W1 ? 'week 1' : 'schedule'));
@@ -870,6 +968,8 @@
     app.appendChild(el('div', 'sc-tools')).appendChild(printAll);
     var glanceBox = el('div', 'sc-glance');
     if (W1) app.appendChild(glanceBox);
+    var todayBox = el('div', 'sc-today');
+    if (!W1) app.appendChild(todayBox);
     var list = el('div', 'sc-kids', '<p class="sc-note">Loading…</p>');
     app.appendChild(list);
     var kids = window.EOT2_KIDS.slice().sort(function (a, b) { return a.name.localeCompare(b.name); });
@@ -895,6 +995,7 @@
         paintList(all.map(function (days) { return { days: days, by: 'staff' }; }));
       });
       paintList(states);
+      if (!W1) todayView(todayBox, kids, current);
       if (!W1) app.appendChild(hoursEl(kids, states.map(function (st, i) { return st && st.days ? st.days : school(kids[i].slug); })));
     });
   }
