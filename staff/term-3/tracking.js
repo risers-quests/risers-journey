@@ -58,6 +58,25 @@
   function blank() { return { workbooks: [], assessments: [], observations: [], tables: [], spelling: [] }; }
   function uid() { return Math.random().toString(36).slice(2, 10); }
 
+  // Dates: kept as 2026-09-08; older ones were typed freely ("8 Sept",
+  // "17/9.26"). Shown as day/month/year.
+  var MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+  function isoOfText(t) {
+    t = String(t || '').trim();
+    var m = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(t);
+    if (m) return m[1] + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[3]).slice(-2);
+    m = /^(\d{1,2})[\/.\-](\d{1,2})(?:[\/.\-](\d{2,4}))?$/.exec(t);
+    if (m) { var y = m[3] ? (m[3].length === 2 ? '20' + m[3] : m[3]) : '2026'; return y + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[1]).slice(-2); }
+    m = /^(\d{1,2})(?:st|nd|rd|th)?\s+([a-z]+)\.?(?:\s+(\d{4}))?$/i.exec(t) || null;
+    var mo = m ? MONTHS.indexOf(m[2].slice(0, 3).toLowerCase()) : -1;
+    if (m && mo !== -1) return (m[3] || '2026') + '-' + ('0' + (mo + 1)).slice(-2) + '-' + ('0' + m[1]).slice(-2);
+    m = /^([a-z]+)\s+(\d{1,2})(?:st|nd|rd|th)?$/i.exec(t);
+    mo = m ? MONTHS.indexOf(m[1].slice(0, 3).toLowerCase()) : -1;
+    if (m && mo !== -1) return '2026-' + ('0' + (mo + 1)).slice(-2) + '-' + ('0' + m[2]).slice(-2);
+    return '';
+  }
+  function dmy(t) { var i = isoOfText(t); return i ? i.slice(8, 10) + '/' + i.slice(5, 7) + '/' + i.slice(0, 4) : String(t || ''); }
+
   // Every assessment entry with a score or feedback has an observation
   // (obs.auto = the entry's id) kept in step with it: date, area and what
   // happened. Entries from before this (noObs) and ones whose observation
@@ -164,7 +183,7 @@
   function paintAuto() {
     Array.prototype.forEach.call(body.querySelectorAll('[data-auto]'), function (x) {
       var o = (rec.observations || []).filter(function (r) { return r.auto === x.dataset.auto; })[0];
-      if (o) x.textContent = o[x.dataset.col] || '';
+      if (o) x.textContent = x.dataset.col === 'date' ? dmy(o.date) : o[x.dataset.col] || '';
     });
   }
   function section(name) {
@@ -194,9 +213,28 @@
             var ro = el('div', 'tk-ro');
             ro.dataset.auto = row.auto; ro.dataset.col = c[0];
             ro.style.minWidth = (c[2] || 90) + 'px';
-            ro.textContent = row[c[0]] || '';
+            ro.textContent = c[0] === 'date' ? dmy(row.date) : row[c[0]] || '';
             td.appendChild(ro);
             if (c[0] === 'date') td.appendChild(el('span', 'tk-tag', 'From the tracker'));
+          } else if (name === 'observations' && c[0] === 'date') {
+            // Day/month/year, picked from a calendar.
+            var pick = el('label', 'tk-date');
+            var shown = el('span', '', row.date ? esc(dmy(row.date)) : 'Pick a date');
+            if (!row.date) shown.className = 'tk-date-none';
+            var cal = el('input');
+            cal.type = 'date';
+            cal.value = isoOfText(row.date);
+            cal.setAttribute('aria-label', 'Date');
+            cal.addEventListener('change', function () {
+              if (!cal.value) return;
+              row.date = cal.value;
+              shown.textContent = dmy(cal.value);
+              shown.className = '';
+              save();
+            });
+            pick.appendChild(shown);
+            pick.appendChild(cal);
+            td.appendChild(pick);
           } else {
             // A box that grows to fit what's in it.
             var inp = el('textarea', 'tk-in');
