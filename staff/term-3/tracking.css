@@ -43,3 +43,6 @@
 .tk-newcol .tk-add { padding: 6px 4px; }
 .tk-newsec { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 4px 0 6px; }
 .tk-newsec input { min-width: 240px; }
+.tk-subj { margin: 16px 0 6px; font-size: 1rem; color: var(--ink); }
+.tk-subj small { font-weight: 600; color: var(--ink-faint); font-size: .8rem; margin-left: 4px; }
+.tk-sec .tk-subj:first-of-type { margin-top: 6px; }

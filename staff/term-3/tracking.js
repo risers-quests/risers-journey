@@ -37,7 +37,7 @@
       ['date', 'Date', 110], ['covered', 'Tables covered', 170], ['correct', 'Correct', 70], ['total', 'Total', 70], ['%', 'Score %'],
       ['mins', 'Time (mins)', 70], ['avg', 'Avg / question (sec)'], ['remarks', 'Remarks / feedback', 260]] },
     spelling: { title: 'Spelling', cols: [['week', 'Week', 90], ['date', 'Date', 110], ['score', 'Score', 80], ['%', '%']] },
-    observations: { title: 'Observations', cols: [['date', 'Date', 110], ['area', 'Area', 170], ['observation', 'Observation', 320],
+    observations: { title: 'Observations', cols: [['subject', 'Subject', 110], ['date', 'Date', 110], ['area', 'Area', 170], ['observation', 'Observation', 320],
       ['needed', 'Support needed', 220], ['offered', 'Support offered', 220], ['happened', 'What happened?', 200]] },
     workbooks: { title: 'Subject workbooks', cols: [['subject', 'Subject', 150], ['grade', 'Grade', 70], ['link', 'Table of contents link', 380]] }
   };
@@ -81,7 +81,17 @@
     });
   }
   // An observation filled in from an assessment entry: these come from it.
-  var AUTO_COLS = ['date', 'area', 'observation'];
+  var AUTO_COLS = ['subject', 'date', 'area', 'observation'];
+  // Observations are grouped by subject: the Subject typed, or else worked
+  // out from the subject or area.
+  var SUBJ = [['Math', /math|times?\s*tables?|division|fraction|multipl|factor|decimal|integer|algebra|geometr|number|lcm|hcf/i],
+    ['Language Arts', /spell|language|\bla\b|writing|grammar|reading|english|vocab/i],
+    ['Science', /science|chem|physic|biolog/i], ['Tamil', /tamil/i]];
+  function subjOf(o) {
+    var t = String(o.subject || '').trim();
+    var hit = SUBJ.filter(function (x) { return x[1].test(t || o.area || ''); })[0];
+    return t && !hit ? t.charAt(0).toUpperCase() + t.slice(1) : hit ? hit[0] : 'Other';
+  }
 
   function el(tag, cls, html) {
     var e = document.createElement(tag);
@@ -147,11 +157,27 @@
       var o = obs.filter(function (x) { return x.auto === a.id; })[0];
       if (!o) { o = { auto: a.id }; obs.push(o); moved = true; }
       var p = pct(a.score);
+      o.subject = subjOf({ subject: a.subject, area: a.section });
       o.date = a.scheduled || a.requested || '';
       o.area = [a.subject, a.section].filter(function (x) { return String(x || '').trim(); }).join(' — ') + ' (assessment)';
       o.observation = 'Assessment' + (String(a.score || '').trim() ? ': scored ' + a.score.trim() + (p !== '' ? ' (' + p + '%)' : '') + '.' : '.') +
         (String(a.feedback || '').trim() ? ' Areas for revision: ' + a.feedback.trim() + '.' : '') +
         (String(a.comments || '').trim() ? ' ' + a.comments.trim() : '');
+    });
+    // Times tables too.
+    (r.tables || []).forEach(function (t) {
+      if (!t.id) t.id = uid();
+      var got = String(t.correct || '').trim() && String(t.total || '').trim();
+      if (t.obsOff || !(got || String(t.remarks || '').trim())) return;
+      live[t.id] = 1;
+      var o = obs.filter(function (x) { return x.auto === t.id; })[0];
+      if (!o) { o = { auto: t.id }; obs.push(o); moved = true; }
+      var p = pct(t.correct, t.total);
+      o.subject = 'Math';
+      o.date = t.date || '';
+      o.area = 'Times tables' + (String(t.covered || '').trim() ? ' — ' + t.covered.trim() : '');
+      o.observation = 'Times tables' + (got ? ': ' + t.correct + '/' + t.total + ' correct' + (p !== '' ? ' (' + p + '%)' : '') + (parseFloat(t.mins) > 0 ? ' in ' + t.mins + ' min' : '') + '.' : '.') +
+        (String(t.remarks || '').trim() ? ' ' + t.remarks.trim() : '');
     });
     for (var i = obs.length - 1; i >= 0; i--) if (obs[i].auto && !live[obs[i].auto]) { obs.splice(i, 1); moved = true; }
     return moved;
@@ -268,9 +294,11 @@
   function section(name) {
     {
       var L = listOf(name), rows = rowsOf(name);
-      var sec = el('section', 'tk-sec', '<h2>' + esc(L.title) + (L.custom ? ' <button type="button" class="tk-mini tk-rename">Rename</button><button type="button" class="tk-mini tk-remove">Remove section</button>' : '') + '</h2>' + (name === 'observations' ? '<p class="tk-note">An assessment entry with a score or feedback adds its observation here by itself, and keeps it up to date. Fill in the support and what happened.</p>' : ''));
+      var sec = el('section', 'tk-sec', '<h2>' + esc(L.title) + (L.custom ? ' <button type="button" class="tk-mini tk-rename">Rename</button><button type="button" class="tk-mini tk-remove">Remove section</button>' : '') + '</h2>' + (name === 'observations' ? '<p class="tk-note">Grouped by subject. Assessment and times-table entries with a result add their observation here by themselves, and keep it up to date. Fill in the support and what happened.</p>' : ''));
       sec.dataset.list = name;
-      var wrap = el('div', 'tk-wrap'), t = el('table', 'tk-table');
+      // A table with its column heads (and ✕ on added columns).
+      function makeTable() {
+      var t = el('table', 'tk-table');
       t.innerHTML = '<thead><tr>' + L.cols.map(function (c) { return '<th>' + esc(c[1]) + (c[4] ? ' <button type="button" class="tk-colx" data-col="' + c[0] + '" aria-label="Remove the ' + esc(c[1]) + ' column">✕</button>' : '') + '</th>'; }).join('') + '<th></th></tr></thead>';
       // Remove a column staff added (for every Riser).
       Array.prototype.forEach.call(t.querySelectorAll('.tk-colx'), function (b) {
@@ -284,6 +312,8 @@
           });
         });
       });
+      return t;
+      }
       if (L.custom) {
         sec.querySelector('.tk-rename').addEventListener('click', function () {
           var t2 = prompt('New name for this section:', L.title);
@@ -295,8 +325,7 @@
           saveDefs(function (d) { d.sections = d.sections.filter(function (x) { return x.id !== name; }); });
         });
       }
-      var tb = el('tbody');
-      rows.forEach(function (row, i) {
+      function rowEl(row, i) {
         var tr = el('tr');
         L.cols.forEach(function (c) {
           var td = el('td');
@@ -345,6 +374,7 @@
             inp.style.minWidth = (c[2] || 90) + 'px';
             inp.value = row[c[0]] || '';
             inp.setAttribute('aria-label', c[1]);
+            if (name === 'observations' && c[0] === 'subject') inp.placeholder = subjOf(row);
             var fit = function () { inp.style.height = 'auto'; inp.style.height = inp.scrollHeight + 2 + 'px'; };
             setTimeout(fit, 0);
             inp.addEventListener('input', function () {
@@ -368,15 +398,41 @@
         del.addEventListener('click', function () {
           if (!confirm('Delete this row?')) return;
           // Deleting an automatic observation: don't add it back.
-          if (row.auto) (rec.assessments || []).forEach(function (a) { if (a.id === row.auto) a.obsOff = true; });
+          if (row.auto) (rec.assessments || []).concat(rec.tables || []).forEach(function (a) { if (a.id === row.auto) a.obsOff = true; });
           rows.splice(i, 1); save(); draw();
         });
         var td = el('td'); td.appendChild(del); tr.appendChild(td);
-        tb.appendChild(tr);
-      });
-      t.appendChild(tb);
-      wrap.appendChild(t);
-      if (rows.length) sec.appendChild(wrap); else sec.appendChild(el('p', 'tk-empty', 'Nothing yet.'));
+        return tr;
+      }
+      function tableOf(list) {
+        var wrap = el('div', 'tk-wrap'), t = makeTable(), tb = el('tbody');
+        list.forEach(function (i) { tb.appendChild(rowEl(rows[i], i)); });
+        t.appendChild(tb);
+        wrap.appendChild(t);
+        return wrap;
+      }
+      var all = rows.map(function (r, i) { return i; });
+      if (!rows.length) sec.appendChild(el('p', 'tk-empty', 'Nothing yet.'));
+      else if (name !== 'observations') sec.appendChild(tableOf(all));
+      else {
+        // Observations: a table for each subject, oldest first.
+        var groups = {};
+        all.forEach(function (i) { var g = subjOf(rows[i]); (groups[g] = groups[g] || []).push(i); });
+        var names = SUBJ.map(function (x) { return x[0]; }).filter(function (g) { return groups[g]; })
+          .concat(Object.keys(groups).filter(function (g) { return g !== 'Other' && !SUBJ.some(function (x) { return x[0] === g; }); }).sort())
+          .concat(groups.Other ? ['Other'] : []);
+        names.forEach(function (g) {
+          var list = groups[g].sort(function (x, y) { return (isoOfText(rows[x].date) || '9').localeCompare(isoOfText(rows[y].date) || '9'); });
+          sec.appendChild(el('h3', 'tk-subj', esc(g) + ' <small>' + list.length + '</small>'));
+          sec.appendChild(tableOf(list));
+          var ga = el('button', 'tk-add', g === 'Other' ? '+ Add an observation' : '+ Add a ' + esc(g) + ' observation');
+          ga.type = 'button';
+          ga.addEventListener('click', function () {
+            rows.push({ subject: g === 'Other' ? '' : g, date: new Date().toISOString().slice(0, 10) }); save(); draw();
+          });
+          sec.appendChild(ga);
+        });
+      }
       var add = el('button', 'tk-add', '+ Add a row');
       add.type = 'button';
       add.addEventListener('click', function () {
@@ -388,7 +444,7 @@
         var ins = body.querySelector('section[data-list="' + name + '"]').querySelectorAll('tbody tr:last-child .tk-in');
         if (ins[0]) ins[0].focus();
       });
-      sec.appendChild(add);
+      if (name !== 'observations' || !rows.length) sec.appendChild(add);
       // + Add a column, for every Riser.
       var cf = el('form', 'tk-newcol', '<input type="text" maxlength="40" placeholder="New column" aria-label="New column name"><select aria-label="Column type"><option value="text">Text</option><option value="date">Date</option></select><button type="submit" class="tk-add">+ Add a column</button>');
       cf.addEventListener('submit', function (e) {
