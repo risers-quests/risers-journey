@@ -118,13 +118,13 @@
 
   // Every assessment entry with a score or feedback has an observation
   // (obs.auto = the entry's id) kept in step with it: date, area and what
-  // happened. Entries from before this (noObs) and ones whose observation
-  // staff deleted are left alone. Returns true if rows were added or gone.
+  // happened. Every entry, imported ones too, except one whose observation
+  // staff deleted (obsOff). Returns true if rows were added or gone.
   function syncObs(r) {
     var obs = r.observations = r.observations || [], moved = false, live = {};
     (r.assessments || []).forEach(function (a) {
-      if (!a.id) { a.id = uid(); a.noObs = true; }
-      if (a.noObs || !(String(a.score || '').trim() || String(a.feedback || '').trim())) return;
+      if (!a.id) a.id = uid();
+      if (a.obsOff || !(String(a.score || '').trim() || String(a.feedback || '').trim())) return;
       live[a.id] = 1;
       var o = obs.filter(function (x) { return x.auto === a.id; })[0];
       if (!o) { o = { auto: a.id }; obs.push(o); moved = true; }
@@ -349,7 +349,7 @@
         del.addEventListener('click', function () {
           if (!confirm('Delete this row?')) return;
           // Deleting an automatic observation: don't add it back.
-          if (row.auto) (rec.assessments || []).forEach(function (a) { if (a.id === row.auto) a.noObs = true; });
+          if (row.auto) (rec.assessments || []).forEach(function (a) { if (a.id === row.auto) a.obsOff = true; });
           rows.splice(i, 1); save(); draw();
         });
         var td = el('td'); td.appendChild(del); tr.appendChild(td);
@@ -418,9 +418,9 @@
         setStatus('Saving…');
         return Promise.all(slugs.map(function (s) {
           var k = window.EOT2_findKid(s);
-          // Assessments from the spreadsheet are past ones: no observations
-          // are made for them. Observations already here are kept.
-          data[s].assessments.forEach(function (a) { a.id = uid(); a.noObs = true; });
+          // Observations already here are kept; the assessments' own are made
+          // when the Riser is next opened.
+          data[s].assessments.forEach(function (a) { a.id = uid(); });
           var old = rs[slugs.indexOf(s)] && rs[slugs.indexOf(s)].state;
           return window.eot2Save(k.group, k.slug, KEY, Object.assign(blank(), data[s], { observations: (old && old.observations) || [], u: Date.now(), by: STAFF }));
         })).then(function (res) {
