@@ -106,7 +106,15 @@
   function setMeta(key, v) { state.meta[key] = { v: v, u: now() }; changed(); }
   function sprint() { return Q.weekOf(); }
   // This week's Quest Master (older boards saved it as director<week>).
-  function master(w) { w = w || sprint(); return meta('master' + w, '') || meta('director' + w, ''); }
+  function master(w) {
+    var asked = w;
+    w = w || sprint();
+    var m = meta('master' + w, '') || meta('director' + w, '');
+    // In the getting-ready week (before quest week 1) nobody is set yet:
+    // the Quest Master for quest week 1 runs things.
+    if (!m && !asked && meta('started')) { var qw = questWeek(); if (qw && qw.n < 1) m = meta('master' + Q.startWeek(meta('started')), ''); }
+    return m;
+  }
   function isMaster() { return KID && master() === ME; }
   // A Riser's own job, or anyone's for staff.
   function owner(c) { return (c.who && c.who[0]) || (c.by !== 'facilitator' ? c.by : '') || ''; }
@@ -1240,16 +1248,12 @@
     var qw = questWeek();
     // A Riser trying Term 3 out (assets/brand.js LH_TRIAL), and staff
     // looking at their team, can open it early to see how it works.
-    var trial = qw && qw.n < 1 && (window.LH_TRIAL || []).some(function (t) {
+    var trial = qw && qw.n < 1 && today() < Q.WEEKS[0][0] && (window.LH_TRIAL || []).some(function (t) {
       return KID ? ME.toLowerCase() === t : group.kids.some(function (k) { return k.toLowerCase() === t; });
     });
-    if (qw && qw.n < 1 && !trial) {
-      var first = Q.WEEKS[Q.startWeek(meta('started')) - 1];
-      wrap.appendChild(el('div', 'pb-intro', '<h2>Look Back</h2><p>Your first Look Back is on Wednesday of quest week 1' +
-        (first ? ' (' + Q.nice(wedOf(first[0])) + ')' : '') + '. This week, get ready: read the Quest Pack and fill in Our Plan.</p>'));
-      return wrap;
-    }
-    var label = trial ? 'Quest week 1' : qw ? 'Quest week ' + qw.n : 'Week ' + w;
+    // The getting-ready week has its Look Back too, like a first week.
+    var ready = qw && qw.n < 1;
+    var label = trial ? 'Quest week 1' : ready ? 'Getting-ready week' : qw ? 'Quest week ' + qw.n : 'Week ' + w;
     if (trial) wrap.appendChild(el('p', 'pb-ci-trial', '👀 Try-out: opened early so you can see how it works. The real first Look Back is on Wednesday of quest week 1.' + (KID ? '' : ' Clear it afterwards on the Try-out page.')));
     wrap.appendChild(el('div', 'pb-intro', '<h2>' + label + ': Look Back</h2><p>Wednesday, 30 minutes. <b>Part 1</b>: together, ' +
       esc(master() || 'the Quest Master') + ' types (15 min). <b>Part 2</b>: on your own computer (15 min).</p>'));
@@ -1265,7 +1269,7 @@
       // Did we finish?
       var b1 = block('✅ Did we finish?');
       var done = inCol('done'), stuck = openBlockers();
-      var firstWeek = trial || (qw && qw.n === 1);
+      var firstWeek = trial || ready || (qw && qw.n === 1);
       if (lastGoal && !firstWeek) {
         b1.appendChild(el('p', 'pb-ci-q', 'Last week we said we’d finish: <b>' + esc(lastGoal) + '</b>'));
         b1.appendChild(segs('finished', FINISHED));
@@ -1350,7 +1354,7 @@
     if (window.T3_reflect) window.T3_reflect(rf, group, KID ? ME : '', w, {
       closed: closed,
       label: label,
-      first: trial || (!!qw && qw.n === 1),
+      first: trial || ready || (!!qw && qw.n === 1),
       addTry: function (t) {
         putCard(uid(), { title: '🤝 ' + t, col: 'todo', who: [ME], order: now(), by: ME, kind: 'try' });
         return true;
