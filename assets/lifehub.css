@@ -57,9 +57,9 @@ a { color: var(--accent); }
   background-repeat: no-repeat;
 }
 .lh-has-shell #app {
-  width: 100%; max-width: 1120px; margin: 0 auto; flex: 1 0 auto; padding: 40px 40px 72px;
+  box-sizing: border-box; width: 100%; max-width: 1200px; margin: 0 auto; flex: 1 0 auto; padding: 40px 40px 72px;
 }
-.lh-signed-out #app { max-width: 900px; padding-top: 8px; }
+.lh-signed-out #app { max-width: 980px; padding-top: 8px; }
 
 .lh-side {
   position: fixed; inset: 0 auto 0 0; width: 256px; z-index: 30;
@@ -170,6 +170,8 @@ a { color: var(--accent); }
   .lh-has-shell #app { padding: 22px 16px 40px; }
   .lh-gatebar { padding-top: 28px; }
   .lh-gatebar .lh-logo img { height: 52px; }
+  /* 16px text boxes, so a phone doesn't zoom in when one is tapped. */
+  html .lh-has-shell input:not([type=checkbox]):not([type=radio]), html .lh-has-shell textarea, html .lh-has-shell select { font-size: 16px; }
 }
 
 /* ---- Type ---- */

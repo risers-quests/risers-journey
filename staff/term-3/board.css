@@ -98,6 +98,9 @@
   .pb-board, .pb-su-grid, .pb-review, .pb-retro, .pb-top-row { grid-template-columns: 1fr; }
   .pb-groups { grid-template-columns: 1fr 1fr; }
   .pb-head { flex-direction: column; }
+  .pb-tabs { gap: 4px; }
+  .pb-tab { flex: 1 1 0; min-width: 0; padding: 9px 4px; font-size: .78rem; line-height: 1.2; }
+  .pb-col { min-height: 0; }
 }
 .pb-by { align-self: flex-start; display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .03em; color: var(--ink-soft); background: var(--paper-soft); border: 1px solid var(--border); border-radius: 6px; padding: 1px 7px; margin: 0; }
 
