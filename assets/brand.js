@@ -36,6 +36,14 @@
   // Written in while the page is still loading, like the page's own
   // stylesheets, so nothing is drawn before it is in.
   if (document.readyState === 'loading') document.write('<link rel="stylesheet" href="' + assets + 'mobile.css">');
+  // Installable as an app (Android's "Install"): the staff app opens on
+  // the staff home, the Risers' on theirs.
+  if (!document.querySelector('link[rel=manifest]')) {
+    var mf = document.createElement('link');
+    mf.rel = 'manifest';
+    mf.href = root + (isStaff ? 'staff/' : '') + 'manifest.webmanifest';
+    document.head.appendChild(mf);
+  }
   var vp = document.querySelector('meta[name=viewport]');
   if (vp && !/viewport-fit/.test(vp.content)) vp.content += ', viewport-fit=cover';
   [['theme-color', '#f7f9f5'], ['mobile-web-app-capable', 'yes'], ['apple-mobile-web-app-capable', 'yes'],
