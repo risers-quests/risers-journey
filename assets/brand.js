@@ -30,6 +30,23 @@
   icon.href = assets + 'lifehub-mark.png';
   document.head.appendChild(icon);
 
+  // Phones: the app look (assets/mobile.css, moved after the page's own
+  // stylesheets once they're all in), full-screen from the home screen,
+  // and room for the notch and the home bar.
+  var mcss = document.createElement('link');
+  mcss.rel = 'stylesheet';
+  mcss.href = assets + 'mobile.css';
+  document.head.appendChild(mcss);
+  var vp = document.querySelector('meta[name=viewport]');
+  if (vp && !/viewport-fit/.test(vp.content)) vp.content += ', viewport-fit=cover';
+  [['theme-color', '#f7f9f5'], ['mobile-web-app-capable', 'yes'], ['apple-mobile-web-app-capable', 'yes'],
+    ['apple-mobile-web-app-status-bar-style', 'default'], ['apple-mobile-web-app-title', 'Risers Journey']].forEach(function (m) {
+    if (document.querySelector('meta[name="' + m[0] + '"]')) return;
+    var e = document.createElement('meta');
+    e.name = m[0]; e.content = m[1];
+    document.head.appendChild(e);
+  });
+
   var ICONS = {
     home: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/>',
     quests: '<path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2.5Z"/><path d="M8 7h7M8 11h5"/>',
@@ -187,10 +204,12 @@
           '</div>' +
         '</aside>' +
         '<div class="lh-main">' +
-          '<header class="lh-topbar">' + logo +
-            '<span class="lh-topbar-title">Risers Journey</span>' +
-            '<span class="lh-avatar lh-avatar-sm">' + initial + '</span>' +
-            '<a href="#" class="lh-logout" aria-label="Log out">' + svg('logout') + '</a>' +
+          '<header class="lh-topbar">' +
+            '<span class="lh-nb-left"><a class="lh-back" href="#" hidden>' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg><span></span></a>' +
+              '<a class="lh-nb-mark" href="' + homeHref + '"><img src="' + assets + 'lifehub-mark.png" alt=""><span>Risers Journey</span></a></span>' +
+            '<span class="lh-nb-title" aria-hidden="true"></span>' +
+            '<button type="button" class="lh-me" aria-label="Your account"><span class="lh-avatar">' + initial + '</span></button>' +
           '</header>' +
         '</div>' +
         '<nav class="lh-tabbar" aria-label="Main">' + navHtml(true) + '</nav>';
@@ -204,6 +223,8 @@
     main.insertAdjacentHTML('beforeend', footer);
 
     Array.prototype.forEach.call(shell.querySelectorAll('.lh-logout'), function (a) { a.addEventListener('click', logout); });
+    document.head.appendChild(mcss);
+    if (name) phone(shell, name, app);
     Array.prototype.forEach.call(shell.querySelectorAll('.lh-nav-toggle'), function (b) {
       b.addEventListener('click', function () {
         var g = b.closest('.lh-nav-group'), open = g.classList.toggle('is-open');
@@ -216,6 +237,55 @@
       var t = e.target.closest && e.target.closest('#logout-link');
       if (t) { e.stopImmediatePropagation(); logout(e); }
     }, true);
+  }
+
+  /* Phones: the navigation bar takes the page's own "← Back" link as its
+     back button, shows the page's big title once it scrolls away, and the
+     avatar opens an account sheet. Pages draw themselves after loading,
+     so this watches #app for them. */
+  function phone(shell, name, app) {
+    var bar = shell.querySelector('.lh-topbar'), back = bar.querySelector('.lh-back'), title = bar.querySelector('.lh-nb-title');
+    var seen = null, io = null;
+    function sync() {
+      var crumb = app && app.querySelector('.dash-crumb a, .eot2-crumb a');
+      if (crumb) {
+        back.href = crumb.getAttribute('href');
+        back.lastChild.textContent = crumb.textContent.replace(/^\s*[←‹<]\s*/, '');
+        back.hidden = false;
+      } else back.hidden = true;
+      bar.classList.toggle('has-back', !!crumb);
+      document.body.classList.toggle('lh-has-back', !!crumb);
+      var h1 = app && app.querySelector('h1');
+      title.textContent = h1 ? h1.textContent : '';
+      if (h1 !== seen) {
+        seen = h1;
+        if (io) io.disconnect();
+        if (h1 && 'IntersectionObserver' in window) {
+          io = new IntersectionObserver(function (es) { bar.classList.toggle('is-scrolled', !es[0].isIntersecting); }, { rootMargin: '-56px 0px 0px 0px' });
+          io.observe(h1);
+        }
+      }
+      if (!h1) bar.classList.toggle('is-scrolled', window.scrollY > 4);
+    }
+    if (app) new MutationObserver(sync).observe(app, { childList: true, subtree: true });
+    window.addEventListener('scroll', function () { if (!seen) bar.classList.toggle('is-scrolled', window.scrollY > 4); }, { passive: true });
+    sync();
+
+    var sheet = document.createElement('div');
+    sheet.className = 'lh-sheet';
+    sheet.hidden = true;
+    sheet.innerHTML = '<div class="lh-sheet-bg"></div><div class="lh-sheet-panel" role="dialog" aria-label="Your account">' +
+      '<div class="lh-sheet-grab"></div>' +
+      '<div class="lh-sheet-who"><span class="lh-avatar">' + name.charAt(0) + '</span><span><b>' + name + '</b><small>' + (isStaff ? 'Facilitator' : 'Riser') + ' · LifeHub</small></span></div>' +
+      '<div class="lh-sheet-list"><a class="lh-sheet-row" href="' + root + (isStaff ? 'staff/index.html' : 'index.html') + '">' + svg('home') + 'Home</a>' +
+      '<a class="lh-sheet-row is-danger lh-sheet-out" href="#">' + svg('logout') + 'Log out</a></div>' +
+      '<button type="button" class="lh-sheet-row lh-sheet-close">Close</button></div>';
+    document.body.appendChild(sheet);
+    function close() { sheet.hidden = true; }
+    bar.querySelector('.lh-me').addEventListener('click', function () { sheet.hidden = false; });
+    sheet.querySelector('.lh-sheet-bg').addEventListener('click', close);
+    sheet.querySelector('.lh-sheet-close').addEventListener('click', close);
+    sheet.querySelector('.lh-sheet-out').addEventListener('click', logout);
   }
 
   if (document.body && document.getElementById('app')) build();

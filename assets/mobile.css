@@ -1,0 +1,171 @@
+/* LifeHub on phones — the app look. assets/brand.js loads this after every
+   other stylesheet, and it only applies up to tablet width, so computers
+   keep the sidebar layout untouched.
+
+   The model is a native phone app: a quiet navigation bar with a back
+   button and a title that appears once the page's big title scrolls away,
+   a frosted tab bar, grouped lists instead of web cards, segmented tabs,
+   press feedback instead of hover, and no web footer. */
+
+@view-transition { navigation: auto; }
+
+@media (max-width: 960px) {
+  html { -webkit-text-size-adjust: 100%; background: var(--paper); }
+  body { -webkit-tap-highlight-color: transparent; }
+  body.lh-has-shell { margin: 0; }
+  a, button, input, select, textarea, label { touch-action: manipulation; }
+
+  /* ---- Navigation bar ---- */
+  .lh-signed-in .lh-topbar {
+    view-transition-name: lh-topbar;
+    display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 8px;
+    min-height: 52px; padding: env(safe-area-inset-top) 12px 0;
+    background: rgba(247, 249, 245, 0); border-bottom: .5px solid transparent;
+    transition: background .2s ease, border-color .2s ease;
+  }
+  .lh-signed-in .lh-topbar.is-scrolled {
+    background: rgba(247, 249, 245, .82); border-bottom-color: rgba(30, 42, 51, .12);
+    -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+  }
+  .lh-topbar > .lh-logout, .lh-topbar > .lh-avatar-sm, .lh-topbar > .lh-logo { display: none; }
+  .lh-nb-left { grid-column: 1; display: flex; align-items: center; min-width: 0; }
+  .lh-nb-mark { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--ink); min-width: 0; }
+  .lh-nb-mark img { width: 30px; height: 30px; border-radius: 9px; background: #fff; box-shadow: 0 0 0 .5px rgba(30, 42, 51, .12); padding: 3px; box-sizing: border-box; }
+  .lh-nb-mark span { font-family: var(--font-head); font-weight: 600; font-size: .95rem; white-space: nowrap; }
+  .lh-back {
+    display: inline-flex; align-items: center; gap: 1px; min-width: 0; min-height: 44px; margin-left: -6px; padding-right: 8px;
+    color: var(--accent); text-decoration: none; font-size: 1.02rem; font-weight: 500;
+  }
+  .lh-back svg { width: 26px; height: 26px; flex: 0 0 auto; }
+  .lh-back span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lh-back:active { opacity: .45; }
+  .lh-back[hidden] { display: none; }
+  .lh-nb-title {
+    grid-column: 2; max-width: 46vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-family: var(--font-head); font-weight: 600; font-size: 1rem; color: var(--ink); text-align: center;
+    opacity: 0; transform: translateY(4px); transition: opacity .2s ease, transform .2s ease;
+  }
+  .lh-topbar.is-scrolled .lh-nb-title { opacity: 1; transform: none; }
+  .lh-topbar.has-back .lh-nb-mark { display: none; }
+  .lh-me {
+    grid-column: 3; justify-self: end; border: 0; padding: 0; background: none; cursor: pointer;
+    width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%;
+  }
+  .lh-me .lh-avatar { width: 32px; height: 32px; font-size: .85rem; }
+  .lh-me:active { opacity: .6; }
+
+  /* ---- Tab bar ---- */
+  .lh-signed-in .lh-tabbar {
+    view-transition-name: lh-tabbar;
+    background: rgba(255, 255, 255, .86); border-top: .5px solid rgba(30, 42, 51, .14);
+    -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+    padding: 6px 6px calc(4px + env(safe-area-inset-bottom));
+    -webkit-user-select: none; user-select: none;
+  }
+  .lh-tabbar .lh-nav-item {
+    gap: 4px; padding: 2px 2px 4px; font-size: .68rem; font-weight: 600; color: #8592a0; border-radius: 0;
+    min-height: 48px;
+  }
+  .lh-tabbar .lh-nav-item .lh-ico {
+    width: 58px; height: 30px; padding: 4px 18px; box-sizing: border-box; border-radius: 99px;
+    transition: background .2s ease;
+  }
+  .lh-tabbar .lh-nav-item.is-active { color: var(--accent-dark); }
+  .lh-tabbar .lh-nav-item.is-active .lh-ico { background: var(--accent-soft); color: var(--accent); stroke-width: 2.1; }
+  .lh-tabbar .lh-nav-item:active .lh-ico { background: var(--paper-soft); }
+  .lh-signed-in .lh-main { padding-bottom: calc(66px + env(safe-area-inset-bottom)); }
+
+  /* An app has no web footer. */
+  .lh-signed-in .lh-footer { display: none; }
+  .lh-main { background: var(--paper); }
+
+  /* The page's own "← Back" link lives in the navigation bar now. */
+  .lh-has-back .dash-crumb, .lh-has-back .eot2-crumb { display: none; }
+
+  /* ---- Account sheet ---- */
+  .lh-sheet { position: fixed; inset: 0; z-index: 60; display: flex; flex-direction: column; justify-content: flex-end; }
+  .lh-sheet[hidden] { display: none; }
+  .lh-sheet-bg { position: absolute; inset: 0; background: rgba(20, 28, 34, .32); animation: lh-fade .2s ease; }
+  .lh-sheet-panel {
+    position: relative; background: #fff; border-radius: 22px 22px 0 0; padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
+    box-shadow: 0 -8px 30px rgba(20, 28, 34, .12); animation: lh-up .28s cubic-bezier(.2, .9, .3, 1);
+  }
+  .lh-sheet-grab { width: 38px; height: 5px; border-radius: 3px; background: #d5dbd1; margin: 0 auto 14px; }
+  .lh-sheet-who { display: flex; align-items: center; gap: 14px; padding: 4px 4px 18px; }
+  .lh-sheet-who .lh-avatar { width: 52px; height: 52px; font-size: 1.3rem; }
+  .lh-sheet-who b { display: block; font-family: var(--font-head); font-weight: 600; font-size: 1.15rem; }
+  .lh-sheet-who small { color: var(--ink-faint); font-size: .85rem; }
+  .lh-sheet-list { background: var(--paper); border-radius: 14px; overflow: hidden; }
+  .lh-sheet-row {
+    display: flex; align-items: center; gap: 12px; width: 100%; min-height: 50px; padding: 0 16px; border: 0; background: none;
+    font: inherit; font-size: 1rem; color: var(--ink); text-decoration: none; text-align: left; cursor: pointer;
+  }
+  .lh-sheet-row + .lh-sheet-row { box-shadow: inset 0 .5px 0 rgba(30, 42, 51, .12); }
+  .lh-sheet-row .lh-ico { width: 20px; height: 20px; color: var(--ink-faint); }
+  .lh-sheet-row.is-danger, .lh-sheet-row.is-danger .lh-ico { color: #c2382d; }
+  .lh-sheet-row:active { background: #e9ede5; }
+  .lh-sheet-close { margin-top: 10px; background: var(--paper); border-radius: 14px; justify-content: center; font-weight: 600; color: var(--accent); }
+  @keyframes lh-up { from { transform: translateY(100%); } to { transform: none; } }
+  @keyframes lh-fade { from { opacity: 0; } to { opacity: 1; } }
+
+  /* ---- Touch: press feedback, no hover lifts ---- */
+  a.hd-tile, .eot2-hub-card, .pq-btn, .eot2-btn, .btn-primary, .eot2-btn-secondary, .pb-tab, .sc-tab, .sq-row {
+    transition: transform .12s ease, background .12s ease, opacity .12s ease;
+  }
+  a.hd-tile:active, .eot2-hub-card:active, .sq-row:active { transform: scale(.985); }
+  .pq-btn:active, .eot2-btn:active, .btn-primary:active, .eot2-btn-secondary:active { transform: scale(.97); opacity: .85; }
+}
+
+@media (max-width: 960px) and (hover: none) {
+  a.hd-tile:hover, .eot2-hub-card:hover, .btn-primary:hover, .eot2-btn:hover { transform: none; box-shadow: var(--shadow-sm); }
+  a.hd-tile:hover .hd-tile-go, .sq-row:hover .sq-go { transform: none; }
+}
+
+@media (max-width: 640px) {
+  .lh-has-shell.lh-signed-in #app { padding: 6px 16px 28px; }
+
+  /* ---- Large titles ---- */
+  .hd-welcome { padding: 4px 4px 20px; }
+  .hd-page-head { padding: 0 4px 18px; }
+  .hd-welcome h1, .hd-page-head h1, .eot2-head h1, .lh-signed-in .eot2-form-header h1 {
+    font-size: 2rem; font-weight: 700; letter-spacing: -.025em; line-height: 1.12; margin-bottom: 4px;
+  }
+  .hd-welcome p:last-child, .hd-page-head p:last-child { font-size: .98rem; }
+  .hd-eyebrow { font-size: .7rem; margin-bottom: 4px; }
+
+  /* ---- Menus as a grouped list ---- */
+  .hd-tiles {
+    gap: 0; background: #fff; border-radius: 18px; overflow: hidden;
+    box-shadow: 0 0 0 .5px rgba(30, 42, 51, .08), 0 1px 3px rgba(30, 42, 51, .05);
+  }
+  .hd-tile, a.hd-tile {
+    position: relative; padding: 13px 14px 13px 16px; gap: 14px; border: 0; border-radius: 0; box-shadow: none; background: #fff;
+    min-height: 0;
+  }
+  .hd-tile + .hd-tile::before {
+    content: ''; position: absolute; top: 0; right: 0; left: 66px; height: .5px; background: rgba(30, 42, 51, .13);
+  }
+  a.hd-tile:active { transform: none; background: #eef1ec; }
+  .hd-tile-ico { width: 36px; height: 36px; border-radius: 10px; align-self: flex-start; margin-top: 1px; }
+  .hd-tile-ico .lh-ico { width: 20px; height: 20px; }
+  .hd-tile-text strong { font-family: var(--font-body); font-size: 1rem; font-weight: 600; margin-bottom: 1px; letter-spacing: -.01em; }
+  .hd-tile-text span { font-size: .84rem; line-height: 1.38; }
+  .hd-tile-go { font-size: 0; width: 8px; height: 8px; flex: 0 0 auto; border: solid #b8c0c7; border-width: 2px 2px 0 0; transform: rotate(45deg); margin-right: 4px; }
+  a.hd-tile:hover .hd-tile-go { transform: rotate(45deg); }
+  .hd-tile.is-soon { background: #fff; opacity: .6; }
+
+  /* ---- Segmented controls ---- */
+  .pb-tabs, .sc-tabs {
+    display: flex; gap: 2px; padding: 3px; border-radius: 12px; background: rgba(118, 128, 120, .13);
+  }
+  .pb-tab, .sc-tab {
+    flex: 1 1 0; min-width: 0; border: 0 !important; border-radius: 9px; background: transparent; color: var(--ink);
+    font-size: .8rem; font-weight: 600; padding: 8px 2px; line-height: 1.2; box-shadow: none;
+  }
+  .pb-tab.is-on, .sc-tab.is-on {
+    background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(20, 28, 34, .14), 0 0 0 .5px rgba(20, 28, 34, .04);
+  }
+
+  /* ---- Comfortable touch targets ---- */
+  .pq-btn, .eot2-btn, .btn-primary, .eot2-btn-secondary { min-height: 44px; }
+}
