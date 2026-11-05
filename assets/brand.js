@@ -30,8 +30,8 @@
   icon.href = assets + 'lifehub-mark.png';
   document.head.appendChild(icon);
 
-  // Phones: the app look (assets/mobile.css, moved after the page's own
-  // stylesheets once they're all in), full-screen from the home screen,
+  // Phones: the app look (assets/mobile.css; its rules start with `html`
+  // so they win over page stylesheets loaded after this), full-screen from the home screen,
   // and room for the notch and the home bar.
   var mcss = document.createElement('link');
   mcss.rel = 'stylesheet';
@@ -223,7 +223,6 @@
     main.insertAdjacentHTML('beforeend', footer);
 
     Array.prototype.forEach.call(shell.querySelectorAll('.lh-logout'), function (a) { a.addEventListener('click', logout); });
-    document.head.appendChild(mcss);
     if (name) phone(shell, name, app);
     Array.prototype.forEach.call(shell.querySelectorAll('.lh-nav-toggle'), function (b) {
       b.addEventListener('click', function () {

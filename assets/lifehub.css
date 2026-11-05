@@ -57,9 +57,9 @@ a { color: var(--accent); }
   background-repeat: no-repeat;
 }
 .lh-has-shell #app {
-  box-sizing: border-box; width: 100%; max-width: 1200px; margin: 0 auto; flex: 1 0 auto; padding: 40px 40px 72px;
+  width: 100%; max-width: 1120px; margin: 0 auto; flex: 1 0 auto; padding: 40px 40px 72px;
 }
-.lh-signed-out #app { max-width: 980px; padding-top: 8px; }
+.lh-signed-out #app { max-width: 900px; padding-top: 8px; }
 
 .lh-side {
   position: fixed; inset: 0 auto 0 0; width: 256px; z-index: 30;
@@ -163,7 +163,7 @@ a { color: var(--accent); }
     justify-content: center;
   }
   .lh-tabbar .lh-nav-item.is-active { background: none; }
-  .lh-has-shell #app { padding: 28px 20px 48px; }
+  .lh-has-shell #app { padding: 28px 20px 48px; box-sizing: border-box; }
   .lh-footer { padding: 16px 20px; }
 }
 @media (max-width: 560px) {

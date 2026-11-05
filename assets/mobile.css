@@ -113,7 +113,7 @@
     transition: transform .12s ease, background .12s ease, opacity .12s ease;
   }
   a.hd-tile:active, .eot2-hub-card:active, .sq-row:active { transform: scale(.985); }
-  .pq-btn:active, .eot2-btn:active, .btn-primary:active, .eot2-btn-secondary:active { transform: scale(.97); opacity: .85; }
+  html .pq-btn:active, html .eot2-btn:active, .btn-primary:active, .eot2-btn-secondary:active { transform: scale(.97); opacity: .85; }
 }
 
 @media (max-width: 960px) and (hover: none) {
@@ -155,17 +155,17 @@
   .hd-tile.is-soon { background: #fff; opacity: .6; }
 
   /* ---- Segmented controls ---- */
-  .pb-tabs, .sc-tabs {
+  html .pb-tabs, html .sc-tabs {
     display: flex; gap: 2px; padding: 3px; border-radius: 12px; background: rgba(118, 128, 120, .13);
   }
-  .pb-tab, .sc-tab {
+  html .pb-tab, html .sc-tab {
     flex: 1 1 0; min-width: 0; border: 0 !important; border-radius: 9px; background: transparent; color: var(--ink);
     font-size: .8rem; font-weight: 600; padding: 8px 2px; line-height: 1.2; box-shadow: none;
   }
-  .pb-tab.is-on, .sc-tab.is-on {
+  html .pb-tab.is-on, html .sc-tab.is-on {
     background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(20, 28, 34, .14), 0 0 0 .5px rgba(20, 28, 34, .04);
   }
 
   /* ---- Comfortable touch targets ---- */
-  .pq-btn, .eot2-btn, .btn-primary, .eot2-btn-secondary { min-height: 44px; }
+  html .pq-btn, html .eot2-btn, html .btn-primary, html .eot2-btn-secondary { min-height: 44px; }
 }
