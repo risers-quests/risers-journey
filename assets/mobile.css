@@ -7,7 +7,7 @@
    a frosted tab bar, grouped lists instead of web cards, segmented tabs,
    press feedback instead of hover, and no web footer. */
 
-@view-transition { navigation: auto; }
+@media (max-width: 960px) { @view-transition { navigation: auto; } }
 
 @media (max-width: 960px) {
   html { -webkit-text-size-adjust: 100%; background: var(--paper); }
