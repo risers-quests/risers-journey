@@ -1,7 +1,7 @@
 {
   "id": "/staff/",
-  "name": "Risers Journey Staff",
-  "short_name": "RJ Staff",
+  "name": "Risers Journey",
+  "short_name": "Risers Journey",
   "description": "LifeHub's Risers Journey staff workspace.",
   "start_url": "/staff/",
   "scope": "/",
