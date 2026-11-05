@@ -33,10 +33,9 @@
   // Phones: the app look (assets/mobile.css; its rules start with `html`
   // so they win over page stylesheets loaded after this), full-screen from the home screen,
   // and room for the notch and the home bar.
-  var mcss = document.createElement('link');
-  mcss.rel = 'stylesheet';
-  mcss.href = assets + 'mobile.css';
-  document.head.appendChild(mcss);
+  // Written in while the page is still loading, like the page's own
+  // stylesheets, so nothing is drawn before it is in.
+  if (document.readyState === 'loading') document.write('<link rel="stylesheet" href="' + assets + 'mobile.css">');
   var vp = document.querySelector('meta[name=viewport]');
   if (vp && !/viewport-fit/.test(vp.content)) vp.content += ', viewport-fit=cover';
   [['theme-color', '#f7f9f5'], ['mobile-web-app-capable', 'yes'], ['apple-mobile-web-app-capable', 'yes'],
