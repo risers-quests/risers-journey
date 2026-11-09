@@ -106,7 +106,7 @@ light others follow.</p>
 <td>1</td>
 <td><strong>Spark</strong></td>
 <td>Trying it out, often</td>
-<td>5 Snaps over at least 3 weeks</td>
+<td>5 feed posts over at least 3 weeks</td>
 </tr>
 <tr>
 <td>2</td>
@@ -214,49 +214,91 @@ baking competition.</p>
 family once: "What do you, or people you know, do for a living, and
 would they host a visit or a day's shadowing?" Tag each answer by field.
 That one list makes Level 5 possible for most Risers.</p>
-<h2>Snaps, not a journal</h2>
-<p>Kids see a journal as homework. So there is no journal: there are
-<strong>Snaps</strong>.</p>
+<h2>The Passion Feed (instead of a journal)</h2>
+<p>Kids see a journal as homework. So there is no journal: there's a
+<strong>Passion Feed</strong>. Each week, in passion hour, a Riser posts what they've
+been working on: a <strong>photo or a short video with a caption</strong>. Other
+Risers and staff react with 🔥 ❤️ 👏.</p>
 <div class="doc-table"><table>
 <thead>
 <tr>
 <th>Problem with journals</th>
-<th>What Snaps do instead</th>
+<th>What the feed does instead</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Writing feels like schoolwork</td>
-<td><strong>A photo, a 10-second video or a voice note.</strong> Writing is optional: one line at most</td>
+<td>Writing for no one</td>
+<td><strong>A real audience</strong>: other Risers and their mentor see it and react</td>
 </tr>
 <tr>
-<td>A blank page: "what do I write?"</td>
-<td><strong>One quick question each time</strong>, different every week: "What went wrong today?", "What would you show a friend?", "What surprised you?" Answer by voice</td>
+<td>Writing feels like schoolwork</td>
+<td><strong>A photo or a video of up to 30 seconds</strong>, and a one-line caption (or a voice note)</td>
+</tr>
+<tr>
+<td>A blank page: "what do I post?"</td>
+<td><strong>A weekly question</strong> shown as a caption idea: "What went wrong today?", "What would you show a friend?"</td>
 </tr>
 <tr>
 <td>Remembering to do it at home</td>
-<td><strong>The last 5 minutes of passion hour is Snap time</strong>, with the mentor. Done before they leave</td>
-</tr>
-<tr>
-<td>Writing for no one</td>
-<td><strong>Other Risers and their mentor can react</strong> (⭐ 🔥 👏), and they choose what their family sees</td>
-</tr>
-<tr>
-<td>Doesn't feel like it leads anywhere</td>
-<td><strong>Every Snap fills their level bar.</strong> Posting is levelling up</td>
+<td><strong>The last 5 minutes of passion hour is posting time</strong>, with the mentor. Done before they leave</td>
 </tr>
 <tr>
 <td>Too much effort</td>
-<td><strong>The mentor can Snap for them</strong> during passion hour (a photo of what they're making)</td>
+<td><strong>The mentor can post for them</strong> (a photo of what they're making)</td>
+</tr>
+<tr>
+<td>Doesn't feel like it leads anywhere</td>
+<td><strong>Every post fills their level bar</strong></td>
 </tr>
 <tr>
 <td>Nothing to show at the end</td>
-<td><strong>At each level-up, the app makes a "then and now"</strong>: their first Snap next to their latest</td>
+<td><strong>At each level-up, a "then and now"</strong>: their first post next to their latest</td>
+</tr>
+<tr>
+<td>Others' work stays unseen</td>
+<td><strong>Risers see each other's passions</strong>, which sparks new ones</td>
 </tr>
 </tbody>
 </table></div>
-<p><strong>No streaks, no guilt reminders.</strong> Streaks turn a passion into a chore.
-If a Riser goes quiet, their mentor talks to them; the app doesn't nag.</p>
+<h3>Feed rules (to keep it kind and safe)</h3>
+<div class="doc-table"><table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reactions only: 🔥 ❤️ 👏. <strong>No comments</strong> (the mentor can add a private note)</td>
+<td>No mean or careless comments</td>
+</tr>
+<tr>
+<td>Show <strong>who</strong> reacted, <strong>not counts</strong>. No "top posts"</td>
+<td>It must not become a popularity contest</td>
+</tr>
+<tr>
+<td>Only <strong>LifeHub Risers and staff</strong> see the feed; each Riser chooses which posts their family sees</td>
+<td>Children's photos stay inside LifeHub</td>
+</tr>
+<tr>
+<td><strong>Staff can hide</strong> any post</td>
+<td>Anything inappropriate is gone at once</td>
+</tr>
+<tr>
+<td><strong>No streaks</strong>, no "you haven't posted" reminders to the Riser</td>
+<td>A passion mustn't turn into a chore. The mentor talks to a quiet Riser</td>
+</tr>
+</tbody>
+</table></div>
+<h3>Before we build it: private storage</h3>
+<p>Today everything the site saves goes to one store whose key is in the
+public code (see TODO.md). That's fine for quest progress, <strong>not for
+children's photos and videos</strong>. The feed needs <strong>private storage with
+proper sign-in</strong> first (for example a private file store with
+time-limited links, or Google Drive), and videos are too big for the
+current store anyway.</p>
 <h2>What the app does automatically</h2>
 <div class="doc-table"><table>
 <thead>
@@ -271,12 +313,12 @@ If a Riser goes quiet, their mentor talks to them; the app doesn't nag.</p>
 <td>From their Passion Finder answers (their ONE)</td>
 </tr>
 <tr>
-<td>Keeps their Snaps</td>
-<td>Photos, short videos and voice notes, any time, from a phone</td>
+<td>Runs the Passion Feed</td>
+<td>Photo or video posts with captions; reactions; family sharing by choice</td>
 </tr>
 <tr>
 <td>Counts progress</td>
-<td>Fills their level bar ("4 of 5 Snaps")</td>
+<td>Fills their level bar ("4 of 5 posts")</td>
 </tr>
 <tr>
 <td>Says what's next</td>
@@ -292,7 +334,7 @@ If a Riser goes quiet, their mentor talks to them; the app doesn't nag.</p>
 </tr>
 <tr>
 <td>Tells the mentor</td>
-<td>Flags a Riser who hasn't Snapped in 2 weeks, so the mentor can talk to them (no nagging the Riser)</td>
+<td>Flags a Riser who hasn't posted in 2 weeks, so the mentor can talk to them (no nagging the Riser)</td>
 </tr>
 <tr>
 <td>Finds opportunities</td>
@@ -304,7 +346,7 @@ If a Riser goes quiet, their mentor talks to them; the app doesn't nag.</p>
 </tr>
 <tr>
 <td>Shows staff</td>
-<td>One board: each Riser's passion, level, last Snap, and who's waiting for sign-off</td>
+<td>One board: each Riser's passion, level, last post, and who's waiting for sign-off</td>
 </tr>
 </tbody>
 </table></div>
@@ -322,7 +364,7 @@ visits and shadowing, and the conversations.</p>
 <tbody>
 <tr>
 <td>Mentor (the Riser's own staff)</td>
-<td>Run Snap time at the end of passion hour; approve level-ups; a 10-minute chat with each Riser</td>
+<td>Run posting time at the end of passion hour; hide posts if needed; approve level-ups; a 10-minute chat with each Riser</td>
 <td>Weekly Snap time; monthly chat; level-ups when asked</td>
 </tr>
 <tr>
@@ -341,9 +383,11 @@ visits and shadowing, and the conversations.</p>
 <ol>
 <li><strong>Level names:</strong> "Rise" (Spark → Star) above, or another theme
    (see below).</li>
-<li><strong>Go-ahead to build</strong>, in this order: passion hour Snaps and levels;
-   then mentor sign-off, badges and the staff board; then the Experts
-   Directory and matching opportunities.</li>
+<li><strong>Private storage for photos and videos</strong> (needed before the feed):
+   a private file store, or Google Drive?</li>
+<li><strong>Go-ahead to build</strong>, in this order: private storage; the Passion
+   Feed and levels; then mentor sign-off, badges and the staff board;
+   then the Experts Directory and matching opportunities.</li>
 </ol>
 <p>Other name themes: <strong>Growth:</strong> Seed · Sprout · Sapling · Bloom · Branch ·
 Grove · Forest. <strong>Climb:</strong> Basecamp · Trailblazer · Ridge · Summit ·
