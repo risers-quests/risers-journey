@@ -100,7 +100,7 @@
       ['Assessment Tracking', 'staff/term-3/tracking.html'], ['Observations', 'staff/term-3/observations.html'],
       ['Assessments', 'term-3/assessments/index.html?view=staff'], ['10th Boards: before we meet', 'term-3/grade10/index.html?view=staff'],
       ['Passion Finder', 'term-3/passion/index.html?view=staff'],
-      ['Olympiad Plan', 'staff/term-3/olympiads.html'], ['Passions', 'staff/term-3/passions.html'],
+      ['Olympiad Plan', 'staff/term-3/olympiads.html'], ['Beyond the Classroom', 'staff/term-3/opportunities.html'], ['Passions', 'staff/term-3/passions.html'],
       ['Try-out data', 'staff/term-3/try-out.html']],
     'Term 2': [['Term 2 Conference', 'end-of-term-2/staff/index.html'], ['Term 2 Quests', 'staff/quests/index.html']],
     'Term 1': [['Term 1 Conference', 'term-1-conference/index.html?view=staff']]
