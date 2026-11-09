@@ -11,7 +11,20 @@
      term3-grade10 as { answers: { <id>: text | choice | [choices],
      <id>_why: text }, _sent }. */
 (function () {
-  var G = window.G10, KEY = 'term3-grade10', APPROVAL = 'grade10-approval';
+  var G = window.G10;
+  // Wording and save keys can come from the data file, so the same page
+  // also runs other questionnaires (e.g. the Passion Finder); these
+  // defaults are the 10th Grade ones.
+  var T = Object.assign({
+    key: 'term3-grade10', approval: 'grade10-approval', defaultKids: ['benjamin'],
+    sub: 'For {name}’s parents, before the meeting',
+    send: 'Send before the meeting',
+    thanks: 'Thank you! You sent this on {date}. We will go through it with you at the meeting.',
+    staffIntro: 'Parents fill this in before the meeting about their child’s 10th grade exams: how they feel, their plans, and how they would like to do it. Families only see it once it’s OK’d here; they find it on their child’s Term 3 page.',
+    previewNote: 'This is what parents see (with their child’s name).',
+    who: 'whose parents it’s for', one: 'family', many: 'families'
+  }, G.text || {});
+  var KEY = T.key, APPROVAL = T.approval;
   var app = document.getElementById('app');
   var params = new URLSearchParams(location.search);
 
@@ -29,7 +42,7 @@
   function filled(v) { return Array.isArray(v) ? v.length > 0 : v && String(v).trim(); }
   function day(iso) { return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }); }
   function fetchApproval() {
-    return window.eot2Fetch('term-3', 'staff', APPROVAL).then(function (r) { return (r && r.state) || { approved: false, kids: ['benjamin'] }; });
+    return window.eot2Fetch('term-3', 'staff', APPROVAL).then(function (r) { return (r && r.state) || { approved: false, kids: T.defaultKids.slice() }; });
   }
   // Questions shown for these answers: a 'when' section or question only
   // once the big question points its way (in preview, every one).
@@ -118,7 +131,7 @@
     NAME = kid.name;
     app.innerHTML = '';
     app.appendChild(el('div', 'eot2-crumb', '<a href="../index.html">&larr; Term 3</a>'));
-    var head = el('div', 'eot2-form-header', '<div><h1>' + esc(G.title) + '</h1><div class="eot2-sub">For ' + esc(kid.name) + '’s parents, before the meeting</div></div>');
+    var head = el('div', 'eot2-form-header', '<div><h1>' + esc(G.title) + '</h1><div class="eot2-sub">' + esc(nm(T.sub)) + '</div></div>');
     var status = el('div', 'eot2-status eot2-status-offline', 'Loading…');
     head.appendChild(status);
     app.appendChild(head);
@@ -131,7 +144,7 @@
       var ans = (r[1] && r[1].state) || {};
       setStatus('saved', ans._sent ? 'Sent' : 'Saved');
       if (ans._sent) {
-        body.appendChild(el('p', 'g10-intro', 'Thank you! You sent this on ' + day(ans._sent) + '. We will go through it with you at the meeting.'));
+        body.appendChild(el('p', 'g10-intro', esc(nm(T.thanks).replace('{date}', day(ans._sent)))));
         body.appendChild(formEl(ans, 'read'));
         return;
       }
@@ -151,7 +164,7 @@
       body.appendChild(el('p', 'g10-intro', esc(nm(G.intro))));
       body.appendChild(formEl(ans, 'answer', function () { save(); }));
       var bar = el('div', 'g10-bar');
-      var send = el('button', 'eot2-btn', 'Send before the meeting');
+      var send = el('button', 'eot2-btn', esc(T.send));
       send.type = 'button';
       var msg = el('span', 'g10-msg');
       send.addEventListener('click', function () {
@@ -184,19 +197,19 @@
     try { STAFF = localStorage.getItem('rj-staff-name') || ''; } catch (e) {}
     app.innerHTML = '';
     app.appendChild(el('div', 'eot2-crumb', '<a href="../../staff/term-3/index.html">&larr; Term 3</a>'));
-    app.appendChild(el('div', 'eot2-head', '<h1>' + esc(G.title) + '</h1><p>Parents fill this in before the meeting about their child’s 10th grade exams: how they feel, their plans, and how they would like to do it. Families only see it once it’s OK’d here; they find it on their child’s Term 3 page.</p>'));
+    app.appendChild(el('div', 'eot2-head', '<h1>' + esc(G.title) + '</h1><p>' + esc(T.staffIntro) + '</p>'));
     var body = el('div', 'g10-body', '<p class="g10-intro">Loading…</p>');
     app.appendChild(body);
     var kids = window.EOT2_KIDS.slice().sort(function (a, b) { return a.name.localeCompare(b.name); });
     Promise.all([fetchApproval()].concat(kids.map(function (k) { return window.eot2Fetch(k.group, k.slug, KEY); }))).then(function (r) {
       var ap = r[0], answers = r.slice(1).map(function (x) { return (x && x.state) || {}; });
-      ap.kids = ap.kids || ['benjamin'];
+      ap.kids = ap.kids || T.defaultKids.slice();
       body.innerHTML = '';
       // Approval and who sees it.
       var card = el('section', 'g10-staff');
       function paintCard() {
-        card.innerHTML = '<h2>' + (ap.approved ? 'OK’d' + (ap.by ? ' by ' + esc(ap.by) : '') + (ap.at ? ' on ' + day(ap.at) : '') + ': these families can see it' : 'Not OK’d yet: no family can see it') + '</h2>' +
-          '<p>Choose whose parents it’s for, then OK it. They’ll find it on their child’s Term 3 page.</p>';
+        card.innerHTML = '<h2>' + (ap.approved ? 'OK’d' + (ap.by ? ' by ' + esc(ap.by) : '') + (ap.at ? ' on ' + day(ap.at) : '') + ': these ' + T.many + ' can see it' : 'Not OK’d yet: no ' + T.one + ' can see it') + '</h2>' +
+          '<p>Choose ' + esc(T.who) + ', then OK it. They’ll find it on ' + (T.one === 'family' ? 'their child’s' : 'their') + ' Term 3 page.</p>';
         var list = el('div', 'g10-kids');
         kids.forEach(function (k) {
           var lb = el('label', '', '<input type="checkbox"' + (ap.kids.indexOf(k.slug) !== -1 ? ' checked' : '') + '> ' + esc(k.name));
@@ -209,14 +222,14 @@
         });
         card.appendChild(list);
         var bar = el('div', 'g10-bar');
-        var b = el('button', ap.approved ? 'eot2-btn eot2-btn-secondary' : 'eot2-btn', ap.approved ? 'Hide it again' : 'OK it and show it to these families');
+        var b = el('button', ap.approved ? 'eot2-btn eot2-btn-secondary' : 'eot2-btn', ap.approved ? 'Hide it again' : 'OK it and show it to these ' + T.many);
         b.type = 'button';
         var msg = el('span', 'g10-msg');
         b.addEventListener('click', function () {
-          if (!ap.approved && !ap.kids.length) { msg.textContent = 'Choose at least one family first.'; return; }
+          if (!ap.approved && !ap.kids.length) { msg.textContent = 'Choose at least one ' + T.one + ' first.'; return; }
           ap.approved = !ap.approved;
           ap.by = STAFF; ap.at = new Date().toISOString();
-          store(ap.approved ? 'Shown to ' + ap.kids.length + ' famil' + (ap.kids.length > 1 ? 'ies' : 'y') + '.' : 'Hidden.');
+          store(ap.approved ? 'Shown to ' + ap.kids.length + ' ' + (ap.kids.length > 1 ? T.many : T.one) + '.' : 'Hidden.');
         });
         bar.appendChild(b); bar.appendChild(msg);
         card.appendChild(bar);
@@ -248,8 +261,8 @@
         });
         view.innerHTML = '';
         if (shown === 'preview') {
-          NAME = 'your child';
-          view.appendChild(el('p', 'g10-intro', 'This is what parents see (with their child’s name). Try it out here; nothing is saved. <br>' + esc(nm(G.intro))));
+          NAME = G.previewName || 'your child';
+          view.appendChild(el('p', 'g10-intro', esc(T.previewNote) + ' Try it out here; nothing is saved. <br>' + esc(nm(G.intro))));
           view.appendChild(formEl({}, 'preview', function () {}));
           return;
         }
