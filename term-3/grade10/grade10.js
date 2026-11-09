@@ -92,7 +92,7 @@
       if (s.when) { conds.push({ el: sec, item: s }); if (mode === 'preview') sec.insertAdjacentHTML('afterbegin', '<p class="g10-cond">' + esc(s.whenLabel || (G.conds || {})[s.when] || ('Shown only if they answer the big question ' + (s.when === 'noexam' ? '“No”' : '“Yes” or “Not decided”'))) + '</p>'); }
       s.qs.forEach(function (q) {
         if (mode === 'read' && !shows(q, a)) return;
-        var row = el('div', 'g10-q', (q.when && q.whenLabel && mode === 'preview' ? '<p class="g10-cond">' + esc(q.whenLabel) + '</p>' : '') + '<p>' + esc(nm(q.text)) + (q.optional && !T.hideOptional ? ' <small>(optional)</small>' : '') + '</p>' + (q.hint && mode !== 'read' ? '<p class="g10-hint">' + esc(nm(q.hint)) + '</p>' : ''));
+        var row = el('div', 'g10-q', (q.when && q.whenLabel && mode === 'preview' ? '<p class="g10-cond">' + esc(q.whenLabel) + '</p>' : '') + '<p>' + esc(nm(q.text)) + (q.optional && !T.hideOptional ? ' <small>(optional)</small>' : '') + '</p>' + (q.hint && mode !== 'read' && !(q.optionsFrom && q.emptyHint && !(a[q.optionsFrom] || []).length) ? '<p class="g10-hint">' + esc(nm(q.hint)) + '</p>' : ''));
         row.dataset.q = q.id;
         if (q.when) conds.push({ el: row, item: q });
         if (mode === 'read') {

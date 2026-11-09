@@ -51,7 +51,8 @@
       ] },
       { title: 'Your ONE', qs: [
         { id: 'top', text: 'Of everything you ticked, if you could keep only ONE, which would it be?', kind: 'one', rerender: true,
-          optionsFrom: 'free', emptyHint: 'Tick what you choose to do at the top first; it will show up here.' }
+          optionsFrom: 'free', hint: 'These are the things you ticked in question 1. Tap the one you’d keep.',
+          emptyHint: 'Nothing here yet: tick what you do in question 1 first, and those things will show up here.' }
       ] },
       { title: 'Your one: {pick}', when: chosen, whenLabel: 'Shown once they pick their ONE (the questions are about that one thing)', qs: [
         { id: 'last', text: 'When did you last do it, and what exactly did you do?', kind: 'text', hint: 'As exactly as you can: which day, what you did, for how long.' },
