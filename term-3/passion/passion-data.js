@@ -7,19 +7,17 @@
    How it gets past quick, surface answers:
    1. They tick what they choose to do when nobody tells them, then make
       quick either/or choices.
-   2. They pick the ONE thing they'd keep (only from what they ticked), or
-      "I'm not sure yet".
+   2. They pick the ONE thing they'd keep (only from what they ticked).
    3. For that one thing they're asked for proof, not preferences: when
       they last did it and what exactly, the best thing they've made, names
       they know in it, whether they'd still do it if nobody saw, what
       they've skipped for it.
-   "I'm not sure yet" leads to choosing tasters to try instead.
+   There's no "not sure" answer: everyone picks one.
    Staff OK it and choose which Risers see it before anyone does. */
 (function () {
-  var NOT_SURE = 'I’m not sure yet';
   var OTHER = 'Something else';
   var DOING = ['Drawing or painting', 'Building or making things', 'Playing games', 'Making games', 'Coding or tinkering with tech', 'Reading', 'Writing stories or poems', 'Music: playing, singing or making it', 'Sport or moving about', 'Cooking or baking', 'Being out in nature', 'Taking photos or making videos', 'Taking things apart to see how they work', 'Looking after animals or plants', 'Helping or teaching other people', 'Selling things or running a small business', OTHER];
-  var chosen = function (a) { return !!a.top && a.top !== NOT_SURE; };
+  var chosen = function (a) { return !!a.top; };
 
   window.G10 = {
     title: 'Passion Finder',
@@ -53,7 +51,7 @@
       ] },
       { title: 'Your ONE', qs: [
         { id: 'top', text: 'Of everything you ticked, if you could keep only ONE, which would it be?', kind: 'one', rerender: true,
-          optionsFrom: 'free', extra: [NOT_SURE], emptyHint: 'Tick what you choose to do at the top first; it will show up here.' }
+          optionsFrom: 'free', emptyHint: 'Tick what you choose to do at the top first; it will show up here.' }
       ] },
       { title: 'Your one: {pick}', when: chosen, whenLabel: 'Shown once they pick their ONE (the questions are about that one thing)', qs: [
         { id: 'last', text: 'When did you last do it, and what exactly did you do?', kind: 'text', hint: 'As exactly as you can: which day, what you did, for how long.' },
@@ -65,10 +63,6 @@
         { id: 'next', text: 'What do you wish you could do in it that you can’t do yet?', kind: 'text' },
         { id: 'help', text: 'What would help you do more of it?', kind: 'many',
           options: ['Time in my week for it', 'Materials or tools', 'Someone who knows how', 'Videos, books or courses', 'A friend who loves it too', 'A quiet space'] }
-      ] },
-      { title: 'Things to try', when: function (a) { return a.top === NOT_SURE; }, whenLabel: 'Shown only if they pick “I’m not sure yet”', qs: [
-        { id: 'try', text: 'That’s fine! Which would you like to try for a few weeks, to find out?', kind: 'many', options: DOING.filter(function (o) { return o !== OTHER; }) },
-        { id: 'try_more', text: 'Anything else you’d love to try?', kind: 'text', optional: true }
       ] }
     ]
   };
