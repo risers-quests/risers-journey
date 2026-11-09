@@ -49,7 +49,7 @@
   if (window.eot2Fetch) window.eot2Fetch('term-3', 'staff', 'passion-approval').then(function (r) {
     var ap = r && r.state;
     if (!ap || !ap.approved || (ap.kids || []).indexOf(kid) === -1) return;
-    document.querySelector('.hd-tiles').insertAdjacentHTML('beforeend', window.LH_tiles([{ title: 'Passion Finder', desc: 'What do you love doing? Answer a few questions to find your passion project.', href: 'passion/index.html', icon: 'skills', tone: 'violet' }]));
+    document.querySelector('.hd-tiles').insertAdjacentHTML('beforeend', window.LH_tiles([{ title: 'Passion Finder', desc: 'What do you love doing? Tell us, so you get time to do more of it.', href: 'passion/index.html', icon: 'skills', tone: 'violet' }]));
   });
 
   // The parents' 10th grade questionnaire: only once staff OK it for this family.

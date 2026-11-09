@@ -58,7 +58,7 @@ students**. Each Olympiad below says which it is.
 - **The national ladders (IOQM and NSEJS):** only for Risers who already
   enjoy hard, unfamiliar problems. Start them on the official past papers
   months ahead. Try one past paper first to see if they enjoy it.
-- **Link to passion projects:** a Riser whose passion project is coding
+- **Link to passions** ([PASSIONS.md](PASSIONS.md)): a Riser whose passion is coding
   can aim at ZIO/ZCO. A science-inventor type can aim at INSPIRE-MANAK
   next year (through a partner school).
 
@@ -202,7 +202,7 @@ students**. Each Olympiad below says which it is.
 - **Who:** "Schools can nominate 5 best original ideas/innovations of
   students." The school must be registered on the portal.
 - **When:** Nominations for 2026–27 closed (last date was 10 Oct 2026).
-- **Skill level:** Project-based. A good fit for passion projects.
+- **Skill level:** Project-based. A good fit for a Riser whose passion is inventing.
 - **Official source:** https://www.inspireawards-dst.gov.in/
 
 ## Still to check

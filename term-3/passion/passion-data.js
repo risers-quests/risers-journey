@@ -1,5 +1,5 @@
-/* Passion Finder: the questionnaire each Riser fills in to find a passion
-   project to take on and grow into a skill. Runs on the 10th Grade
+/* Passion Finder: the questionnaire each Riser fills in to find what they love,
+   so we can give them time to do more of it. Runs on the 10th Grade
    questionnaire's page (../grade10/grade10.js): same question kinds
    ('text' | 'one' | 'many'), hint, why, optional. {name} is the Riser.
    `text` sets the save keys and wording for Risers instead of parents.
@@ -7,13 +7,13 @@
 window.G10 = {
   title: 'Passion Finder',
   previewName: 'you',
-  intro: 'This is all about you: what you love doing, what you are curious about, and what you would like to get really good at. There are no right or wrong answers, and nothing here is marked. Your answers help us find a passion project you can take on and grow into a real skill. It saves as you type.',
+  intro: 'This is all about you: what you love doing, what you are curious about, and what you would like to get really good at. There are no right or wrong answers, and nothing here is marked. Your answers help us find what you really love, so we can make time for you to do more of it. It saves as you type.',
   text: {
     key: 'term3-passion', approval: 'passion-approval', defaultKids: [],
-    sub: '{name}’s passion project, step 1',
+    sub: 'All about what {name} loves',
     send: 'Send to my facilitator',
-    thanks: 'Thank you! You sent this on {date}. Your facilitator will read it and talk with you about your passion project.',
-    staffIntro: 'Each Riser fills this in to find a passion project: what they love, what they are curious about, how they like to work and what they would like to get good at. Risers only see it once it’s OK’d here; they find it on their Term 3 page.',
+    thanks: 'Thank you! You sent this on {date}. Your facilitator will read it and talk with you about what you love and how to make time for it.',
+    staffIntro: 'Each Riser fills this in to tell us what they love, what they are curious about and what they would spend time on if they could, so we can find their passion and give them time for it. Risers only see it once it’s OK’d here; they find it on their Term 3 page.',
     previewNote: 'This is what Risers see.',
     who: 'which Risers it’s for', one: 'Riser', many: 'Risers'
   },
@@ -31,26 +31,19 @@ window.G10 = {
       { id: 'question', text: 'What is a question you would really like to find the answer to?', kind: 'text', hint: 'Big or small, e.g. “How do they make games?” or “Why do cats purr?”' },
       { id: 'rabbit', text: 'What do you watch, read or look up when nobody tells you to?', kind: 'text', hint: 'Videos, channels, books, websites, people you follow.', optional: true }
     ] },
-    { title: 'How you like to work', qs: [
-      { id: 'style', text: 'Which ways of working do you enjoy most? Choose all that fit.', kind: 'many',
-        options: ['Making things with my hands', 'Making things on a screen', 'Performing or presenting', 'Finding things out and researching', 'Planning and organising', 'Solving puzzles and problems', 'Talking to people and finding out what they think', 'Teaching or explaining to others'] },
-      { id: 'team', text: 'Would you rather work on a project…', kind: 'one',
-        options: ['On my own', 'With one friend', 'In a small team', 'It doesn’t matter to me'], why: 'Why?' },
-      { id: 'length', text: 'What kind of project sounds best?', kind: 'one',
-        options: ['Something I can finish in a few weeks', 'A bigger project over a whole term', 'Something I keep growing for a year or more', 'Not sure'] }
+    { title: 'How you like to do it', qs: [
+      { id: 'style', text: 'Which of these do you enjoy most? Choose all that fit.', kind: 'many',
+        options: ['Making things with my hands', 'Making things on a screen', 'Performing', 'Finding things out', 'Practising until I get really good', 'Solving puzzles and problems', 'Being outdoors', 'Teaching or explaining to others'] },
+      { id: 'with', text: 'Who would you like to do it with?', kind: 'one',
+        options: ['On my own', 'With a friend', 'With a few others who love it too', 'It doesn’t matter to me'] }
     ] },
-    { title: 'What you’d like to get good at', qs: [
-      { id: 'wish', text: 'What is one skill you wish you had right now?', kind: 'text', hint: 'For example: drawing comics, coding a game, baking bread, speaking another language, editing videos.' },
-      { id: 'make', text: 'If you had three months, the things you need and someone to help you, what would you make or do?', kind: 'text' },
-      { id: 'show', text: 'At the end, who would you love to show it to, and how?', kind: 'text', hint: 'An exhibition, a video, selling it, teaching a class, a website, a performance…', optional: true }
-    ] },
-    { title: 'Your project ideas', qs: [
-      { id: 'ideas', text: 'Write down one to three passion project ideas.', kind: 'text', hint: 'They can be wild! We’ll help you shape one into a project.' },
-      { id: 'excited', text: 'How excited are you to start a passion project?', kind: 'one',
-        options: ['Can’t wait!', 'Quite excited', 'A bit unsure', 'Not sure what to pick yet'] },
-      { id: 'help', text: 'What would you need to get going?', kind: 'many',
-        options: ['Ideas to choose from', 'Materials or tools', 'Time in my week for it', 'Someone who knows the skill', 'Videos or courses to learn from', 'A friend to do it with', 'Help planning the steps'] },
-      { id: 'stuck', text: 'What might get in the way, and is there anything else we should know?', kind: 'text', optional: true }
+    { title: 'Time to do what you love', qs: [
+      { id: 'hours', text: 'If you had a few hours every week to spend on anything you love, what would you do?', kind: 'text', hint: 'Say as much as you like. More than one thing is fine.' },
+      { id: 'wish', text: 'What is one thing you wish you were really good at?', kind: 'text', hint: 'For example: drawing comics, coding, baking bread, a sport, an instrument, another language, editing videos.' },
+      { id: 'learnfrom', text: 'Is there someone (anyone: someone you know, or someone famous) who does this, that you would love to learn from?', kind: 'text', optional: true },
+      { id: 'help', text: 'What would help you do more of it?', kind: 'many',
+        options: ['Time in my week for it', 'Materials or tools', 'Someone who knows how', 'Videos, books or courses', 'A friend who loves it too', 'A quiet space', 'Nothing, I just need the time'] },
+      { id: 'stuck', text: 'Is anything stopping you from doing it now? Anything else we should know?', kind: 'text', optional: true }
     ] }
   ]
 };
