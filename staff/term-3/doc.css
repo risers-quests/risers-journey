@@ -53,3 +53,8 @@
 .doc .pf-level p { margin: 2px 0 0; }
 .doc .pf-note { text-align: center; margin: 12px 0 0; }
 @media (max-width: 760px) { .pf { margin: 22px 0 6px; padding: 18px 14px; } .pf-points { grid-template-columns: 1fr; } }
+.doc .pf h2 small { font-size: .9rem; font-weight: 500; color: var(--ink-soft); margin-left: 6px; }
+.pf-comments { border-top: 1px solid var(--border); margin-top: 7px; padding-top: 6px; }
+.doc .pf-comments p { margin: 0 0 4px; font-size: .74rem; }
+.pf-comments i { font-style: normal; color: #9a3412; font-weight: 600; }
+.doc .pf-lazy { margin: -2px 0 8px; font-size: .68rem; color: #a3432b; }
