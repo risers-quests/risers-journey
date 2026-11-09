@@ -44,3 +44,17 @@
 @media (prefers-reduced-motion: reduce) { .g10-done-tick { animation: none; } }
 .g10-prog { font-size: .9rem; font-weight: 600; color: var(--ink-soft); }
 .g10-prog.is-ok { color: var(--good); }
+/* Typed items (chips) with "Stuck? See ideas". */
+.g10-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+.g10-chip { display: inline-flex; align-items: center; gap: 4px; background: var(--accent-soft); color: var(--accent-dark); border: 1.5px solid var(--accent); border-radius: 99px; padding: 5px 6px 5px 12px; font-size: .9rem; font-weight: 600; }
+.g10-chip-x { border: 0; background: none; color: inherit; font-size: 1.05rem; line-height: 1; cursor: pointer; padding: 0 4px; }
+.g10-add { display: flex; gap: 8px; }
+.g10-add input { flex: 1; min-width: 0; font: inherit; font-size: .95rem; padding: 9px 11px; border: 1.5px solid var(--border); border-radius: 10px; }
+.g10-add input:focus { outline: none; border-color: var(--accent); }
+.g10-add-btn { font: inherit; font-weight: 700; padding: 9px 18px; border-radius: 10px; border: 0; background: var(--accent); color: #fff; cursor: pointer; }
+.g10-ideas-btn { font: inherit; font-size: .85rem; font-weight: 600; margin-top: 8px; padding: 6px 12px; border-radius: 99px; border: 1.5px dashed var(--border); background: #fff; color: var(--ink-soft); cursor: pointer; }
+.g10-ideas { margin-top: 8px; }
+.g10-ideas-text { margin-top: 6px !important; }
+.g10-from-idea { color: var(--ink-faint); }
+.g10-typed { color: var(--good); }
+.g10-q.is-missing .g10-add input { border-color: #e8b4a4; }

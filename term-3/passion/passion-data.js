@@ -5,9 +5,11 @@
    they chose.
 
    How it gets past quick, surface answers:
-   1. They tick what they choose to do when nobody tells them, then make
-      quick either/or choices.
-   2. They pick the ONE thing they'd keep (only from what they ticked).
+   1. They type what they make, practise or do when nobody tells them,
+      before seeing any list ("Stuck? See ideas" opens one; staff see which
+      answers were typed and which were picked from ideas). Then quick
+      either/or choices.
+   2. They pick the ONE thing they'd keep (only from what they added).
    3. For that one thing they're asked for proof, not preferences: when
       they last did it and what exactly, the best thing they've made, names
       they know in it, whether they'd still do it if nobody saw, what
@@ -15,9 +17,8 @@
    There's no "not sure" answer: everyone picks one.
    Staff OK it and choose which Risers see it before anyone does. */
 (function () {
-  var OTHER = 'Something else';
   var SCREEN = 'Watching shows or videos, gaming or scrolling';
-  var DOING = ['Drawing or painting', 'Building or making things', 'Making games', 'Coding or tinkering with tech', 'Reading', 'Writing stories or poems', 'Music: playing, singing or making it', 'Sport or moving about', 'Cooking or baking', 'Being out in nature', 'Taking photos or making videos', 'Taking things apart to see how they work', 'Looking after animals or plants', 'Helping or teaching other people', 'Selling things or running a small business', SCREEN, OTHER];
+  var DOING = ['Drawing or painting', 'Building or making things', 'Making games', 'Coding or tinkering with tech', 'Reading', 'Writing stories or poems', 'Music: playing, singing or making it', 'Sport or moving about', 'Cooking or baking', 'Being out in nature', 'Taking photos or making videos', 'Taking things apart to see how they work', 'Looking after animals or plants', 'Helping or teaching other people', 'Selling things or running a small business', SCREEN];
   var chosen = function (a) { return !!a.top; };
 
   // Watching, gaming, scrolling, eating or sleeping: consuming, not doing.
@@ -30,34 +31,40 @@
   var DO = /\b(make|makes|making|made|creat\w*|edit\w*|record\w*|film(ing|ed)|shoot\w*|draw\w*|paint\w*|sketch\w*|build\w*|code|codes|coding|coded|program\w*|writ\w*|wrote|cook\w*|bak\w*|design\w*|animat\w*|compos\w*|practi[cs]\w*|train\w*|fix\w*|grow\w*|sell\w*|teach\w*|learn\w*|review\w*|mod(s|ding|ded)?|stream(ing)? my)\b/i;
   function consuming(v) { return CONSUME.test(v || '') && !DO.test(v || ''); }
   function check(msg) { return function (v) { return consuming(v) ? msg : ''; }; }
+  // A typed item for question 1: "nothing"/"idk" isn't an answer; watching,
+  // gaming or scrolling is filed as SCREEN (never their ONE).
+  function redirect(v) {
+    if (/^(nothing|none|idk|dunno|no idea|not sure|nil|na|n\/a)$/i.test(v.trim())) return { reject: 'Write one real thing you do, or tap “Stuck? See ideas”.' };
+    if (consuming(v)) return { to: SCREEN, note: '“' + v + '” sounds like watching, gaming or scrolling, so it’s added as “' + SCREEN + '”. What do you make, practise or do?' };
+    return null;
+  }
 
   window.G10 = {
     title: 'Passion Finder',
     previewName: 'you',
     intro: 'This is all about you: what you really love doing. There are no right or wrong answers and nothing here is marked. Be honest, not impressive: the more real your answers, the better we can make time for you to do more of what you love. It saves as you type.',
-    pick: { from: 'top', otherOption: OTHER, otherFrom: 'free_other', none: 'your one thing' },
+    pick: { from: 'top', none: 'your one thing' },
     text: {
       key: 'term3-passion', approval: 'passion-approval', defaultKids: [],
       sub: 'All about what {name} loves',
       hideOptional: true,
       flagNote: 'Flagged: this sounds like watching, gaming, scrolling or eating rather than doing.',
       thanks: 'Thank you! You submitted this on {date}. Your facilitator will read it and talk with you about what you love and how to make time for it.',
-      staffIntro: 'Each Riser ticks what they make, practise or do when nobody tells them (watching, gaming or scrolling can be ticked honestly but never becomes their ONE; instead they say what they love about it: story, strategy, building worlds…). Typed answers about watching, gaming, scrolling or eating are caught and must be changed before sending. They make quick either/or choices, then pick the ONE thing they’d keep. For that one thing they are asked for proof rather than preferences (when they last did it, the best thing they made, names they know, whether they’d do it if nobody saw). Answers that are vague or don’t hold together are your starting point for the chat. Risers only see it once it’s OK’d here; they find it on their Term 3 page.',
+      staffIntro: 'Each Riser types what they make, practise or do when nobody tells them, before seeing any list; “Stuck? See ideas” opens one. Answers are marked typed or from ideas: typed is the stronger signal. Watching, gaming or scrolling is filed separately and never becomes their ONE; instead they say what they love about it (story, strategy, building worlds…). Typed answers about watching, gaming, scrolling or eating are caught and must be changed before sending. They make quick either/or choices, then pick the ONE thing they’d keep. For that one thing they are asked for proof rather than preferences (when they last did it, the best thing they made, names they know, whether they’d do it if nobody saw). Answers that are vague or don’t hold together are your starting point for the chat. Risers only see it once it’s OK’d here; they find it on their Term 3 page.',
       previewNote: 'This is what Risers see. The questions in “Your one” follow whatever they pick.',
       who: 'which Risers it’s for', one: 'Riser', many: 'Risers'
     },
     sections: [
       { title: 'What you choose to do', qs: [
-        { id: 'free', text: 'When nobody tells you what to do, what do you make, practise or do? Choose all that are true.', kind: 'many', rerender: true,
-          hint: 'Only things you really do now, where you are the one doing it. If you also spend time watching, gaming or scrolling, tick that honestly too.', options: DOING },
-        { id: 'free_other', text: 'What is the something else?', kind: 'text', when: function (a) { return (a.free || []).indexOf(OTHER) !== -1; }, whenLabel: 'Shown only if they tick “Something else”',
-          check: check('That sounds like watching, gaming, scrolling or eating. Tick “' + SCREEN + '” above for that, and write here something you make, practise or do.') },
+        { id: 'free', text: 'When nobody tells you what to do, what do you make, practise or do?', kind: 'chips', rerender: true,
+          hint: 'Type one thing and tap Add. Add as many as are true, only things you really do now.', placeholder: 'Type one thing…', options: DOING, redirect: redirect },
         { id: 'screen_love', text: 'What do you love most about watching, gaming or scrolling? Choose all that are true.', kind: 'many',
-          when: function (a) { return (a.free || []).indexOf(SCREEN) !== -1; }, whenLabel: 'Shown only if they tick watching, gaming or scrolling',
+          when: function (a) { return (a.free || []).indexOf(SCREEN) !== -1; }, whenLabel: 'Shown only if they add watching, gaming or scrolling',
           options: ['The stories', 'The characters', 'Working out the strategy', 'Competing and winning', 'Building worlds', 'The art, music or effects', 'How it’s made', 'Learning how to do things', 'Being with friends', 'Relaxing'] },
         { id: 'screen_what', text: 'Which shows, channels or games, mostly?', kind: 'text',
-          when: function (a) { return (a.free || []).indexOf(SCREEN) !== -1; }, whenLabel: 'Shown only if they tick watching, gaming or scrolling' },
+          when: function (a) { return (a.free || []).indexOf(SCREEN) !== -1; }, whenLabel: 'Shown only if they add watching, gaming or scrolling' },
         { id: 'flow', text: 'What is something you do or make where you lose track of time?', kind: 'text', hint: 'The thing where you look up and an hour has gone by. Not watching, gaming or scrolling.',
+          ideas: ['building with Lego', 'drawing comics', 'practising football', 'baking', 'writing stories', 'playing an instrument', 'fixing a cycle', 'gardening', 'coding a game'],
           check: check('That sounds like watching, gaming, scrolling or eating. What’s something you do or make where you lose track of time?') },
         { id: 'askme', text: 'What do friends or family ask you to help with, or say you’re good at?', kind: 'text', optional: true }
       ] },
@@ -69,10 +76,10 @@
         { id: 'c_think', text: 'Would you rather…', kind: 'one', options: ['Create something', 'Figure something out'] }
       ] },
       { title: 'Your ONE', qs: [
-        { id: 'top', text: 'Of everything you ticked, if you could keep only ONE, which would it be?', kind: 'one', rerender: true,
+        { id: 'top', text: 'Of everything you added, if you could keep only ONE, which would it be?', kind: 'one', rerender: true,
           optionsFrom: 'free', optionsFilter: function (o) { return o !== SCREEN; },
-          hint: 'These are the things you ticked in question 1 (not watching, gaming or scrolling). Tap the one you’d keep.',
-          emptyHint: 'Nothing here yet: tick the things you make, practise or do in question 1 (not watching, gaming or scrolling), and they will show up here.' }
+          hint: 'These are the things you added in question 1 (not watching, gaming or scrolling). Tap the one you’d keep.',
+          emptyHint: 'Nothing here yet: add the things you make, practise or do in question 1 (not watching, gaming or scrolling), and they will show up here.' }
       ] },
       { title: 'Your one: {pick}', when: chosen, whenLabel: 'Shown once they pick their ONE (the questions are about that one thing)', qs: [
         { id: 'last', text: 'When did you last do it, and what exactly did you do?', kind: 'text', hint: 'As exactly as you can: which day, what you did, for how long.',
