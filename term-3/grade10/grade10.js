@@ -70,7 +70,7 @@
       var sec = el('section', 'g10-sec', '<h2>' + (s.when ? '' : (++n) + '. ') + esc(nm(s.title)) + '</h2>');
       if (s.when) { conds.push({ el: sec, item: s }); if (mode === 'preview') sec.insertAdjacentHTML('afterbegin', '<p class="g10-cond">' + esc((G.conds || {})[s.when] || ('Shown only if they answer the big question ' + (s.when === 'noexam' ? '“No”' : '“Yes” or “Not decided”'))) + '</p>'); }
       s.qs.forEach(function (q) {
-        var row = el('div', 'g10-q', '<p>' + esc(nm(q.text)) + (q.optional ? ' <small>(optional)</small>' : '') + '</p>' + (q.hint && mode !== 'read' ? '<p class="g10-hint">' + esc(nm(q.hint)) + '</p>' : ''));
+        var row = el('div', 'g10-q', '<p>' + esc(nm(q.text)) + (q.optional && !T.hideOptional ? ' <small>(optional)</small>' : '') + '</p>' + (q.hint && mode !== 'read' ? '<p class="g10-hint">' + esc(nm(q.hint)) + '</p>' : ''));
         row.dataset.q = q.id;
         if (mode === 'read') {
           var v = a[q.id];

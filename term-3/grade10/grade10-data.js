@@ -15,34 +15,34 @@ window.G10 = {
   // The answers that mean "not the 10th boards" (carry on as now). The
   // last two are wordings of earlier versions, so answers given before
   // still show the right questions.
-  NO: ['We’d like to carry on as we are at LifeHub', 'We’re leaning towards a different path', 'No, we’re not aiming for 10th grade'],
-  conds: { exam: 'Shown only if they answer “Leaning towards the 10th boards” or “Not sure yet”' },
+  NO: ['We’re leaning towards carrying on as we are at LifeHub', 'We’d like to carry on as we are at LifeHub', 'We’re leaning towards a different path', 'No, we’re not aiming for 10th grade'],
+  conds: { exam: 'Shown only if they are leaning towards the 10th boards' },
   text: {
     sub: 'For {name}’s parents, to fill in before our meeting',
     send: 'Send before the meeting',
+    hideOptional: true,
     staffIntro: 'Parents fill this in before the meeting where we ask them whether their child takes the 10th boards route (if not, the child carries on at LifeHub as now): where they are now and, for the 10th boards, what they have already researched, the materials and ways of working they would like, and the support they need. Families only see it once it’s OK’d here; they find it on their child’s Term 3 page.'
   },
   sections: [
     { title: 'Where you are now', qs: [
       { id: 'route', text: 'Right now, are you thinking of {name} taking the 10th boards?', kind: 'one',
-        options: ['We’re leaning towards the 10th boards', 'We’d like to carry on as we are at LifeHub', 'We’re not sure yet'],
+        options: ['We’re leaning towards the 10th boards', 'We’re leaning towards carrying on as we are at LifeHub'],
         why: 'What makes you lean this way?' },
       { id: 'feel', text: 'How do you feel about it?', kind: 'one',
         options: ['Confident', 'Excited', 'Unsure', 'Worried'], why: 'Tell us a little more.' },
-      { id: 'child', text: 'What does {name} think about it, from what you have seen or heard?', kind: 'text' },
-      { id: 'know', text: 'What do you already know about the 10th boards?', kind: 'text', hint: 'For example: the boards, the subjects, how the exams work, what other families have done.' }
+      { id: 'child', text: 'What does {name} think about it, from what you have seen or heard?', kind: 'text' }
     ] },
     { title: 'If you’re leaning towards the 10th boards', when: 'exam', qs: [
-      { id: 'research', text: 'What have you already looked into or thought about for the 10th boards?', kind: 'text',
-        hint: 'Anything you have read, watched, or heard from other families, schools or teachers.' },
+      { id: 'research', text: 'What have you already found out about the 10th boards?', kind: 'text',
+        hint: 'For example: the boards, the subjects, how the exams work, what other families, schools or teachers have told you.' },
       { id: 'board', text: 'Is there a board or route you are drawn to?', kind: 'one',
-        options: ['NIOS', 'IGCSE (Cambridge)', 'CBSE (private candidate)', 'ICSE', 'Not sure yet', 'Something else'], why: 'Why this one?' },
+        options: ['NIOS', 'IGCSE (Cambridge)', 'CBSE (private candidate)', 'ICSE', 'Something else'], why: 'Why this one?' },
       { id: 'subjects', text: 'Which subjects do you have in mind, and why?', kind: 'text', optional: true },
       { id: 'materials', text: 'Have you found study materials or resources you would like {name} to follow?', kind: 'many',
         options: ['The board’s own textbooks', 'Guide books or question banks', 'Past papers', 'Online courses or videos', 'Learning apps', 'Coaching centre material', 'Not yet'] },
       { id: 'materials_more', text: 'Tell us which ones (names, links, publishers) and what you like about them.', kind: 'text', optional: true },
       { id: 'prepare', text: 'How would you like {name} to prepare? Choose all that fit.', kind: 'many',
-        options: ['Studying on their own', 'Sessions with a facilitator at LifeHub', 'Online classes', 'A tutor', 'Studying with friends', 'Practice tests'] },
+        options: ['Studying on their own', 'Online classes', 'A tutor', 'Studying with friends', 'Practice tests'] },
       { id: 'how', text: 'Is there a particular way you would like it to work, at LifeHub and at home?', kind: 'text',
         hint: 'For example: a daily routine, a tutor for some subjects, keeping projects and quests alongside it, regular practice tests.' }
     ] },
@@ -50,15 +50,13 @@ window.G10 = {
       { id: 'strengths', text: 'Which subjects or areas does {name} enjoy or find easier, and which do they find hard?', kind: 'text' },
       { id: 'learns', text: 'Is there anything about how {name} learns that we should keep in mind?', kind: 'text',
         hint: 'For example: needing more time, finding exams stressful, a learning difficulty, how they like to study.', optional: true },
-      { id: 'week', text: 'What else fills {name}’s week outside LifeHub?', kind: 'text', hint: 'Sport, music, art, classes, family commitments…', optional: true },
       { id: 'school', text: 'Might {name} join a school, or study somewhere else, later on?', kind: 'one',
-        options: ['Yes', 'Maybe', 'No', 'Not sure'], why: 'Where are you thinking of?' },
+        options: ['Leaning towards yes', 'Leaning towards no'], why: 'Where are you thinking of?' },
       { id: 'after', text: 'What do you hope {name} will go on to do later?', kind: 'text', hint: 'Further studies, a field they love, work, something else…' }
     ] },
     { title: 'Support for the 10th boards', when: 'exam', qs: [
       { id: 'lifehub', text: 'What would you need from LifeHub and the facilitators for the 10th boards?', kind: 'text' },
-      { id: 'family', text: 'What support can you give {name} at home while preparing?', kind: 'text' },
-      { id: 'costs', text: 'Are there costs you would like to talk through?', kind: 'text', hint: 'For example: exam fees, books, tutors or classes.', optional: true }
+      { id: 'family', text: 'What support can you give {name} at home while preparing?', kind: 'text' }
     ] },
     { title: 'Before we meet', qs: [
       { id: 'worry', text: 'Do you have any worries or concerns?', kind: 'text', optional: true },
