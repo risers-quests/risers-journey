@@ -203,3 +203,9 @@ p.as-blank { margin: 6px 0 0; font-size: .85rem; }
 .as-fullkey { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 4px; }
 .as-fullkey h3 { margin: 0 0 6px; font-size: 1rem; }
 .as-fullkey p { margin: 0 0 4px; font-size: .92rem; }
+
+/* Rework: only the parts marked wrong, each with its own box. */
+.as-rwpart { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); display: flex; flex-direction: column; gap: 8px; }
+.as-rwpart-q b { display: block; font-size: .85rem; color: var(--accent-dark); margin-bottom: 4px; }
+.as-rwpart-q .as-qhtml p { margin: 2px 0; }
+.as-rw-table td.as-rw-cell { background: #fff4dc; font-weight: 700; text-align: center; color: #93600f; }

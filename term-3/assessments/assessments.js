@@ -632,10 +632,112 @@
     return items(q).map(function (i) { return key[i] ? '(' + i.slice(String(q.n).length) + ') ' + key[i] : ''; }).filter(Boolean).join('  ');
   }
 
-  /* ---------- rework: the wrong questions again ---------- */
+  /* ---------- rework: only the wrong parts ---------- */
 
-  // After the revision plan the Riser answers the wrong questions again
-  // (ans.rework[n]) and sends it (ans._reworked). Staff send the key for
+  // The parts of a question marked wrong, once each (a split mark's pieces
+  // are one part): ['b', 't13', …], or [''] for a whole question.
+  function wrongParts(q, w) {
+    var out = [];
+    w.wrong.forEach(function (i) {
+      var m = /^\d+([a-z]|t\d\d)?(?:_\d+)?$/.exec(i), l = m && m[1] ? m[1] : '';
+      if (out.indexOf(l) === -1) out.push(l);
+    });
+    return out;
+  }
+  // A question's HTML as lines: each block, split at line breaks; a table
+  // stays one line.
+  function linesOf(html) {
+    var out = [];
+    if (!html || !window.DOMParser) return out;
+    var body = new DOMParser().parseFromString('<div>' + html + '</div>', 'text/html').body.firstChild;
+    while (body.children.length === 1 && /^(DIV|SECTION)$/.test(body.firstElementChild.tagName) && !body.firstElementChild.querySelector('table')) body = body.firstElementChild;
+    Array.prototype.forEach.call(body.childNodes, function (n) {
+      if (n.nodeType === 3) { if (n.textContent.trim()) out.push({ html: esc(n.textContent), text: n.textContent.trim() }); return; }
+      if (n.nodeType !== 1) return;
+      if (n.tagName === 'TABLE' || n.querySelector('table')) { out.push({ html: n.outerHTML, text: n.textContent.trim(), table: true }); return; }
+      var tag = n.tagName.toLowerCase();
+      n.innerHTML.split(/<br\s*\/?>/i).forEach(function (h) {
+        var d = document.createElement('div'); d.innerHTML = h;
+        var t = d.textContent.replace(/\s+/g, ' ').trim();
+        if (t) out.push({ html: '<' + tag + '>' + h + '</' + tag + '>', text: t });
+      });
+    });
+    return out;
+  }
+  // The question cut into its opening (stem) and the parts asked for:
+  // { stem, parts: { b: { label, html } } }, or null to show it whole.
+  function partsToRedo(paper, q, letters) {
+    if (letters.length === 1 && letters[0] === '') return null;
+    var res = { stem: '', parts: {} };
+    if (q.parts) {
+      res.stem = q.text ? math(q.text) : '';
+      letters.forEach(function (l) {
+        var p = q.parts.filter(function (x) { return x.l === l; })[0];
+        res.parts[l] = { label: '(' + l + ')', html: p ? math(p.text || '') : '' };
+      });
+      return res;
+    }
+    var html = paper.html && paper.html[q.n] ? String(paper.html[q.n]) : '';
+    if (!html) return null;
+    if (q.table) {
+      var doc = new DOMParser().parseFromString(html, 'text/html'), t = doc.querySelector('table');
+      if (!t) return null;
+      var trs = Array.prototype.slice.call(t.querySelectorAll('tr'));
+      var want = {};
+      letters.forEach(function (l) { var m = /^t(\d)(\d)$/.exec(l); if (m) (want[+m[1]] = want[+m[1]] || {})[+m[2]] = l; });
+      trs.forEach(function (tr, ri) {
+        if (ri === 0) return;
+        if (!want[ri]) { tr.remove(); return; }
+        Array.prototype.forEach.call(tr.children, function (td, ci) { if (ci && want[ri][ci]) { td.classList.add('as-rw-cell'); td.textContent = '?'; } });
+      });
+      t.classList.add('as-rw-table');
+      var before = html.split(/<table/i)[0];
+      res.stem = before + t.outerHTML;
+      letters.forEach(function (l) {
+        var m = /^t(\d)(\d)$/.exec(l);
+        res.parts[l] = { label: m ? (q.table.rows[+m[1] - 1] || 'Row ' + m[1]) + ' · ' + (q.table.cols[+m[2] - 1] || '') : l, html: '' };
+      });
+      return res;
+    }
+    // Lettered parts in the text: Assertion–Reason, blanks, sets of choices.
+    var all = q.markLetters || [];
+    var names = all.map(function (l, i) { return q.markLabels ? q.markLabels[i] : l; });
+    if (q.markLabels && !names.every(function (n) { return /^(i{1,3}|iv|vi{0,3}|ix|x)$/.test(n); })) return null;
+    var lines = linesOf(html), at = [], from = 0;
+    for (var k = 0; k < names.length; k++) {
+      var re = new RegExp('^\\(' + names[k] + '\\)', 'i'), found = -1;
+      for (var j = from; j < lines.length; j++) if (re.test(lines[j].text) && (!q.assertLetters || /assertion/i.test(lines[j].text))) { found = j; break; }
+      if (found === -1) return null;
+      at.push(found); from = found + 1;
+    }
+    res.stem = lines.slice(0, at[0]).map(function (x) { return x.html; }).join('');
+    letters.forEach(function (l) {
+      var k = all.indexOf(l);
+      if (k === -1) return;
+      res.parts[l] = { label: (q.assertLetters || q.markLabels ? 'Part ' : '') + '(' + names[k] + ')', html: lines.slice(at[k], k + 1 < at.length ? at[k + 1] : lines.length).map(function (x) { return x.html; }).join('') };
+    });
+    return Object.keys(res.parts).length === letters.length ? res : null;
+  }
+  // One part's line in a key: the text after "(b)" up to the next "(c)".
+  function keyPart(text, name) {
+    var t = String(text || ''), re = new RegExp('\\(' + name + '\\)\\s*([\\s\\S]*?)(?=\\s*\\((?:[a-h]|i{1,3}|iv|vi{0,3}|ix|x)\\)|$)', 'i'), m = re.exec(t);
+    return m && m[1].trim() ? m[1].trim() : t;
+  }
+  // What to redo for one wrong question, as { split, stem, parts: [{ id, label, html }] }.
+  function redoOf(paper, q, w) {
+    var letters = wrongParts(q, w), cut = partsToRedo(paper, q, letters);
+    if (!cut) return { split: false, parts: [{ id: String(q.n), label: '', html: '' }] };
+    return { split: true, stem: cut.stem, parts: letters.map(function (l) { return { id: q.n + l, l: l, label: cut.parts[l].label, html: cut.parts[l].html }; }) };
+  }
+  function redoKey(q, part, keyText) {
+    if (!filled(keyText)) return '';
+    if (!part.l || /^t\d\d$/.test(part.l)) return keyText;
+    return keyPart(keyText, part.label.replace(/^Part /, '').replace(/[()]/g, ''));
+  }
+
+  // After the revision plan the Riser answers the wrong questions again,
+  // only the parts marked wrong, each in its own box (ans.rework[n], or
+  // ans.rework[n + part] like "5c", "21t13"), and sends it (ans._reworked). Staff send the key for
   // those questions (mk.keyFor[n], mk._keySent); the Riser corrects their
   // work with it and says so (ans._corrected).
   function reworkEl(paper, kid, ans, mk, save, redraw) {
@@ -649,24 +751,33 @@
       : ans._reworked ? 'Sent to your facilitator on ' + day(ans._reworked) + '. They will send you the answer key to check it.'
       : 'Try the questions you got wrong again. Answer each one, then send your rework to your facilitator.') + '</p>');
     wrong.forEach(function (w) {
-      var q = w.q, card = el('div', 'as-rwq');
-      card.appendChild(el('div', 'as-rwhead', '<b>' + q.n + '.</b><span>Redo' + (q.parts || q.markLetters ? ': ' + esc(wrongLabels(q, w).join(', ')) : ' this question') + '</span>'));
-      card.appendChild(questionHtmlEl(paper, q));
-      if (canWrite) {
-        var ta = el('textarea', 'as-input');
-        ta.rows = 3;
-        ta.placeholder = 'My answer, worked again';
-        ta.value = rw[q.n] || '';
-        ta.addEventListener('input', function () { rw[q.n] = ta.value; save(); });
-        card.appendChild(ta);
-      } else card.appendChild(el('p', 'as-written' + (filled(rw[q.n]) ? '' : ' as-blank'), filled(rw[q.n]) ? esc(rw[q.n]).replace(/\n/g, '<br>') : 'No answer'));
-      if (keyFor) card.appendChild(el('p', 'as-key', '<b>Key:</b> ' + (filled(keyFor[q.n]) ? esc(keyFor[q.n]) : 'ask your facilitator about this one.')));
+      var q = w.q, card = el('div', 'as-rwq'), redo = redoOf(paper, q, w);
+      card.appendChild(el('div', 'as-rwhead', '<b>' + q.n + '.</b><span>Redo' + (redo.split ? ' ' + (redo.parts.length > 1 ? 'these parts' : 'this part') : q.parts || q.markLetters ? ': ' + esc(wrongLabels(q, w).join(', ')) : ' this question') + '</span>'));
+      if (redo.split) { if (redo.stem) card.appendChild(el('div', 'as-qtext as-qhtml', redo.stem)); }
+      else card.appendChild(questionHtmlEl(paper, q));
+      // Written before parts had their own boxes: shown, to copy from.
+      if (redo.split && filled(rw[q.n]) && !redo.parts.some(function (pt) { return filled(rw[pt.id]); })) card.appendChild(el('p', 'as-written', '<span>What you wrote before</span>' + esc(rw[q.n]).replace(/\n/g, '<br>')));
+      redo.parts.forEach(function (pt) {
+        var row = el('div', 'as-rwpart');
+        if (redo.split) row.appendChild(el('div', 'as-rwpart-q', (pt.html ? '' : '<b>' + esc(pt.label) + '</b>') + (pt.html ? '<div class="as-qhtml">' + pt.html + '</div>' : '')));
+        if (canWrite) {
+          var small = q.assertLetters && pt.l;
+          var ta = el(small ? 'input' : 'textarea', 'as-input' + (small ? ' as-numans' : ''));
+          if (small) { ta.type = 'text'; ta.inputMode = 'numeric'; ta.maxLength = 1; ta.placeholder = 'Type the number (1, 2, 3, 4)'; }
+          else { ta.rows = redo.split ? 2 : 3; ta.placeholder = 'My answer, worked again'; }
+          ta.value = rw[pt.id] || '';
+          ta.addEventListener('input', function () { rw[pt.id] = ta.value; save(); });
+          row.appendChild(ta);
+        } else row.appendChild(el('p', 'as-written' + (filled(rw[pt.id]) ? '' : ' as-blank'), filled(rw[pt.id]) ? esc(rw[pt.id]).replace(/\n/g, '<br>') : 'No answer'));
+        if (keyFor) { var kt = redoKey(q, pt, keyFor[q.n]); row.appendChild(el('p', 'as-key', '<b>Key:</b> ' + (kt ? esc(kt) : 'ask your facilitator about this one.'))); }
+        card.appendChild(row);
+      });
       box.appendChild(card);
     });
     if (!ans._reworked) {
       box.appendChild(submitBar('Send my rework', function () {
-        var blank = wrong.filter(function (w) { return !filled(rw[w.q.n]); });
-        if (blank.length) { alert('Answer every question first: ' + blank.map(function (w) { return 'Q' + w.q.n; }).join(', ') + '.'); return null; }
+        var blank = wrong.filter(function (w) { return redoOf(paper, w.q, w).parts.some(function (pt) { return !filled(rw[pt.id]); }); });
+        if (blank.length) { alert('Answer every part first: ' + blank.map(function (w) { return 'Q' + w.q.n; }).join(', ') + '.'); return null; }
         ans._reworked = new Date().toISOString();
         return save(true);
       }, redraw, function () { delete ans._reworked; }));
@@ -690,11 +801,22 @@
     box.insertAdjacentHTML('beforeend', '<p class="as-sub">Sent by ' + esc(kid.name) + ' on ' + day(ans._reworked) + '.' +
       (mk._keySent ? ' You sent the answer key on ' + day(mk._keySent) + '.' + (ans._corrected ? ' They corrected their work on ' + day(ans._corrected) + '.' : '') : '') + '</p>');
     wrong.forEach(function (w) {
-      var q = w.q, card = el('div', 'as-rwq');
-      card.appendChild(el('div', 'as-rwhead', '<b>' + q.n + '.</b><span>Redo' + (q.parts || q.markLetters ? ': ' + esc(wrongLabels(q, w).join(', ')) : '') + '</span>'));
-      card.appendChild(el('p', 'as-written' + (filled(rw[q.n]) ? '' : ' as-blank'), filled(rw[q.n]) ? esc(rw[q.n]).replace(/\n/g, '<br>') : 'No answer'));
+      var q = w.q, card = el('div', 'as-rwq'), redo = redoOf(paper, q, w);
+      card.appendChild(el('div', 'as-rwhead', '<b>' + q.n + '.</b><span>Redo' + (redo.split ? ': ' + esc(redo.parts.map(function (pt) { return pt.label; }).join('; ')) : q.parts || q.markLetters ? ': ' + esc(wrongLabels(q, w).join(', ')) : '') + '</span>'));
       var kt = mk._keySent ? (mk.keyFor || {})[q.n] : keyTextFor(q, key);
-      if (filled(kt)) card.appendChild(el('p', 'as-key', '<b>Key:</b> ' + esc(kt)));
+      // Sent before parts had their own boxes: one answer for the question.
+      var old = redo.split && filled(rw[q.n]) && !redo.parts.some(function (pt) { return filled(rw[pt.id]); });
+      if (old) {
+        card.appendChild(el('p', 'as-written', esc(rw[q.n]).replace(/\n/g, '<br>')));
+        if (filled(kt)) card.appendChild(el('p', 'as-key', '<b>Key:</b> ' + esc(kt)));
+      } else redo.parts.forEach(function (pt) {
+        var row = el('div', 'as-rwpart');
+        if (redo.split) row.appendChild(el('div', 'as-rwpart-q', '<b>' + esc(pt.label) + '</b>'));
+        row.appendChild(el('p', 'as-written' + (filled(rw[pt.id]) ? '' : ' as-blank'), filled(rw[pt.id]) ? esc(rw[pt.id]).replace(/\n/g, '<br>') : 'No answer'));
+        var k2 = redoKey(q, pt, kt);
+        if (k2) row.appendChild(el('p', 'as-key', '<b>Key:</b> ' + esc(k2)));
+        card.appendChild(row);
+      });
       box.appendChild(card);
     });
     if (!mk._keySent && !key) box.appendChild(el('p', 'as-note', paper.enc ? 'Enter the facilitator PIN at the top to load the answer key, then send it.' : 'The answer key couldn’t be loaded from the staff site, so it can’t be sent yet.'));
