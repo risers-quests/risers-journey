@@ -20,7 +20,8 @@
      facilitator adds a note and ticks they were there, which closes it.
      Part 2, on their own: each Riser's Team Reflection (reflect.js).
    - Photos: the quest in pictures, week by week. Anyone on the team adds
-     up to 4 a week, each with a caption.
+     up to 4 a week, each with a caption about that photo (at least five
+     real words; filler, mashes and bare names are turned back).
 
    A team chooses its quest one week and starts it the next. The team
    picks a Quest Master for each week in Our Plan (the turn goes round);
@@ -1382,6 +1383,21 @@
 
   var PHOTOS_A_WEEK = 4, PHOTO_MAX = 190000;
   var pics = {};   // id -> data URL, once fetched
+  // A caption has to say what's in the photo: a real sentence of at least
+  // five words, not filler, a keyboard mash, emojis or a list of names.
+  // The page can't see the picture, so staff still check it fits.
+  var FILLER = /^(a |the |our |my )?(photo|pic|picture|image|selfie|group photo|team photo|us|me|we|nice|cool|good|great|fun|awesome|amazing|random|nothing|idk|lol|hi|hello|test|testing|ok|okay|done|work|working|quest|our quest|this is us|look|see)[.!\s]*$/i;
+  function captionProblem(text) {
+    var t = String(text || '').trim();
+    if (!t) return 'Write a caption first.';
+    var words = t.split(/\s+/).filter(function (w) { return /[a-z]/i.test(w); });
+    if (FILLER.test(t)) return 'Say what is happening in this photo, not just “' + t + '”.';
+    if (/(.)\1{3,}/i.test(t) || words.some(function (w) { return w.length > 3 && !/[aeiouy]/i.test(w); })) return 'That doesn’t look like real words. Say what is happening in the photo.';
+    var names = group.kids.map(function (k) { return k.toLowerCase(); }).concat(['and', '&', 'with']);
+    if (words.length && words.every(function (w) { return names.indexOf(w.toLowerCase().replace(/[^a-z&]/g, '')) !== -1; })) return 'Not just names: say what they are doing.';
+    if (words.length < 5) return 'Write at least 5 words: who is doing what, or what we made. e.g. “Zach measuring the plank before we cut it.”';
+    return '';
+  }
   function photoList(w) {
     return listOf('photos').filter(function (x) { return w === undefined || x.w === w; });
   }
@@ -1430,7 +1446,7 @@
   }
   function photosView() {
     var w = sprint(), wrap = el('div', 'ph');
-    wrap.appendChild(el('div', 'ph-head', '<h2>📸 Our quest in pictures</h2><p>Up to ' + PHOTOS_A_WEEK + ' photos a week, each with a caption: what we did, made or found out.</p>'));
+    wrap.appendChild(el('div', 'ph-head', '<h2>📸 Our quest in pictures</h2><p>Up to ' + PHOTOS_A_WEEK + ' photos a week. Each needs a caption about that photo: who is doing what, or what we made or found out.</p>'));
     var weeks = {};
     photoList().forEach(function (x) { weeks[x.w] = 1; });
     weeks[w] = 1;
@@ -1461,13 +1477,14 @@
         cap.innerHTML = '';
         var ta = el('textarea', 'ph-cap'); ta.rows = 2; ta.value = x.cap || '';
         var save = el('button', 'pq-btn', 'Save'); save.type = 'button';
+        var why = el('p', 'ph-msg');
         save.addEventListener('click', function () {
-          var v = ta.value.trim();
-          if (!v) { ta.classList.add('is-missing'); ta.focus(); return; }
+          var v = ta.value.trim(), bad = captionProblem(v);
+          if (bad) { ta.classList.add('is-missing'); why.textContent = bad; ta.focus(); return; }
           state.photos[x.id] = Object.assign({}, state.photos[x.id], { cap: v, u: now() });
           changed(); draw();
         });
-        cap.appendChild(ta); cap.appendChild(save); ta.focus();
+        cap.appendChild(ta); cap.appendChild(save); cap.appendChild(why); ta.focus();
       });
       var rm = el('button', 'ph-link is-danger', 'Remove'); rm.type = 'button';
       rm.addEventListener('click', function () {
@@ -1492,7 +1509,7 @@
         box.innerHTML = '';
         box.classList.add('is-new');
         var im = el('img', 'ph-img'); im.src = data; im.alt = '';
-        var ta = el('textarea', 'ph-cap'); ta.rows = 3; ta.placeholder = 'Caption: what is happening in this photo?';
+        var ta = el('textarea', 'ph-cap'); ta.rows = 3; ta.placeholder = 'What is happening in this photo? e.g. “Zach measuring the plank before we cut it.”';
         var row = el('div', 'ph-row');
         var save = el('button', 'pq-btn', 'Add photo'), cancel = el('button', 'ph-link', 'Cancel');
         save.type = cancel.type = 'button';
@@ -1502,7 +1519,8 @@
         cancel.addEventListener('click', draw);
         save.addEventListener('click', function () {
           var cap = ta.value.trim();
-          if (!cap) { ta.classList.add('is-missing'); msg.textContent = 'Write a caption first.'; ta.focus(); return; }
+          var bad = captionProblem(cap);
+          if (bad) { ta.classList.add('is-missing'); msg.textContent = bad; ta.focus(); return; }
           if (photoList(w).length >= PHOTOS_A_WEEK) { msg.textContent = 'This week already has ' + PHOTOS_A_WEEK + ' photos.'; return; }
           save.disabled = true; msg.textContent = 'Uploading…';
           var id = uid();
