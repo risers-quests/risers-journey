@@ -100,6 +100,10 @@
   // The last question of an uploaded paper can carry the start of the page
   // after it (the feedback form's heading, Name and Date lines): cut it off.
   function trimTail(h) {
+    // A setter's tag at the start of a question, like "[Word Problem]",
+    // is for staff, not part of the question.
+    h = h.replace(/(^|<(?:p|div|li|h\d)[^>]*>)((?:\s*<(?:em|i|b|strong|span)[^>]*>)*\s*)\[[A-Za-z][A-Za-z ,&/-]{1,30}\]\s*/gi, '$1$2');
+    for (var k = 0; k < 3; k++) h = h.replace(/<(em|i|b|strong)>\s*<\/\1>\s*/gi, '');
     var m = /<(p|h\d|div)[^>]*>\s*(?:<[^>]+>\s*)*(?:Self[- ]Directed Learning|[^<]{0,40}Feedback Form|[^<]{0,40}My Results)/i.exec(h);
     return m ? h.slice(0, m.index) : h;
   }
