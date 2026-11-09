@@ -45,9 +45,11 @@
     return window.eot2Fetch('term-3', 'staff', APPROVAL).then(function (r) { return (r && r.state) || { approved: false, kids: T.defaultKids.slice() }; });
   }
   // Questions shown for these answers: a 'when' section or question only
-  // once the big question points its way (in preview, every one).
+  // once the big question points its way (in preview, every one). `when`
+  // can also be a function of the answers (e.g. the Passion Finder's).
   function shows(item, a, all) {
     if (!item.when || all) return true;
+    if (typeof item.when === 'function') return !!item.when(a);
     if (!a.route) return false;
     return ([].concat(G.NO).indexOf(a.route) !== -1) === (item.when === 'noexam');
   }
@@ -60,18 +62,39 @@
   // The questions; mode 'answer' (typing), 'read' (answers shown) or
   // 'preview' (staff trying it, nothing saved).
   var NAME = 'your child';
-  function nm(t) { return String(t || '').replace(/\{name\}/g, NAME); }
+  // {pick}: the one thing they chose (G.pick says which answer holds it;
+  // its "Something else" option takes the words they typed for it).
+  var PICK = '';
+  function pickOf(a) {
+    var P = G.pick;
+    if (!P) return '';
+    var v = a[P.from] || '';
+    if (v && v === P.otherOption) v = (a[P.otherFrom] || '').trim() || v;
+    return v || P.none || '';
+  }
+  function nm(t) { return String(t || '').replace(/\{name\}/g, NAME).replace(/\{pick\}/g, PICK); }
+  // A question's choices: fixed, or (optionsFrom) the ones they ticked in
+  // another question, plus any extra choices.
+  function optsOf(q, a) {
+    if (!q.optionsFrom) return q.options;
+    return (a[q.optionsFrom] || []).concat(q.extra || []);
+  }
   function formEl(ans, mode, onChange) {
     var a = ans.answers = ans.answers || {};
     var box = el('div');
     var n = 0, conds = [];
+    function paint() {
+    box.innerHTML = ''; n = 0; conds = [];
+    PICK = pickOf(a);
     G.sections.forEach(function (s) {
       if (mode === 'read' && !shows(s, a)) return;
       var sec = el('section', 'g10-sec', '<h2>' + (s.when ? '' : (++n) + '. ') + esc(nm(s.title)) + '</h2>');
-      if (s.when) { conds.push({ el: sec, item: s }); if (mode === 'preview') sec.insertAdjacentHTML('afterbegin', '<p class="g10-cond">' + esc((G.conds || {})[s.when] || ('Shown only if they answer the big question ' + (s.when === 'noexam' ? '“No”' : '“Yes” or “Not decided”'))) + '</p>'); }
+      if (s.when) { conds.push({ el: sec, item: s }); if (mode === 'preview') sec.insertAdjacentHTML('afterbegin', '<p class="g10-cond">' + esc(s.whenLabel || (G.conds || {})[s.when] || ('Shown only if they answer the big question ' + (s.when === 'noexam' ? '“No”' : '“Yes” or “Not decided”'))) + '</p>'); }
       s.qs.forEach(function (q) {
-        var row = el('div', 'g10-q', '<p>' + esc(nm(q.text)) + (q.optional && !T.hideOptional ? ' <small>(optional)</small>' : '') + '</p>' + (q.hint && mode !== 'read' ? '<p class="g10-hint">' + esc(nm(q.hint)) + '</p>' : ''));
+        if (mode === 'read' && !shows(q, a)) return;
+        var row = el('div', 'g10-q', (q.when && q.whenLabel && mode === 'preview' ? '<p class="g10-cond">' + esc(q.whenLabel) + '</p>' : '') + '<p>' + esc(nm(q.text)) + (q.optional && !T.hideOptional ? ' <small>(optional)</small>' : '') + '</p>' + (q.hint && mode !== 'read' ? '<p class="g10-hint">' + esc(nm(q.hint)) + '</p>' : ''));
         row.dataset.q = q.id;
+        if (q.when) conds.push({ el: row, item: q });
         if (mode === 'read') {
           var v = a[q.id];
           row.appendChild(el('p', 'g10-ans' + (filled(v) ? '' : ' is-blank'), filled(v) ? esc(Array.isArray(v) ? v.join(', ') : v) : 'No answer'));
@@ -83,8 +106,9 @@
           ta.addEventListener('input', function () { a[q.id] = ta.value; row.classList.remove('is-missing'); onChange(); });
           row.appendChild(ta);
         } else {
-          var opts = el('div', 'g10-opts');
-          q.options.forEach(function (o) {
+          var opts = el('div', 'g10-opts'), qo = optsOf(q, a);
+          if (q.optionsFrom && !(a[q.optionsFrom] || []).length && q.emptyHint) row.appendChild(el('p', 'g10-hint', esc(q.emptyHint)));
+          qo.forEach(function (o) {
             var on = q.kind === 'many' ? (a[q.id] || []).indexOf(o) !== -1 : a[q.id] === o;
             var b = el('button', 'g10-opt' + (on ? ' is-on' : ''), esc(o));
             b.type = 'button';
@@ -95,8 +119,16 @@
                 if (i === -1) list.push(o); else list.splice(i, 1);
                 a[q.id] = list;
               } else a[q.id] = a[q.id] === o ? '' : o;
+              if (q.rerender) {
+                // Answers whose choices came from this one: drop a choice
+                // that's no longer there, then draw the form again.
+                G.sections.forEach(function (s2) { s2.qs.forEach(function (q2) {
+                  if (q2.optionsFrom && a[q2.id] && optsOf(q2, a).indexOf(a[q2.id]) === -1) a[q2.id] = '';
+                }); });
+                paint(); onChange(); return;
+              }
               Array.prototype.forEach.call(opts.children, function (x, j) {
-                var y = q.options[j], is = q.kind === 'many' ? a[q.id].indexOf(y) !== -1 : a[q.id] === y;
+                var y = qo[j], is = q.kind === 'many' ? a[q.id].indexOf(y) !== -1 : a[q.id] === y;
                 x.classList.toggle('is-on', is); x.setAttribute('aria-pressed', is);
               });
               row.classList.remove('is-missing');
@@ -119,9 +151,11 @@
       });
       box.appendChild(sec);
     });
+    refresh();
+    }
     // Show the sections for the answer to the big question.
     function refresh() { conds.forEach(function (c) { c.el.hidden = !shows(c.item, a, mode === 'preview'); }); }
-    refresh();
+    paint();
     return box;
   }
 
