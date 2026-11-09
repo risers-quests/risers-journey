@@ -695,7 +695,11 @@
       trs.forEach(function (tr, ri) {
         if (ri === 0) return;
         if (!want[ri]) { tr.remove(); return; }
-        Array.prototype.forEach.call(tr.children, function (td, ci) { if (ci && want[ri][ci]) { td.classList.add('as-rw-cell'); td.textContent = '?'; } });
+        Array.prototype.forEach.call(tr.children, function (td, ci) {
+          if (!ci) return;
+          td.setAttribute('data-c', 't' + ri + ci);
+          if (want[ri][ci]) { td.classList.add('as-rw-cell'); td.textContent = '?'; }
+        });
       });
       t.classList.add('as-rw-table');
       var before = html.split(/<table/i)[0];
@@ -777,6 +781,27 @@
       card.appendChild(el('div', 'as-rwhead', '<b>' + q.n + '.</b><span>Redo' + (redo.split ? ' ' + (redo.parts.length > 1 ? 'these parts' : 'this part') : q.parts || q.markLetters ? ': ' + esc(wrongLabels(q, w).join(', ')) : ' this question') + '</span>'));
       if (redo.split && !redo.whole) { if (redo.stem) card.appendChild(el('div', 'as-qtext as-qhtml', redo.stem)); }
       else card.appendChild(questionHtmlEl(paper, q));
+      // A table: the wrong cells are typed in the table itself; the cells
+      // that were right get a tick.
+      var tbl = q.table && redo.split && !redo.whole ? card.querySelector('table.as-rw-table') : null;
+      if (tbl) {
+        Array.prototype.forEach.call(tbl.querySelectorAll('td[data-c]'), function (td) {
+          var c = td.getAttribute('data-c'), pt = redo.parts.filter(function (x) { return x.l === c; })[0];
+          if (!pt) { td.textContent = markOf(mk.marks || {}, q.n + c) === 'r' ? '✓' : ''; td.classList.add('as-rw-ok'); return; }
+          td.textContent = '';
+          if (canWrite) {
+            var inp = el('textarea', 'as-input as-rw-in');
+            inp.rows = 2; inp.placeholder = 'Answer';
+            inp.setAttribute('aria-label', pt.label);
+            inp.value = rw[pt.id] || '';
+            inp.addEventListener('input', function () { rw[pt.id] = inp.value; save(); });
+            td.appendChild(inp);
+          } else td.textContent = filled(rw[pt.id]) ? rw[pt.id] : '—';
+        });
+        if (keyFor && filled(keyFor[q.n])) card.appendChild(el('p', 'as-key', '<b>Key:</b> ' + esc(keyFor[q.n])));
+        box.appendChild(card);
+        return;
+      }
       // Written before parts had their own boxes: shown, to copy from.
       if (redo.split && filled(rw[q.n]) && !redo.parts.some(function (pt) { return filled(rw[pt.id]); })) card.appendChild(el('p', 'as-written', '<span>What you wrote before</span>' + esc(rw[q.n]).replace(/\n/g, '<br>')));
       redo.parts.forEach(function (pt) {
@@ -800,7 +825,8 @@
           var small = q.assertLetters && pt.l;
           var ta = el(small ? 'input' : 'textarea', 'as-input' + (small ? ' as-numans' : ''));
           if (small) { ta.type = 'text'; ta.inputMode = 'numeric'; ta.maxLength = 1; ta.placeholder = 'Type the number (1, 2, 3, 4)'; }
-          else { ta.rows = redo.split ? 2 : 3; ta.placeholder = 'My answer, worked again'; }
+          else if (redo.split && q.options && !q.markLabels && /_{3,}/.test(pt.html || '')) { ta = el('input', 'as-input'); ta.type = 'text'; ta.autocomplete = 'off'; ta.placeholder = 'Fill in the blank'; }
+          else { ta.rows = redo.split ? 2 : 3; ta.placeholder = 'My answer'; }
           ta.value = rw[pt.id] || '';
           ta.addEventListener('input', function () { rw[pt.id] = ta.value; save(); });
           row.appendChild(ta);
