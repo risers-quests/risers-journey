@@ -19,7 +19,6 @@ window.G10 = {
   conds: { exam: 'Shown only if they are leaning towards the 10th boards' },
   text: {
     sub: 'For {name}’s parents, to fill in before our meeting',
-    send: 'Send before the meeting',
     hideOptional: true,
     staffIntro: 'Parents fill this in before the meeting where we ask them whether their child takes the 10th boards route (if not, the child carries on at LifeHub as now): where they are now and, for the 10th boards, what they have already researched, the materials and ways of working they would like, and the support they need. Families only see it once it’s OK’d here; they find it on their child’s Term 3 page.'
   },

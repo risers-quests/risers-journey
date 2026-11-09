@@ -34,3 +34,13 @@
 .g10-pill.is-ok { background: var(--good-soft); color: var(--good); }
 .g10-cond { margin: 0 0 6px; font-size: .8rem; font-weight: 700; color: #2b6cb0; }
 .g10-warn { margin: 6px 0 0; padding: 7px 11px; border-radius: 10px; background: #fdecea; color: #a3432b; font-size: .88rem; font-weight: 600; }
+/* Submitted: a clear finish. */
+.g10-done { text-align: center; background: #fff; border: 1px solid var(--border); border-top: 6px solid var(--good); border-radius: 18px; padding: 30px 22px 26px; margin: 0 0 18px; max-width: 760px; }
+.g10-done-tick { width: 72px; height: 72px; margin: 0 auto 12px; border-radius: 50%; background: var(--good-soft); color: var(--good); font-size: 2.4rem; font-weight: 700; line-height: 72px; animation: g10-pop .45s ease-out; }
+.g10-done h2 { margin: 0 0 8px; font-family: var(--font-head); font-size: 1.6rem; }
+.g10-done p { margin: 0 auto 18px; max-width: 520px; color: var(--ink-soft); line-height: 1.55; }
+.g10-done .eot2-btn { width: auto; padding: 10px 22px; }
+@keyframes g10-pop { 0% { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .g10-done-tick { animation: none; } }
+.g10-prog { font-size: .9rem; font-weight: 600; color: var(--ink-soft); }
+.g10-prog.is-ok { color: var(--good); }

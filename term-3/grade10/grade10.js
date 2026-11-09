@@ -18,8 +18,9 @@
   var T = Object.assign({
     key: 'term3-grade10', approval: 'grade10-approval', defaultKids: ['benjamin'],
     sub: 'For {name}’s parents, before the meeting',
-    send: 'Send before the meeting',
-    thanks: 'Thank you! You sent this on {date}. We will go through it with you at the meeting.',
+    send: 'Submit',
+    doneTitle: 'Submitted!',
+    thanks: 'Thank you! You submitted this on {date}. We will go through it with you at the meeting.',
     staffIntro: 'Parents fill this in before the meeting about their child’s 10th grade exams: how they feel, their plans, and how they would like to do it. Families only see it once it’s OK’d here; they find it on their child’s Term 3 page.',
     previewNote: 'This is what parents see (with their child’s name).',
     who: 'whose parents it’s for', one: 'family', many: 'families'
@@ -183,10 +184,18 @@
       var ap = r[0];
       if (!ap.approved || (ap.kids || []).indexOf(kid.slug) === -1) { location.replace('../index.html'); return; }
       var ans = (r[1] && r[1].state) || {};
-      setStatus('saved', ans._sent ? 'Sent' : 'Saved');
+      setStatus('saved', ans._sent ? 'Submitted' : 'Saved');
       if (ans._sent) {
-        body.appendChild(el('p', 'g10-intro', esc(nm(T.thanks).replace('{date}', day(ans._sent)))));
-        body.appendChild(formEl(ans, 'read'));
+        // Done: a clear "Submitted!" card; their answers stay one tap away.
+        var done = el('section', 'g10-done', '<div class="g10-done-tick" aria-hidden="true">✓</div><h2>' + esc(T.doneTitle) + '</h2><p>' + esc(nm(T.thanks).replace('{date}', day(ans._sent))) + '</p>');
+        var see = el('button', 'eot2-btn eot2-btn-secondary', 'See what you submitted');
+        see.type = 'button';
+        var answers = formEl(ans, 'read');
+        answers.hidden = true;
+        see.addEventListener('click', function () { answers.hidden = !answers.hidden; see.textContent = answers.hidden ? 'See what you submitted' : 'Hide my answers'; });
+        done.appendChild(see);
+        body.appendChild(done);
+        body.appendChild(answers);
         return;
       }
       var timer = null;
@@ -203,8 +212,17 @@
         });
       }
       body.appendChild(el('p', 'g10-intro', esc(nm(G.intro))));
-      body.appendChild(formEl(ans, 'answer', function () { save(); }));
+      body.appendChild(formEl(ans, 'answer', function () { save(); progress(); }));
       var bar = el('div', 'g10-bar');
+      // How far along they are, next to the Submit button.
+      var prog = el('span', 'g10-prog');
+      function progress() {
+        var qs = allQs(ans.answers).filter(function (q) { return !q.optional; });
+        var n = qs.filter(function (q) { return filled(ans.answers[q.id]); }).length;
+        prog.textContent = n + ' of ' + qs.length + ' answered';
+        prog.classList.toggle('is-ok', n === qs.length);
+      }
+      progress();
       var send = el('button', 'eot2-btn', esc(T.send));
       send.type = 'button';
       var msg = el('span', 'g10-msg');
@@ -216,16 +234,17 @@
           document.querySelector('.g10-q.is-missing').scrollIntoView({ behavior: 'smooth', block: 'center' });
           return;
         }
-        if (!confirm('Send your answers? You can’t change them after this.')) return;
+        if (!confirm('Submit your answers? You can’t change them after this.')) return;
         ans._sent = new Date().toISOString();
         send.disabled = true;
         save(true).then(function (ok) {
           if (ok) { renderKid(kid); window.scrollTo(0, 0); return; }
           delete ans._sent; send.disabled = false;
-          msg.textContent = 'Not sent — check the connection and try again.';
+          msg.textContent = 'Not submitted — check the connection and try again.';
         });
       });
       bar.appendChild(send);
+      bar.appendChild(prog);
       bar.appendChild(msg);
       body.appendChild(bar);
     });
@@ -309,7 +328,7 @@
         }
         var i = kids.map(function (k) { return k.slug; }).indexOf(shown), a = answers[i];
         NAME = kids[i].name;
-        view.appendChild(el('p', '', a._sent ? '<span class="g10-pill is-ok">Sent ' + day(a._sent) + '</span>' : a.answers && Object.keys(a.answers).length ? '<span class="g10-pill">Started, not sent yet</span>' : '<span class="g10-pill">Not started</span>'));
+        view.appendChild(el('p', '', a._sent ? '<span class="g10-pill is-ok">Submitted ' + day(a._sent) + '</span>' : a.answers && Object.keys(a.answers).length ? '<span class="g10-pill">Started, not submitted yet</span>' : '<span class="g10-pill">Not started</span>'));
         view.appendChild(formEl(a, 'read'));
       }
       paintTabs();

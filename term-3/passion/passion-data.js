@@ -39,10 +39,9 @@
     text: {
       key: 'term3-passion', approval: 'passion-approval', defaultKids: [],
       sub: 'All about what {name} loves',
-      send: 'Send to my facilitator',
       hideOptional: true,
       flagNote: 'Flagged: this sounds like watching, gaming, scrolling or eating rather than doing.',
-      thanks: 'Thank you! You sent this on {date}. Your facilitator will read it and talk with you about what you love and how to make time for it.',
+      thanks: 'Thank you! You submitted this on {date}. Your facilitator will read it and talk with you about what you love and how to make time for it.',
       staffIntro: 'Each Riser ticks what they make, practise or do when nobody tells them (watching, gaming or scrolling can be ticked honestly but never becomes their ONE; instead they say what they love about it: story, strategy, building worlds…). Typed answers about watching, gaming, scrolling or eating are caught and must be changed before sending. They make quick either/or choices, then pick the ONE thing they’d keep. For that one thing they are asked for proof rather than preferences (when they last did it, the best thing they made, names they know, whether they’d do it if nobody saw). Answers that are vague or don’t hold together are your starting point for the chat. Risers only see it once it’s OK’d here; they find it on their Term 3 page.',
       previewNote: 'This is what Risers see. The questions in “Your one” follow whatever they pick.',
       who: 'which Risers it’s for', one: 'Riser', many: 'Risers'
