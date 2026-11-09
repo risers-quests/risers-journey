@@ -18,6 +18,8 @@
      goal, planning next week from the Backlog, the work goal); a
      facilitator adds a note and ticks they were there, which closes it.
      Part 2, on their own: each Riser's Team Reflection (reflect.js).
+   - Photos: the quest in pictures, week by week. Anyone on the team adds
+     up to 4 a week, each with a caption.
 
    A team chooses its quest one week and starts it the next. The team
    picks a Quest Master for each week in Our Plan (the turn goes round);
@@ -27,7 +29,9 @@
    One shared record per team, saved through the progress Worker under
    group "term-3", kid = the group id, week "board": meta (project,
    started, master<week>, planOk, pgoal_<n>, noShop), cards, standups,
-   checkins, blockers, materials (no longer shown), plan and shop. Every item carries the time it last changed (u); saving
+   checkins, blockers, materials (no longer shown), plan, shop and photos
+   ({ w, cap, by, order }; each picture is its own record, week
+   "photo-<id>": { img } as a small JPEG, so the board stays light). Every item carries the time it last changed (u); saving
    fetches the latest copy and keeps the newer version of each, so two
    Risers working at once don't wipe each other's changes. Deleted items
    are kept as { deleted: true }. The page refreshes from other devices
@@ -54,7 +58,7 @@
     return { id: 'own', own: true, cat: o.cat || 'sol', title: o.title, what: o.what, make: o.make, learn: o.learn, lo: o.learn, weeks: +o.weeks || 3, resp: [], st: o.st, note: o.note, by: o.by, okBy: o.okBy };
   }
   var WEEKS = Q.WEEKS.map(function (w, i) { return i + 1; });
-  var MAPS = ['meta', 'cards', 'standups', 'checkins', 'blockers', 'materials', 'plan', 'shop'];
+  var MAPS = ['meta', 'cards', 'standups', 'checkins', 'blockers', 'materials', 'plan', 'shop', 'photos'];
 
   // A Riser (term-3/quest/index.html sets PB_KID_MODE) sees only their own
   // group; staff pick any.
@@ -75,7 +79,7 @@
   var state = blank();
   var loaded = false, saving = false, dirty = false, saveTimer = null;
 
-  function blank() { return { meta: {}, cards: {}, standups: {}, checkins: {}, blockers: {}, materials: {}, plan: {}, shop: {} }; }
+  function blank() { return { meta: {}, cards: {}, standups: {}, checkins: {}, blockers: {}, materials: {}, plan: {}, shop: {}, photos: {} }; }
   function now() { return Date.now(); }
   function uid() { return Math.random().toString(36).slice(2, 9); }
   function esc(s) {
@@ -199,6 +203,8 @@
     if (!loaded || dirty || saving || document.hidden || (!KID && OVERVIEW)) return;
     var a = document.activeElement;
     if (a && /INPUT|TEXTAREA|SELECT/.test(a.tagName)) return;
+    // A photo being added (or its caption edited) isn't lost to a refresh.
+    if (app.querySelector('.ph-add.is-new, .ph-wait, .ph-card textarea')) return;
     window.eot2Fetch('term-3', group.id, 'board').then(function (d) {
       if (!d || !d.state || dirty) return;
       var before = JSON.stringify(state);
@@ -246,7 +252,7 @@
   var approvals = {};
   function approved(b) { var a = approvals[b.id]; return a && a.v === 'yes'; }
 
-  var TABS = [['pack', 'Quest Pack'], ['plan', 'Our Plan'], ['board', 'Board'], ['standup', 'Stand-up'], ['checkin', 'Look Back']];
+  var TABS = [['pack', 'Quest Pack'], ['plan', 'Our Plan'], ['board', 'Board'], ['standup', 'Stand-up'], ['checkin', 'Look Back'], ['photos', 'Photos']];
 
   function draw() {
     var main = app.querySelector('.pb-main');
@@ -272,7 +278,7 @@
       tabs.appendChild(b);
     });
     main.appendChild(tabs);
-    main.appendChild(tab === 'pack' ? packView() : tab === 'plan' ? planView() : tab === 'standup' ? standupView() : tab === 'checkin' ? checkinView() : boardView());
+    main.appendChild(tab === 'pack' ? packView() : tab === 'plan' ? planView() : tab === 'standup' ? standupView() : tab === 'checkin' ? checkinView() : tab === 'photos' ? photosView() : boardView());
     window.scrollTo(0, y);
   }
 
@@ -1368,6 +1374,148 @@
       }
     });
     return wrap;
+  }
+
+  /* ---------- Photos: the quest in pictures, week by week ---------- */
+
+  var PHOTOS_A_WEEK = 4, PHOTO_MAX = 190000;
+  var pics = {};   // id -> data URL, once fetched
+  function photoList(w) {
+    return listOf('photos').filter(function (x) { return w === undefined || x.w === w; });
+  }
+  function photoWeekName(w) {
+    var start = meta('started') ? Q.startWeek(meta('started')) : 0, n = start ? w - start + 1 : 0;
+    var r = Q.WEEKS[w - 1];
+    return (start ? (n < 1 ? 'Getting ready' : 'Quest week ' + n) : 'Week ' + w) + (r ? ' · ' + shortDate(r[0]) + '–' + shortDate(r[1]) : '');
+  }
+  // A phone photo, made small enough for one record: at most 1280px, as a JPEG.
+  function shrinkPhoto(file) {
+    return new Promise(function (ok, fail) {
+      var img = new Image(), url = URL.createObjectURL(file);
+      img.onload = function () {
+        URL.revokeObjectURL(url);
+        var tries = [[1280, 0.8], [1100, 0.72], [960, 0.65], [800, 0.6], [640, 0.55]];
+        for (var i = 0; i < tries.length; i++) {
+          var k = Math.min(1, tries[i][0] / Math.max(img.naturalWidth, img.naturalHeight));
+          var c = document.createElement('canvas');
+          c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          var d = c.toDataURL('image/jpeg', tries[i][1]);
+          if (d.length <= PHOTO_MAX || i === tries.length - 1) return ok(d);
+        }
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); fail(); };
+      img.src = url;
+    });
+  }
+  function photoImg(x) {
+    var im = el('img', 'ph-img');
+    im.alt = x.cap || '';
+    im.loading = 'lazy';
+    if (pics[x.id]) im.src = pics[x.id];
+    else window.eot2Fetch('term-3', group.id, 'photo-' + x.id).then(function (d) {
+      var src = d && d.state && d.state.img;
+      if (src) { pics[x.id] = src; im.src = src; } else im.classList.add('is-missing');
+    });
+    return im;
+  }
+  function viewPhoto(x) {
+    var o = el('div', 'ph-full', '<button type="button" class="ph-full-x" aria-label="Close">✕</button>');
+    o.appendChild(photoImg(x));
+    o.appendChild(el('p', '', esc(x.cap) + ' <small>' + esc(x.by || '') + '</small>'));
+    o.addEventListener('click', function () { o.remove(); });
+    document.body.appendChild(o);
+  }
+  function photosView() {
+    var w = sprint(), wrap = el('div', 'ph');
+    wrap.appendChild(el('div', 'ph-head', '<h2>📸 Our quest in pictures</h2><p>Up to ' + PHOTOS_A_WEEK + ' photos a week, each with a caption: what we did, made or found out.</p>'));
+    var weeks = {};
+    photoList().forEach(function (x) { weeks[x.w] = 1; });
+    weeks[w] = 1;
+    Object.keys(weeks).map(Number).filter(function (n) { return n <= w; }).sort(function (a, b) { return b - a; }).forEach(function (n) {
+      var list = photoList(n).sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
+      var sec = el('section', 'ph-week', '<h3>' + (n === w ? 'This week' : photoWeekName(n)) + (n === w ? ' <small>' + esc(photoWeekName(n)) + '</small>' : '') + '<em>' + list.length + (n === w ? ' of ' + PHOTOS_A_WEEK : '') + '</em></h3>');
+      var grid = el('div', 'ph-grid');
+      list.forEach(function (x) { grid.appendChild(photoCard(x)); });
+      if (n === w && list.length < PHOTOS_A_WEEK) grid.appendChild(addPhotoEl(w));
+      if (!list.length && n !== w) return;
+      sec.appendChild(grid);
+      wrap.appendChild(sec);
+    });
+    return wrap;
+  }
+  function canChangePhoto(x) { return !KID || x.by === ME; }
+  function photoCard(x) {
+    var c = el('figure', 'ph-card');
+    var im = photoImg(x);
+    im.addEventListener('click', function () { viewPhoto(x); });
+    c.appendChild(im);
+    var cap = el('figcaption', '', '<span>' + esc(x.cap) + '</span><small>' + esc(x.by || '') + '</small>');
+    c.appendChild(cap);
+    if (canChangePhoto(x)) {
+      var acts = el('div', 'ph-acts');
+      var ed = el('button', 'ph-link', 'Edit caption'); ed.type = 'button';
+      ed.addEventListener('click', function () {
+        cap.innerHTML = '';
+        var ta = el('textarea', 'ph-cap'); ta.rows = 2; ta.value = x.cap || '';
+        var save = el('button', 'pq-btn', 'Save'); save.type = 'button';
+        save.addEventListener('click', function () {
+          var v = ta.value.trim();
+          if (!v) { ta.classList.add('is-missing'); ta.focus(); return; }
+          state.photos[x.id] = Object.assign({}, state.photos[x.id], { cap: v, u: now() });
+          changed(); draw();
+        });
+        cap.appendChild(ta); cap.appendChild(save); ta.focus();
+      });
+      var rm = el('button', 'ph-link is-danger', 'Remove'); rm.type = 'button';
+      rm.addEventListener('click', function () {
+        if (!confirm('Remove this photo?')) return;
+        state.photos[x.id] = Object.assign({}, state.photos[x.id], { deleted: true, u: now() });
+        changed(); draw();
+      });
+      acts.appendChild(ed); acts.appendChild(rm);
+      c.appendChild(acts);
+    }
+    return c;
+  }
+  function addPhotoEl(w) {
+    var box = el('div', 'ph-add');
+    var pick = el('label', 'ph-pick', '<span>＋</span>Add a photo<input type="file" accept="image/*" hidden>');
+    box.appendChild(pick);
+    pick.querySelector('input').addEventListener('change', function () {
+      var f = this.files && this.files[0];
+      if (!f) return;
+      box.innerHTML = '<p class="ph-wait">Getting your photo ready…</p>';
+      shrinkPhoto(f).then(function (data) {
+        box.innerHTML = '';
+        box.classList.add('is-new');
+        var im = el('img', 'ph-img'); im.src = data; im.alt = '';
+        var ta = el('textarea', 'ph-cap'); ta.rows = 3; ta.placeholder = 'Caption: what is happening in this photo?';
+        var row = el('div', 'ph-row');
+        var save = el('button', 'pq-btn', 'Add photo'), cancel = el('button', 'ph-link', 'Cancel');
+        save.type = cancel.type = 'button';
+        var msg = el('p', 'ph-msg');
+        row.appendChild(save); row.appendChild(cancel);
+        box.appendChild(im); box.appendChild(ta); box.appendChild(row); box.appendChild(msg);
+        cancel.addEventListener('click', draw);
+        save.addEventListener('click', function () {
+          var cap = ta.value.trim();
+          if (!cap) { ta.classList.add('is-missing'); msg.textContent = 'Write a caption first.'; ta.focus(); return; }
+          if (photoList(w).length >= PHOTOS_A_WEEK) { msg.textContent = 'This week already has ' + PHOTOS_A_WEEK + ' photos.'; return; }
+          save.disabled = true; msg.textContent = 'Uploading…';
+          var id = uid();
+          // The picture first, so the board never lists a photo that isn't there.
+          window.eot2Save('term-3', group.id, 'photo-' + id, { img: data, by: ME || 'staff', u: now() }).then(function (res) {
+            if (!res.ok) { save.disabled = false; msg.textContent = 'Not uploaded: check the connection and try again.'; return; }
+            pics[id] = data;
+            state.photos[id] = { w: w, cap: cap, by: KID ? ME : 'Facilitator', order: now(), u: now() };
+            changed(); draw();
+          });
+        });
+        ta.focus();
+      }, function () { box.innerHTML = '<p class="ph-msg">That file isn’t a photo this page can read. Try another.</p>'; });
+    });
+    return box;
   }
 
   /* ---------- staff overview: every team at a glance ---------- */

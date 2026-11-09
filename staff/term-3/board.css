@@ -578,3 +578,45 @@ button.qp-ck { font: inherit; text-align: left; border: 2px solid transparent; c
 .qp-uses span { font-size: .92rem; }
 .qp-checked { margin: 10px 0 0; background: var(--good-soft); color: var(--good); font-weight: 700; border-radius: 10px; padding: 8px 12px; }
 .pl-total.is-over { color: #a3432b; }
+
+/* Photos: the quest in pictures, week by week. */
+.ph-head h2 { margin: 0 0 4px; font-family: var(--font-head); font-size: 1.15rem; }
+.ph-head p { margin: 0 0 16px; color: var(--ink-soft); font-size: .92rem; }
+.ph-week { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 14px 16px 16px; margin-bottom: 14px; box-shadow: var(--shadow-sm); }
+.ph-week h3 { display: flex; align-items: baseline; gap: 8px; margin: 0 0 12px; font-family: var(--font-head); font-size: 1rem; }
+.ph-week h3 small { font-family: var(--font-body); font-weight: 500; font-size: .8rem; color: var(--ink-faint); }
+.ph-week h3 em { margin-left: auto; font-style: normal; font-size: .8rem; font-weight: 600; color: var(--ink-faint); }
+.ph-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; }
+.ph-card { margin: 0; display: flex; flex-direction: column; background: var(--paper-soft); border-radius: 14px; overflow: hidden; }
+.ph-img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: #e8ede4; cursor: zoom-in; }
+.ph-img.is-missing { cursor: default; }
+.ph-card figcaption { padding: 10px 12px 4px; display: flex; flex-direction: column; gap: 6px; font-size: .9rem; line-height: 1.4; }
+.ph-card figcaption small { color: var(--ink-faint); font-size: .76rem; font-weight: 600; }
+.ph-acts { display: flex; gap: 14px; padding: 0 12px 10px; }
+.ph-link { border: 0; background: none; padding: 4px 0; font: inherit; font-size: .8rem; font-weight: 600; color: var(--accent); cursor: pointer; }
+.ph-link.is-danger { color: #b5402f; }
+.ph-cap { width: 100%; box-sizing: border-box; font: inherit; font-size: .92rem; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 10px; resize: vertical; }
+.ph-cap.is-missing { border-color: #d0342c; background: #fff6f5; }
+.ph-add { display: flex; flex-direction: column; gap: 10px; min-height: 180px; }
+.ph-add.is-new { background: var(--paper-soft); border-radius: 14px; padding: 10px; }
+.ph-add.is-new .ph-img { border-radius: 10px; cursor: default; }
+.ph-pick { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 180px;
+  border: 2px dashed #cdd8c4; border-radius: 14px; color: var(--accent); font-weight: 600; font-size: .92rem; cursor: pointer; background: #fbfcfa; }
+.ph-pick span { font-size: 1.8rem; line-height: 1; }
+.ph-pick:active { background: var(--accent-soft); }
+.ph-row { display: flex; align-items: center; gap: 14px; }
+.ph-msg, .ph-wait { margin: 0; font-size: .85rem; color: var(--ink-soft); }
+.ph-wait { padding: 20px; text-align: center; }
+.ph-full { position: fixed; inset: 0; z-index: 80; background: rgba(12, 16, 20, .92); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 20px; cursor: zoom-out; }
+.ph-full .ph-img { width: auto; max-width: 100%; max-height: 78vh; aspect-ratio: auto; object-fit: contain; background: none; border-radius: 8px; }
+.ph-full p { margin: 0; color: #fff; text-align: center; max-width: 640px; }
+.ph-full p small { display: block; color: rgba(255, 255, 255, .6); margin-top: 4px; }
+.ph-full-x { position: absolute; top: calc(12px + env(safe-area-inset-top)); right: 14px; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255, 255, 255, .14); color: #fff; font-size: 1.1rem; cursor: pointer; }
+@media (max-width: 640px) {
+  .ph-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .ph-week { padding: 12px 12px 14px; }
+  .ph-card figcaption { padding: 8px 10px 2px; font-size: .84rem; }
+  .ph-acts { padding: 0 10px 8px; gap: 12px; }
+  .ph-add, .ph-pick { min-height: 140px; }
+  .ph-add.is-new { grid-column: 1 / -1; }
+}
