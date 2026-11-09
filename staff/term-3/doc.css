@@ -1,0 +1,60 @@
+/* Staff document pages (olympiads.html, passions.html). */
+.doc { max-width: 860px; background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 22px 26px 30px; line-height: 1.6; }
+.doc h1 { font-family: var(--font-head); font-size: 1.7rem; margin: 0 0 12px; }
+.doc h2 { font-family: var(--font-head); font-size: 1.25rem; margin: 30px 0 10px; padding-top: 18px; border-top: 1px solid var(--border); }
+.doc h3 { font-family: var(--font-head); font-size: 1.05rem; margin: 22px 0 8px; }
+.doc p, .doc li { font-size: .97rem; }
+.doc ul, .doc ol { padding-left: 22px; }
+.doc li { margin: 4px 0; }
+.doc a { color: var(--accent-dark, var(--accent)); word-break: break-word; }
+.doc hr { border: 0; border-top: 2px solid var(--border); margin: 30px 0; }
+.doc-table { overflow-x: auto; margin: 10px 0 16px; }
+.doc table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+.doc th, .doc td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; vertical-align: top; }
+.doc th { background: var(--paper-soft); }
+@media (max-width: 640px) { .doc { padding: 16px 16px 22px; border-radius: 14px; } }
+/* Passions page: the Passion Feed showcase and phone mock-ups. */
+.pf { margin: 26px -6px 6px; padding: 24px 22px 18px; border-radius: 20px; background: linear-gradient(135deg, #fff7ed 0%, #fdf2f8 55%, #eef2ff 100%); border: 1px solid #fde6cf; }
+.doc .pf h2 { margin: 2px 0 8px; padding: 0; border: 0; font-size: 1.7rem; }
+.pf-kicker { margin: 0; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #c2410c; }
+.doc .pf-lead { font-size: 1.08rem; margin: 0 0 14px; }
+.pf-points { list-style: none; padding: 0 !important; margin: 0 0 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 22px; }
+.pf-points li { display: flex; gap: 12px; align-items: flex-start; margin: 0 0 8px !important; }
+.pf-points li > span { flex: none; width: 34px; height: 34px; border-radius: 10px; background: #fff; display: grid; place-items: center; box-shadow: 0 1px 3px rgba(0,0,0,.08); font-size: 1.05rem; }
+.pf-phones { display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; }
+.pf-phone { margin: 0; }
+.pf-phone figcaption { text-align: center; font-weight: 700; font-family: var(--font-head); margin: 0 0 8px; color: #9a3412; }
+.pf-screen { width: 270px; background: #fff; border: 9px solid #1f2933; border-radius: 34px; padding: 12px 10px 10px; box-shadow: 0 18px 40px rgba(31,41,51,.22); font-size: .8rem; line-height: 1.35; }
+.pf-top { display: flex; justify-content: space-between; align-items: baseline; padding: 0 4px 8px; }
+.pf-top b { font-family: var(--font-head); font-size: 1rem; }
+.pf-top span, .pf-post small, .pf-upload small, .pf-note { color: var(--ink-faint, #7b8794); font-size: .72rem; }
+.pf-upload { border: 2px dashed #f6c99a; border-radius: 12px; padding: 6px; margin-bottom: 8px; text-align: center; }
+.pf-upload .pf-img { height: 92px; margin-bottom: 4px; }
+.pf-q { display: block; font-weight: 700; font-size: .76rem; margin: 0 0 7px; }
+.pf-q span { display: block; font-weight: 400; margin-top: 3px; padding: 6px 8px; border: 1.5px solid var(--border); border-radius: 9px; background: #fafafa; }
+.pf-q em { font-style: normal; font-weight: 600; font-size: .66rem; color: #c2410c; background: #ffedd5; border-radius: 99px; padding: 1px 6px; margin-left: 2px; white-space: nowrap; }
+.pf-q-rot span { border-color: #fdba74; }
+.pf-post-btn { text-align: center; background: #2f855a; color: #fff; font-weight: 700; border-radius: 99px; padding: 8px; margin-top: 4px; }
+.pf-post { border: 1px solid var(--border); border-radius: 14px; padding: 8px 9px; margin-bottom: 9px; }
+.pf-head { display: flex; gap: 8px; align-items: center; margin-bottom: 7px; }
+.pf-head div { display: flex; flex-direction: column; }
+.pf-av { width: 28px; height: 28px; border-radius: 50%; color: #fff; display: grid; place-items: center; font-weight: 700; font-size: .8rem; }
+.pf-img { height: 100px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; }
+.pf-img-pitch { background: repeating-linear-gradient(90deg, #2f855a 0 22px, #38a169 22px 44px); }
+.pf-img-bake { background: linear-gradient(135deg, #f6ad55, #c05621); }
+.pf-emoji { font-size: 2rem; line-height: 1; }
+.pf-big { font-weight: 700; font-size: .92rem; margin-top: 4px; text-shadow: 0 1px 2px rgba(0,0,0,.25); }
+.pf-cap { display: grid; grid-template-columns: auto 1fr; gap: 3px 7px; margin: 8px 0 6px; font-size: .78rem; }
+.pf-cap dt { font-weight: 700; color: #9a3412; }
+.pf-cap dd { margin: 0; }
+.pf-foot { font-size: .72rem; font-weight: 600; color: #2f855a; }
+.pf-level { text-align: center; background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #fcd34d; }
+.pf-confetti { font-size: 1.5rem; }
+.doc .pf-level p { margin: 2px 0 0; }
+.doc .pf-note { text-align: center; margin: 12px 0 0; }
+@media (max-width: 760px) { .pf { margin: 22px 0 6px; padding: 18px 14px; } .pf-points { grid-template-columns: 1fr; } }
+.doc .pf h2 small { font-size: .9rem; font-weight: 500; color: var(--ink-soft); margin-left: 6px; }
+.pf-comments { border-top: 1px solid var(--border); margin-top: 7px; padding-top: 6px; }
+.doc .pf-comments p { margin: 0 0 4px; font-size: .74rem; }
+.pf-comments i { font-style: normal; color: #9a3412; font-weight: 600; }
+.doc .pf-lazy { margin: -2px 0 8px; font-size: .68rem; color: #a3432b; }

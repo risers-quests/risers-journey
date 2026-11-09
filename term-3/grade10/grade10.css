@@ -33,3 +33,28 @@
 .g10-pill { display: inline-block; font-size: .78rem; font-weight: 700; border-radius: 99px; padding: 3px 10px; background: var(--paper-soft); color: var(--ink-soft); }
 .g10-pill.is-ok { background: var(--good-soft); color: var(--good); }
 .g10-cond { margin: 0 0 6px; font-size: .8rem; font-weight: 700; color: #2b6cb0; }
+.g10-warn { margin: 6px 0 0; padding: 7px 11px; border-radius: 10px; background: #fdecea; color: #a3432b; font-size: .88rem; font-weight: 600; }
+/* Submitted: a clear finish. */
+.g10-done { text-align: center; background: #fff; border: 1px solid var(--border); border-top: 6px solid var(--good); border-radius: 18px; padding: 30px 22px 26px; margin: 0 0 18px; max-width: 760px; }
+.g10-done-tick { width: 72px; height: 72px; margin: 0 auto 12px; border-radius: 50%; background: var(--good-soft); color: var(--good); font-size: 2.4rem; font-weight: 700; line-height: 72px; animation: g10-pop .45s ease-out; }
+.g10-done h2 { margin: 0 0 8px; font-family: var(--font-head); font-size: 1.6rem; }
+.g10-done p { margin: 0 auto 18px; max-width: 520px; color: var(--ink-soft); line-height: 1.55; }
+.g10-done .eot2-btn { width: auto; padding: 10px 22px; }
+@keyframes g10-pop { 0% { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .g10-done-tick { animation: none; } }
+.g10-prog { font-size: .9rem; font-weight: 600; color: var(--ink-soft); }
+.g10-prog.is-ok { color: var(--good); }
+/* Typed items (chips) with "Stuck? See ideas". */
+.g10-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+.g10-chip { display: inline-flex; align-items: center; gap: 4px; background: var(--accent-soft); color: var(--accent-dark); border: 1.5px solid var(--accent); border-radius: 99px; padding: 5px 6px 5px 12px; font-size: .9rem; font-weight: 600; }
+.g10-chip-x { border: 0; background: none; color: inherit; font-size: 1.05rem; line-height: 1; cursor: pointer; padding: 0 4px; }
+.g10-add { display: flex; gap: 8px; }
+.g10-add input { flex: 1; min-width: 0; font: inherit; font-size: .95rem; padding: 9px 11px; border: 1.5px solid var(--border); border-radius: 10px; }
+.g10-add input:focus { outline: none; border-color: var(--accent); }
+.g10-add-btn { font: inherit; font-weight: 700; padding: 9px 18px; border-radius: 10px; border: 0; background: var(--accent); color: #fff; cursor: pointer; }
+.g10-ideas-btn { font: inherit; font-size: .85rem; font-weight: 600; margin-top: 8px; padding: 6px 12px; border-radius: 99px; border: 1.5px dashed var(--border); background: #fff; color: var(--ink-soft); cursor: pointer; }
+.g10-ideas { margin-top: 8px; }
+.g10-ideas-text { margin-top: 6px !important; }
+.g10-from-idea { color: var(--ink-faint); }
+.g10-typed { color: var(--good); }
+.g10-q.is-missing .g10-add input { border-color: #e8b4a4; }
