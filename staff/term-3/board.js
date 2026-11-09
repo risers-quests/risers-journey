@@ -9,11 +9,12 @@
    - Board: Backlog → This week → Doing → Done. Each Riser adds and moves
      only their own jobs (tagged with their name) and sees everyone's. A
      job can be flagged "I'm stuck".
-   - Stand-up, on quest days. On Monday and Wednesday the Quest Master
-     runs it and types every card (no one else can); on Tuesday each Riser
-     types only their own card. On other days the cards are locked.
+   - Stand-up, Monday and Tuesday. On Monday the Quest Master runs it
+     and types every card (no one else can); on Tuesday each Riser types
+     only their own card. Wednesday has no stand-up (the Look Back is at
+     the end of the session); on other days the cards are locked.
      "What will I do today?" can be added to the Board, in Doing.
-   - Look Back (the check-in), once a week on Wednesday, 30 minutes. Part 1, together:
+   - Look Back (the check-in), once a week at the end of Wednesday's session, 30 minutes. Part 1, together:
      the Quest Master fills it in (our week, keep doing, change, the team
      goal, planning next week from the Backlog, the work goal); a
      facilitator adds a note and ticks they were there, which closes it.
@@ -1109,16 +1110,17 @@
     var wrap = el('div', 'pb-standup');
     var day = today(), dow = new Date().getDay();
     var who = master();
-    var together = dow === 1 || dow === 3;
+    var together = dow === 1;
     var how = dow === 2 ? 'Today you work on your own. Fill in your own card when you start.'
       : together ? (who ? esc(who) : 'The Quest Master') + ' runs the stand-up at the start of the session and types everyone’s card.'
-      : 'Stand-ups are on quest days: Monday, Tuesday and Wednesday.';
+      : dow === 3 ? 'No stand-up on Wednesday: finish what’s in Doing. The Look Back is at the end of the session.'
+      : 'Stand-ups are on Monday (together) and Tuesday (on your own).';
     wrap.appendChild(el('div', 'pb-intro', '<h2>Stand-up · ' + niceDate(day) + '</h2><p>' + how + '</p>'));
     var grid = el('div', 'pb-su-grid');
     group.kids.forEach(function (k, i) {
       var id = day + '_' + k.toLowerCase();
       var rec = state.standups[id] || {};
-      // Monday and Wednesday: only the Quest Master types, on every card.
+      // Monday: only the Quest Master types, on every card.
       // Tuesday: each Riser types only their own. Staff can always type.
       var edit = !KID || (together ? isMaster() : dow === 2 && k === ME);
       var card = el('div', 'pb-su-card' + (edit ? '' : ' is-locked'));
@@ -1261,7 +1263,7 @@
     var ready = qw && qw.n < 1;
     var label = trial ? 'Quest week 1' : ready ? 'Getting-ready week' : qw ? 'Quest week ' + qw.n : 'Week ' + w;
     if (trial) wrap.appendChild(el('p', 'pb-ci-trial', '👀 Try-out: opened early so you can see how it works. The real first Look Back is on Wednesday of quest week 1.' + (KID ? '' : ' Clear it afterwards on the Try-out page.')));
-    wrap.appendChild(el('div', 'pb-intro', '<h2>' + label + ': Look Back</h2><p>Wednesday, 30 minutes. <b>Part 1</b>: together, ' +
+    wrap.appendChild(el('div', 'pb-intro', '<h2>' + label + ': Look Back</h2><p>Wednesday, at the end of the session, 30 minutes. <b>Part 1</b>: together, ' +
       esc(master() || 'the Quest Master') + ' types (15 min). <b>Part 2</b>: on your own computer (15 min).</p>'));
     wrap.appendChild(el('div', 'pb-part-head', '<h3>Part 1 · Our quest work <small>(15 minutes)</small></h3><p>Talk together. ' + esc(master() || 'The Quest Master') + ' fills it in.</p>'));
 
@@ -1542,7 +1544,7 @@
       got: done.length, total: done.length + open.length,
       stuck: all.filter(function (c) { return c.stuck && c.col !== 'done'; }).map(function (c) { return c.title; })
         .concat(Object.keys(s.blockers || {}).map(function (id) { return s.blockers[id]; }).filter(function (x) { return x && x.what && !x.solved && !x.deleted; }).map(function (x) { return x.what; })),
-      stood: stood, signed: !!ci.signed
+      stood: stood, standDay: [1, 2].indexOf(new Date().getDay()) !== -1, signed: !!ci.signed
     };
   }
 
@@ -1563,7 +1565,7 @@
           '<span class="pb-ov-week"><small>Week ' + a.week + '</small><strong>' + (a.master ? 'Quest Master: ' + esc(a.master) : '<em class="pb-ov-none">No Quest Master yet</em>') + '</strong>' + (a.goal ? '<em>' + esc(a.goal) + '</em>' : '') + '</span>' +
           '<span class="pb-ov-prog">' + (a.total ? '<span class="pb-track"><span style="width:' + pct + '%"></span></span><em>' + a.got + ' of ' + a.total + ' done this week</em>' : '<em class="pb-ov-none">No jobs this week</em>') + '</span>' +
           '<span class="pb-ov-stuck">' + (a.stuck.length ? '<strong class="pb-ov-flag" title="' + esc(a.stuck.join(', ')) + '">🚩 ' + a.stuck.length + '</strong>' : '<em class="pb-ov-none">—</em>') + '</span>' +
-          '<span class="pb-ov-stand">' + (a.stood.length === g.kids.length ? '<em class="is-ok">Everyone</em>'
+          '<span class="pb-ov-stand">' + (!a.standDay && !a.stood.length ? '<em class="pb-ov-none">No stand-up today</em>' : a.stood.length === g.kids.length ? '<em class="is-ok">Everyone</em>'
             : a.stood.length ? '<em>Missing: ' + g.kids.filter(function (k) { return a.stood.indexOf(k) === -1; }).map(esc).join(', ') + '</em>'
             : '<em class="pb-ov-none">Not done yet</em>') + '</span>' +
           '<span class="pb-ov-check">' + (a.signed ? '<strong class="is-ok">✓ Week ' + a.week + '</strong>' : '<em class="pb-ov-none">Not yet</em>') + '</span>';
