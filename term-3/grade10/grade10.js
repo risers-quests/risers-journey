@@ -77,7 +77,7 @@
   // another question, plus any extra choices.
   function optsOf(q, a) {
     if (!q.optionsFrom) return q.options;
-    return (a[q.optionsFrom] || []).concat(q.extra || []);
+    return (a[q.optionsFrom] || []).filter(function (o) { return !q.optionsFilter || q.optionsFilter(o, a); }).concat(q.extra || []);
   }
   function formEl(ans, mode, onChange) {
     var a = ans.answers = ans.answers || {};
@@ -92,22 +92,29 @@
       if (s.when) { conds.push({ el: sec, item: s }); if (mode === 'preview') sec.insertAdjacentHTML('afterbegin', '<p class="g10-cond">' + esc(s.whenLabel || (G.conds || {})[s.when] || ('Shown only if they answer the big question ' + (s.when === 'noexam' ? '“No”' : '“Yes” or “Not decided”'))) + '</p>'); }
       s.qs.forEach(function (q) {
         if (mode === 'read' && !shows(q, a)) return;
-        var row = el('div', 'g10-q', (q.when && q.whenLabel && mode === 'preview' ? '<p class="g10-cond">' + esc(q.whenLabel) + '</p>' : '') + '<p>' + esc(nm(q.text)) + (q.optional && !T.hideOptional ? ' <small>(optional)</small>' : '') + '</p>' + (q.hint && mode !== 'read' && !(q.optionsFrom && q.emptyHint && !(a[q.optionsFrom] || []).length) ? '<p class="g10-hint">' + esc(nm(q.hint)) + '</p>' : ''));
+        var row = el('div', 'g10-q', (q.when && q.whenLabel && mode === 'preview' ? '<p class="g10-cond">' + esc(q.whenLabel) + '</p>' : '') + '<p>' + esc(nm(q.text)) + (q.optional && !T.hideOptional ? ' <small>(optional)</small>' : '') + '</p>' + (q.hint && mode !== 'read' && !(q.optionsFrom && q.emptyHint && !optsOf(q, a).length) ? '<p class="g10-hint">' + esc(nm(q.hint)) + '</p>' : ''));
         row.dataset.q = q.id;
         if (q.when) conds.push({ el: row, item: q });
         if (mode === 'read') {
           var v = a[q.id];
           row.appendChild(el('p', 'g10-ans' + (filled(v) ? '' : ' is-blank'), filled(v) ? esc(Array.isArray(v) ? v.join(', ') : v) : 'No answer'));
+          if (q.check && filled(v) && q.check(v)) row.appendChild(el('p', 'g10-warn', esc(T.flagNote || 'Flagged.')));
           if (q.why && filled(a[q.id + '_why'])) row.appendChild(el('p', 'g10-ans', '<b>Why:</b> ' + esc(a[q.id + '_why'])));
         } else if (q.kind === 'text') {
           var ta = el('textarea');
           ta.value = a[q.id] || '';
           ta.setAttribute('aria-label', nm(q.text));
-          ta.addEventListener('input', function () { a[q.id] = ta.value; row.classList.remove('is-missing'); onChange(); });
+          ta.addEventListener('input', function () { a[q.id] = ta.value; row.classList.remove('is-missing'); warn(); onChange(); });
           row.appendChild(ta);
+          // q.check(answer): a message when the answer isn't the kind we
+          // want (e.g. watching rather than doing); it must be changed.
+          var wn = el('p', 'g10-warn');
+          var warn = function () { var m = q.check ? q.check(a[q.id] || '') : ''; wn.textContent = m || ''; wn.hidden = !m; };
+          row.appendChild(wn);
+          warn();
         } else {
           var opts = el('div', 'g10-opts'), qo = optsOf(q, a);
-          if (q.optionsFrom && !(a[q.optionsFrom] || []).length && q.emptyHint) row.appendChild(el('p', 'g10-hint', esc(q.emptyHint)));
+          if (q.optionsFrom && !optsOf(q, a).length && q.emptyHint) row.appendChild(el('p', 'g10-hint', esc(q.emptyHint)));
           qo.forEach(function (o) {
             var on = q.kind === 'many' ? (a[q.id] || []).indexOf(o) !== -1 : a[q.id] === o;
             var b = el('button', 'g10-opt' + (on ? ' is-on' : ''), esc(o));
@@ -202,10 +209,10 @@
       send.type = 'button';
       var msg = el('span', 'g10-msg');
       send.addEventListener('click', function () {
-        var miss = allQs(ans.answers).filter(function (q) { return !q.optional && !filled(ans.answers[q.id]); });
+        var miss = allQs(ans.answers).filter(function (q) { var v = ans.answers[q.id]; return (!q.optional && !filled(v)) || (q.check && filled(v) && q.check(v)); });
         Array.prototype.forEach.call(document.querySelectorAll('.g10-q'), function (x) { x.classList.toggle('is-missing', miss.some(function (q) { return q.id === x.dataset.q; })); });
         if (miss.length) {
-          msg.textContent = 'Please answer ' + (miss.length === 1 ? 'the question' : 'the ' + miss.length + ' questions') + ' outlined in red first.';
+          msg.textContent = 'Please answer or change ' + (miss.length === 1 ? 'the question' : 'the ' + miss.length + ' questions') + ' outlined in red first.';
           document.querySelector('.g10-q.is-missing').scrollIntoView({ behavior: 'smooth', block: 'center' });
           return;
         }
