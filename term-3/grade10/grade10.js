@@ -1,4 +1,4 @@
-/* 10th Grade: Parents' Questionnaire — parents fill it in, on their
+/* 10th Boards: Before We Meet — parents fill it in, on their
    child's Term 3 page, before the meeting about 10th grade (questions in
    grade10-data.js, {name} = the child).
 
@@ -49,7 +49,7 @@
   function shows(item, a, all) {
     if (!item.when || all) return true;
     if (!a.route) return false;
-    return (a.route === G.NO) === (item.when === 'noexam');
+    return ([].concat(G.NO).indexOf(a.route) !== -1) === (item.when === 'noexam');
   }
   function allQs(a) {
     var out = [];
@@ -68,7 +68,7 @@
     G.sections.forEach(function (s) {
       if (mode === 'read' && !shows(s, a)) return;
       var sec = el('section', 'g10-sec', '<h2>' + (s.when ? '' : (++n) + '. ') + esc(nm(s.title)) + '</h2>');
-      if (s.when) { conds.push({ el: sec, item: s }); if (mode === 'preview') sec.insertAdjacentHTML('afterbegin', '<p class="g10-cond">Shown only if they answer the big question ' + (s.when === 'noexam' ? '“No”' : '“Yes” or “Not decided”') + '</p>'); }
+      if (s.when) { conds.push({ el: sec, item: s }); if (mode === 'preview') sec.insertAdjacentHTML('afterbegin', '<p class="g10-cond">' + esc((G.conds || {})[s.when] || ('Shown only if they answer the big question ' + (s.when === 'noexam' ? '“No”' : '“Yes” or “Not decided”'))) + '</p>'); }
       s.qs.forEach(function (q) {
         var row = el('div', 'g10-q', '<p>' + esc(nm(q.text)) + (q.optional ? ' <small>(optional)</small>' : '') + '</p>' + (q.hint && mode !== 'read' ? '<p class="g10-hint">' + esc(nm(q.hint)) + '</p>' : ''));
         row.dataset.q = q.id;

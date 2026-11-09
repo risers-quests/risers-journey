@@ -56,7 +56,7 @@
   if (window.eot2Fetch) window.eot2Fetch('term-3', 'staff', 'grade10-approval').then(function (r) {
     var ap = r && r.state;
     if (!ap || !ap.approved || (ap.kids || []).indexOf(kid) === -1) return;
-    document.querySelector('.hd-tiles').insertAdjacentHTML('beforeend', window.LH_tiles([{ title: 'For parents: 10th Grade', desc: 'A short questionnaire for parents to fill in before our meeting about the 10th grade exams.', href: 'grade10/index.html', icon: 'paper', tone: 'amber' }]));
+    document.querySelector('.hd-tiles').insertAdjacentHTML('beforeend', window.LH_tiles([{ title: 'For parents: Before we meet', desc: 'A short form for parents to fill in before our meeting about the 10th boards or another path.', href: 'grade10/index.html', icon: 'paper', tone: 'amber' }]));
   });
 
   var Q = window.T3Q, info = window.T3_reflectInfo;
