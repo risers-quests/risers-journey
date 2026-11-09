@@ -12,7 +12,8 @@
    the slips over; a teammate sees a slip only once it's submitted.
    4. What my team said: the slips sent to them this week. "I'll try
       this" on one of their teammates' ideas puts it on the Board in This
-      week as a 🤝 job: their one thing to try next week.
+      week as a 🤝 job: their one thing to try next week. "Try this
+      instead" on another idea swaps it, on the Board too.
    Once sent, slips leave the sender's screen (a parent at home never sees
    what a child wrote about someone else). When the facilitator closes the
    Look Back, anyone who hasn't submitted is marked absent and the sheet
@@ -259,10 +260,12 @@
         var t = el('div', 'rf-tryrow', '<p class="rf-try">🎯 Next week, try: ' + esc(x.slip.next) + '</p>');
         if (mine.tryNext === x.slip.next) {
           t.appendChild(el('span', 'rf-picked', '✓ I’ll try this' + (mine.tryAdded ? ' · on the Board' : '')));
-        } else if (!mine.tryNext && !closed) {
-          var pick = el('button', 'pq-seg', 'I’ll try this');
+        } else if (!closed) {
+          // Changing their mind: the other idea replaces the first, on the Board too.
+          var pick = el('button', 'pq-seg', mine.tryNext ? 'Try this instead' : 'I’ll try this');
           pick.type = 'button';
           pick.addEventListener('click', function () {
+            if (mine.tryNext && opts.dropTry) opts.dropTry(mine.tryNext);
             mine.tryNext = x.slip.next;
             mine.tryAdded = !!(opts.addTry && opts.addTry(x.slip.next));
             changed();

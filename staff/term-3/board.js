@@ -1358,6 +1358,13 @@
       addTry: function (t) {
         putCard(uid(), { title: '🤝 ' + t, col: 'todo', who: [ME], order: now(), by: ME, kind: 'try' });
         return true;
+      },
+      // Picked a different idea: take the old one off the Board, if it's still there.
+      dropTry: function (t) {
+        Object.keys(state.cards).forEach(function (id) {
+          var c = state.cards[id];
+          if (c && !c.deleted && c.kind === 'try' && c.title === '🤝 ' + t && (c.who || []).indexOf(ME) !== -1) putCard(id, { deleted: true });
+        });
       }
     });
     return wrap;
