@@ -97,10 +97,17 @@
   // An uploaded question read as choices that is really lettered parts
   // (blanks, or written parts) or several sets of choices is marked a
   // letter at a time: q.markLetters, and q.markLabels for the sets.
+  // The last question of an uploaded paper can carry the start of the page
+  // after it (the feedback form's heading, Name and Date lines): cut it off.
+  function trimTail(h) {
+    var m = /<(p|h\d|div)[^>]*>\s*(?:<[^>]+>\s*)*(?:Self[- ]Directed Learning|[^<]{0,40}Feedback Form|[^<]{0,40}My Results)/i.exec(h);
+    return m ? h.slice(0, m.index) : h;
+  }
   function splitLetters(paper) {
     if (!paper || !paper.uploaded || !paper.html) return paper;
     paper.sections.forEach(function (s) {
       s.qs.forEach(function (q) {
+        if (paper.html[q.n]) paper.html[q.n] = trimTail(String(paper.html[q.n]));
         var h = String(paper.html[q.n] || '');
         if (!h) return;
         var tb = tableOf(h);
@@ -669,7 +676,7 @@
   function partsToRedo(paper, q, letters) {
     if (letters.length === 1 && letters[0] === '') return null;
     var res = { stem: '', parts: {} };
-    if (q.parts) {
+    if (q.parts && q.parts.some(function (x) { return x.text; })) {
       res.stem = q.text ? math(q.text) : '';
       letters.forEach(function (l) {
         var p = q.parts.filter(function (x) { return x.l === l; })[0];
@@ -699,8 +706,9 @@
       });
       return res;
     }
-    // Lettered parts in the text: Assertion–Reason, blanks, sets of choices.
-    var all = q.markLetters || [];
+    // Lettered parts in the text: Assertion–Reason, blanks, sets of choices,
+    // or an uploaded question's parts (which have only their letters).
+    var all = q.markLetters || (q.parts ? q.parts.map(function (x) { return x.l; }) : []);
     var names = all.map(function (l, i) { return q.markLabels ? q.markLabels[i] : l; });
     if (q.markLabels && !names.every(function (n) { return /^(i{1,3}|iv|vi{0,3}|ix|x)$/.test(n); })) return null;
     var lines = linesOf(html), at = [], from = 0;
@@ -726,8 +734,22 @@
   // What to redo for one wrong question, as { split, stem, parts: [{ id, label, html }] }.
   function redoOf(paper, q, w) {
     var letters = wrongParts(q, w), cut = partsToRedo(paper, q, letters);
+    // Parts that can't be cut out: the whole question, with a box for each wrong part.
+    if (!cut && !(letters.length === 1 && letters[0] === '')) return { split: true, whole: true, parts: letters.map(function (l) {
+      var k = (q.markLetters || []).indexOf(l), nm = q.markLabels && k !== -1 ? q.markLabels[k] : l, m = /^t(\d)(\d)$/.exec(l);
+      return { id: q.n + l, l: l, label: m && q.table ? (q.table.rows[+m[1] - 1] || '') + ' · ' + (q.table.cols[+m[2] - 1] || '') : (q.assertLetters || q.markLabels ? 'Part ' : '') + '(' + nm + ')', html: '' };
+    }) };
     if (!cut) return { split: false, parts: [{ id: String(q.n), label: '', html: '' }] };
     return { split: true, stem: cut.stem, parts: letters.map(function (l) { return { id: q.n + l, l: l, label: cut.parts[l].label, html: cut.parts[l].html }; }) };
+  }
+  // A multiple-choice question or set of choices: the letters to pick from, or null.
+  function choiceLetters(paper, q, pt) {
+    if (!pt.l && q.options && !q.markLetters && !q.parts) return q.options.map(function (o, i) { return LETTERS[i]; });
+    if (pt.l && q.markLabels) {
+      var g = choiceGroups(String((paper.html || {})[q.n] || ''))[(q.markLetters || []).indexOf(pt.l)];
+      return g ? LETTERS.slice(0, g.n).split('') : null;
+    }
+    return null;
   }
   function redoKey(q, part, keyText) {
     if (!filled(keyText)) return '';
@@ -753,14 +775,28 @@
     wrong.forEach(function (w) {
       var q = w.q, card = el('div', 'as-rwq'), redo = redoOf(paper, q, w);
       card.appendChild(el('div', 'as-rwhead', '<b>' + q.n + '.</b><span>Redo' + (redo.split ? ' ' + (redo.parts.length > 1 ? 'these parts' : 'this part') : q.parts || q.markLetters ? ': ' + esc(wrongLabels(q, w).join(', ')) : ' this question') + '</span>'));
-      if (redo.split) { if (redo.stem) card.appendChild(el('div', 'as-qtext as-qhtml', redo.stem)); }
+      if (redo.split && !redo.whole) { if (redo.stem) card.appendChild(el('div', 'as-qtext as-qhtml', redo.stem)); }
       else card.appendChild(questionHtmlEl(paper, q));
       // Written before parts had their own boxes: shown, to copy from.
       if (redo.split && filled(rw[q.n]) && !redo.parts.some(function (pt) { return filled(rw[pt.id]); })) card.appendChild(el('p', 'as-written', '<span>What you wrote before</span>' + esc(rw[q.n]).replace(/\n/g, '<br>')));
       redo.parts.forEach(function (pt) {
         var row = el('div', 'as-rwpart');
         if (redo.split) row.appendChild(el('div', 'as-rwpart-q', (pt.html ? '' : '<b>' + esc(pt.label) + '</b>') + (pt.html ? '<div class="as-qhtml">' + pt.html + '</div>' : '')));
-        if (canWrite) {
+        var choices = choiceLetters(paper, q, pt);
+        if (canWrite && choices) {
+          var opts = el('div', 'as-opts');
+          choices.forEach(function (l) {
+            var bt = el('button', 'as-opt' + (rw[pt.id] === l ? ' is-on' : ''), '<b>(' + l + ')</b>');
+            bt.type = 'button';
+            bt.addEventListener('click', function () {
+              rw[pt.id] = rw[pt.id] === l ? '' : l;
+              Array.prototype.forEach.call(opts.children, function (x, j) { x.classList.toggle('is-on', rw[pt.id] === choices[j]); });
+              save();
+            });
+            opts.appendChild(bt);
+          });
+          row.appendChild(opts);
+        } else if (canWrite) {
           var small = q.assertLetters && pt.l;
           var ta = el(small ? 'input' : 'textarea', 'as-input' + (small ? ' as-numans' : ''));
           if (small) { ta.type = 'text'; ta.inputMode = 'numeric'; ta.maxLength = 1; ta.placeholder = 'Type the number (1, 2, 3, 4)'; }
