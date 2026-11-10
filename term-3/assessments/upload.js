@@ -480,6 +480,12 @@
         });
       });
 
+      // An uploaded question read as a written answer that is really
+      // multiple choice: give it its choices and its correct letter. Only
+      // the paper changes; every Riser's answers are kept (a Riser picks
+      // the choice again once they reload).
+      if (!built) body.appendChild(toChoiceEl(id));
+
       // Delete: for everyone, with every Riser's answers and marks.
       var del = el('section', 'as-results up-delete', '<h2>Delete this assessment</h2><p class="as-sub">It goes from every Riser, and all their answers, marks and revision plans for it are deleted too. This can’t be undone.</p>');
       var open = el('button', 'up-delbtn', 'Delete this assessment');
@@ -506,6 +512,62 @@
         });
       });
     });
+  }
+
+  function toChoiceEl(id) {
+    var sec = el('section', 'as-results', '<h2>Make a question multiple choice</h2><p class="as-sub">For a question that should have choices to tap, not a box to type in. Risers see the change when they next open or reload the paper; nothing they’ve written is lost.</p><p class="as-sub">Loading the questions…</p>');
+    window.T3_store.fetchPaper(id).then(function (paper) {
+      sec.lastChild.remove();
+      if (!paper) { sec.appendChild(el('p', 'as-sub', 'The paper couldn’t be loaded. Check the connection and reload.')); return; }
+      var qs = [];
+      paper.sections.forEach(function (s) { s.qs.forEach(function (q) { if (!q.options && !q.parts) qs.push(q); }); });
+      if (!qs.length) { sec.appendChild(el('p', 'as-sub', 'Every question already has choices or parts.')); return; }
+      var L = 'abcdefgh';
+      var form = el('div', 'up-choice',
+        '<label>Question <select class="uc-q">' + qs.map(function (q) { return '<option value="' + q.n + '">' + q.n + '</option>'; }).join('') + '</select></label>' +
+        '<label>Choices <select class="uc-n">' + [2, 3, 4, 5, 6].map(function (n) { return '<option' + (n === 4 ? ' selected' : '') + '>' + n + '</option>'; }).join('') + '</select></label>' +
+        '<label>Correct answer <select class="uc-a"></select></label>' +
+        '<label>Facilitator PIN <input class="uc-pin" type="password" inputmode="numeric" autocomplete="off" maxlength="8"></label>');
+      var nSel = form.querySelector('.uc-n'), aSel = form.querySelector('.uc-a');
+      function letters() { var n = +nSel.value, h = ''; for (var i = 0; i < n; i++) h += '<option value="' + L[i] + '">(' + L[i] + ')</option>'; aSel.innerHTML = h; }
+      letters();
+      nSel.addEventListener('change', letters);
+      var go = el('button', 'eot2-btn', 'Make it multiple choice');
+      go.type = 'button';
+      var msg = el('span', 'as-msg');
+      sec.appendChild(form); sec.appendChild(go); sec.appendChild(msg);
+      go.addEventListener('click', function () {
+        var n = form.querySelector('.uc-q').value, count = +nSel.value, ans = aSel.value, pin = form.querySelector('.uc-pin').value.trim();
+        msg.textContent = '';
+        sha16('lifehub-t3|pin|' + pin).then(function (h) {
+          if (h !== window.T3_PASS) { msg.textContent = 'That PIN isn’t right.'; return; }
+          go.disabled = true; msg.textContent = 'Saving…';
+          // The newest copy, so nothing changed meanwhile is lost.
+          return window.T3_store.fetchPaper(id).then(function (p) {
+            var q = null;
+            p.sections.forEach(function (s) { s.qs.forEach(function (x) { if (String(x.n) === n) q = x; }); });
+            if (!q) throw new Error('gone');
+            return Promise.all([window.T3_store.unlock(p.enc, pin), window.T3_hash(id, n, window.T3_markTools.canonical(ans, 'mcq'))]).then(function (r) {
+              var key = r[0] || {};
+              key[n] = String(key[n] || '').replace(/\s*→ accepted:[\s\S]*$/, '') + '  → accepted: ' + ans;
+              q.options = new Array(count).join(',').split(',');
+              p.kinds = p.kinds || {}; p.kinds[n] = 'mcq';
+              p.auto = p.auto || {}; p.auto[n] = [r[1]];
+              if (p.rules) delete p.rules[n];
+              return window.T3_store.lock(key, pin);
+            }).then(function (enc) {
+              p.enc = enc;
+              delete p.html;   // kept in its own records
+              return window.T3_store.savePaper(p);
+            });
+          }).then(function (ok) {
+            go.disabled = false;
+            msg.textContent = ok ? 'Done: question ' + n + ' now has ' + count + ' choices, and (' + ans + ') is right.' : 'Not saved — check the connection and try again.';
+          }, function () { go.disabled = false; msg.textContent = 'Not saved — reload the page and try again.'; });
+        });
+      });
+    });
+    return sec;
   }
 
   window.T3_renderUpload = function (app, id) { if (id) renderEdit(app, id); else renderNew(app); };
