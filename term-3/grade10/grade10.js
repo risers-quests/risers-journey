@@ -410,7 +410,40 @@
         if (shown === 'preview') {
           NAME = G.previewName || 'your child';
           view.appendChild(el('p', 'g10-intro', esc(T.previewNote) + ' Try it out here; nothing is saved. <br>' + esc(nm(G.intro))));
-          view.appendChild(formEl({}, 'preview', function () {}));
+          // The same Submit button and "Submitted!" finish the person sees;
+          // in the preview nothing is saved.
+          var pa = {};
+          var pprog = el('span', 'g10-prog'), pmsg = el('span', 'g10-msg');
+          var progress = function () {
+            var qs = allQs(pa.answers || {}).filter(function (q) { return !q.optional; });
+            var n = qs.filter(function (q) { return filled(pa.answers[q.id]); }).length;
+            pprog.textContent = n + ' of ' + qs.length + ' answered';
+            pprog.classList.toggle('is-ok', n === qs.length);
+          };
+          view.appendChild(formEl(pa, 'preview', progress));
+          var pbar = el('div', 'g10-bar');
+          var psend = el('button', 'eot2-btn', esc(T.send));
+          psend.type = 'button';
+          psend.addEventListener('click', function () {
+            var miss = allQs(pa.answers).filter(function (q) { var v = pa.answers[q.id]; return (!q.optional && !filled(v)) || (q.check && filled(v) && q.check(v)); });
+            Array.prototype.forEach.call(view.querySelectorAll('.g10-q'), function (x) { x.classList.toggle('is-missing', miss.some(function (q) { return q.id === x.dataset.q; })); });
+            if (miss.length) {
+              pmsg.textContent = 'Please answer or change ' + (miss.length === 1 ? 'the question' : 'the ' + miss.length + ' questions') + ' outlined in red first.';
+              view.querySelector('.g10-q.is-missing').scrollIntoView({ behavior: 'smooth', block: 'center' });
+              return;
+            }
+            view.innerHTML = '';
+            var done = el('section', 'g10-done', '<div class="g10-done-tick" aria-hidden="true">✓</div><h2>' + esc(T.doneTitle) + '</h2><p>' + esc(nm(T.thanks).replace('{date}', day(new Date().toISOString()))) + '</p><p class="g10-cond">Preview only: nothing was saved.</p>');
+            var again = el('button', 'eot2-btn eot2-btn-secondary', 'Try the preview again');
+            again.type = 'button';
+            again.addEventListener('click', function () { paintTabs(); });
+            done.appendChild(again);
+            view.appendChild(done);
+            window.scrollTo(0, view.getBoundingClientRect().top + window.scrollY - 20);
+          });
+          pbar.appendChild(psend); pbar.appendChild(pprog); pbar.appendChild(pmsg);
+          view.appendChild(pbar);
+          progress();
           return;
         }
         var i = kids.map(function (k) { return k.slug; }).indexOf(shown), a = answers[i];
