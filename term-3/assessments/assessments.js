@@ -122,7 +122,8 @@
         }
         var ap = assertParts(h);
         if (ap.length) { q.assertLetters = ap; q.markLetters = ap; return; }
-        if (!q.options) return;
+        // Staff said it's one multiple-choice question (q.mcq): leave it so.
+        if (!q.options || q.mcq) return;
         if (writtenParts(h)) { q.markLetters = q.options.map(function (o, i) { return LETTERS[i]; }); return; }
         var g = choiceGroups(h);
         if (g.length >= 2) { q.markLetters = g.map(function (x, i) { return LETTERS[i]; }); q.markLabels = g.map(function (x) { return x.label; }); }
@@ -246,7 +247,7 @@
         if (mode === 'mark') wrap.appendChild(keyLine(q));
         return wrap;
       }
-      if (q && q.options && writtenParts(qh)) {
+      if (q && q.options && !q.mcq && writtenParts(qh)) {
         var got = {};
         String(answers[id] || '').split('\n').forEach(function (line) { var m = /^\(([a-h])\)\s*(.*)$/.exec(line.trim()); if (m) got[m[1]] = m[2]; });
         if (mode === 'answer') {
@@ -280,7 +281,7 @@
       }
       // Two or more sets of choices in one question (each from (a) again):
       // a row of buttons for each set. Saved as "(i) b" lines, for staff.
-      var groups = q && q.options ? choiceGroups(qh) : [];
+      var groups = q && q.options && !q.mcq ? choiceGroups(qh) : [];
       if (groups.length >= 2) {
         var picked = {};
         String(answers[id] || '').split('\n').forEach(function (line) { var m = /^\((\w+)\)\s*([a-h])$/.exec(line.trim()); if (m) picked[m[1]] = m[2]; });

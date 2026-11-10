@@ -520,11 +520,11 @@
       sec.lastChild.remove();
       if (!paper) { sec.appendChild(el('p', 'as-sub', 'The paper couldn’t be loaded. Check the connection and reload.')); return; }
       var qs = [];
-      paper.sections.forEach(function (s) { s.qs.forEach(function (q) { if (!q.options && !q.parts) qs.push(q); }); });
-      if (!qs.length) { sec.appendChild(el('p', 'as-sub', 'Every question already has choices or parts.')); return; }
+      paper.sections.forEach(function (s) { s.qs.forEach(function (q) { qs.push(q); }); });
+      var what = function (q) { return q.mcq ? 'multiple choice' : q.parts ? q.parts.length + ' parts' : q.options ? 'lettered' : 'typed answer'; };
       var L = 'abcdefgh';
       var form = el('div', 'up-choice',
-        '<label>Question <select class="uc-q">' + qs.map(function (q) { return '<option value="' + q.n + '">' + q.n + '</option>'; }).join('') + '</select></label>' +
+        '<label>Question <select class="uc-q">' + qs.map(function (q) { return '<option value="' + q.n + '">' + q.n + ' (now: ' + what(q) + ')</option>'; }).join('') + '</select></label>' +
         '<label>Choices <select class="uc-n">' + [2, 3, 4, 5, 6].map(function (n) { return '<option' + (n === 4 ? ' selected' : '') + '>' + n + '</option>'; }).join('') + '</select></label>' +
         '<label>Correct answer <select class="uc-a"></select></label>' +
         '<label>Facilitator PIN <input class="uc-pin" type="password" inputmode="numeric" autocomplete="off" maxlength="8"></label>');
@@ -552,6 +552,9 @@
               var key = r[0] || {};
               key[n] = String(key[n] || '').replace(/\s*→ accepted:[\s\S]*$/, '') + '  → accepted: ' + ans;
               q.options = new Array(count).join(',').split(',');
+              q.mcq = true;      // one question with choices, not lettered parts
+              delete q.parts;
+              delete q.markLetters; delete q.markLabels; delete q.assertLetters; delete q.table;
               p.kinds = p.kinds || {}; p.kinds[n] = 'mcq';
               p.auto = p.auto || {}; p.auto[n] = [r[1]];
               if (p.rules) delete p.rules[n];
