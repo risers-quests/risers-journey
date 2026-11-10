@@ -39,8 +39,7 @@
   ];
   tiles.push({ title: 'My Schedule', desc: 'Your week at LifeHub, day by day.', href: 'schedule/index.html', icon: 'clock', tone: 'violet' });
   tiles.push({ title: 'Assessments', desc: 'Your Term 3 assessments, marked papers and revision plan.', href: 'assessments/index.html', icon: 'paper', tone: 'slate' });
-  tiles.unshift({ title: 'Term 3 Quest', desc: 'Your group’s project: choose it, plan it, build it, and look back every week.', href: 'quest/index.html', icon: 'skills', tone: 'green' },
-    { title: 'Our Own Quest', desc: 'Got your own idea? Make up a quest and send it to a facilitator to OK.', href: 'quest/index.html?own=1', icon: 'quests', tone: 'rose' });
+  tiles.unshift({ title: 'Term 3 Quest', desc: 'Your group’s project: choose it, plan it, build it, and look back every week.', href: 'quest/index.html', icon: 'skills', tone: 'green' });
   document.getElementById('app').innerHTML =
     '<header class="hd-welcome"><h1>Term 3</h1><p>26 October – 21 January</p></header>' +
     '<div id="tw"></div><div class="hd-tiles">' + window.LH_tiles(tiles) + '</div>';

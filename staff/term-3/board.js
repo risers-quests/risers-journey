@@ -369,8 +369,10 @@
       });
       wrap.appendChild(grid);
     });
-    if (!shown) wrap.appendChild(el('p', 'pb-empty', KID ? 'Our quests are on their way. Check back soon, or make up your own below.' : 'No projects approved for this team yet. Approve them on the Term 3 Quests page.'));
-    wrap.appendChild(ownEl(current));
+    if (!shown) wrap.appendChild(el('p', 'pb-empty', KID ? 'Our quests are on their way. Check back soon.' : 'No projects approved for this team yet. Approve them on the Term 3 Quests page.'));
+    // Risers no longer make up their own quests; a team that already has
+    // one still sees it.
+    if (!KID || project('own')) wrap.appendChild(ownEl(current));
     return wrap;
   }
 
