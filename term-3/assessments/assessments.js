@@ -1197,6 +1197,12 @@
           });
         });
         card.appendChild(tb);
+        // An uploaded paper: change its questions (e.g. make one multiple choice).
+        if (UPLOADED[j.paper.id] && UPLOADED[j.paper.id].at) {
+          var ed = el('a', 'as-takeback as-editp', 'Edit paper');
+          ed.href = 'index.html?view=upload&id=' + encodeURIComponent(j.paper.id) + '#choice';
+          card.appendChild(ed);
+        }
         list.appendChild(card);
       });
     });

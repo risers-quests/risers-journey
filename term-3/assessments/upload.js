@@ -515,7 +515,7 @@
   }
 
   function toChoiceEl(id) {
-    var sec = el('section', 'as-results', '<h2>Make a question multiple choice</h2><p class="as-sub">For a question that should have choices to tap, not a box to type in. Risers see the change when they next open or reload the paper; nothing they’ve written is lost.</p><p class="as-sub">Loading the questions…</p>');
+    var sec = el('section', 'as-results', '<h2 id="choice">Make a question multiple choice</h2><p class="as-sub">For a question that should have choices to tap, not a box to type in. Risers see the change when they next open or reload the paper; nothing they’ve written is lost.</p><p class="as-sub">Loading the questions…</p>');
     window.T3_store.fetchPaper(id).then(function (paper) {
       sec.lastChild.remove();
       if (!paper) { sec.appendChild(el('p', 'as-sub', 'The paper couldn’t be loaded. Check the connection and reload.')); return; }
@@ -536,6 +536,7 @@
       go.type = 'button';
       var msg = el('span', 'as-msg');
       sec.appendChild(form); sec.appendChild(go); sec.appendChild(msg);
+      if (location.hash === '#choice') sec.scrollIntoView();
       go.addEventListener('click', function () {
         var n = form.querySelector('.uc-q').value, count = +nSel.value, ans = aSel.value, pin = form.querySelector('.uc-pin').value.trim();
         msg.textContent = '';
