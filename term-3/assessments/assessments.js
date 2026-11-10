@@ -114,6 +114,15 @@
         if (paper.html[q.n]) paper.html[q.n] = trimTail(String(paper.html[q.n]));
         var h = String(paper.html[q.n] || '');
         if (!h) return;
+        // A table whose rows are lettered parts ("(a) | Value of p | p = ___"):
+        // parts (a), (b), not a table to fill in.
+        var lr = letteredRows(h);
+        if (lr && !q.options && !q.parts) {
+          q.options = lr.map(function (r) { return r.text; });
+          q.lettered = true;
+          q.markLetters = lr.map(function (r) { return r.l; });
+          return;
+        }
         var tb = tableOf(h);
         if (tb && !q.options && !q.parts) {
           q.table = tb; q.markLetters = [];
@@ -247,7 +256,7 @@
         if (mode === 'mark') wrap.appendChild(keyLine(q));
         return wrap;
       }
-      if (q && q.options && !q.mcq && writtenParts(qh)) {
+      if (q && q.options && !q.mcq && (q.lettered || writtenParts(qh))) {
         var got = {};
         String(answers[id] || '').split('\n').forEach(function (line) { var m = /^\(([a-h])\)\s*(.*)$/.exec(line.trim()); if (m) got[m[1]] = m[2]; });
         if (mode === 'answer') {
@@ -259,7 +268,7 @@
             hooks.change();
           };
           q.options.forEach(function (o, i) {
-            var row = el('label', 'as-blank-row', '<b>(' + LETTERS[i] + ')</b><input type="text" class="as-input" autocomplete="off">');
+            var row = el('label', 'as-blank-row', '<b>(' + LETTERS[i] + ')' + (q.lettered && o ? ' ' + esc(o) : '') + '</b><input type="text" class="as-input" autocomplete="off">');
             var inp = row.querySelector('input');
             inp.value = got[LETTERS[i]] || '';
             inp.setAttribute('aria-label', 'Blank (' + LETTERS[i] + ')');
@@ -268,9 +277,18 @@
           });
           wrap.appendChild(boxes);
         } else {
+          // Written in one box, not "(a) …" lines: shown once, as written.
+          var oneBox = filled(answers[id]) && !Object.keys(got).length;
+          if (oneBox) wrap.appendChild(el('p', 'as-written', '<span>As written:</span> ' + esc(answers[id]).replace(/\n/g, '<br>')));
           q.options.forEach(function (o, i) {
             var l = LETTERS[i], row = el('div', 'as-pmark');
             row.dataset.item = q.n + l;
+            if (oneBox) {
+              row.innerHTML = numHtml('(' + l + ')', markOf(marks, q.n + l), mode, true) + '<span class="as-plabel-t">' + esc(String(o || '').replace(/_{2,}/g, '').replace(/\s+/g, ' ').replace(/\s+[A-Za-z]\s*=\s*$/, '').trim()) + '</span>';
+              if (mode === 'mark') row.appendChild(markBox(q.n + l));
+              wrap.appendChild(row);
+              return;
+            }
             row.innerHTML = numHtml('(' + l + ')', markOf(marks, q.n + l), mode, true) + '<p class="as-written' + (filled(got[l]) ? '' : ' as-blank') + '">' + (filled(got[l]) ? esc(got[l]) : 'No answer') + '</p>';
             if (mode === 'mark') row.appendChild(markBox(q.n + l));
             wrap.appendChild(row);
@@ -442,6 +460,23 @@
       });
       return m;
     }
+  }
+  // A table laid out as lettered parts: every row starts with "(a)", "(b)" …
+  // Returns [{ l, text }] or null.
+  function letteredRows(qh) {
+    if (!/<table/i.test(qh) || !window.DOMParser) return null;
+    var t = new DOMParser().parseFromString(qh, 'text/html').querySelector('table');
+    var trs = t ? Array.prototype.slice.call(t.querySelectorAll('tr')) : [];
+    var txt = function (c) { return c.textContent.replace(/\s+/g, ' ').trim(); };
+    var out = [];
+    for (var i = 0; i < trs.length; i++) {
+      var cells = Array.prototype.slice.call(trs[i].children).map(txt).filter(Boolean);
+      if (!cells.length) continue;
+      var m = /^\(([a-h])\)\s*(.*)$/.exec(cells[0]);
+      if (!m || m[1] !== LETTERS[out.length]) return null;
+      out.push({ l: m[1], text: [m[2]].concat(cells.slice(1)).filter(Boolean).join('  ') });
+    }
+    return out.length >= 2 ? out : null;
   }
   // A question with a table to complete: its column heads (after the
   // first) and row labels. Each cell is marked on its own.
