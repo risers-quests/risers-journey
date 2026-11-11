@@ -620,3 +620,10 @@ button.qp-ck { font: inherit; text-align: left; border: 2px solid transparent; c
   .ph-add, .ph-pick { min-height: 140px; }
   .ph-add.is-new { grid-column: 1 / -1; }
 }
+
+/* Slip sentences to finish: the fixed words, then a roomy box. */
+.rf-frame { display: flex; flex-direction: column; gap: 6px; margin-top: 14px; padding: 12px 14px; background: #fbfaf6; border: 1px solid var(--border); border-radius: 14px; }
+.rf-frame-l { font-size: .85rem; font-weight: 700; }
+.rf-frame-w { margin: 4px 0 0; font-weight: 600; font-size: .95rem; color: var(--ink); }
+.rf-frame-in { font: inherit; font-size: .95rem; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; resize: vertical; min-height: 64px; background: #fff; }
+.rf-fb { color: #4b3a7a; }

@@ -6,8 +6,10 @@
       last week's slips), how they tried it, and how it went.
    2. My self-evaluation: ten statements, each Not yet / Starting /
       Getting there / Every time.
-   3. A feedback slip for each teammate: the same ten, a shout-out, and
-      one thing to try next week.
+   3. A feedback slip for each teammate: the same ten, then sentences to
+      finish. Shout-out: "When we …". Feedback: "When we …, you were ….
+      Next time, can you help the team by …?" (the last is the one thing
+      to try next week).
    "Submit Part 2" (once everything is answered) locks the sheet and hands
    the slips over; a teammate sees a slip only once it's submitted.
    4. What my team said: the slips sent to them this week. "I'll try
@@ -24,7 +26,9 @@
    One record per Riser per week, through the progress Worker: group
    "term-3", kid = the Riser's name in lower case, week "reflect-w<N>":
    { self: { <1-10>: 1-4 }, how, went, slips: { <Teammate>: { <1-10>,
-   shout, next } }, sent, tryNext, tryAdded, u }. Only the Riser writes
+   shout, next, shoutWhen, fbWhen, fbWere, fbBy, fb } }, sent, tryNext,
+   tryAdded, u } (shout, fb and next are the finished sentences / the thing
+   to try, kept for the readers). Only the Riser writes
    their own record. */
 (function () {
   var SCALE = ['Not yet', 'Starting', 'Getting there', 'Every time'];
@@ -130,6 +134,29 @@
     });
     return box;
   }
+  // A sentence to finish: fixed words with a roomy box for each blank.
+  // bits: ['When we', { k: 'fbWhen', ph }, 'you were', …].
+  function frameEl(label, bits, s, onInput) {
+    var f = el('div', 'rf-frame', '<span class="rf-frame-l">' + label + '</span>');
+    bits.forEach(function (b) {
+      if (typeof b === 'string') { f.appendChild(el('p', 'rf-frame-w', esc(b))); return; }
+      var t = el('textarea', 'rf-frame-in');
+      t.rows = 2;
+      t.placeholder = b.ph || '';
+      t.value = s[b.k] || '';
+      t.setAttribute('aria-label', label.replace(/<[^>]+>/g, '') + ': ' + b.ph);
+      t.addEventListener('input', function () { s[b.k] = t.value; onInput(); });
+      f.appendChild(t);
+    });
+    return f;
+  }
+  function clean(v) { return String(v || '').trim().replace(/[.?!\s]+$/, ''); }
+  // The finished sentences a teammate reads.
+  function finish(s) {
+    if (s.shoutWhen !== undefined) s.shout = clean(s.shoutWhen) ? 'When we ' + clean(s.shoutWhen) + '.' : '';
+    if (s.fbWhen !== undefined || s.fbWere !== undefined) s.fb = clean(s.fbWhen) || clean(s.fbWere) ? 'When we ' + clean(s.fbWhen) + ', you were ' + clean(s.fbWere) + '.' : '';
+    if (s.fbBy !== undefined) s.next = clean(s.fbBy);
+  }
   function textEl(label, value, readOnly, onInput, rows) {
     var f = el('label', 'rf-text', '<span>' + esc(label) + '</span>');
     if (readOnly) { f.appendChild(el('p', 'rf-said' + (value ? '' : ' is-blank'), value ? esc(value) : 'Not filled in')); return f; }
@@ -213,8 +240,13 @@
         var s = mine.slips[t] = mine.slips[t] || {};
         var slip = el('div', 'rf-slip', '<h4>To ' + esc(t) + '</h4><p class="rf-hint">This week, ' + esc(t) + ' …</p>');
         slip.appendChild(statements(PEER, s, false, function (n, v) { s[n] = v; changed(); }));
-        slip.appendChild(textEl('⭐ Shout-out: one thing you did this week that helped our team', s.shout, false, function (v) { s.shout = v; changed(); }));
-        slip.appendChild(textEl('🎯 Next week it would help our team if you could try…', s.next, false, function (v) { s.next = v; changed(); }));
+        // Started before the sentence frames: what they'd written carries over.
+        if (s.shoutWhen === undefined && s.shout) s.shoutWhen = s.shout;
+        if (s.fbBy === undefined && s.next) s.fbBy = s.next;
+        var upd = function () { finish(s); changed(); };
+        slip.appendChild(frameEl('⭐ Shout-out', ['When we', { k: 'shoutWhen', ph: 'e.g. were building the shelf, you held the planks steady so I could saw' }], s, upd));
+        slip.appendChild(frameEl('💬 Feedback', ['When we', { k: 'fbWhen', ph: 'e.g. were choosing the colours' }, 'you were', { k: 'fbWere', ph: 'e.g. quiet and didn’t share your idea' },
+          'Next time, can you help the team by', { k: 'fbBy', ph: 'e.g. telling us your idea first' }], s, upd));
         s3.appendChild(slip);
       });
       // Submit: the whole sheet answered, then the slips go out.
@@ -231,8 +263,8 @@
           var s = mine.slips[t], left = [];
           var gaps = ALL.filter(function (n) { return !s[n]; }).length;
           if (gaps) left.push(gaps === 1 ? '1 answer' : gaps + ' answers');
-          if (!String(s.shout || '').trim()) left.push('a shout-out');
-          if (!String(s.next || '').trim()) left.push('something to try');
+          if (!clean(s.shoutWhen)) left.push('the shout-out');
+          if (!clean(s.fbWhen) || !clean(s.fbWere) || !clean(s.fbBy)) left.push('the feedback');
           if (left.length) missing.push('Slip for ' + t + ' (' + left.join(', ') + ')');
         });
         if (missing.length) { msg.textContent = 'Almost there! Still to fill in: ' + missing.join('; ') + '.'; return; }
@@ -255,9 +287,10 @@
     else if (!mine.tryNext && !closed) s4.appendChild(el('p', 'rf-hint', 'Pick one thing your team asked you to try, and tap <b>I’ll try this</b>.'));
     got.forEach(function (x) {
       var c = el('div', 'rf-got', '<h4>From ' + esc(x.from) + '</h4>' +
-        (x.slip.shout ? '<p class="rf-shout">⭐ ' + esc(x.slip.shout) + '</p>' : ''));
+        (x.slip.shout ? '<p class="rf-shout">⭐ ' + esc(x.slip.shout) + '</p>' : '') +
+        (x.slip.fb ? '<p class="rf-fb">💬 ' + esc(x.slip.fb) + '</p>' : ''));
       if (x.slip.next) {
-        var t = el('div', 'rf-tryrow', '<p class="rf-try">🎯 Next week, try: ' + esc(x.slip.next) + '</p>');
+        var t = el('div', 'rf-tryrow', '<p class="rf-try">🎯 ' + (x.slip.fb ? 'Next time, can you help the team by ' + esc(x.slip.next) + '?' : 'Next week, try: ' + esc(x.slip.next)) + '</p>');
         if (mine.tryNext === x.slip.next) {
           t.appendChild(el('span', 'rf-picked', '✓ I’ll try this' + (mine.tryAdded ? ' · on the Board' : '')));
         } else if (!closed) {
@@ -322,7 +355,7 @@
           (chose ? '<p><b>Chose to try:</b> ' + esc(chose) + '</p>' : '') +
           '<p><b>How they tried:</b> ' + (r.how ? esc(r.how) : '<i>not filled in</i>') + (r.went ? ' · <b>It went:</b> ' + SCALE[r.went - 1] : '') + '</p>' : '') +
         (got.length ? got.map(function (x) {
-          return '<p class="rf-shout">⭐ ' + esc(x.slip.shout || '') + ' <small>' + esc(x.from) + '</small></p>' + (x.slip.next ? '<p class="rf-try">🎯 Try: ' + esc(x.slip.next) + ' <small>' + esc(x.from) + '</small></p>' : '');
+          return '<p class="rf-shout">⭐ ' + esc(x.slip.shout || '') + ' <small>' + esc(x.from) + '</small></p>' + (x.slip.fb ? '<p class="rf-fb">💬 ' + esc(x.slip.fb) + ' <small>' + esc(x.from) + '</small></p>' : '') + (x.slip.next ? '<p class="rf-try">🎯 Try: ' + esc(x.slip.next) + ' <small>' + esc(x.from) + '</small></p>' : '');
         }).join('') : '<p class="rf-empty">No slips sent to ' + esc(k) + ' yet.</p>') +
         (r.tryNext ? '<p class="rf-chose">🤝 Next week ' + esc(k) + ' will try: <b>' + esc(r.tryNext) + '</b></p>' : ''));
       box.appendChild(c);
