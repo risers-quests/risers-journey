@@ -15,11 +15,10 @@ step"): More on Large Numbers → Operations on Large Numbers → Factors and
 Multiples → Fractions and Division → Four Operations of Fractions →
 Decimals → Geometry → Measurement → Perimeter and Area → Volume and Nets
 of Solids → Time and Temperature → Life Mathematics → Scales and
-Directions → Data Handling → Patterns and Symmetry. Each topic depends on
-the one directly before it, so the engine only unlocks a topic once its
-immediate predecessor is mastered — a single linear building-blocks chain
-matching how the textbook sequences the year (see `itemBank/topics.ts` for
-why this is a deliberate simplification of the "true" prerequisite graph).
+Directions → Data Handling → Patterns and Symmetry. Topics are tested in
+that order, but each one unlocks as soon as the topics it really builds on
+are mastered (see `itemBank/topics.ts`), so a gap holds back only the
+topics that depend on it and the rest of the book is still assessed.
 
 **Methodology note (read this before the rest):** the original design doc
 proposed detecting anxiety *live, from within the math questions*, via a
