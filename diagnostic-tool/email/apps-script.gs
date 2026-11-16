@@ -13,7 +13,9 @@
  * Script properties (Project Settings -> Script properties):
  *   SECRET        a long passphrase; the same one goes into Vercel
  *   STAFF_EMAIL   highergrade@lifehub.in
- *   EMAIL_EVA, EMAIL_ZACH, ...   one per child: EMAIL_ + first name in capitals
+ *   EMAILS        all the children at once, one per line or comma:
+ *                   Eva = eva@example.com, Zach = zach@example.com, ...
+ *   (or one property per child: EMAIL_EVA, EMAIL_ZACH, ...)
  */
 function doPost(e) {
   var props = PropertiesService.getScriptProperties();
@@ -26,7 +28,7 @@ function doPost(e) {
     }
     var staffTo = props.getProperty('STAFF_EMAIL') || 'highergrade@lifehub.in';
     var key = 'EMAIL_' + String(data.childName || '').trim().toUpperCase().replace(/[^A-Z]/g, '');
-    var childTo = props.getProperty(key);
+    var childTo = props.getProperty(key) || fromList(props.getProperty('EMAILS'), data.childName);
 
     MailApp.sendEmail({ to: staffTo, subject: data.staff.subject, htmlBody: data.staff.html, name: 'LifeHub Maths Diagnostic' });
     out.staff = true;
@@ -41,6 +43,18 @@ function doPost(e) {
     out.error = String(err);
   }
   return reply(out);
+}
+
+/** Finds "Name = address" in the EMAILS property (lines or commas). */
+function fromList(list, name) {
+  if (!list || !name) return null;
+  var want = String(name).trim().toLowerCase();
+  var entries = String(list).split(/[\n,;]+/);
+  for (var i = 0; i < entries.length; i++) {
+    var parts = entries[i].split('=');
+    if (parts.length === 2 && parts[0].trim().toLowerCase() === want) return parts[1].trim();
+  }
+  return null;
 }
 
 function reply(obj) {

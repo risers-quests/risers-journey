@@ -24,12 +24,10 @@ Easiest on a computer; the Apps Script editor is awkward on an iPad.
 |---|---|
 | `SECRET` | a long passphrase you make up (letters and numbers, 30+ characters) |
 | `STAFF_EMAIL` | `highergrade@lifehub.in` |
-| `EMAIL_BENJAMIN` | Benjamin's email |
-| `EMAIL_CHRIS` | Chris's email |
-| `EMAIL_ELYON` | … one row per child: `EMAIL_` + first name in capitals |
+| `EMAILS` | all 12 children in one value: `Benjamin = address, Chris = address, …` (the first names as on the start page) |
 
 The 12: Benjamin, Chris, Elyon, Eva, Gabby, Karis, Michael, Owen, Pranavi,
-Shalom, Yokesh, Zach.
+Shalom, Yokesh, Zach. (One property per child, `EMAIL_EVA` etc., also works.)
 
 ## 3. Publish it
 
@@ -56,5 +54,5 @@ Then redeploy (Deployments → ⋯ → Redeploy).
 
 Finish a short test (e.g. Data Handling only). The end screen says whether
 both emails went out; if not, it says why and offers **Send them again**.
-To change a child's address later, edit their `EMAIL_` property; nothing
-else changes.
+To change a child's address later, edit it in `EMAILS`; nothing else
+changes.

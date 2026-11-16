@@ -33,7 +33,7 @@ function findBestItem(topicId: string, cpa: CPAStage, bloom: BloomLevel, state?:
   if (hasTemplate(topicId, cpa, bloom)) {
     const asked = state?.topics[topicId]?.askedItemIds;
     const item = generateItem(topicId, cpa, bloom, { avoid: asked, given });
-    if (asked && !given) asked.push(signature(item));
+    if (asked) asked.push(signature(item));
     return item;
   }
   const exact = findItem(topicId, cpa, bloom);
@@ -190,9 +190,9 @@ export function applyOutcome(state: SessionState, input: OutcomeInput): LoopOutc
   // the "procedural without conceptual grounding" signature from Section 04 —
   // a CPA-representation gap, distinct from a plain skill gap.
   if (!t.proceduralCheck && t.consecutiveStruggle === 2 && t.frontierCpa !== "abstract") {
-    // Generated topics re-ask the exact numbers the child just struggled
-    // with, now in symbols: a truly identical relationship.
-    const abstractItem = findBestItem(input.topicId, "abstract", t.frontierBloom, state, input.params);
+    // A fresh question in symbols (new numbers): the same kind of relationship,
+    // but nothing the child has just seen, so a right answer can't be recall.
+    const abstractItem = findBestItem(input.topicId, "abstract", t.frontierBloom, state);
     if (abstractItem.cpa === "abstract") {
       t.proceduralCheck = {
         itemId: abstractItem.id,

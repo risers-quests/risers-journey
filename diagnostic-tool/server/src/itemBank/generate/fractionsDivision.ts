@@ -125,8 +125,8 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
   // ---------------- CONCRETE ----------------
   "concrete|remember": (rng) => {
     const { food, people } = ctx(rng);
-    const b = int(rng, 2, 5);
-    const a = b * int(rng, 1, 3);
+    const b = int(rng, 2, 8);
+    const a = b * int(rng, 1, 4);
     return build(
       {
         ...base("c-remember", "concrete", "remember", "equal-sharing", a, b, rng),
@@ -145,8 +145,8 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
 
   "concrete|understand": (rng) => {
     const { food, people } = ctx(rng);
-    const b = int(rng, 2, 5);
-    const k = int(rng, 2, 4);
+    const b = int(rng, 2, 8);
+    const k = int(rng, 2, 5);
     const a = b * k;
     return build(
       {
@@ -168,7 +168,7 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
 
   "concrete|apply": (rng, given) => {
     const { food, people } = ctx(rng);
-    const { a, b } = given ?? nonMultiple(rng, 3, 11, 2, 5);
+    const { a, b } = given ?? nonMultiple(rng, 3, 15, 2, 7);
     return build(
       {
         ...base("c-apply", "concrete", "apply", "fraction-notation", a, b, rng),
@@ -188,7 +188,7 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
 
   "concrete|analyze": (rng, given) => {
     const { food, people, name } = ctx(rng);
-    const { a, b } = given && given.a > given.b && given.a % given.b ? given : nonMultiple(rng, 5, 15, 2, 5);
+    const { a, b } = given && given.a > given.b && given.a % given.b ? given : nonMultiple(rng, 5, 17, 2, 7);
     const n = Math.floor(a / b);
     if (n < 1) return FRACTIONS_DIVISION_TEMPLATES["concrete|analyze"](rng);
     return build(
@@ -210,7 +210,7 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
   "concrete|evaluate": (rng, given) => {
     const { food, people } = ctx(rng);
     const g = given && given.a < given.b ? given : null;
-    const b = g ? g.b : int(rng, 3, 8);
+    const b = g ? g.b : int(rng, 3, 10);
     const a = g ? g.a : int(rng, 2, b - 1);
     return build(
       {
@@ -231,7 +231,7 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
   // ---------------- PICTORIAL ----------------
   "pictorial|remember": (rng, given) => {
     const { food } = ctx(rng);
-    const { a, b } = given ?? nonMultiple(rng, 2, 9, 3, 8);
+    const { a, b } = given ?? nonMultiple(rng, 2, 17, 3, 12);
     return build(
       {
         ...base("p-remember", "pictorial", "remember", "fraction-notation", a, b, rng),
@@ -251,7 +251,7 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
 
   "pictorial|understand": (rng, given) => {
     const { food, people } = ctx(rng);
-    const { a, b } = given ?? nonMultiple(rng, 2, 9, 3, 8);
+    const { a, b } = given ?? nonMultiple(rng, 2, 17, 3, 12);
     return build(
       {
         ...base("p-understand", "pictorial", "understand", "equal-sharing", a, b, rng),
@@ -273,7 +273,7 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
 
   "pictorial|apply": (rng, given) => {
     const { food } = ctx(rng);
-    const { a, b } = given && given.a > given.b && given.a % given.b ? given : nonMultiple(rng, 5, 13, 2, 6);
+    const { a, b } = given && given.a > given.b && given.a % given.b ? given : nonMultiple(rng, 5, 19, 2, 8);
     if (a < b) return FRACTIONS_DIVISION_TEMPLATES["pictorial|apply"](rng);
     return build(
       {
@@ -294,7 +294,7 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
 
   "pictorial|analyze": (rng, given) => {
     const { food } = ctx(rng);
-    const { a, b } = given && given.a > given.b && given.a % given.b ? given : nonMultiple(rng, 7, 17, 2, 5);
+    const { a, b } = given && given.a > given.b && given.a % given.b ? given : nonMultiple(rng, 7, 23, 2, 7);
     const n = Math.floor(a / b);
     if (n < 1) return FRACTIONS_DIVISION_TEMPLATES["pictorial|analyze"](rng);
     return build(
@@ -315,7 +315,7 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
 
   "pictorial|evaluate": (rng, given) => {
     const { food, people } = ctx(rng);
-    const { a, b } = given && given.a < given.b ? given : (() => { const b = int(rng, 3, 8); return { a: int(rng, 2, b - 1), b }; })();
+    const { a, b } = given && given.a < given.b ? given : (() => { const b = int(rng, 3, 12); return { a: int(rng, 2, b - 1), b }; })();
     return build(
       {
         ...base("p-evaluate", "pictorial", "evaluate", "word-problem-setup", a, b, rng),
@@ -334,7 +334,7 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
 
   // ---------------- ABSTRACT ----------------
   "abstract|remember": (rng, given) => {
-    const { a, b } = given ?? nonMultiple(rng, 2, 9, 2, 9);
+    const { a, b } = given ?? nonMultiple(rng, 2, 19, 2, 12);
     return build(
       { ...base("a-remember", "abstract", "remember", "fraction-notation", a, b, rng), prompt: `${a} ÷ ${b} = ?`, representation: null },
       { a, b },
@@ -369,7 +369,7 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
     if (given) ({ a, b } = given);
     else {
       const k = int(rng, 2, 4);
-      const { a: p, b: q } = nonMultiple(rng, 2, 9, 2, 9);
+      const { a: p, b: q } = nonMultiple(rng, 2, 19, 2, 12);
       const g = gcd(p, q);
       a = (p / g) * k;
       b = (q / g) * k;
@@ -410,7 +410,7 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
   },
 
   "abstract|evaluate": (rng, given) => {
-    const { a, b } = given && given.a > given.b ? given : nonMultiple(rng, 5, 15, 2, 6);
+    const { a, b } = given && given.a > given.b ? given : nonMultiple(rng, 5, 25, 2, 9);
     if (a < b) return FRACTIONS_DIVISION_TEMPLATES["abstract|evaluate"](rng);
     return build(
       { ...base("a-evaluate", "abstract", "evaluate", "word-problem-setup", a, b, rng), prompt: `${a} ÷ ${b} = ? Choose the answer with the right reason.`, representation: null },

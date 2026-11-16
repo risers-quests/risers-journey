@@ -123,3 +123,36 @@ export async function insertResponse(r: Omit<ResponseRecord, "id">): Promise<Res
 export async function getResponses(sessionId: string): Promise<ResponseRecord[]> {
   return [...(await load(sessionId)).responses].sort((a, b) => a.seq - b.seq);
 }
+
+// ---- What each child has already seen, across all their tests ----
+// One record per child (group "diagnostic-history", kid = first name):
+// { topics: { <topicId>: [question signatures] } }. Used so a child never
+// gets the same numbers in a topic again.
+function historyUrl(child: string): string | null {
+  const kid = child.trim().toLowerCase().replace(/[^a-z0-9-]/g, "");
+  return kid ? `${STORE_URL}/sync?group=diagnostic-history&kid=${kid}&week=seen` : null;
+}
+
+export async function loadHistory(child: string): Promise<Record<string, string[]>> {
+  const url = historyUrl(child);
+  if (!url) return {};
+  try {
+    const res = await fetch(url, { headers: { "X-Site-Key": STORE_KEY } });
+    const body = (await res.json()) as { found: boolean; data?: { state: { topics: Record<string, string[]> } } };
+    return body.found && body.data ? body.data.state.topics ?? {} : {};
+  } catch {
+    return {};
+  }
+}
+
+export async function saveHistory(child: string, topics: Record<string, string[]>): Promise<void> {
+  const kid = child.trim().toLowerCase().replace(/[^a-z0-9-]/g, "");
+  if (!kid) return;
+  // Keep the most recent 600 per topic (well under the store's record size).
+  const trimmed = Object.fromEntries(Object.entries(topics).map(([t, list]) => [t, [...new Set(list)].slice(-600)]));
+  await fetch(`${STORE_URL}/sync`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Site-Key": STORE_KEY },
+    body: JSON.stringify({ group: "diagnostic-history", kid, week: "seen", state: { topics: trimmed } }),
+  }).catch(() => undefined);
+}

@@ -249,10 +249,16 @@ running cost.
   simplify"…, listed with explanations in the topic's template file). A
   wrong answer records which one it was, and the report lists the mistakes
   behind a topic's wrong answers, most frequent first.
-- **No repeats.** A child never gets the same numbers twice in a cell.
-- **The "procedural, not conceptual" side-probe re-asks the same numbers**
-  in symbols (7 sandwiches shared by 3 → 7 ÷ 3), a truly identical
-  relationship rather than a different item from the same cell.
+- **Never the same question twice, across all of a child's tests.** Once a
+  child has had a pair of numbers in a topic (at any level), they don't get
+  it in that topic again. Each child's history is saved after every answer
+  (store record group `diagnostic-history`, kid = first name), so even an
+  unfinished test counts. Measured: a level only runs out after about
+  15–19 tests of the same topic; after that it reuses the numbers seen
+  longest ago.
+- **The "procedural, not conceptual" side-probe is a fresh question** in
+  symbols (new numbers), so a right answer can't just be recall of the
+  question before.
 - **Checked by a stress test:** `npx tsx scripts/check-templates.ts` builds
   20,000 questions per cell and checks 4 different options, one right
   answer of the right value, no wrong option equal to it, and pictures that

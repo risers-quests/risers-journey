@@ -6,12 +6,14 @@ import {
   saveSessionState,
   insertResponse,
   getResponses,
+  loadHistory,
+  saveHistory,
 } from "./sessionStore.js";
 import { selectNextQuestion, applyOutcome } from "./engine/skillEngine.js";
 import { readSignal } from "./engine/signalEngine.js";
 import { sanitizeItemForClient, getItemById, getTopic } from "./itemBank/index.js";
 import { STRANDS } from "./itemBank/topics.js";
-import { isGenerated, generateItem, hasTemplate, MISCONCEPTIONS } from "./itemBank/generate/index.js";
+import { isGenerated, generateItem, hasTemplate, signature, MISCONCEPTIONS } from "./itemBank/generate/index.js";
 import { BLOOM_ORDER, CPA_ORDER } from "./types.js";
 import { buildInsights } from "./engine/insights.js";
 import { childEmail, staffEmail } from "./report/emails.js";
@@ -47,7 +49,14 @@ router.post("/sessions", async (req, res) => {
   // Which strands this test covers; none given means the whole book.
   const chosen = Array.isArray(strands) ? STRANDS.filter((s) => strands.includes(s)) : STRANDS;
   if (!chosen.length) return res.status(400).json({ error: "choose at least one strand" });
-  const { id } = await createSession(childName.trim().slice(0, 80), grade || "Grade 5", chosen);
+  const name = childName.trim().slice(0, 80);
+  const { id, state } = await createSession(name, grade || "Grade 5", chosen);
+  // Numbers this child has had before (in earlier tests) are off limits.
+  const history = await loadHistory(name);
+  for (const [topicId, seen] of Object.entries(history)) {
+    if (state.topics[topicId]) state.topics[topicId].askedItemIds.push(...seen);
+  }
+  if (Object.keys(history).length) await saveSessionState(id, state);
   res.json({ sessionId: id });
 });
 
@@ -106,6 +115,13 @@ router.get("/sessions/:id/next-question", async (req, res) => {
       state.phase = "anxiety_questionnaire";
       state.skillEndedAt = Date.now();
       await saveSessionState(sessionId, state);
+      // Remember every question's numbers for this child's later tests.
+      const row = await getSessionRow(sessionId);
+      const history = await loadHistory(row.child_name);
+      for (const [topicId, t] of Object.entries(state.topics)) {
+        if (t.askedItemIds.length) history[topicId] = [...(history[topicId] ?? []), ...t.askedItemIds];
+      }
+      await saveHistory(row.child_name, history);
       return res.json({ done: true, nextPhase: "anxiety_questionnaire" });
     }
     state.seqCounter += 1;
@@ -218,6 +234,14 @@ router.post("/sessions/:id/answer", async (req, res) => {
 
   state.pendingQuestion = null;
   await saveSessionState(sessionId, state);
+  // Remember these numbers for this child straight away, so even an
+  // unfinished test's questions are never asked again.
+  if (pq.item) {
+    const row = await getSessionRow(sessionId);
+    const history = await loadHistory(row.child_name);
+    history[pq.topicId] = [...(history[pq.topicId] ?? []), signature(pq.item)];
+    await saveHistory(row.child_name, history);
+  }
 
   res.json({
     correct,

@@ -32,14 +32,30 @@ export function generateItem(
   const template = TEMPLATES[topicId][`${cpa}|${bloom}`];
   const rng = opts.rng ?? Math.random;
   if (opts.given) return template(rng, opts.given);
-  let item = template(rng);
-  for (let i = 0; i < 20 && opts.avoid?.includes(signature(item)); i++) item = template(rng);
-  return item;
+  const avoid = opts.avoid ?? [];
+  // Try for numbers this child has never had. If a level has truly run out
+  // (only after many tests), use the numbers they saw longest ago.
+  let best: GeneratedItem | null = null;
+  let bestAge = Infinity;
+  for (let i = 0; i < 300; i++) {
+    const item = template(rng);
+    const at = avoid.lastIndexOf(signature(item));
+    if (at === -1) return item;
+    if (at < bestAge) {
+      bestAge = at;
+      best = item;
+    }
+  }
+  return best!;
 }
 
-/** What counts as "the same question": the cell and its numbers, not the story around them. */
+/**
+ * What counts as "the same question": the topic and its numbers, at any
+ * level. Once a child has had 7 and 3 in a topic, in any form, they don't
+ * get 7 and 3 in that topic again (in this test or a later one).
+ */
 export function signature(item: GeneratedItem): string {
-  return `${item.cpa}|${item.bloom}|${Object.entries(item.params).map(([k, v]) => `${k}=${v}`).join(",")}`;
+  return `${item.topicId}|${Object.entries(item.params).map(([k, v]) => `${k}=${v}`).join(",")}`;
 }
 
 export function isGenerated(item: Item): item is GeneratedItem {
