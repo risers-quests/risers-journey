@@ -28,7 +28,14 @@ function stepCpaForward(cpa: CPAStage): CPAStage | null {
   return null; // already at abstract, nowhere further forward
 }
 
-function findBestItem(topicId: string, cpa: CPAStage, bloom: BloomLevel, state?: SessionState, given?: Record<string, number>): Item {
+/**
+ * The question to ask for a cell. Never one this child has already had in
+ * this test: generated topics make fresh numbers; hand-written topics pick
+ * an unasked question (this cell, else the nearest cell). Returns null when
+ * a hand-written topic has no unasked question left. Passing `state` marks
+ * the question as asked.
+ */
+function findBestItem(topicId: string, cpa: CPAStage, bloom: BloomLevel, state?: SessionState, given?: Record<string, number>): Item | null {
   // Generated topics: a fresh question with numbers this child hasn't had.
   if (hasTemplate(topicId, cpa, bloom)) {
     const asked = state?.topics[topicId]?.askedItemIds;
@@ -36,13 +43,21 @@ function findBestItem(topicId: string, cpa: CPAStage, bloom: BloomLevel, state?:
     if (asked) asked.push(signature(item));
     return item;
   }
-  const exact = findItem(topicId, cpa, bloom);
-  if (exact) return exact;
-  // fall back to nearest authored cell so the engine never stalls on a thin item bank
-  const sameTopic = ALL_ITEMS.filter((it) => it.topicId === topicId);
-  const sameCpa = sameTopic.find((it) => it.cpa === cpa);
-  if (sameCpa) return sameCpa;
-  return sameTopic[0];
+  const asked = state?.topics[topicId]?.askedItemIds ?? [];
+  const fresh = ALL_ITEMS.filter((it) => it.topicId === topicId && !asked.includes(it.id));
+  // This cell if unasked; otherwise the nearest unasked cell (same stage first).
+  const distance = (it: Item) => Math.abs(CPA_ORDER.indexOf(it.cpa) - CPA_ORDER.indexOf(cpa)) * 10 + Math.abs(BLOOM_ORDER.indexOf(it.bloom) - BLOOM_ORDER.indexOf(bloom));
+  const pick = [...fresh].sort((x, y) => distance(x) - distance(y))[0] ?? null;
+  if (pick && state) state.topics[topicId]?.askedItemIds.push(pick.id);
+  return pick;
+}
+
+/** A hand-written topic with no unasked question left: stop it where it stands rather than repeat. */
+function endExhaustedTopic(state: SessionState, topicId: string) {
+  const t = state.topics[topicId];
+  t.status = "lag_point";
+  t.lagPoints.push({ cpa: t.frontierCpa, bloom: t.frontierBloom, subskill: "", reason: "Ran out of fresh questions at this level (this topic's questions are not yet generated)." });
+  logTrace(state, `${getTopic(topicId).shortLabel}: no unasked questions left — topic stopped here instead of repeating.`);
 }
 
 /** Picks whichever unlocked topic still has work left, in prerequisite order. */
@@ -88,7 +103,9 @@ export function selectNextQuestion(state: SessionState): NextQuestion | null {
     const askedSoFar = 2 - state.warmupRemaining;
     const topicForWarmup = state.topicOrder[askedSoFar % state.topicOrder.length];
     const item = findBestItem(topicForWarmup, "concrete", "remember", state);
-    return { item, isProceduralCheck: false };
+    if (item) return { item, isProceduralCheck: false };
+    state.phase = "assessment"; // no fresh warm-up question: skip straight to the test
+    state.warmupRemaining = 0;
   }
 
   const topicId = activeTopicId(state);
@@ -105,6 +122,10 @@ export function selectNextQuestion(state: SessionState): NextQuestion | null {
   }
 
   const item = findBestItem(topicId, t.probeCpa, t.probeBloom, state);
+  if (!item) {
+    endExhaustedTopic(state, topicId);
+    return selectNextQuestion(state);
+  }
   return { item, isProceduralCheck: false };
 }
 
@@ -193,7 +214,7 @@ export function applyOutcome(state: SessionState, input: OutcomeInput): LoopOutc
     // A fresh question in symbols (new numbers): the same kind of relationship,
     // but nothing the child has just seen, so a right answer can't be recall.
     const abstractItem = findBestItem(input.topicId, "abstract", t.frontierBloom, state);
-    if (abstractItem.cpa === "abstract") {
+    if (abstractItem && abstractItem.cpa === "abstract") {
       t.proceduralCheck = {
         itemId: abstractItem.id,
         item: isGenerated(abstractItem) ? abstractItem : undefined,
@@ -211,7 +232,7 @@ export function applyOutcome(state: SessionState, input: OutcomeInput): LoopOutc
     t.lagPoints.push({
       cpa: t.frontierCpa,
       bloom: t.frontierBloom,
-      subskill: findBestItem(input.topicId, t.frontierCpa, t.frontierBloom).subskill,
+      subskill: findBestItem(input.topicId, t.frontierCpa, t.frontierBloom)?.subskill ?? "",
       reason: `No traction after ${LAG_THRESHOLD} questions around ${t.frontierCpa}·${t.frontierBloom}.`,
     });
     logTrace(state, `${topic.shortLabel}: LAG POINT logged at ${t.frontierCpa}·${t.frontierBloom} — moving to a different strand.`);
