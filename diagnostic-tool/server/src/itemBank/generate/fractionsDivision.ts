@@ -1,0 +1,411 @@
+import { Rng, Template, build, frac, fracWithMixed, gcd, int, pick } from "./core.js";
+
+/**
+ * Fractions and Division, generated. Every cell tests the same idea the
+ * hand-written bank did (a things shared equally among b people: each gets
+ * a ÷ b = a/b), with fresh numbers and contexts each time and wrong options
+ * built from named mistakes (MISCONCEPTIONS below).
+ */
+
+const TOPIC = "fractions-division";
+
+export const MISCONCEPTIONS: Record<string, { label: string; detail: string }> = {
+  "fd-flips": {
+    label: "Flips the fraction",
+    detail: "Writes b/a for a ÷ b (people on top, things below), so shares come out the wrong way round.",
+  },
+  "fd-multiplies": {
+    label: "Multiplies instead of sharing",
+    detail: "Treats sharing as multiplying the two numbers.",
+  },
+  "fd-subtracts": {
+    label: "Subtracts instead of sharing",
+    detail: "Takes one number away from the other instead of sharing equally.",
+  },
+  "fd-adds": {
+    label: "Adds the numbers",
+    detail: "Combines the things and the people into one total.",
+  },
+  "fd-whole-part-only": {
+    label: "Ignores the leftover",
+    detail: "Gives only the whole-number part of a share (7 ÷ 3 = 2) and drops the remainder.",
+  },
+  "fd-unit-fraction-only": {
+    label: "Forgets how many wholes",
+    detail: "Answers 1/b, the size of one piece of one whole, instead of the full share a/b.",
+  },
+  "fd-wrong-whole": {
+    label: "Uses the wrong number as the whole",
+    detail: "Counts pieces against the number of things instead of the number of equal parts.",
+  },
+  "fd-names-divisor": {
+    label: "Answers with the number of people",
+    detail: "Gives the number of sharers instead of what each one gets.",
+  },
+  "fd-no-sharing": {
+    label: "Doesn't share at all",
+    detail: "Gives the whole amount to each person.",
+  },
+  "fd-size-misjudged": {
+    label: "Misjudges a fraction's size",
+    detail: "Can't tell whether a/b is more or less than 1 (or than a whole number).",
+  },
+  "fd-not-simplified": {
+    label: "Doesn't simplify",
+    detail: "Leaves a fraction that can be simplified, e.g. 9/6 instead of 3/2.",
+  },
+  "fd-simplifies-one-part": {
+    label: "Simplifies only one part",
+    detail: "Divides the top (or the bottom) of a fraction but not both.",
+  },
+  "fd-unequal-shares": {
+    label: "Unsure what 'equal' means",
+    detail: "Doesn't yet see that sharing equally means every share is the same size.",
+  },
+  "fd-irrelevant-reason": {
+    label: "Reasons from an irrelevant fact",
+    detail: "Picks a reason that's true or tempting but doesn't decide the question.",
+  },
+};
+
+// Contexts: things that can be cut into equal pieces, and who shares them.
+const FOODS = [
+  { one: "roti", many: "rotis", icon: "🫓" },
+  { one: "chapati", many: "chapatis", icon: "🫓" },
+  { one: "dosa", many: "dosas", icon: "🥞" },
+  { one: "idli", many: "idlis", icon: "🍚" },
+  { one: "laddu", many: "laddus", icon: "🟠" },
+  { one: "mango", many: "mangoes", icon: "🥭" },
+  { one: "cake", many: "cakes", icon: "🍰" },
+  { one: "pizza", many: "pizzas", icon: "🍕" },
+  { one: "sandwich", many: "sandwiches", icon: "🥪" },
+  { one: "paratha", many: "parathas", icon: "🫓" },
+  { one: "watermelon", many: "watermelons", icon: "🍉" },
+  { one: "chikki bar", many: "chikki bars", icon: "🍫" },
+] as const;
+const PEOPLE = ["children", "friends", "cousins", "classmates", "players", "neighbours"] as const;
+const NAMES = ["Priya", "Arjun", "Meera", "Kabir", "Ananya", "Rohan", "Zara", "Ishaan", "Diya", "Vihaan", "Sara", "Aditya"] as const;
+
+function ctx(rng: Rng) {
+  return { food: pick(rng, FOODS), people: pick(rng, PEOPLE), name: pick(rng, NAMES) };
+}
+function id(cell: string, a: number, b: number, rng: Rng) {
+  return `fd-g-${cell}-${a}-${b}-${Math.floor(rng() * 1e6).toString(36)}`;
+}
+function base(cell: string, cpa: "concrete" | "pictorial" | "abstract", bloom: "remember" | "understand" | "apply" | "analyze" | "evaluate", subskill: string, a: number, b: number, rng: Rng) {
+  return { id: id(cell, a, b, rng), topicId: TOPIC, cpa, bloom, subskill };
+}
+/** a and b with a not a multiple of b (a real fraction), within ranges. */
+function nonMultiple(rng: Rng, aLo: number, aHi: number, bLo: number, bHi: number) {
+  for (;;) {
+    const a = int(rng, aLo, aHi);
+    const b = int(rng, bLo, bHi);
+    if (a % b !== 0 && a !== b) return { a, b };
+  }
+}
+function amountOf(n: number, d: number, food: { one: string; many: string }) {
+  return n < d ? `${frac(n, d)} of a ${food.one}` : `${fracWithMixed(n, d)} ${food.many}`;
+}
+
+export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
+  // ---------------- CONCRETE ----------------
+  "concrete|remember": (rng) => {
+    const { food, people } = ctx(rng);
+    const b = int(rng, 2, 5);
+    const a = b * int(rng, 1, 3);
+    return build(
+      {
+        ...base("c-remember", "concrete", "remember", "equal-sharing", a, b, rng),
+        prompt: `Look at the ${a} ${food.many} being shared equally among ${b} ${people}. What does 'shared equally' mean here?`,
+        representation: { kind: "concrete", icon: food.icon, itemCount: a, groups: b, groupLabel: people },
+      },
+      { a, b },
+      `Each of the ${b} ${people} gets the same amount`,
+      [
+        { text: `The first ${people.slice(0, -1)} to ask gets the most`, mistake: "fd-unequal-shares" },
+        { text: `The oldest gets more ${food.many}`, mistake: "fd-unequal-shares" },
+        { text: "It doesn't matter how they are shared", mistake: "fd-unequal-shares" },
+      ]
+    );
+  },
+
+  "concrete|understand": (rng) => {
+    const { food, people } = ctx(rng);
+    const b = int(rng, 2, 5);
+    const k = int(rng, 2, 4);
+    const a = b * k;
+    return build(
+      {
+        ...base("c-understand", "concrete", "understand", "equal-sharing", a, b, rng),
+        prompt: `${a} ${food.many} are shared equally among ${b} ${people}, shown below. How many ${food.many} does each get?`,
+        representation: { kind: "concrete", icon: food.icon, itemCount: a, groups: b, groupLabel: people },
+      },
+      { a, b },
+      String(k),
+      [
+        { text: String(b), mistake: "fd-names-divisor" },
+        { text: String(a), mistake: "fd-no-sharing" },
+        { text: String(a - b), mistake: "fd-subtracts" },
+        { text: String(a + b), mistake: "fd-adds" },
+        { text: String(k + 1), mistake: null },
+      ]
+    );
+  },
+
+  "concrete|apply": (rng, given) => {
+    const { food, people } = ctx(rng);
+    const { a, b } = given ?? nonMultiple(rng, 3, 11, 2, 5);
+    return build(
+      {
+        ...base("c-apply", "concrete", "apply", "fraction-notation", a, b, rng),
+        prompt: `${a} ${food.many} are shared equally among ${b} ${people}. Which expression shows how many ${food.many} each gets?`,
+        representation: { kind: "concrete", icon: food.icon, itemCount: a, groups: b, groupLabel: people },
+      },
+      { a, b },
+      `${a} ÷ ${b}`,
+      [
+        { text: `${b} ÷ ${a}`, mistake: "fd-flips" },
+        { text: `${a} × ${b}`, mistake: "fd-multiplies" },
+        { text: `${a} − ${b}`, mistake: "fd-subtracts" },
+        { text: `${a} + ${b}`, mistake: "fd-adds" },
+      ]
+    );
+  },
+
+  "concrete|analyze": (rng, given) => {
+    const { food, people, name } = ctx(rng);
+    const { a, b } = given && given.a > given.b && given.a % given.b ? given : nonMultiple(rng, 5, 15, 2, 5);
+    const n = Math.floor(a / b);
+    if (n < 1) return FRACTIONS_DIVISION_TEMPLATES["concrete|analyze"](rng);
+    return build(
+      {
+        ...base("c-analyze", "concrete", "analyze", "unit-fraction-reasoning", a, b, rng),
+        prompt: `${a} ${food.many} are shared equally among ${b} ${people}. ${name} says each gets less than ${n + 1} ${food.many}. Is ${name} correct?`,
+        representation: { kind: "concrete", icon: food.icon, itemCount: a, groups: b, groupLabel: people },
+      },
+      { a, b },
+      `Yes, because ${a} ÷ ${b} is between ${n} and ${n + 1}`,
+      [
+        { text: `No, because ${a} ÷ ${b} is more than ${n + 1}`, mistake: "fd-size-misjudged" },
+        { text: `No, each gets exactly ${n}, with nothing left over`, mistake: "fd-whole-part-only" },
+        { text: `No, because ${food.many} can't be shared equally like this`, mistake: "fd-irrelevant-reason" },
+      ]
+    );
+  },
+
+  "concrete|evaluate": (rng, given) => {
+    const g = given && given.a < given.b ? given : null;
+    const b = g ? g.b : int(rng, 3, 8);
+    const a = g ? g.a : int(rng, 2, b - 1);
+    return build(
+      {
+        ...base("c-evaluate", "concrete", "evaluate", "word-problem-setup", a, b, rng),
+        prompt: `A teacher wants to show the fraction ${frac(a, b)} using counters. Which setup best shows it?`,
+        representation: { kind: "concrete", icon: "●", itemCount: a, groups: b, groupLabel: "groups" },
+      },
+      { a, b },
+      `${a} counters shared equally among ${b} groups; one group's share is ${frac(a, b)}`,
+      [
+        { text: `${b} counters shared equally among ${a} groups`, mistake: "fd-flips" },
+        { text: `${a} groups of ${b} counters each`, mistake: "fd-multiplies" },
+        { text: `${a} counters and ${b} counters, added together`, mistake: "fd-adds" },
+      ]
+    );
+  },
+
+  // ---------------- PICTORIAL ----------------
+  "pictorial|remember": (rng, given) => {
+    const { food } = ctx(rng);
+    const { a, b } = given ?? nonMultiple(rng, 2, 9, 3, 8);
+    return build(
+      {
+        ...base("p-remember", "pictorial", "remember", "fraction-notation", a, b, rng),
+        prompt: `The bar stands for ${a} ${food.many}, split into ${b} equal parts. What fraction of the whole bar is one part?`,
+        representation: { kind: "bar-model", totalLabel: `${a} ${food.many}`, parts: b, highlightParts: 1 },
+      },
+      { a, b },
+      frac(1, b),
+      [
+        { text: frac(1, a), mistake: "fd-wrong-whole" },
+        { text: frac(a, b), mistake: "fd-wrong-whole" },
+        { text: frac(b, a), mistake: "fd-wrong-whole" },
+        { text: frac(b - 1, b), mistake: null },
+      ]
+    );
+  },
+
+  "pictorial|understand": (rng, given) => {
+    const { food, people } = ctx(rng);
+    const { a, b } = given ?? nonMultiple(rng, 2, 9, 3, 8);
+    return build(
+      {
+        ...base("p-understand", "pictorial", "understand", "equal-sharing", a, b, rng),
+        prompt: `${a} ${food.many} are shared equally among ${b} ${people}. Based on the bar, how much does each get?`,
+        representation: { kind: "bar-model", totalLabel: `${a} ${food.many} / ${b} ${people}`, parts: b, highlightParts: 1 },
+      },
+      { a, b },
+      `Each gets ${amountOf(a, b, food)}`,
+      [
+        { text: `Each gets ${amountOf(b, a, food)}`, mistake: "fd-flips" },
+        { text: `Each gets ${amountOf(1, b, food)}`, mistake: "fd-unit-fraction-only" },
+        a > b
+          ? { text: `Each gets ${Math.floor(a / b)} whole ${Math.floor(a / b) > 1 ? food.many : food.one}`, mistake: "fd-whole-part-only" }
+          : { text: `Each gets a whole ${food.one}`, mistake: "fd-size-misjudged" },
+        { text: `Each gets ${amountOf(1, a, food)}`, mistake: "fd-wrong-whole" },
+      ]
+    );
+  },
+
+  "pictorial|apply": (rng, given) => {
+    const { food } = ctx(rng);
+    const { a, b } = given && given.a > given.b && given.a % given.b ? given : nonMultiple(rng, 5, 13, 2, 6);
+    if (a < b) return FRACTIONS_DIVISION_TEMPLATES["pictorial|apply"](rng);
+    return build(
+      {
+        ...base("p-apply", "pictorial", "apply", "word-problem-setup", a, b, rng),
+        prompt: `The bar stands for ${a} ${food.many}, split into ${b} equal parts. How much does each part stand for?`,
+        representation: { kind: "bar-model", totalLabel: `${a} ${food.many}`, parts: b, highlightParts: 1 },
+      },
+      { a, b },
+      `${fracWithMixed(a, b)} ${food.many}`,
+      [
+        { text: `${frac(b, a)} of a ${food.one}`, mistake: "fd-flips" },
+        { text: `${frac(1, b)} of a ${food.one}`, mistake: "fd-unit-fraction-only" },
+        { text: `${a} ${food.many} each`, mistake: "fd-no-sharing" },
+        { text: `${Math.floor(a / b)} ${Math.floor(a / b) > 1 ? food.many : food.one}`, mistake: "fd-whole-part-only" },
+      ]
+    );
+  },
+
+  "pictorial|analyze": (rng, given) => {
+    const { food } = ctx(rng);
+    const { a, b } = given && given.a > given.b && given.a % given.b ? given : nonMultiple(rng, 7, 17, 2, 5);
+    const n = Math.floor(a / b);
+    if (n < 1) return FRACTIONS_DIVISION_TEMPLATES["pictorial|analyze"](rng);
+    return build(
+      {
+        ...base("p-analyze", "pictorial", "analyze", "unit-fraction-reasoning", a, b, rng),
+        prompt: `The bar stands for ${a} ${food.many}, split into ${b} equal parts. Which statement about one part is correct?`,
+        representation: { kind: "bar-model", totalLabel: `${a} ${food.many}`, parts: b, highlightParts: 1 },
+      },
+      { a, b },
+      `Each part is ${frac(a, b)} ${food.many}, which is more than ${n} whole ${n > 1 ? food.many : food.one}`,
+      [
+        { text: `Each part is ${frac(b, a)} of a ${food.one}`, mistake: "fd-flips" },
+        { text: `Each part is exactly ${n} ${n > 1 ? food.many : food.one}`, mistake: "fd-whole-part-only" },
+        { text: `Each part is less than 1 ${food.one}`, mistake: "fd-size-misjudged" },
+      ]
+    );
+  },
+
+  "pictorial|evaluate": (rng, given) => {
+    const { food, people } = ctx(rng);
+    const { a, b } = given && given.a < given.b ? given : (() => { const b = int(rng, 3, 8); return { a: int(rng, 2, b - 1), b }; })();
+    return build(
+      {
+        ...base("p-evaluate", "pictorial", "evaluate", "word-problem-setup", a, b, rng),
+        prompt: `${a} ${food.many} are shared equally among ${b} ${people}. Which description matches the bar model shown?`,
+        representation: { kind: "bar-model", totalLabel: `${a} ${food.many} / ${b} ${people}`, parts: b, highlightParts: 1 },
+      },
+      { a, b },
+      `A bar of ${a} ${food.many} split into ${b} equal parts; each part is ${frac(a, b)}`,
+      [
+        { text: `A bar of ${b} ${food.many} split into ${a} equal parts; each part is ${frac(b, a)}`, mistake: "fd-flips" },
+        { text: `A bar split into ${a} parts, one for each ${food.one}`, mistake: "fd-wrong-whole" },
+        { text: `A bar split into ${a + b} equal parts`, mistake: "fd-adds" },
+      ]
+    );
+  },
+
+  // ---------------- ABSTRACT ----------------
+  "abstract|remember": (rng, given) => {
+    const { a, b } = given ?? nonMultiple(rng, 2, 9, 2, 9);
+    return build(
+      { ...base("a-remember", "abstract", "remember", "fraction-notation", a, b, rng), prompt: `${a} ÷ ${b} = ?`, representation: null },
+      { a, b },
+      frac(a, b),
+      [
+        { text: frac(b, a), mistake: "fd-flips" },
+        { text: String(a * b), mistake: "fd-multiplies" },
+        { text: String(Math.abs(a - b)), mistake: "fd-subtracts" },
+        { text: String(a + b), mistake: "fd-adds" },
+      ]
+    );
+  },
+
+  "abstract|understand": (rng, given) => {
+    const { a, b } = given ?? nonMultiple(rng, 2, 11, 2, 12);
+    return build(
+      { ...base("a-understand", "abstract", "understand", "fraction-notation", a, b, rng), prompt: `Which division does ${frac(a, b)} stand for?`, representation: null },
+      { a, b },
+      `${a} divided by ${b}`,
+      [
+        { text: `${b} divided by ${a}`, mistake: "fd-flips" },
+        { text: `${a} multiplied by ${b}`, mistake: "fd-multiplies" },
+        { text: `${Math.max(a, b)} minus ${Math.min(a, b)}`, mistake: "fd-subtracts" },
+        { text: `${a} plus ${b}`, mistake: "fd-adds" },
+      ]
+    );
+  },
+
+  "abstract|apply": (rng, given) => {
+    // a ÷ b in simplest form. Fresh questions always need simplifying.
+    let a: number, b: number;
+    if (given) ({ a, b } = given);
+    else {
+      const k = int(rng, 2, 4);
+      const { a: p, b: q } = nonMultiple(rng, 2, 9, 2, 9);
+      const g = gcd(p, q);
+      a = (p / g) * k;
+      b = (q / g) * k;
+      if (b === k) return FRACTIONS_DIVISION_TEMPLATES["abstract|apply"](rng);
+    }
+    const g = gcd(a, b);
+    const p = a / g;
+    const q = b / g;
+    return build(
+      { ...base("a-apply", "abstract", "apply", "fraction-notation", a, b, rng), prompt: `${a} ÷ ${b} = ? (simplest form)`, representation: null },
+      { a, b },
+      frac(p, q),
+      [
+        { text: frac(q, p), mistake: "fd-flips" },
+        { text: frac(a, b), mistake: g > 1 ? "fd-not-simplified" : "fd-flips" },
+        { text: frac(p, b), mistake: "fd-simplifies-one-part" },
+        { text: frac(a, q), mistake: "fd-simplifies-one-part" },
+        { text: String(a * b), mistake: "fd-multiplies" },
+        { text: frac(b, a), mistake: "fd-flips" },
+      ]
+    );
+  },
+
+  "abstract|analyze": (rng, given) => {
+    const { a, b } = given ?? nonMultiple(rng, 2, 12, 2, 12);
+    const g = gcd(a, b);
+    const bigger = a > b;
+    return build(
+      { ...base("a-analyze", "abstract", "analyze", "unit-fraction-reasoning", a, b, rng), prompt: `If a ÷ b = ${frac(a / g, b / g)}, which must be true?`, representation: null },
+      { a, b },
+      bigger ? "a is greater than b" : "a is less than b",
+      [
+        { text: bigger ? "a is less than b" : "a is greater than b", mistake: "fd-size-misjudged" },
+        { text: "a equals b", mistake: "fd-size-misjudged" },
+        { text: "a must be an even number", mistake: "fd-irrelevant-reason" },
+      ]
+    );
+  },
+
+  "abstract|evaluate": (rng, given) => {
+    const { a, b } = given && given.a > given.b ? given : nonMultiple(rng, 5, 15, 2, 6);
+    if (a < b) return FRACTIONS_DIVISION_TEMPLATES["abstract|evaluate"](rng);
+    return build(
+      { ...base("a-evaluate", "abstract", "evaluate", "word-problem-setup", a, b, rng), prompt: `${a} ÷ ${b} = ? Choose the answer with the right reason.`, representation: null },
+      { a, b },
+      `${frac(a, b)}, because sharing ${a} equally into ${b} groups gives ${frac(a, b)} each`,
+      [
+        { text: `${frac(b, a)}, because the smaller number goes on top`, mistake: "fd-flips" },
+        { text: `${a * b}, because sharing means multiplying`, mistake: "fd-multiplies" },
+        { text: `${a - b}, because sharing means taking away`, mistake: "fd-subtracts" },
+      ]
+    );
+  },
+};

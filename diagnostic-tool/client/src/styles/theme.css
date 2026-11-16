@@ -504,3 +504,11 @@ a { color: var(--deep-teal); }
 .strand-option b { display: block; color: var(--ink); font-size: 0.95rem; }
 .strand-option small { display: block; color: var(--ink-soft); font-size: 0.8rem; font-weight: 400; line-height: 1.4; margin-top: 2px; }
 .strand-total { font-size: 0.85rem; font-weight: 600; color: var(--deep-teal); }
+
+/* ---- Mistakes behind wrong answers (generated questions) ---- */
+.mistakes-box { margin: 10px 0; padding: 10px 12px; border-radius: 8px; background: #fcebee; }
+.mistakes-title { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--soft-clay); margin-bottom: 6px; }
+.mistakes-box ul { margin: 0; padding-left: 18px; }
+.mistakes-box li { font-size: 0.85rem; margin: 4px 0; }
+.mistakes-box small { display: block; color: var(--ink-soft); line-height: 1.4; }
+.mistake-count { color: var(--soft-clay); font-weight: 700; }

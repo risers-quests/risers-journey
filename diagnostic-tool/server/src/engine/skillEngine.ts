@@ -1,6 +1,7 @@
 import { BLOOM_CEILING, BLOOM_ORDER, CPA_ORDER, BloomLevel, CPAStage, cellId } from "../types.js";
 import { SessionState, logTrace } from "./state.js";
 import { findItem, getItemById, getTopic, ALL_ITEMS } from "../itemBank/index.js";
+import { generateItem, hasTemplate, isGenerated, signature } from "../itemBank/generate/index.js";
 import { Item } from "../types.js";
 
 const CLIMB_BLOOM_ORDER: BloomLevel[] = ["understand", "apply", "analyze"];
@@ -27,7 +28,14 @@ function stepCpaForward(cpa: CPAStage): CPAStage | null {
   return null; // already at abstract, nowhere further forward
 }
 
-function findBestItem(topicId: string, cpa: CPAStage, bloom: BloomLevel): Item {
+function findBestItem(topicId: string, cpa: CPAStage, bloom: BloomLevel, state?: SessionState, given?: Record<string, number>): Item {
+  // Generated topics: a fresh question with numbers this child hasn't had.
+  if (hasTemplate(topicId, cpa, bloom)) {
+    const asked = state?.topics[topicId]?.askedItemIds;
+    const item = generateItem(topicId, cpa, bloom, { avoid: asked, given });
+    if (asked && !given) asked.push(signature(item));
+    return item;
+  }
   const exact = findItem(topicId, cpa, bloom);
   if (exact) return exact;
   // fall back to nearest authored cell so the engine never stalls on a thin item bank
@@ -79,7 +87,7 @@ export function selectNextQuestion(state: SessionState): NextQuestion | null {
   if (state.phase === "warmup") {
     const askedSoFar = 2 - state.warmupRemaining;
     const topicForWarmup = state.topicOrder[askedSoFar % state.topicOrder.length];
-    const item = findBestItem(topicForWarmup, "concrete", "remember");
+    const item = findBestItem(topicForWarmup, "concrete", "remember", state);
     return { item, isProceduralCheck: false };
   }
 
@@ -92,11 +100,11 @@ export function selectNextQuestion(state: SessionState): NextQuestion | null {
   // an anxiety-detection mechanism, so it stays.
   const pc = dueProceduralCheck(state, topicId);
   if (pc) {
-    const item = getItemById(pc.itemId);
+    const item = pc.item ?? getItemById(pc.itemId);
     return { item, isProceduralCheck: true };
   }
 
-  const item = findBestItem(topicId, t.probeCpa, t.probeBloom);
+  const item = findBestItem(topicId, t.probeCpa, t.probeBloom, state);
   return { item, isProceduralCheck: false };
 }
 
@@ -107,6 +115,8 @@ export interface OutcomeInput {
   correct: boolean;
   isProceduralCheck: boolean;
   seq: number;
+  /** The numbers the question was built from (generated topics), so the side-probe can re-ask the same ones. */
+  params?: Record<string, number>;
 }
 
 export type LoopOutcome = "cleared" | "struggle" | "procedural_confirmed" | "procedural_ruled_out";
@@ -180,10 +190,13 @@ export function applyOutcome(state: SessionState, input: OutcomeInput): LoopOutc
   // the "procedural without conceptual grounding" signature from Section 04 —
   // a CPA-representation gap, distinct from a plain skill gap.
   if (!t.proceduralCheck && t.consecutiveStruggle === 2 && t.frontierCpa !== "abstract") {
-    const abstractItem = findBestItem(input.topicId, "abstract", t.frontierBloom);
+    // Generated topics re-ask the exact numbers the child just struggled
+    // with, now in symbols: a truly identical relationship.
+    const abstractItem = findBestItem(input.topicId, "abstract", t.frontierBloom, state, input.params);
     if (abstractItem.cpa === "abstract") {
       t.proceduralCheck = {
         itemId: abstractItem.id,
+        item: isGenerated(abstractItem) ? abstractItem : undefined,
         subskill: abstractItem.subskill,
         scheduledAtSeq: state.seqCounter + 1,
         presented: false,

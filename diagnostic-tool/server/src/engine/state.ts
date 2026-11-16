@@ -1,6 +1,7 @@
 import { BloomLevel, CPAStage, ENTRY_BLOOM, ENTRY_CPA } from "../types.js";
 import { STRANDS, TOPICS } from "../itemBank/topics.js";
 import type { ClientItem } from "../itemBank/index.js";
+import type { GeneratedItem } from "../itemBank/generate/index.js";
 
 export type TopicStatus = "locked" | "in_progress" | "mastered" | "lag_point";
 
@@ -13,6 +14,8 @@ export interface LagPoint {
 
 export interface ProceduralCheck {
   itemId: string;
+  /** For generated topics: the question itself (the same numbers, in symbols). */
+  item?: GeneratedItem;
   subskill: string;
   scheduledAtSeq: number;
   presented: boolean;
@@ -45,6 +48,8 @@ export interface PendingQuestion {
   isProceduralCheck: boolean;
   clientItem: ClientItem;
   shownAtServerMs: number;
+  /** For generated topics: the full question, with its answer and mistakes (never sent to the child). */
+  item?: GeneratedItem;
 }
 
 export interface AnxietyResponse {

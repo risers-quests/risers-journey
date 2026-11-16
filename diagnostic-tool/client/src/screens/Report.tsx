@@ -144,6 +144,19 @@ export function Report({ sessionId }: { sessionId: string }) {
                     </p>
                   ))}
                 </div>
+                {t.mistakes && t.mistakes.length > 0 && (
+                  <div className="mistakes-box">
+                    <div className="mistakes-title">Mistakes behind the wrong answers</div>
+                    <ul>
+                      {t.mistakes.map((m) => (
+                        <li key={m.code}>
+                          <b>{m.label}</b> <span className="mistake-count">{m.count}×</span>
+                          <small>{m.detail}</small>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 <div className="recommendation">&rarr; {t.recommendation}</div>
               </div>
             ))}

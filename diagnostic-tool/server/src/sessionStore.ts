@@ -45,6 +45,8 @@ export interface ResponseRecord {
   reframe_of_seq: number | null;
   is_procedural_check: number;
   outcome: string | null;
+  /** Generated questions: the mistake a wrong answer stands for (see itemBank/generate). */
+  misconception?: string | null;
 }
 
 interface StoredSession {

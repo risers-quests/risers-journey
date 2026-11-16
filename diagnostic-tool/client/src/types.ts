@@ -132,6 +132,7 @@ export interface TopicDiagnosis {
   cpaGapNote: string;
   evidence: string[];
   recommendation: string;
+  mistakes?: { code: string; label: string; detail: string; count: number }[];
 }
 
 export interface ReportData {

@@ -1,6 +1,7 @@
 import { SessionState } from "./state.js";
 import { ResponseRecord } from "../sessionStore.js";
 import { TOPICS, getTopic } from "../itemBank/index.js";
+import { MISCONCEPTIONS } from "../itemBank/generate/index.js";
 import { ANXIETY_QUESTIONS, AnxietyFactor } from "../itemBank/anxietyQuestionnaire.js";
 import { BLOOM_ORDER, BloomLevel, CPAStage, DiagnosisTag } from "../types.js";
 
@@ -13,6 +14,8 @@ export interface TopicDiagnosis {
   cpaGapNote: string;
   evidence: string[];
   recommendation: string;
+  /** Generated topics: the mistakes behind this child's wrong answers, most frequent first. */
+  mistakes: { code: string; label: string; detail: string; count: number }[];
 }
 
 export type AnxietyLevel = "low" | "moderate" | "elevated";
@@ -149,6 +152,21 @@ function buildTopicDiagnosis(topicId: string, state: SessionState, responses: Re
     }
   }
 
+  // Which mistakes the wrong answers stood for (generated questions only).
+  const counts: Record<string, number> = {};
+  for (const r of responses) {
+    if (r.topic_id === topicId && !r.correct && r.misconception && MISCONCEPTIONS[r.misconception]) {
+      counts[r.misconception] = (counts[r.misconception] || 0) + 1;
+    }
+  }
+  const mistakes = Object.entries(counts)
+    .sort((x, y) => y[1] - x[1])
+    .map(([code, count]) => ({ code, label: MISCONCEPTIONS[code].label, detail: MISCONCEPTIONS[code].detail, count }));
+  if (mistakes.length && tag !== "not_yet_reached") {
+    const top = mistakes[0];
+    evidence.push(`Most frequent mistake: ${top.label.toLowerCase()} (${top.count}×) — ${top.detail}`);
+  }
+
   return {
     topicId,
     name: topic.name,
@@ -158,6 +176,7 @@ function buildTopicDiagnosis(topicId: string, state: SessionState, responses: Re
     cpaGapNote,
     evidence,
     recommendation: TAG_RECOMMENDATION[tag],
+    mistakes,
   };
 }
 

@@ -11,6 +11,7 @@ import { selectNextQuestion, applyOutcome } from "./engine/skillEngine.js";
 import { readSignal } from "./engine/signalEngine.js";
 import { sanitizeItemForClient, getItemById, getTopic } from "./itemBank/index.js";
 import { STRANDS } from "./itemBank/topics.js";
+import { isGenerated } from "./itemBank/generate/index.js";
 import { ANXIETY_QUESTIONS } from "./itemBank/anxietyQuestionnaire.js";
 import { logTrace } from "./engine/state.js";
 import { buildGrid, buildSessionMap, buildBreadcrumb } from "./engine/view.js";
@@ -82,6 +83,7 @@ router.get("/sessions/:id/next-question", async (req, res) => {
       isProceduralCheck: next.isProceduralCheck,
       clientItem: sanitizeItemForClient(next.item),
       shownAtServerMs: Date.now(),
+      item: isGenerated(next.item) ? next.item : undefined,
     };
     await saveSessionState(sessionId, state);
   }
@@ -128,8 +130,10 @@ router.post("/sessions/:id/answer", async (req, res) => {
   const { choiceId, hesitationBeforeStartMs, solvingDurationMs, answerChanges, pulse } = req.body ?? {};
   if (typeof choiceId !== "string") return res.status(400).json({ error: "choiceId is required" });
 
-  const item = getItemById(pq.itemId);
+  const item = pq.item ?? getItemById(pq.itemId);
   const correct = item.correctChoiceId === choiceId;
+  // Generated questions: which mistake the chosen wrong answer stands for.
+  const misconception = !correct && pq.item ? pq.item.mistakes[choiceId] ?? null : null;
   const signal = readSignal({
     hesitationBeforeStartMs: Number(hesitationBeforeStartMs) || 0,
     solvingDurationMs: Number(solvingDurationMs) || 0,
@@ -154,6 +158,7 @@ router.post("/sessions/:id/answer", async (req, res) => {
     reframe_of_seq: null,
     is_procedural_check: pq.isProceduralCheck ? 1 : 0,
     outcome: null,
+    misconception,
   });
 
   let loopOutcome: string = "warmup";
@@ -172,6 +177,7 @@ router.post("/sessions/:id/answer", async (req, res) => {
       correct,
       isProceduralCheck: pq.isProceduralCheck,
       seq: pq.seq,
+      params: pq.item?.params,
     });
   }
 

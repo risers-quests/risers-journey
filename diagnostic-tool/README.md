@@ -207,6 +207,33 @@ Sources consulted for this change:
 - [Time on Their Side: visual timers and anticipatory anxiety](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12731990/)
 - [Distinguishing math learning and evaluation anxiety (competing theoretical models)](https://pmc.ncbi.nlm.nih.gov/articles/PMC13326596/)
 
+## Generated questions (Fractions and Division so far)
+
+Instead of one fixed question per CPA × Bloom cell, a topic can have a
+**template** per cell (`server/src/itemBank/generate/`). Each time, it picks
+new numbers and a new context (food, people, names), and **the code works
+out the right answer**, so a generated question is always correct. No AI
+writes questions live, so there's no risk of a wrong answer key and no
+running cost.
+
+- **Every wrong option is a named mistake.** Distractors are built from
+  misconceptions ("flips the fraction", "ignores the leftover", "doesn't
+  simplify"…, listed with explanations in the topic's template file). A
+  wrong answer records which one it was, and the report lists the mistakes
+  behind a topic's wrong answers, most frequent first.
+- **No repeats.** A child never gets the same numbers twice in a cell.
+- **The "procedural, not conceptual" side-probe re-asks the same numbers**
+  in symbols (7 sandwiches shared by 3 → 7 ÷ 3), a truly identical
+  relationship rather than a different item from the same cell.
+- **Checked by a stress test:** `npx tsx scripts/check-templates.ts` builds
+  20,000 questions per cell and checks 4 different options, one right
+  answer of the right value, no wrong option equal to it, and pictures that
+  match the numbers.
+- Topics without templates still use the hand-written bank. To convert a
+  topic: write its 15 templates and misconceptions (copy
+  `generate/fractionsDivision.ts`), register it in `generate/index.ts`, add
+  it to the stress test, and run it.
+
 ## The item bank's four representation kinds
 
 The original two topics only ever needed two diagram types — a bar model
