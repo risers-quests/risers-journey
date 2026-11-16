@@ -110,6 +110,8 @@ export interface PlaceValueActivity {
   columns: number[];
   start: number[];
   target: number;
+  /** Results of known mistakes, so a wrong attempt is named (e.g. added without carrying). */
+  wrong?: { value: number; mistake: string }[];
 }
 
 /** What the child did on a place-value chart: discs per column. */
@@ -132,7 +134,14 @@ export interface PlaceValueChartSpec {
   columns: { label: string; count: number }[];
 }
 
-export type Representation = BarModelSpec | ConcreteSpec | SharingSpec | PlaceValueChartSpec | NumberLineSpec | GridSpec | ShapeSpec | null;
+export interface BarsSpec {
+  /** Bar model drawn to scale: one or more bars of parts (widths proportional to value); "ghost" parts are dashed (a difference); brace labels the whole of the first bar. */
+  kind: "bars";
+  bars: { name: string; parts: { value: number; label: string; ghost?: boolean }[] }[];
+  brace?: { label: string };
+}
+
+export type Representation = BarModelSpec | ConcreteSpec | SharingSpec | PlaceValueChartSpec | BarsSpec | NumberLineSpec | GridSpec | ShapeSpec | null;
 
 export interface Choice {
   id: string;

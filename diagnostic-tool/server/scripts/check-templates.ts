@@ -15,6 +15,7 @@
 import { GENERATED_TOPICS, MISCONCEPTIONS, generateItem, GeneratedItem } from "../src/itemBank/generate/index.js";
 import { checkActivity } from "../src/itemBank/generate/activities.js";
 import { verify as verifyLargeNumbers, dropZeros } from "../src/itemBank/generate/moreOnLargeNumbers.js";
+import { verify as verifyOperations } from "../src/itemBank/generate/operationsOnLargeNumbers.js";
 import { BLOOM_ORDER, CPA_ORDER } from "../src/types.js";
 
 const N = Number(process.env.N || 20000);
@@ -48,6 +49,7 @@ function verifyFractions(it: GeneratedItem): string | null {
 const VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
   "fractions-division": verifyFractions,
   "more-large-numbers": (it) => verifyLargeNumbers(it),
+  "operations-large-numbers": (it) => verifyOperations(it),
 };
 
 // ---- activities: a perfect attempt, and typical mistakes ----
@@ -79,7 +81,11 @@ function checkActivityItem(it: GeneratedItem, where: string) {
     if (act.columns.reduce((s, p, i) => s + p * digits[i], 0) !== act.target) fail(`${where}: target ${act.target} doesn't fit the chart`);
     if (!checkActivity(act, { counts: digits }).correct) fail(`${where}: the right discs were marked wrong`);
     const asCounts = (v: number) => act.columns.map((p) => Math.floor(v / p) % 10);
-    if (act.mode === "build") {
+    if (act.wrong) {
+      // Each listed mistake result must be marked as that mistake.
+      for (const w of act.wrong) if (checkActivity(act, { counts: asCounts(w.value) }).misconception !== w.mistake) fail(`${where}: ${w.value} not caught as ${w.mistake}`);
+      if (act.wrong.some((w) => w.value === act.target)) fail(`${where}: a 'mistake' result equals the right answer`);
+    } else if (act.mode === "build") {
       const dz = dropZeros(act.target);
       if (dz !== act.target && checkActivity(act, { counts: asCounts(dz) }).misconception !== "lnum-drops-zero") fail(`${where}: dropped zeros not caught`);
     } else if (act.mode === "regroup") {

@@ -48,6 +48,8 @@ function checkPlaceValue(a: Extract<Activity, { kind: "place-value" }>, it: Plac
     return { correct: true, misconception: null };
   }
   if (v === t) return { correct: true, misconception: null };
+  // The template listed what typical mistakes would give.
+  if (a.wrong) return { correct: false, misconception: a.wrong.find((w) => w.value === v)?.mistake ?? null };
   if (a.mode === "build") {
     if (v === dropZeros(t)) return { correct: false, misconception: "lnum-drops-zero" };
     if (v === t * 10 || v * 10 === t) return { correct: false, misconception: "lnum-shifts-place" };

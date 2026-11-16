@@ -8,6 +8,7 @@ import { Shape } from "../components/Shape";
 import { Activity, Representation } from "../types";
 import { ShareActivity } from "../components/ShareActivity";
 import { PlaceValueActivity, PlaceValueChart } from "../components/PlaceValue";
+import { Bars } from "../components/Bars";
 
 interface PreviewItem {
   id: string;
@@ -37,7 +38,7 @@ export function Preview() {
     <div className="preview">
       <h1>Question preview: {data.topic}</h1>
       <p className="lede">
-        Topics: <a href="?preview=more-large-numbers">More on Large Numbers</a> · <a href="?preview=fractions-division">Fractions and Division</a>
+        Topics: <a href="?preview=more-large-numbers">More on Large Numbers</a> · <a href="?preview=operations-large-numbers">Operations on Large Numbers</a> · <a href="?preview=fractions-division">Fractions and Division</a>
       </p>
       <p className="lede">One fresh question per level. Reload the page for new numbers and contexts. ✓ marks the right answer; each wrong option shows the mistake it stands for.</p>
       {data.items.map((it) => (
@@ -53,6 +54,7 @@ export function Preview() {
           {it.activity?.kind === "share" && <ShareActivity spec={it.activity} onChange={() => undefined} />}
           {it.activity?.kind === "place-value" && <PlaceValueActivity spec={it.activity} onChange={() => undefined} />}
           {it.representation?.kind === "place-value-chart" && <PlaceValueChart spec={it.representation} />}
+          {it.representation?.kind === "bars" && <Bars spec={it.representation} />}
           {it.answerBy === "activity" && <p className="preview-note">Answered by doing the activity: marked from what the child actually does, not by choosing an option.</p>}
           <ul className="preview-choices">
             {it.choices.map((c) => (

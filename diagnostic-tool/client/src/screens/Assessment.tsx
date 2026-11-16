@@ -13,6 +13,7 @@ import { PulseCheck } from "../components/PulseCheck";
 import { Sharing } from "../components/Sharing";
 import { ShareActivity } from "../components/ShareActivity";
 import { PlaceValueActivity, PlaceValueChart } from "../components/PlaceValue";
+import { Bars } from "../components/Bars";
 
 export function Assessment({
   sessionId,
@@ -143,6 +144,7 @@ export function Assessment({
         {item.representation?.kind === "concrete" && <ConcreteObjects spec={item.representation} />}
         {item.representation?.kind === "sharing" && <Sharing spec={item.representation} />}
         {item.representation?.kind === "place-value-chart" && <PlaceValueChart spec={item.representation} />}
+        {item.representation?.kind === "bars" && <Bars spec={item.representation} />}
         {item.representation?.kind === "number-line" && <NumberLine spec={item.representation} />}
         {item.representation?.kind === "grid" && <Grid spec={item.representation} />}
         {item.representation?.kind === "shape" && <Shape spec={item.representation} />}

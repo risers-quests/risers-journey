@@ -2,6 +2,7 @@ import { BloomLevel, CPAStage, Item } from "../../types.js";
 import { GeneratedItem, Rng, Template } from "./core.js";
 import { FRACTIONS_DIVISION_TEMPLATES, MISCONCEPTIONS as FD_MISCONCEPTIONS } from "./fractionsDivision.js";
 import { MORE_ON_LARGE_NUMBERS_TEMPLATES, MISCONCEPTIONS as LN_MISCONCEPTIONS } from "./moreOnLargeNumbers.js";
+import { OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES, MISCONCEPTIONS as OP_MISCONCEPTIONS } from "./operationsOnLargeNumbers.js";
 
 export type { GeneratedItem } from "./core.js";
 
@@ -9,6 +10,7 @@ export type { GeneratedItem } from "./core.js";
 const TEMPLATES: Record<string, Record<string, Template>> = {
   "fractions-division": FRACTIONS_DIVISION_TEMPLATES,
   "more-large-numbers": MORE_ON_LARGE_NUMBERS_TEMPLATES,
+  "operations-large-numbers": OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES,
 };
 
 /** Topics with generated questions. */
@@ -17,6 +19,7 @@ export const GENERATED_TOPICS = Object.keys(TEMPLATES);
 export const MISCONCEPTIONS: Record<string, { label: string; detail: string; childTip: string }> = {
   ...FD_MISCONCEPTIONS,
   ...LN_MISCONCEPTIONS,
+  ...OP_MISCONCEPTIONS,
 };
 
 export function hasTemplate(topicId: string, cpa: CPAStage, bloom: BloomLevel): boolean {
