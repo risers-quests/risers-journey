@@ -2,9 +2,9 @@
   "name": "risers-journey",
   "private": true,
   "type": "module",
-  "description": "The site is static files, served as they are. This file does two things for the diagnostic tool: Vercel runs 'build' on every deploy, which builds its page into diagnostic/; and the dependencies are its server function's packages (api/diagnostic.ts).",
+  "description": "The site is static files, served as they are (no build on Vercel). The dependencies are the diagnostic tool's server function's packages (api/diagnostic.ts). 'build:diagnostic' rebuilds the tool's page into diagnostic/, which is committed: see CLAUDE.md.",
   "scripts": {
-    "build": "npm --prefix diagnostic-tool ci --no-audit --no-fund && npm --prefix diagnostic-tool run build:client"
+    "build:diagnostic": "npm --prefix diagnostic-tool ci --no-audit --no-fund && npm --prefix diagnostic-tool run build:client"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
