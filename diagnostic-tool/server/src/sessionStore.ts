@@ -96,7 +96,7 @@ async function save(sessionId: string, session: StoredSession): Promise<void> {
 
 export async function createSession(childName: string, grade: string, strands?: string[]): Promise<{ id: string; state: SessionState }> {
   const id = newId();
-  const state = createInitialState(strands);
+  const state = createInitialState(strands, grade === "Grade 4" ? 4 : 5);
   await save(id, { child_name: childName, grade, created_at: new Date().toISOString(), status: "in_progress", state, responses: [] });
   return { id, state };
 }

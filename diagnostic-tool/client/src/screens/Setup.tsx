@@ -15,6 +15,7 @@ export function Setup({ onStart }: { onStart: (status: SessionStatus) => void })
   const [unfinished, setUnfinished] = useState<SessionStatus[]>([]);
   // One strand per sitting by default, so a test stays well under an hour.
   const [strands, setStrands] = useState<string[]>(["Number & Algebra"]);
+  const [grade, setGrade] = useState("Grade 5");
   const topicCount = STRAND_CHOICES.filter((c) => strands.includes(c.name)).reduce((n, c) => n + c.topics.length, 0);
   function toggleStrand(name: string) {
     setStrands((list) => (list.includes(name) ? list.filter((x) => x !== name) : [...list, name]));
@@ -40,7 +41,7 @@ export function Setup({ onStart }: { onStart: (status: SessionStatus) => void })
     setError(null);
     try {
       const name = childName.trim();
-      const sessionId = await createSession(name, "Grade 5", strands);
+      const sessionId = await createSession(name, grade, grade === "Grade 4" ? ["Number & Algebra"] : strands);
       rememberTest({ id: sessionId, childName: name, startedAt: new Date().toISOString() });
       const status = await getSessionStatus(sessionId);
       if (!status) throw new Error("Couldn't start the test");
@@ -97,11 +98,15 @@ export function Setup({ onStart }: { onStart: (status: SessionStatus) => void })
         </div>
         <div>
           <label htmlFor="grade">Grade</label>
-          <select id="grade" defaultValue="Grade 5" disabled>
+          <select id="grade" value={grade} onChange={(e) => setGrade(e.target.value)}>
             <option>Grade 5</option>
+            <option>Grade 4</option>
           </select>
+          {grade === "Grade 4" && (
+            <small className="grade-note">Grade 4 so far: Large Numbers and Operations on Large Numbers. More topics are being added.</small>
+          )}
         </div>
-        <fieldset className="strand-pick">
+        {grade === "Grade 5" && <fieldset className="strand-pick">
           <legend>What to test</legend>
           {STRAND_CHOICES.map((c) => (
             <label key={c.name} className={"strand-option" + (strands.includes(c.name) ? " on" : "")}>
@@ -117,9 +122,9 @@ export function Setup({ onStart }: { onStart: (status: SessionStatus) => void })
           <div className="strand-total">
             {topicCount ? `${topicCount} topic${topicCount > 1 ? "s" : ""}` : "Choose at least one strand"}
           </div>
-        </fieldset>
+        </fieldset>}
         {error && <div style={{ color: "var(--soft-clay)", fontSize: "0.85rem" }}>{error}</div>}
-        <button className="btn btn-primary" type="submit" disabled={loading || !childName.trim() || !strands.length}>
+        <button className="btn btn-primary" type="submit" disabled={loading || !childName.trim() || (grade === "Grade 5" && !strands.length)}>
           {loading ? "Starting…" : "Start the test"}
         </button>
       </form>

@@ -1,4 +1,4 @@
-import { Rng, Template, build, buildActivity, int, pick } from "./core.js";
+import { D, G, Rng, Template, build, buildActivity, int, pick } from "./core.js";
 
 /**
  * Operations on Large Numbers, generated. One ladder: the four operations
@@ -73,6 +73,8 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
 
 const fmt = (n: number) => n.toLocaleString("en-US");
 const SIX = [100000, 10000, 1000, 100, 10, 1];
+/** The place-value chart's columns: Grade 5 hundred thousands … ones; Grade 4 ten thousands … ones. */
+const COLS = () => (G() === 10 ? SIX.slice(1) : SIX);
 const NAMES = ["Priya", "Arjun", "Meera", "Kabir", "Ananya", "Rohan", "Zara", "Ishaan", "Diya", "Vihaan", "Sara", "Aditya"] as const;
 const digits = (n: number) => SIX.map((p) => Math.floor(n / p) % 10);
 
@@ -99,12 +101,12 @@ function roundish(rng: Rng, lo: number, hi: number, step: number): number {
 const chart = (start: number, target: number, wrong: { value: number; mistake: string }[]) => ({
   kind: "place-value" as const,
   mode: "change" as const,
-  columns: SIX,
-  start: digits(start),
+  columns: COLS(),
+  start: COLS().map((p) => Math.floor(start / p) % 10),
   target,
   // Drop impossible results and ones equal to the right answer; if two
   // mistakes give the same number, it can't tell them apart: keep the first.
-  wrong: wrong.filter((w, i) => w.value !== target && w.value >= 0 && w.value < 1000000 && wrong.findIndex((x) => x.value === w.value) === i),
+  wrong: wrong.filter((w, i) => w.value !== target && w.value >= 0 && w.value < 1000000 / G() && wrong.findIndex((x) => x.value === w.value) === i),
 });
 const THINGS = [
   ["visitors to a fair", "visitors"],
@@ -120,9 +122,9 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   "concrete|remember": (rng) => {
     // Add with no exchanging.
     for (;;) {
-      const a = roundish(rng, 110000, 780000, 10000);
-      const b = roundish(rng, 11000, 99000, 1000);
-      if (carries(a, b) || a + b >= 1000000) continue;
+      const a = roundish(rng, (110000 / G()), (780000 / G()), (10000 / G()));
+      const b = roundish(rng, (11000 / G()), (99000 / G()), (1000 / G()));
+      if (carries(a, b) || a + b >= (1000000 / G())) continue;
       return buildActivity(
         { ...base("c-remember", "concrete", "remember", "addition", a + b, rng), prompt: `The chart shows ${fmt(a)}. Add ${fmt(b)} to it.`, representation: null },
         { a, b },
@@ -134,9 +136,9 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   "concrete|understand": (rng) => {
     // Add with an exchange (10 discs -> 1 in the next column).
     for (;;) {
-      const a = roundish(rng, 110000, 880000, 1000);
-      const b = roundish(rng, 2000, 98000, 1000);
-      if (!carries(a, b) || a + b >= 1000000) continue;
+      const a = roundish(rng, (110000 / G()), (880000 / G()), (1000 / G()));
+      const b = roundish(rng, (2000 / G()), (98000 / G()), (1000 / G()));
+      if (!carries(a, b) || a + b >= (1000000 / G())) continue;
       return buildActivity(
         { ...base("c-understand", "concrete", "understand", "addition", a + b, rng), prompt: `The chart shows ${fmt(a)}. Add ${fmt(b)} to it. If a column gets 10 or more, exchange.`, representation: null },
         { a, b },
@@ -148,8 +150,8 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   "concrete|apply": (rng) => {
     // Subtract with breaking 1 into 10.
     for (;;) {
-      const a = roundish(rng, 210000, 980000, 1000);
-      const b = roundish(rng, 2000, 99000, 1000);
+      const a = roundish(rng, (210000 / G()), (980000 / G()), (1000 / G()));
+      const b = roundish(rng, (2000 / G()), (99000 / G()), (1000 / G()));
       if (!exchanges(a, b) || b >= a) continue;
       return buildActivity(
         { ...base("c-apply", "concrete", "apply", "subtraction", a - b, rng), prompt: `The chart shows ${fmt(a)}. Take away ${fmt(b)}. If a column hasn't enough, break 1 from the next column into 10.`, representation: null },
@@ -163,7 +165,7 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
     // Make a number 10 or 100 times bigger: every disc moves up.
     const f = pick(rng, [10, 100]);
     const n = f === 10 ? int(rng, 101, 99999) : int(rng, 101, 9999);
-    if (n * f >= 1000000 || n % 10 === 0) return OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES["concrete|analyze"](rng);
+    if (n * f >= (1000000 / G()) || n % 10 === 0) return OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES["concrete|analyze"](rng);
     return buildActivity(
       { ...base("c-analyze", "concrete", "analyze", "multiply-by-10-100", n, rng), prompt: `The chart shows ${fmt(n)}. Change it to show ${fmt(n)} × ${f}.`, representation: null },
       { a: n, f },
@@ -174,8 +176,8 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   "concrete|evaluate": (rng) => {
     // A claim about subtracting across zeros, checked on the chart.
     const h = int(rng, 3, 9);
-    const a = h * 100000;
-    const b = int(rng, 1, 9) * 1000 + int(rng, 1, 9) * 100;
+    const a = h * (100000 / G());
+    const b = int(rng, 1, 9) * (1000 / G()) + int(rng, 1, 9) * 100;
     const right = a - b;
     const wrong = subSmallerFromLarger(a, b);
     const truthful = rng() < 0.5;
@@ -195,11 +197,11 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
             ? { text: `No: it's ${fmt(wrong)}`, mistake: "ops-smaller-from-larger" }
             : { text: `Yes: take each small digit from the zero`, mistake: "ops-smaller-from-larger" },
           { text: `${truthful ? "No" : "Yes"}: you can't take away from zeros, so the answer is ${fmt(a)}`, mistake: "ops-borrow-across-zero" },
-          { text: `No: it's ${fmt(right + 10000)}`, mistake: "ops-borrow-across-zero" },
-          { text: `No: it's ${fmt(right - 1000)}`, mistake: null },
+          { text: `No: it's ${fmt(right + (10000 / G()))}`, mistake: "ops-borrow-across-zero" },
+          { text: `No: it's ${fmt(right - (1000 / G()))}`, mistake: null },
         ]
       ),
-      activity: { kind: "place-value", mode: "change", columns: SIX, start: digits(a), target: right },
+      activity: chart(a, right, [{ value: subSmallerFromLarger(a, b), mistake: "ops-smaller-from-larger" }, { value: a + b, mistake: "ops-wrong-operation" }]),
     };
   },
 
@@ -207,8 +209,8 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   "pictorial|remember": (rng) => {
     // Part-whole: two parts known, whole unknown.
     const [what, unit] = pick(rng, THINGS);
-    const p = roundish(rng, 120000, 480000, 1000);
-    const q = roundish(rng, 110000, 470000, 1000);
+    const p = roundish(rng, (120000 / G()), (480000 / G()), (1000 / G()));
+    const q = roundish(rng, (110000 / G()), (470000 / G()), (1000 / G()));
     return build(
       {
         ...base("p-remember", "pictorial", "remember", "part-whole", p + q, rng),
@@ -228,8 +230,8 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   "pictorial|understand": (rng) => {
     // Part-whole: whole and one part known, other part unknown.
     const [what] = pick(rng, THINGS);
-    const whole = roundish(rng, 300000, 950000, 1000);
-    const p = roundish(rng, 100000, whole - 100000, 1000);
+    const whole = roundish(rng, (300000 / G()), (950000 / G()), (1000 / G()));
+    const p = roundish(rng, (100000 / G()), whole - (100000 / G()), (1000 / G()));
     const q = whole - p;
     if (q === p) return OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES["pictorial|understand"](rng); // the answer would be printed on the other part
     return build(
@@ -243,8 +245,8 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
       [
         { text: fmt(whole + p), mistake: "ops-wrong-operation" },
         { text: fmt(subSmallerFromLarger(whole, p)), mistake: "ops-smaller-from-larger" },
-        { text: fmt(q + 10000), mistake: null },
-        { text: fmt(Math.abs(q - 10000)), mistake: null },
+        { text: fmt(q + (10000 / G())), mistake: null },
+        { text: fmt(Math.abs(q - (10000 / G()))), mistake: null },
       ]
     );
   },
@@ -253,8 +255,8 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
     // Comparison: two bars, how many more?
     for (;;) {
       const [unit, place] = pick(rng, [["visitors", "Fair"], ["books", "Library"], ["tickets", "Cinema"], ["seeds", "Farm"], ["bricks", "Factory"]] as const);
-      const big = roundish(rng, 300000, 900000, 100);
-      const small = roundish(rng, 100000, big - 50000, 100);
+      const big = roundish(rng, (300000 / G()), (900000 / G()), 100);
+      const small = roundish(rng, (100000 / G()), big - (50000 / G()), 100);
       if (!exchanges(big, small) || big - small === small) continue; // difference mustn't equal a printed bar
       const nameA = `${place} A`;
       const nameB = `${place} B`;
@@ -275,8 +277,8 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
         [
           { text: fmt(subSmallerFromLarger(big, small)), mistake: "ops-smaller-from-larger" },
           { text: fmt(big + small), mistake: "ops-wrong-operation" },
-          { text: fmt(big - small + 1000), mistake: null },
-          { text: fmt(big - small - 1000), mistake: null },
+          { text: fmt(big - small + (1000 / G())), mistake: null },
+          { text: fmt(big - small - (1000 / G())), mistake: null },
         ]
       );
     }
@@ -285,9 +287,9 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   "pictorial|analyze": (rng) => {
     // Equal units: total known, find one unit (division).
     const k = int(rng, 3, 8);
-    const unitV = roundish(rng, 12000, 120000, 1000);
+    const unitV = roundish(rng, (12000 / G()), (120000 / G()), (1000 / G()));
     const total = k * unitV;
-    if (total >= 1000000) return OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES["pictorial|analyze"](rng);
+    if (total >= (1000000 / G())) return OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES["pictorial|analyze"](rng);
     const [what] = pick(rng, THINGS);
     return build(
       {
@@ -309,9 +311,9 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   "pictorial|evaluate": (rng) => {
     // "A is k times as many as B; together N." B = N / (k + 1).
     const k = int(rng, 2, 5);
-    const b = roundish(rng, 20000, 150000, 1000);
+    const b = roundish(rng, (20000 / G()), (150000 / G()), (1000 / G()));
     const total = b * (k + 1);
-    if (total >= 1000000) return OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES["pictorial|evaluate"](rng);
+    if (total >= (1000000 / G())) return OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES["pictorial|evaluate"](rng);
     const name = pick(rng, NAMES);
     const wrongB = Math.round(total / k);
     return build(
@@ -339,8 +341,8 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
 
   // ---------------- ABSTRACT ----------------
   "abstract|remember": (rng) => {
-    const f = pick(rng, [10, 100, 1000]);
-    const n = int(rng, 12, 980) * (f === 1000 ? 1 : int(rng, 1, 9));
+    const f = pick(rng, [10, 100, (1000 / G())]);
+    const n = int(rng, 12, 980) * (f === (1000 / G()) ? 1 : int(rng, 1, 9));
     if (n * f >= 10000000 || n % 10 === 0) return OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES["abstract|remember"](rng);
     const divide = rng() < 0.4;
     const big = n * f;
@@ -366,17 +368,17 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   "abstract|understand": (rng) => {
     // Add with carrying.
     for (;;) {
-      const a = int(rng, 100000, 699999);
-      const b = int(rng, 100000, 299999);
-      if (!carries(a, b) || a + b >= 1000000) continue;
+      const a = int(rng, (100000 / G()), 699999);
+      const b = int(rng, (100000 / G()), 299999);
+      if (!carries(a, b) || a + b >= (1000000 / G())) continue;
       return build(
         { ...base("a-understand", "abstract", "understand", "addition", a + b, rng), prompt: `${fmt(a)} + ${fmt(b)} = ?`, representation: null },
         { a, b },
         fmt(a + b),
         [
           { text: fmt(addNoCarry(a, b)), mistake: "ops-forgets-carry" },
-          { text: fmt(a + b + 10000), mistake: null },
-          { text: fmt(a + b - 1000), mistake: null },
+          { text: fmt(a + b + (10000 / G())), mistake: null },
+          { text: fmt(a + b - (1000 / G())), mistake: null },
           { text: fmt(Math.abs(a - b)), mistake: "ops-wrong-operation" },
         ]
       );
@@ -386,8 +388,8 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   "abstract|apply": (rng) => {
     // Subtract across zeros.
     for (;;) {
-      const a = int(rng, 2, 9) * 100000 + int(rng, 0, 9) * 1000 * (rng() < 0.5 ? 0 : 1);
-      const b = int(rng, 10000, 99999);
+      const a = int(rng, 2, 9) * (100000 / G()) + int(rng, 0, 9) * (1000 / G()) * (rng() < 0.5 ? 0 : 1);
+      const b = int(rng, (10000 / G()), 99999);
       if (b >= a || !exchanges(a, b)) continue;
       return build(
         { ...base("a-apply", "abstract", "apply", "subtraction", a - b, rng), prompt: `${fmt(a)} − ${fmt(b)} = ?`, representation: null },
@@ -395,8 +397,8 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
         fmt(a - b),
         [
           { text: fmt(subSmallerFromLarger(a, b)), mistake: "ops-smaller-from-larger" },
-          { text: fmt(a - b + 10000), mistake: "ops-borrow-across-zero" },
-          { text: fmt(a - b + 1000), mistake: "ops-borrow-across-zero" },
+          { text: fmt(a - b + (10000 / G())), mistake: "ops-borrow-across-zero" },
+          { text: fmt(a - b + (1000 / G())), mistake: "ops-borrow-across-zero" },
           { text: fmt(a + b), mistake: "ops-wrong-operation" },
         ]
       );
@@ -406,12 +408,12 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   "abstract|analyze": (rng) => {
     // Order of operations: a + b × c  or  a − b × c.
     const plus = rng() < 0.6;
-    const b = roundish(rng, 2000, 90000, 1000);
+    const b = roundish(rng, (2000 / G()), (90000 / G()), (1000 / G()));
     const c = int(rng, 2, 9);
-    const a = roundish(rng, plus ? 10000 : b * c + 10000, plus ? 500000 : b * c + 500000, 1000);
+    const a = roundish(rng, plus ? (10000 / G()) : b * c + (10000 / G()), plus ? (500000 / G()) : b * c + (500000 / G()), (1000 / G()));
     const right = plus ? a + b * c : a - b * c;
     const ltr = plus ? (a + b) * c : (a - b) * c;
-    if (right === a || right === b) return OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES["abstract|analyze"](rng);
+    if (right === a || right === b || Math.abs(ltr) >= (10000000 / G()) / G()) return OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES["abstract|analyze"](rng);
     return build(
       { ...base("a-analyze", "abstract", "analyze", "order-of-operations", right, rng), prompt: `${fmt(a)} ${plus ? "+" : "−"} ${fmt(b)} × ${c} = ?`, representation: null },
       { a, b, c, plus: plus ? 1 : 0 },
@@ -420,14 +422,14 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
         { text: fmt(ltr), mistake: "ops-left-to-right" },
         { text: fmt(plus ? a + b + c : a - b - c), mistake: "ops-wrong-operation" },
         { text: fmt(plus ? a + b * c * 10 : Math.abs(a - b * c * 10)), mistake: "ops-zeros-wrong" },
-        { text: fmt(right + 1000), mistake: null },
+        { text: fmt(right + (1000 / G())), mistake: null },
       ]
     );
   },
 
   "abstract|evaluate": (rng) => {
     // Is a claimed product sensible? Check by estimating.
-    const a = int(rng, 1100, 9800);
+    const a = G() === 10 ? int(rng, 110, 980) : int(rng, 1100, 9800); // Grade 4: 3-digit × 2-digit
     const b = int(rng, 11, 89);
     const real = a * b;
     const lead = (n: number) => Number(String(n)[0]) * 10 ** (String(n).length - 1);

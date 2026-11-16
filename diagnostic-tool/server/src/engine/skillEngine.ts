@@ -39,7 +39,7 @@ function findBestItem(topicId: string, cpa: CPAStage, bloom: BloomLevel, state?:
   // Generated topics: a fresh question with numbers this child hasn't had.
   if (hasTemplate(topicId, cpa, bloom)) {
     const asked = state?.topics[topicId]?.askedItemIds;
-    const item = generateItem(topicId, cpa, bloom, { avoid: asked, given });
+    const item = generateItem(topicId, cpa, bloom, { avoid: asked, given, grade: state?.grade ?? 5 });
     if (asked) asked.push(signature(item));
     return item;
   }

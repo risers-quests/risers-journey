@@ -1,5 +1,6 @@
 import { BloomLevel, CPAStage, ENTRY_BLOOM, ENTRY_CPA } from "../types.js";
 import { STRANDS, TOPICS } from "../itemBank/topics.js";
+import { GRADE4_TOPICS } from "../itemBank/generate/index.js";
 import type { ClientItem } from "../itemBank/index.js";
 import type { GeneratedItem } from "../itemBank/generate/index.js";
 
@@ -61,6 +62,8 @@ export interface SessionState {
   // The strands this test covers (chosen when it starts); topicOrder and
   // topics hold only their topics. Older sessions have every strand.
   strands?: string[];
+  /** 4 or 5 (older sessions: 5). Grade 4 uses only the topics generated for it. */
+  grade?: number;
   topicOrder: string[];
   currentTopicIndex: number;
   topics: Record<string, TopicEngineState>;
@@ -82,8 +85,8 @@ export interface SessionState {
   emailStatus?: { at: string; child: boolean; staff: boolean; note?: string };
 }
 
-export function createInitialState(strands: string[] = STRANDS): SessionState {
-  const topicOrder = TOPICS.filter((t) => strands.includes(t.strand)).map((t) => t.id);
+export function createInitialState(strands: string[] = STRANDS, grade = 5): SessionState {
+  const topicOrder = TOPICS.filter((t) => strands.includes(t.strand) && (grade !== 4 || GRADE4_TOPICS.includes(t.id))).map((t) => t.id);
   const topics: Record<string, TopicEngineState> = {};
   topicOrder.forEach((id, idx) => {
     topics[id] = {
@@ -103,6 +106,7 @@ export function createInitialState(strands: string[] = STRANDS): SessionState {
   });
 
   return {
+    grade,
     strands: STRANDS.filter((s) => strands.includes(s)),
     topicOrder,
     currentTopicIndex: 0,

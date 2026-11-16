@@ -31,14 +31,17 @@ export function Preview() {
   useEffect(() => {
     // ?preview=<topic id>, e.g. ?preview=more-large-numbers (default: fractions-division)
     const topic = new URLSearchParams(location.search).get("preview") || "fractions-division";
-    fetch(`${BASE}/preview/${topic}`).then((r) => r.json()).then(setData);
+    const g = new URLSearchParams(location.search).get("grade") === "4" ? "?grade=4" : "";
+    fetch(`${BASE}/preview/${topic}${g}`).then((r) => r.json()).then(setData);
   }, []);
   if (!data) return <div>Loading…</div>;
   return (
     <div className="preview">
       <h1>Question preview: {data.topic}</h1>
       <p className="lede">
-        Topics: <a href="?preview=more-large-numbers">More on Large Numbers</a> · <a href="?preview=operations-large-numbers">Operations on Large Numbers</a> · <a href="?preview=fractions-division">Fractions and Division</a>
+        Grade 5: <a href="?preview=more-large-numbers">Large Numbers</a> · <a href="?preview=operations-large-numbers">Operations</a> · <a href="?preview=fractions-division">Fractions and Division</a>
+        <br />
+        Grade 4: <a href="?preview=more-large-numbers&grade=4">Large Numbers</a> · <a href="?preview=operations-large-numbers&grade=4">Operations</a>
       </p>
       <p className="lede">One fresh question per level. Reload the page for new numbers and contexts. ✓ marks the right answer; each wrong option shows the mistake it stands for.</p>
       {data.items.map((it) => (

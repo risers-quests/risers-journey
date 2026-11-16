@@ -237,6 +237,16 @@ separate 8-question self-report at the end.
 
 ## Generated questions (More on Large Numbers, Operations on Large Numbers, Fractions and Division so far)
 
+**Grade 4.** The start page offers Grade 4 or Grade 5. Grade 4 uses the
+same ladders one place value smaller (G() and D() in `generate/core.ts`:
+5-column place-value chart, numbers up to about 99,999). Topics ready at
+Grade 4 are listed in `GRADE4_TOPICS` (`generate/index.ts`): Large Numbers
+and Operations so far; a Grade 4 test offers only those. Each new topic
+should be built grade-aware, with its Grade 4 version added to the stress
+test (which runs every topic at Grade 5 and the Grade 4 topics at Grade 4).
+Grade 4 needs its own topics where the content differs (e.g. Grade 4
+fractions are equivalent fractions and adding like fractions, not a ÷ b).
+
 **Words children see.** CPA and Bloom's levels (concrete, pictorial,
 abstract, remember … evaluate) are how the engine judges and how staff
 read the reports; children never see them. The question screen shows only

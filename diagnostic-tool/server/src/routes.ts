@@ -51,7 +51,8 @@ router.post("/sessions", async (req, res) => {
   const chosen = Array.isArray(strands) ? STRANDS.filter((s) => strands.includes(s)) : STRANDS;
   if (!chosen.length) return res.status(400).json({ error: "choose at least one strand" });
   const name = childName.trim().slice(0, 80);
-  const { id, state } = await createSession(name, grade || "Grade 5", chosen);
+  const { id, state } = await createSession(name, grade === "Grade 4" ? "Grade 4" : "Grade 5", chosen);
+  if (!state.topicOrder.length) return res.status(400).json({ error: "no topics ready for that grade and strand yet" });
   // Numbers this child has had before (in earlier tests) are off limits.
   const history = await loadHistory(name);
   for (const [topicId, seen] of Object.entries(history)) {
@@ -68,7 +69,7 @@ router.get("/preview/:topic", (req, res) => {
   const out = [];
   for (const cpa of CPA_ORDER) for (const bloom of BLOOM_ORDER) {
     if (!hasTemplate(topic, cpa, bloom)) continue;
-    const it = generateItem(topic, cpa, bloom);
+    const it = generateItem(topic, cpa, bloom, { grade: req.query.grade === "4" ? 4 : 5 });
     out.push({ ...it, mistakeLabels: Object.fromEntries(Object.entries(it.mistakes).map(([k, v]) => [k, v ? MISCONCEPTIONS[v]?.label ?? v : null])) });
   }
   if (!out.length) return res.status(404).json({ error: "no generated questions for this topic" });

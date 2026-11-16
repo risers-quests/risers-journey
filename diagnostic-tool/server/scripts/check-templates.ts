@@ -12,7 +12,7 @@
  *     caught as the right misconception
  * Run: npx tsx scripts/check-templates.ts   (N=2000 for a quicker run)
  */
-import { GENERATED_TOPICS, MISCONCEPTIONS, generateItem, GeneratedItem } from "../src/itemBank/generate/index.js";
+import { GENERATED_TOPICS, GRADE4_TOPICS, MISCONCEPTIONS, generateItem, GeneratedItem } from "../src/itemBank/generate/index.js";
 import { checkActivity } from "../src/itemBank/generate/activities.js";
 import { verify as verifyLargeNumbers, dropZeros } from "../src/itemBank/generate/moreOnLargeNumbers.js";
 import { verify as verifyOperations } from "../src/itemBank/generate/operationsOnLargeNumbers.js";
@@ -99,14 +99,21 @@ function checkActivityItem(it: GeneratedItem, where: string) {
   } else fail(`${where}: unknown activity`);
 }
 
-for (const topic of GENERATED_TOPICS) {
+const RUNS: [string, number][] = [...GENERATED_TOPICS.map((t) => [t, 5] as [string, number]), ...GRADE4_TOPICS.map((t) => [t, 4] as [string, number])];
+for (const [topic, grade] of RUNS) {
   for (const cpa of CPA_ORDER)
     for (const bloom of BLOOM_ORDER) {
       const seen = new Set<string>();
       for (let i = 0; i < N; i++) {
         let it: GeneratedItem;
         try {
-          it = generateItem(topic, cpa, bloom);
+          it = generateItem(topic, cpa, bloom, { grade });
+          if (grade === 4) {
+            // Grade 4: numbers stay below 100,000 (pictures and activities included).
+            const nums = (JSON.stringify([it.prompt, it.choices, it.representation, it.activity]).match(/\d{1,3}(?:,\d{3})+(?!\d)|\d+/g) ?? []).map((x) => Number(x.replace(/,/g, "")));
+            if (nums.some((x) => x >= 1000000)) fail(`${topic} G4 ${cpa}/${bloom}: a number of a million or more`);
+            if (it.activity && "columns" in it.activity && it.activity.columns[0] > 10000) fail(`${topic} G4 ${cpa}/${bloom}: chart has a hundred-thousands column`);
+          }
         } catch (e) {
           fail(`${topic} ${cpa}/${bloom}: ${e}`);
           break;
@@ -135,8 +142,8 @@ for (const topic of GENERATED_TOPICS) {
         const problem = VERIFY[topic]?.(it);
         if (problem) fail(`${where}: ${problem}`);
       }
-      console.log(`${topic.padEnd(20)} ${cpa.padEnd(9)} ${bloom.padEnd(10)} ${String(seen.size).padStart(6)} different`);
+      console.log(`G${grade} ${topic.padEnd(20)} ${cpa.padEnd(9)} ${bloom.padEnd(10)} ${String(seen.size).padStart(6)} different`);
     }
 }
-console.log(failures ? `\n${failures} FAILURES` : `\nAll ${GENERATED_TOPICS.length * 15 * N} generated questions passed.`);
+console.log(failures ? `\n${failures} FAILURES` : `\nAll ${RUNS.length * 15 * N} generated questions passed (Grade 5 and Grade 4).`);
 process.exit(failures ? 1 : 0);

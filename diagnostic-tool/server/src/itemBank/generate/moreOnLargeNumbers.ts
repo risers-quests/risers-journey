@@ -1,4 +1,4 @@
-import { Rng, Template, build, buildActivity, int, pick } from "./core.js";
+import { D, G, Rng, Template, build, buildActivity, int, pick } from "./core.js";
 
 /**
  * More on Large Numbers, generated. One ladder built on place value, which
@@ -156,35 +156,40 @@ function numberWith(rng: Rng, len: number, zeros: number): number {
 }
 
 const SIX = PLACES.slice(1); // hundred thousands … ones
+/** Grade-aware place names: Grade 5 "hundred thousands"/"ten thousands", Grade 4 one place smaller. */
+const BIG = () => PLACE_NAME[100000 / G()];
+const SMALL = () => PLACE_NAME[10000 / G()];
+/** The place-value chart's columns: Grade 5 hundred thousands … ones; Grade 4 ten thousands … ones. */
+const COLS = () => (G() === 10 ? PLACES.slice(2) : SIX);
 
 export const MORE_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   // ---------------- CONCRETE: hands-on place-value chart ----------------
   "concrete|remember": (rng) => {
     // Two non-zero places side by side, e.g. 240,000.
-    const top = pick(rng, [100000, 10000, 1000]);
+    const top = pick(rng, [(100000 / G()), (10000 / G()), (1000 / G())]);
     const n = int(rng, 1, 9) * top + int(rng, 1, 9) * (top / 10);
     return buildActivity(
       { ...base("c-remember", "concrete", "remember", "place-value", n, rng), prompt: `Build the number ${fmt(n)} on the place-value chart.`, representation: null },
       { n },
-      { kind: "place-value", mode: "build", columns: SIX, start: SIX.map(() => 0), target: n }
+      { kind: "place-value", mode: "build", columns: COLS(), start: COLS().map(() => 0), target: n }
     );
   },
 
   "concrete|understand": (rng) => {
     // Zeros in the middle: the classic place-holder trap.
-    const n = numberWith(rng, 6, int(rng, 2, 3));
+    const n = numberWith(rng, 6 - D(), int(rng, 2, 3));
     return buildActivity(
       { ...base("c-understand", "concrete", "understand", "place-value", n, rng), prompt: `Build the number ${fmt(n)} on the place-value chart.`, representation: null },
       { n },
-      { kind: "place-value", mode: "build", columns: SIX, start: SIX.map(() => 0), target: n }
+      { kind: "place-value", mode: "build", columns: COLS(), start: COLS().map(() => 0), target: n }
     );
   },
 
   "concrete|apply": (rng) => {
     // One column has 10-18 discs; regroup so every column has 9 or fewer.
     for (;;) {
-      const n = numberWith(rng, 6, int(rng, 0, 1));
-      const d = digitsOf(n, SIX);
+      const n = numberWith(rng, 6 - D(), int(rng, 0, 1));
+      const d = digitsOf(n, COLS());
       const i = int(rng, 1, 4); // column to overfill (not the biggest, not the ones)
       if (d[i - 1] === 0) continue;
       const start = [...d];
@@ -193,11 +198,11 @@ export const MORE_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
       return buildActivity(
         {
           ...base("c-apply", "concrete", "apply", "regrouping", n, rng),
-          prompt: `The chart has ${start[i]} discs in the ${PLACE_NAME[SIX[i]]} column. Exchange 10 discs for 1 in the next column until every column has 9 or fewer, without changing the number.`,
+          prompt: `The chart has ${start[i]} discs in the ${PLACE_NAME[COLS()[i]]} column. Exchange 10 discs for 1 in the next column until every column has 9 or fewer, without changing the number.`,
           representation: null,
         },
         { n },
-        { kind: "place-value", mode: "regroup", columns: SIX, start, target: n }
+        { kind: "place-value", mode: "regroup", columns: COLS(), start, target: n }
       );
     }
   },
@@ -205,15 +210,15 @@ export const MORE_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   "concrete|analyze": (rng) => {
     // Add one in a place that holds a 9, so it has to carry.
     for (;;) {
-      const p = pick(rng, [10000, 1000, 100]);
-      const x = numberWith(rng, 6, 0);
-      const d = digitsOf(x, SIX);
-      const i = SIX.indexOf(p);
+      const p = pick(rng, [(10000 / G()), (1000 / G()), 100]);
+      const x = numberWith(rng, 6 - D(), 0);
+      const d = digitsOf(x, COLS());
+      const i = COLS().indexOf(p);
       d[i] = 9;
       const start = d;
-      const from = valueOf(start, SIX);
+      const from = valueOf(start, COLS());
       const target = from + p;
-      if (target >= 1000000) continue;
+      if (target >= (1000000 / G())) continue;
       return buildActivity(
         {
           ...base("c-analyze", "concrete", "analyze", "regrouping", from, rng),
@@ -221,7 +226,7 @@ export const MORE_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
           representation: null,
         },
         { n: from, p },
-        { kind: "place-value", mode: "change", columns: SIX, start, target }
+        { kind: "place-value", mode: "change", columns: COLS(), start, target }
       );
     }
   },
@@ -230,44 +235,44 @@ export const MORE_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
     // A claim about regrouping, checked by trying it on the chart.
     const h = int(rng, 1, 7);
     const t = int(rng, 11, 18);
-    const real = (h + 1) * 100000 + (t - 10) * 10000;
+    const real = (h + 1) * (100000 / G()) + (t - 10) * (10000 / G());
     const truthful = rng() < 0.5;
-    const claimed = truthful ? real : real - 100000;
+    const claimed = truthful ? real : real - (100000 / G());
     const name = pick(rng, NAMES);
-    const start = [h, t, 0, 0, 0, 0];
+    const start = [h, t, ...Array(COLS().length - 2).fill(0)];
     return {
       ...build(
         {
           ...base("c-evaluate", "concrete", "evaluate", "regrouping", h * 100 + t, rng),
-          prompt: `${name} says ${h} hundred thousands and ${t} ten thousands make ${fmt(claimed)}. Check on the chart. Is ${name} right?`,
+          prompt: `${name} says ${h} ${BIG()} and ${t} ${SMALL()} make ${fmt(claimed)}. Check on the chart. Is ${name} right?`,
           representation: null,
         },
         { h, t },
         truthful
-          ? `Yes: ${t} ten thousands is 1 hundred thousand and ${t - 10} ten thousands, so it's ${fmt(real)}`
-          : `No: ${t} ten thousands is 1 hundred thousand and ${t - 10} ten thousands, so it's ${fmt(real)}`,
+          ? `Yes: ${t} ${SMALL()} is 1 ${BIG().replace(/s$/, "")} and ${t - 10} ${SMALL()}, so it's ${fmt(real)}`
+          : `No: ${t} ${SMALL()} is 1 ${BIG().replace(/s$/, "")} and ${t - 10} ${SMALL()}, so it's ${fmt(real)}`,
         [
           truthful
             ? { text: `No: there are more discs in the first, so it's bigger than ${fmt(claimed)}`, mistake: "lnum-counts-discs" }
-            : { text: `Yes: ${h} hundred thousands and ${t - 10} ten thousands is ${fmt(claimed)}`, mistake: "lnum-no-regroup" },
+            : { text: `Yes: ${h} ${BIG()} and ${t - 10} ${SMALL()} is ${fmt(claimed)}`, mistake: "lnum-no-regroup" },
           { text: `No: a column can't have more than 9 discs, so it isn't a number`, mistake: "lnum-no-regroup" },
-          { text: `${truthful ? "No" : "Yes"}: it's ${fmt(h * 100000 + t * 1000)}`, mistake: "lnum-wrong-place" },
+          { text: `${truthful ? "No" : "Yes"}: it's ${fmt(h * (100000 / G()) + t * (1000 / G()))}`, mistake: "lnum-wrong-place" },
         ]
       ),
-      activity: { kind: "place-value", mode: "regroup", columns: SIX, start, target: real },
+      activity: { kind: "place-value", mode: "regroup", columns: COLS(), start, target: real },
     };
   },
 
   // ---------------- PICTORIAL ----------------
   "pictorial|remember": (rng) => {
     // Discs drawn in columns, with zeros: what number is it?
-    const n = numberWith(rng, 6, int(rng, 1, 2));
-    const d = digitsOf(n, SIX);
+    const n = numberWith(rng, 6 - D(), int(rng, 1, 2));
+    const d = digitsOf(n, COLS());
     return build(
       {
         ...base("p-remember", "pictorial", "remember", "place-value", n, rng),
         prompt: "What number do the discs on the place-value chart show?",
-        representation: { kind: "place-value-chart", columns: SIX.map((p, i) => ({ label: SHORT[p], count: d[i] })) },
+        representation: { kind: "place-value-chart", columns: COLS().map((p, i) => ({ label: SHORT[p], count: d[i] })) },
       },
       { n },
       fmt(n),
@@ -283,57 +288,57 @@ export const MORE_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
 
   "pictorial|understand": (rng) => {
     // Read an unlabelled arrow on a number line marked in 10,000s.
-    const start = int(rng, 1, 8) * 100000;
+    const start = int(rng, 1, 8) * (100000 / G());
     const k = pick(rng, [1, 2, 3, 4, 6, 7, 8, 9]);
-    const n = start + k * 10000;
+    const n = start + k * (10000 / G());
     return build(
       {
         ...base("p-understand", "pictorial", "understand", "number-line", n, rng),
         prompt: "What number is at the red dot?",
-        representation: { kind: "number-line", min: start, max: start + 100000, step: 10000, labelEvery: 5, markers: [{ value: n, label: "?" }] },
+        representation: { kind: "number-line", min: start, max: start + (100000 / G()), step: (10000 / G()), labelEvery: 5, markers: [{ value: n, label: "?" }] },
       },
       { n },
       fmt(n),
       [
-        { text: fmt(start + k * 1000), mistake: "lnum-misreads-scale" },
-        { text: fmt(start + (k + 1) * 10000), mistake: null },
-        { text: fmt(start + (k - 1) * 10000), mistake: null },
-        { text: fmt(start + k * 100000), mistake: "lnum-misreads-scale" },
+        { text: fmt(start + k * (1000 / G())), mistake: "lnum-misreads-scale" },
+        { text: fmt(start + (k + 1) * (10000 / G())), mistake: null },
+        { text: fmt(start + (k - 1) * (10000 / G())), mistake: null },
+        { text: fmt(start + k * (100000 / G())), mistake: "lnum-misreads-scale" },
       ]
     );
   },
 
   "pictorial|apply": (rng) => {
     // Round to the nearest ten thousand, with the number line to help.
-    const lo = int(rng, 10, 98) * 10000;
+    const lo = int(rng, 10, 98) * (10000 / G());
     const r = pick(rng, [1, 2, 3, 4, 6, 7, 8, 9]);
-    const n = lo + r * 1000 + int(rng, 1, 9) * 100;
-    const nearest = r >= 5 ? lo + 10000 : lo;
-    const other = r >= 5 ? lo : lo + 10000;
+    const n = lo + r * (1000 / G()) + int(rng, 1, 9) * (100 / G());
+    const nearest = r >= 5 ? lo + (10000 / G()) : lo;
+    const other = r >= 5 ? lo : lo + (10000 / G());
     return build(
       {
         ...base("p-apply", "pictorial", "apply", "rounding", n, rng),
-        prompt: `${fmt(n)} is marked on the number line. Round it to the nearest ten thousand.`,
-        representation: { kind: "number-line", min: lo, max: lo + 10000, step: 1000, labelEvery: 5, markers: [{ value: n, label: "▲" }] },
+        prompt: `${fmt(n)} is marked on the number line. Round it to the nearest ${SMALL().replace(/s$/, "")}.`,
+        representation: { kind: "number-line", min: lo, max: lo + (10000 / G()), step: (1000 / G()), labelEvery: 5, markers: [{ value: n, label: "▲" }] },
       },
       { n },
       fmt(nearest),
       [
         { text: fmt(other), mistake: "lnum-rounds-wrong-way" },
-        { text: fmt(Math.round(n / 1000) * 1000), mistake: "lnum-rounds-wrong-place" },
-        { text: fmt(Math.round(n / 100000) * 100000), mistake: "lnum-rounds-wrong-place" },
+        { text: fmt(Math.round(n / (1000 / G())) * (1000 / G())), mistake: "lnum-rounds-wrong-place" },
+        { text: fmt(Math.round(n / (100000 / G())) * (100000 / G())), mistake: "lnum-rounds-wrong-place" },
         { text: fmt(n), mistake: "lnum-rounds-wrong-place" },
-        { text: fmt(nearest === lo ? lo - 10000 : lo + 20000), mistake: null },
+        { text: fmt(nearest === lo ? lo - (10000 / G()) : lo + (20000 / G())), mistake: null },
       ]
     );
   },
 
   "pictorial|analyze": (rng) => {
     // Three unlabelled points; which letter is a given number?
-    const start = int(rng, 1, 8) * 100000;
+    const start = int(rng, 1, 8) * (100000 / G());
     const ks = new Set<number>();
     while (ks.size < 3) ks.add(int(rng, 1, 9));
-    const vals = [...ks].sort((x, y) => x - y).map((k) => start + k * 10000 + int(rng, 1, 9) * 100);
+    const vals = [...ks].sort((x, y) => x - y).map((k) => start + k * (10000 / G()) + int(rng, 1, 9) * 100);
     const letters = ["A", "B", "C"];
     const ask = int(rng, 0, 2);
     const n = vals[ask];
@@ -342,7 +347,7 @@ export const MORE_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
       {
         ...base("p-analyze", "pictorial", "analyze", "comparing-ordering", n, rng),
         prompt: `A, B and C mark ${shuffled.map(fmt).join(", ")} (not in that order). Which letter is ${fmt(n)}?`,
-        representation: { kind: "number-line", min: start, max: start + 100000, step: 10000, labelEvery: 5, markers: vals.map((v, i) => ({ value: v, label: letters[i] })) },
+        representation: { kind: "number-line", min: start, max: start + (100000 / G()), step: (10000 / G()), labelEvery: 5, markers: vals.map((v, i) => ({ value: v, label: letters[i] })) },
       },
       { n, s: start },
       letters[ask],
@@ -355,17 +360,17 @@ export const MORE_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
 
   "pictorial|evaluate": (rng) => {
     // Exactly halfway: rounds up.
-    const lo = int(rng, 10, 98) * 10000;
-    const n = lo + 5000;
+    const lo = int(rng, 10, 98) * (10000 / G());
+    const n = lo + (5000 / G());
     const name = pick(rng, NAMES);
     return build(
       {
         ...base("p-evaluate", "pictorial", "evaluate", "rounding", n, rng),
         prompt: `${name} says ${fmt(n)} rounds to ${fmt(lo)} because it's exactly in the middle. Is ${name} right?`,
-        representation: { kind: "number-line", min: lo, max: lo + 10000, step: 1000, labelEvery: 5, markers: [{ value: n, label: "▲" }], highlightRange: [lo, lo + 10000] },
+        representation: { kind: "number-line", min: lo, max: lo + (10000 / G()), step: (1000 / G()), labelEvery: 5, markers: [{ value: n, label: "▲" }], highlightRange: [lo, lo + (10000 / G())] },
       },
       { n },
-      `No: exactly halfway rounds up, to ${fmt(lo + 10000)}`,
+      `No: exactly halfway rounds up, to ${fmt(lo + (10000 / G()))}`,
       [
         { text: `Yes: halfway numbers round down`, mistake: "lnum-halfway-down" },
         { text: `No: it stays ${fmt(n)}, because halfway numbers don't round`, mistake: "lnum-halfway-down" },
@@ -378,12 +383,12 @@ export const MORE_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   "abstract|remember": (rng) => {
     // Value of one digit in a 7-digit number (the digit appears once).
     for (;;) {
-      const n = numberWith(rng, 7, int(rng, 0, 2));
+      const n = numberWith(rng, 7 - 2 * D(), int(rng, 0, 2));
       const s = String(n);
-      const i = int(rng, 0, 4); // millions … hundreds (a tens digit's "one place smaller" is the digit itself)
+      const i = int(rng, 0, 4 - 2 * D()); // biggest place … hundreds (a tens digit's "one place smaller" is the digit itself)
       const d = Number(s[i]);
       if (d < 2 || s.split("").filter((x) => x === s[i]).length > 1) continue;
-      const place = PLACES[i];
+      const place = PLACES[i + 2 * D()]; // a 5-digit number (Grade 4) starts two places lower
       return build(
         { ...base("a-remember", "abstract", "remember", "place-value", n, rng), prompt: `What is the value of the digit ${d} in ${fmt(n)}?`, representation: null },
         { n, i },
@@ -400,9 +405,9 @@ export const MORE_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   "abstract|understand": (rng) => {
     // Number words, 7 digits with zeros.
     for (;;) {
-      const n = numberWith(rng, 7, int(rng, 2, 3));
-      const th = Math.floor(n / 1000) % 1000;
-      const wrongGroup = th >= 10 && th < 100 ? n - th * 1000 + th * 10000 : th >= 100 && th % 100 === 0 ? n - th * 1000 + (th / 10) * 1000 : null;
+      const n = numberWith(rng, 7 - 2 * D(), int(rng, 2, 3));
+      const th = Math.floor(n / 1000) % 1000; // number words group in thousands at every grade
+      const wrongGroup = th >= 10 && th < 100 ? n - th * (1000 / G()) + th * (10000 / G()) : th >= 100 && th % 100 === 0 ? n - th * (1000 / G()) + (th / 10) * (1000 / G()) : null;
       const opts = [
         ...(wrongGroup !== null ? [{ text: words(wrongGroup), mistake: "lnum-words-group" }] : []),
         { text: words(n * 10), mistake: "lnum-shifts-place" },
@@ -419,11 +424,12 @@ export const MORE_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   },
 
   "abstract|apply": (rng) => {
-    const place = pick(rng, [10000, 100000, 1000000]);
+    const place = pick(rng, [(10000 / G() / G()), (100000 / G() / G()), (1000000 / G() / G())]);
     for (;;) {
-      const n = numberWith(rng, 7, int(rng, 0, 2));
+      const n = numberWith(rng, 7 - 2 * D(), int(rng, 0, 2));
       const next = (n % place) / place;
       if (Math.abs(next - 0.5) < 0.05) continue; // not right at halfway here
+      if (n % (place / 10) === 0) continue; // already round: the question would show its answer
       const down = Math.floor(n / place) * place;
       const up = down + place;
       const right = next >= 0.5 ? up : down;
@@ -447,7 +453,7 @@ export const MORE_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
     // Three numbers from the same digits: which is greatest (or smallest)?
     for (;;) {
       const lead = int(rng, 1, 9);
-      const digits = [int(rng, 1, 9), int(rng, 0, 9), int(rng, 1, 9), 0, int(rng, 1, 9), 0];
+      const digits = [int(rng, 1, 9), int(rng, 0, 9), int(rng, 1, 9), 0, int(rng, 1, 9), 0].slice(2 * D());
       const nums = new Set<number>();
       for (let k = 0; k < 30 && nums.size < 3; k++) {
         const p = [...digits].sort(() => rng() - 0.5);
@@ -459,7 +465,7 @@ export const MORE_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
       const greatest = rng() < 0.6;
       const right = greatest ? Math.max(...list) : Math.min(...list);
       // The trap: the number that looks biggest from the right-hand end.
-      const byEnd = [...list].sort((x, y) => (greatest ? (y % 1000) - (x % 1000) : (x % 1000) - (y % 1000)))[0];
+      const byEnd = [...list].sort((x, y) => (greatest ? (y % (1000 / G())) - (x % (1000 / G())) : (x % (1000 / G())) - (y % (1000 / G()))))[0];
       return build(
         { ...base("a-analyze", "abstract", "analyze", "comparing-ordering", right, rng), prompt: `Which is the ${greatest ? "greatest" : "smallest"}: ${list.map(fmt).join(", ")}?`, representation: null },
         { n: list[0], m: list[1], o: list[2] },
@@ -474,7 +480,7 @@ export const MORE_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
 
   "abstract|evaluate": (rng) => {
     // Build a number from a description of its places.
-    const len = pick(rng, [6, 7]);
+    const len = pick(rng, [6, 7]) - 2 * D();
     const places = PLACES.slice(7 - len);
     const i = int(rng, 0, 1); // a big place
     const j = int(rng, len - 3, len - 1); // a small place
@@ -511,7 +517,7 @@ export function verify(item: { cpa: string; bloom: string; params: Record<string
     case "abstract|evaluate":
       return num(right) === p.n ? null : `right answer ${right} is not ${p.n}`;
     case "pictorial|apply":
-      return num(right) === Math.round(p.n / 10000) * 10000 ? null : `rounding ${p.n} gave ${right}`;
+      return num(right) === Math.round(p.n / (p.g === 4 ? 1000 : 10000)) * (p.g === 4 ? 1000 : 10000) ? null : `rounding ${p.n} gave ${right}`;
     case "abstract|apply":
       return num(right) === Math.round(p.n / p.place) * p.place ? null : `rounding ${p.n} to ${p.place} gave ${right}`;
     case "abstract|remember": {

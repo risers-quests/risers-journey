@@ -1,5 +1,5 @@
 import { BloomLevel, CPAStage, Item } from "../../types.js";
-import { GeneratedItem, Rng, Template } from "./core.js";
+import { GeneratedItem, Rng, Template, setGrade } from "./core.js";
 import { FRACTIONS_DIVISION_TEMPLATES, MISCONCEPTIONS as FD_MISCONCEPTIONS } from "./fractionsDivision.js";
 import { MORE_ON_LARGE_NUMBERS_TEMPLATES, MISCONCEPTIONS as LN_MISCONCEPTIONS } from "./moreOnLargeNumbers.js";
 import { OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES, MISCONCEPTIONS as OP_MISCONCEPTIONS } from "./operationsOnLargeNumbers.js";
@@ -36,9 +36,16 @@ export function generateItem(
   topicId: string,
   cpa: CPAStage,
   bloom: BloomLevel,
-  opts: { avoid?: string[]; given?: Record<string, number>; rng?: Rng } = {}
+  opts: { avoid?: string[]; given?: Record<string, number>; rng?: Rng; grade?: number } = {}
 ): GeneratedItem {
-  const template = TEMPLATES[topicId][`${cpa}|${bloom}`];
+  setGrade(opts.grade ?? 5);
+  const make = TEMPLATES[topicId][`${cpa}|${bloom}`];
+  // Each question records its grade (so the same numbers at another grade count as different).
+  const template: Template = (r, g) => {
+    const it = make(r, g);
+    it.params.g = opts.grade ?? 5;
+    return it;
+  };
   const rng = opts.rng ?? Math.random;
   if (opts.given) return template(rng, opts.given);
   const avoid = opts.avoid ?? [];
@@ -70,3 +77,6 @@ export function signature(item: GeneratedItem): string {
 export function isGenerated(item: Item): item is GeneratedItem {
   return (item as GeneratedItem).generated === true;
 }
+
+/** Topics with generated questions for Grade 4 (the same ladders, one place value smaller). */
+export const GRADE4_TOPICS = ["more-large-numbers", "operations-large-numbers"];

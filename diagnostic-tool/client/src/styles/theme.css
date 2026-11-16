@@ -620,3 +620,4 @@ a { color: var(--deep-teal); }
 .bars-part:only-child { border-radius: 6px; }
 .bars-part.query { background: #fdf3df; border-color: var(--warm-amber); color: var(--warm-amber); font-size: 1rem; }
 .bars-part.ghost { background: transparent; border-style: dashed; border-color: var(--warm-amber); color: var(--warm-amber); }
+.grade-note { display: block; margin-top: 6px; font-size: 0.8rem; color: var(--warm-amber); font-weight: 600; }

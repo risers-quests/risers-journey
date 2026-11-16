@@ -21,6 +21,19 @@ export interface GeneratedItem extends Item {
 
 export type Rng = () => number;
 
+/**
+ * The grade questions are being made for (set by generateItem). Grade 4
+ * uses the same ladders one place value smaller: G() is 10 for Grade 4, so
+ * 100,000 / G() is 10,000; D() drops one digit from number lengths.
+ */
+let currentGrade = 5;
+export function setGrade(g: number) {
+  currentGrade = g === 4 ? 4 : 5;
+}
+export const G = () => (currentGrade === 4 ? 10 : 1);
+export const D = () => (currentGrade === 4 ? 1 : 0);
+export const gradeNow = () => currentGrade;
+
 /** A template for one CPA x Bloom cell of one topic. `given` re-uses earlier numbers when asked for. */
 export type Template = (rng: Rng, given?: Record<string, number>) => GeneratedItem;
 
