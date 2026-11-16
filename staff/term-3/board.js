@@ -204,7 +204,10 @@
   setInterval(function () {
     if (!loaded || dirty || saving || document.hidden || (!KID && OVERVIEW)) return;
     var a = document.activeElement;
-    if (a && /INPUT|TEXTAREA|SELECT/.test(a.tagName)) return;
+    // Only real typing pauses the refresh: a locked (read-only) box that was
+    // just tapped mustn't, or the page never learns it's now editable (e.g.
+    // a new Quest Master set from another device).
+    if (a && /INPUT|TEXTAREA|SELECT/.test(a.tagName) && !a.readOnly && !a.disabled) return;
     // A photo being added (or its caption edited) isn't lost to a refresh.
     if (app.querySelector('.ph-add.is-new, .ph-wait, .ph-card textarea')) return;
     window.eot2Fetch('term-3', group.id, 'board').then(function (d) {
