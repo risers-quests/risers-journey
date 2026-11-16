@@ -119,8 +119,9 @@ router.get("/sessions/:id/next-question", async (req, res) => {
       // Remember every question's numbers for this child's later tests.
       const row = await getSessionRow(sessionId);
       const history = await loadHistory(row.child_name);
-      for (const [topicId, t] of Object.entries(state.topics)) {
-        if (t.askedItemIds.length) history[topicId] = [...(history[topicId] ?? []), ...t.askedItemIds];
+      for (const topicId of state.topicOrder) {
+        const asked = state.topics[topicId].askedItemIds;
+        if (asked.length) history[topicId] = [...(history[topicId] ?? []), ...asked];
       }
       await saveHistory(row.child_name, history);
       return res.json({ done: true, nextPhase: "anxiety_questionnaire" });
