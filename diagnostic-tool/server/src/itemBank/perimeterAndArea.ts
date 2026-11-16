@@ -1,0 +1,261 @@
+import { Item } from "../types.js";
+
+const TOPIC = "perimeter-area";
+
+/**
+ * The Grid component renders a plain rows×cols rectangle with some number
+ * of cells shaded from the top-left — it can't draw an actual notch or
+ * L-shape. Earlier drafts of this file described "L-shaped rooms" and a
+ * second, unshown rectangle for comparison, neither of which the picture
+ * actually showed. Every Pictorial item below now only asks about what a
+ * plain shaded rectangle can really represent; composite/notched-shape
+ * reasoning is pushed to Abstract, where it's honestly just a word-free
+ * given/find computation, not a claim about a picture. See README.
+ */
+export const PERIMETER_AND_AREA_ITEMS: Item[] = [
+  // --- CONCRETE (physical tiling / walking the boundary) ---
+  {
+    id: "pa-c-remember",
+    topicId: TOPIC,
+    cpa: "concrete",
+    bloom: "remember",
+    subskill: "area-rectangle",
+    prompt: "A rectangular tabletop is covered edge-to-edge with square tiles, shown below: 3 rows of 5 tiles. How many tiles cover the whole tabletop?",
+    representation: { kind: "grid", rows: 3, cols: 5, shadedCells: 15, unitLabel: "tiles" },
+    choices: [
+      { id: "a", text: "15" },
+      { id: "b", text: "8" },
+      { id: "c", text: "53" },
+      { id: "d", text: "35" },
+    ],
+    correctChoiceId: "a",
+  },
+  {
+    id: "pa-c-understand",
+    topicId: TOPIC,
+    cpa: "concrete",
+    bloom: "understand",
+    subskill: "perimeter-rectangle",
+    prompt: "A rectangular garden, 4 units by 6 units as shown, is fenced on all four sides. What is the perimeter of the fence, in units?",
+    representation: { kind: "grid", rows: 4, cols: 6, shadedCells: 24, unitLabel: "units" },
+    choices: [
+      { id: "a", text: "20" },
+      { id: "b", text: "24" },
+      { id: "c", text: "10" },
+      { id: "d", text: "48" },
+    ],
+    correctChoiceId: "a",
+  },
+  {
+    id: "pa-c-apply",
+    topicId: TOPIC,
+    cpa: "concrete",
+    bloom: "apply",
+    subskill: "area-rectangle",
+    prompt: "Square carpet tiles, each 1 unit by 1 unit, are laid to cover a 7-by-4 unit floor, as shown. What is the total area covered?",
+    representation: { kind: "grid", rows: 7, cols: 4, shadedCells: 28, unitLabel: "sq units" },
+    choices: [
+      { id: "a", text: "28 sq units" },
+      { id: "b", text: "11 sq units" },
+      { id: "c", text: "22 sq units" },
+      { id: "d", text: "56 sq units" },
+    ],
+    correctChoiceId: "a",
+  },
+  {
+    id: "pa-c-analyze",
+    topicId: TOPIC,
+    cpa: "concrete",
+    bloom: "analyze",
+    subskill: "perimeter-rectangle",
+    prompt: "Ravi walks once all the way around the edge of the rectangular field shown, 5 units by 9 units. How far does he walk in total?",
+    representation: { kind: "grid", rows: 5, cols: 9, shadedCells: 45, unitLabel: "units" },
+    choices: [
+      { id: "a", text: "28 units" },
+      { id: "b", text: "45 units" },
+      { id: "c", text: "14 units" },
+      { id: "d", text: "90 units" },
+    ],
+    correctChoiceId: "a",
+  },
+  {
+    id: "pa-c-evaluate",
+    topicId: TOPIC,
+    cpa: "concrete",
+    bloom: "evaluate",
+    subskill: "area-rectangle",
+    prompt: "Two square tabletops, each 4 units by 4 units, are pushed together to form one 4-by-8 rectangle, as shown. What is the combined area?",
+    representation: { kind: "grid", rows: 4, cols: 8, shadedCells: 32, unitLabel: "sq units" },
+    choices: [
+      { id: "a", text: "32 sq units" },
+      { id: "b", text: "16 sq units" },
+      { id: "c", text: "24 sq units" },
+      { id: "d", text: "8 sq units" },
+    ],
+    correctChoiceId: "a",
+  },
+
+  // --- PICTORIAL (plain shaded rectangle only — everything askable is visible) ---
+  {
+    id: "pa-p-remember",
+    topicId: TOPIC,
+    cpa: "pictorial",
+    bloom: "remember",
+    subskill: "area-rectangle",
+    prompt: "What is the area of the rectangle shown?",
+    representation: { kind: "grid", rows: 6, cols: 3, shadedCells: 18, unitLabel: "sq units" },
+    choices: [
+      { id: "a", text: "18 sq units" },
+      { id: "b", text: "9 sq units" },
+      { id: "c", text: "18 units" },
+      { id: "d", text: "36 sq units" },
+    ],
+    correctChoiceId: "a",
+  },
+  {
+    id: "pa-p-understand",
+    topicId: TOPIC,
+    cpa: "pictorial",
+    bloom: "understand",
+    subskill: "perimeter-rectangle",
+    prompt: "What is the perimeter of the rectangle shown?",
+    representation: { kind: "grid", rows: 5, cols: 8, shadedCells: 40, unitLabel: "units" },
+    choices: [
+      { id: "a", text: "26 units" },
+      { id: "b", text: "40 units" },
+      { id: "c", text: "13 units" },
+      { id: "d", text: "80 units" },
+    ],
+    correctChoiceId: "a",
+  },
+  {
+    id: "pa-p-apply",
+    topicId: TOPIC,
+    cpa: "pictorial",
+    bloom: "apply",
+    subskill: "area-rectangle",
+    prompt: "What is the shaded area?",
+    representation: { kind: "grid", rows: 9, cols: 6, shadedCells: 54, unitLabel: "sq units" },
+    choices: [
+      { id: "a", text: "54 sq units" },
+      { id: "b", text: "15 sq units" },
+      { id: "c", text: "45 sq units" },
+      { id: "d", text: "108 sq units" },
+    ],
+    correctChoiceId: "a",
+  },
+  {
+    id: "pa-p-analyze",
+    topicId: TOPIC,
+    cpa: "pictorial",
+    bloom: "analyze",
+    subskill: "area-scaling",
+    prompt: "If both the rows and columns of this grid were doubled, what would happen to the total area?",
+    representation: { kind: "grid", rows: 6, cols: 10, shadedCells: 60, unitLabel: "sq units" },
+    choices: [
+      { id: "a", text: "It would become 4 times as large (240 sq units)" },
+      { id: "b", text: "It would double (120 sq units)" },
+      { id: "c", text: "It would stay the same" },
+      { id: "d", text: "It would triple" },
+    ],
+    correctChoiceId: "a",
+  },
+  {
+    id: "pa-p-evaluate",
+    topicId: TOPIC,
+    cpa: "pictorial",
+    bloom: "evaluate",
+    subskill: "area-rectangle",
+    prompt: "The rectangle shown is 4 units by 9 units (area 36 sq units). Evaluate: could a different rectangle also have an area of 36 sq units but a smaller perimeter?",
+    representation: { kind: "grid", rows: 4, cols: 9, shadedCells: 36, unitLabel: "sq units" },
+    choices: [
+      { id: "a", text: "Yes — e.g. 6 by 6 has the same area (36) but a smaller perimeter (24 vs 26)" },
+      { id: "b", text: "No, all 36-sq-unit rectangles have the same perimeter" },
+      { id: "c", text: "No, a smaller perimeter would mean less area" },
+      { id: "d", text: "Not possible to know" },
+    ],
+    correctChoiceId: "a",
+  },
+
+  // --- ABSTRACT (bare given/find — no scenario, composite shapes live only here) ---
+  {
+    id: "pa-a-remember",
+    topicId: TOPIC,
+    cpa: "abstract",
+    bloom: "remember",
+    subskill: "area-rectangle",
+    prompt: "Area of a 12 cm × 7 cm rectangle = ?",
+    representation: null,
+    choices: [
+      { id: "a", text: "84 sq cm" },
+      { id: "b", text: "38 sq cm" },
+      { id: "c", text: "19 sq cm" },
+      { id: "d", text: "19 cm" },
+    ],
+    correctChoiceId: "a",
+  },
+  {
+    id: "pa-a-understand",
+    topicId: TOPIC,
+    cpa: "abstract",
+    bloom: "understand",
+    subskill: "perimeter-rectangle",
+    prompt: "Perimeter of a 15 m × 9 m rectangle = ?",
+    representation: null,
+    choices: [
+      { id: "a", text: "48 m" },
+      { id: "b", text: "135 m" },
+      { id: "c", text: "24 m" },
+      { id: "d", text: "270 m" },
+    ],
+    correctChoiceId: "a",
+  },
+  {
+    id: "pa-a-apply",
+    topicId: TOPIC,
+    cpa: "abstract",
+    bloom: "apply",
+    subskill: "area-composite",
+    prompt: "Area = (8 m × 6 m) − (3 m × 2 m) = ?",
+    representation: null,
+    choices: [
+      { id: "a", text: "42 sq m" },
+      { id: "b", text: "48 sq m" },
+      { id: "c", text: "54 sq m" },
+      { id: "d", text: "6 sq m" },
+    ],
+    correctChoiceId: "a",
+  },
+  {
+    id: "pa-a-analyze",
+    topicId: TOPIC,
+    cpa: "abstract",
+    bloom: "analyze",
+    subskill: "perimeter-composite",
+    prompt: "A 20 m × 15 m rectangle's perimeter. A 5 m square sits entirely inside it, not touching any edge. Does the outer perimeter change?",
+    representation: null,
+    choices: [
+      { id: "a", text: "No — the square is inside, not on the boundary" },
+      { id: "b", text: "Yes, it increases by 20 m" },
+      { id: "c", text: "Yes, it decreases by 20 m" },
+      { id: "d", text: "Yes, it doubles" },
+    ],
+    correctChoiceId: "a",
+  },
+  {
+    id: "pa-a-evaluate",
+    topicId: TOPIC,
+    cpa: "abstract",
+    bloom: "evaluate",
+    subskill: "area-rectangle",
+    prompt: "Area = 96 sq m, length = 12 m. Width = ? Perimeter = ?",
+    representation: null,
+    choices: [
+      { id: "a", text: "Width 8 m, perimeter 40 m" },
+      { id: "b", text: "Width 8 m, perimeter 96 m" },
+      { id: "c", text: "Width 12 m, perimeter 48 m" },
+      { id: "d", text: "Width 6 m, perimeter 36 m" },
+    ],
+    correctChoiceId: "a",
+  },
+];

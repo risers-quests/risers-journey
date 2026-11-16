@@ -1,0 +1,14 @@
+node_modules/
+dist/
+build/
+*.log
+
+# SQLite runtime data — not part of the source tree
+server/data/
+
+# Local secrets
+.env
+.env.local
+
+# Editor/OS
+.DS_Store
