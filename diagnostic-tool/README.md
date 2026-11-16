@@ -207,6 +207,34 @@ Sources consulted for this change:
 - [Time on Their Side: visual timers and anticipatory anxiety](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12731990/)
 - [Distinguishing math learning and evaluation anxiety (competing theoretical models)](https://pmc.ncbi.nlm.nih.gov/articles/PMC13326596/)
 
+## Reports: a simple summary on screen, detailed emails
+
+Everything is drawn from one reading of the test (`server/src/engine/insights.ts`),
+so the three never disagree. Each topic gets one of four statuses:
+⭐ **Secure** (mastered, mostly sure), 🌱 **Fragile** (mastered but often
+unsure, or right in numbers but not in pictures), 🔧 **Needs teaching** (a
+real gap), ⏸ **Not reached** (waits for a topic it builds on).
+
+| Report | For | What it shows |
+|---|---|---|
+| On-screen summary | child and staff, at the end | one line per topic, one "next" with a tip, emailed or not (with "Send them again") |
+| Child's email | the child | what they've got, what's next with a kid-language tip, "when you were sure you were right X of Y". No anxiety result |
+| Staff email | highergrade@lifehub.in | up to 3 "Do next" actions, a topic table (status, levels grid, answers, main mistake), "Sure but wrong", confidence overall, maths anxiety |
+
+Emails are sent by a Google Apps Script in highergrade@lifehub.in, which
+also holds the children's addresses (never in this repo): see
+`email/SETUP.md`. Preview them for a finished session at
+`/api/diagnostic/sessions/<id>/report-email?who=child` (or `staff`).
+
+## "How sure are you?" on every question
+
+Every answer asks *Sure / I think so / Guessing*. It is read together with
+right and wrong, as **confidence, not anxiety**: sure + wrong is a firm
+misconception (listed in the staff email), right + unsure is fragile
+(a mastered topic answered mostly unsure is reported as Fragile). The
+skill engine itself still moves on correctness alone. Anxiety stays the
+separate 8-question self-report at the end.
+
 ## Generated questions (Fractions and Division so far)
 
 Instead of one fixed question per CPA × Bloom cell, a topic can have a

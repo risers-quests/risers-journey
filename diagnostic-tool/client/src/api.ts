@@ -1,4 +1,4 @@
-import { AnswerResponse, AnxietyQuestion, NextQuestionResponse, ReportData, SessionStatus } from "./types";
+import { AnswerResponse, AnxietyQuestion, NextQuestionResponse, SessionStatus } from "./types";
 
 // The UI is served by the Risers Journey site at /diagnostic/ and talks to
 // the server function at /api/diagnostic on the same site (api/diagnostic.ts
@@ -46,10 +46,6 @@ export async function submitAnswer(sessionId: string, payload: AnswerPayload): P
   return asJson<AnswerResponse>(res);
 }
 
-export async function getReport(sessionId: string): Promise<ReportData> {
-  const res = await fetch(`${BASE}/sessions/${sessionId}/report`);
-  return asJson<ReportData>(res);
-}
 
 export async function getAnxietyQuestions(sessionId: string): Promise<AnxietyQuestion[]> {
   const res = await fetch(`${BASE}/sessions/${sessionId}/anxiety-questions`);
@@ -74,4 +70,21 @@ export async function getSessionStatus(sessionId: string): Promise<SessionStatus
   const res = await fetch(`${BASE}/sessions/${encodeURIComponent(sessionId)}/status`);
   if (res.status === 404) return null;
   return asJson<SessionStatus>(res);
+}
+
+export interface Summary {
+  childName: string;
+  topics: { name: string; status: "secure" | "fragile" | "gap" | "notReached" }[];
+  next: { topic: string; tip: string } | null;
+  sureRight: number;
+  sureTotal: number;
+  email: { at: string; child: boolean; staff: boolean; note?: string } | null;
+}
+
+export async function getSummary(sessionId: string): Promise<Summary> {
+  return asJson<Summary>(await fetch(`${BASE}/sessions/${sessionId}/summary`));
+}
+
+export async function resendEmail(sessionId: string): Promise<Summary["email"]> {
+  return asJson<Summary["email"]>(await fetch(`${BASE}/sessions/${sessionId}/email`, { method: "POST" }));
 }

@@ -4,6 +4,10 @@ import { SessionStatus } from "../types";
 import { forgetTest, rememberTest, savedTests } from "../saved";
 import { STRAND_CHOICES } from "../strands";
 
+// The 12 Risers. Their report email addresses are kept only in the email
+// script (diagnostic-tool/email), never on the site; it matches by name.
+const RISERS = ["Benjamin", "Chris", "Elyon", "Eva", "Gabby", "Karis", "Michael", "Owen", "Pranavi", "Shalom", "Yokesh", "Zach"];
+
 export function Setup({ onStart }: { onStart: (status: SessionStatus) => void }) {
   const [childName, setChildName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -83,14 +87,13 @@ export function Setup({ onStart }: { onStart: (status: SessionStatus) => void })
 
       <form className="setup-form card" onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="childName">Child's first name</label>
-          <input
-            id="childName"
-            value={childName}
-            onChange={(e) => setChildName(e.target.value)}
-            placeholder="e.g. Aanya"
-            autoFocus={unfinished.length === 0}
-          />
+          <label htmlFor="childName">Who is taking the test?</label>
+          <select id="childName" value={childName} onChange={(e) => setChildName(e.target.value)}>
+            <option value="">Choose a Riser…</option>
+            {RISERS.map((n) => (
+              <option key={n}>{n}</option>
+            ))}
+          </select>
         </div>
         <div>
           <label htmlFor="grade">Grade</label>

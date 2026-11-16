@@ -13,6 +13,25 @@ import { sanitizeItemForClient, getItemById, getTopic } from "./itemBank/index.j
 import { STRANDS } from "./itemBank/topics.js";
 import { isGenerated, generateItem, hasTemplate, MISCONCEPTIONS } from "./itemBank/generate/index.js";
 import { BLOOM_ORDER, CPA_ORDER } from "./types.js";
+import { buildInsights } from "./engine/insights.js";
+import { childEmail, staffEmail } from "./report/emails.js";
+import { sendReports } from "./report/mail.js";
+
+async function insightsFor(sessionId: string) {
+  const state = await getSessionState(sessionId);
+  const row = await getSessionRow(sessionId);
+  const responses = await getResponses(sessionId);
+  return { state, row, insights: buildInsights(state, responses, row.child_name, row.grade, row.created_at) };
+}
+
+/** Builds both report emails and sends them; records the result on the session. */
+async function emailReports(sessionId: string) {
+  const { state, insights } = await insightsFor(sessionId);
+  const result = await sendReports(insights.childName, childEmail(insights), staffEmail(insights));
+  state.emailStatus = result;
+  await saveSessionState(sessionId, state);
+  return result;
+}
 import { ANXIETY_QUESTIONS } from "./itemBank/anxietyQuestionnaire.js";
 import { logTrace } from "./engine/state.js";
 import { buildGrid, buildSessionMap, buildBreadcrumb } from "./engine/view.js";
@@ -248,7 +267,10 @@ router.post("/sessions/:id/anxiety-answers", async (req, res) => {
   logTrace(state, `Anxiety questionnaire complete (${cleaned.length}/${ANXIETY_QUESTIONS.length} answered).`);
   await saveSessionState(sessionId, state, "completed");
 
-  res.json({ ok: true });
+  // The test is finished: email the child's and the staff report. A failed
+  // send doesn't stop the child seeing their summary; staff can resend.
+  const email = await emailReports(sessionId).catch((e) => ({ at: new Date().toISOString(), child: false, staff: false, note: String(e) }));
+  res.json({ ok: true, email });
 });
 
 router.get("/sessions/:id/report", async (req, res) => {
@@ -263,4 +285,44 @@ router.get("/sessions/:id/report", async (req, res) => {
   const responses = await getResponses(sessionId);
   const report = synthesizeReport(state, responses, row.child_name, row.grade, row.created_at);
   res.json(report);
+});
+
+// The simple on-site summary: one line per topic and the next step.
+router.get("/sessions/:id/summary", async (req, res) => {
+  let data;
+  try {
+    data = await insightsFor(req.params.id);
+  } catch {
+    return res.status(404).json({ error: "session not found" });
+  }
+  const { insights, state } = data;
+  res.json({
+    childName: insights.childName,
+    topics: insights.topics.map((t) => ({ name: t.name, status: t.status })),
+    next: insights.nextForChild,
+    sureRight: insights.overall.sureRight,
+    sureTotal: insights.overall.sureRight + insights.overall.sureWrong,
+    email: state.emailStatus ?? null,
+  });
+});
+
+// Send the report emails again (e.g. after email was set up).
+router.post("/sessions/:id/email", async (req, res) => {
+  try {
+    const state = await getSessionState(req.params.id);
+    if (state.phase !== "completed") return res.status(400).json({ error: "the test isn't finished" });
+    res.json(await emailReports(req.params.id));
+  } catch {
+    res.status(404).json({ error: "session not found" });
+  }
+});
+
+// The report emails as web pages, for checking how they look: ?who=child|staff.
+router.get("/sessions/:id/report-email", async (req, res) => {
+  try {
+    const { insights } = await insightsFor(req.params.id);
+    res.type("html").send((req.query.who === "child" ? childEmail(insights) : staffEmail(insights)).html);
+  } catch {
+    res.status(404).json({ error: "session not found" });
+  }
 });

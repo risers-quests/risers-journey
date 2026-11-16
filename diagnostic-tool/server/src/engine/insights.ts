@@ -1,0 +1,191 @@
+import { SessionState } from "./state.js";
+import { ResponseRecord } from "../sessionStore.js";
+import { synthesizeReport, ReportData } from "./synthesis.js";
+import { getTopic } from "../itemBank/index.js";
+import { MISCONCEPTIONS } from "../itemBank/generate/index.js";
+import { BLOOM_ORDER, CPA_ORDER, BloomLevel, CPAStage } from "../types.js";
+
+/**
+ * Insights: one plain reading of a finished test, which every report (the
+ * on-site summary, the child's email, the staff email) is drawn from, so
+ * they never disagree.
+ *
+ * A topic's status combines the skill engine's diagnosis with how sure the
+ * child was ("How sure are you?" on every question):
+ *   secure      mastered, and mostly sure when right
+ *   fragile     mastered but often unsure, or "procedural, not conceptual"
+ *   gap         a real skill gap
+ *   notReached  held back by a gap it depends on
+ * Confidence is read with right/wrong, never as anxiety: sure + wrong is a
+ * firm misconception (the child doesn't know they're wrong).
+ */
+
+export type TopicStatus = "secure" | "fragile" | "gap" | "notReached";
+
+export interface Confidence {
+  sureRight: number;
+  unsureRight: number;
+  sureWrong: number;
+  unsureWrong: number;
+}
+
+export interface TopicInsight {
+  topicId: string;
+  name: string;
+  strand: string;
+  status: TopicStatus;
+  /** Why, in a few words, for staff. */
+  why: string;
+  confidence: Confidence;
+  questions: number;
+  /** The CPA x Bloom grid: "cleared" | "struggled" | "" per cell, CPA rows (concrete, pictorial, abstract) x Bloom columns. */
+  grid: string[][];
+  mistakes: { label: string; detail: string; childTip: string; count: number; sureCount: number }[];
+  /** Where to start reteaching (gap/fragile), e.g. "concrete" — the stage the child got stuck at or below. */
+  startAt: CPAStage | null;
+  blockedBy: string[];
+}
+
+export interface Insights {
+  childName: string;
+  date: string;
+  strands: string[];
+  questionCount: number;
+  durationMinutes: number;
+  topics: TopicInsight[];
+  overall: Confidence;
+  /** Staff: at most three things to do next, most important first. */
+  actions: { topic: string; what: string; how: string }[];
+  /** Child: the topic to learn next, and one tip in kid language. */
+  nextForChild: { topic: string; tip: string } | null;
+  anxiety: ReportData["mathAnxiety"];
+}
+
+const STAGE_WORDS: Record<CPAStage, string> = {
+  concrete: "real objects (cutting, sharing, counting)",
+  pictorial: "pictures and bar models",
+  abstract: "numbers and symbols",
+};
+
+const SHORT_STAGE: Record<CPAStage, string> = { concrete: "real-object", pictorial: "picture", abstract: "numbers-only" };
+
+function emptyConfidence(): Confidence {
+  return { sureRight: 0, unsureRight: 0, sureWrong: 0, unsureWrong: 0 };
+}
+function addConfidence(c: Confidence, r: ResponseRecord) {
+  const sure = r.pulse === "sure";
+  if (r.correct) sure ? c.sureRight++ : c.unsureRight++;
+  else sure ? c.sureWrong++ : c.unsureWrong++;
+}
+
+export function buildInsights(state: SessionState, responses: ResponseRecord[], childName: string, grade: string, createdAt: string): Insights {
+  const report = synthesizeReport(state, responses, childName, grade, createdAt);
+  const overall = emptyConfidence();
+  const topics: TopicInsight[] = report.topics.map((t) => {
+    const rs = responses.filter((r) => r.topic_id === t.topicId && !r.is_procedural_check);
+    const conf = emptyConfidence();
+    rs.forEach((r) => addConfidence(conf, r));
+    responses.filter((r) => r.topic_id === t.topicId).forEach((r) => addConfidence(overall, r));
+    const right = conf.sureRight + conf.unsureRight;
+    const unsureShare = right ? conf.unsureRight / right : 0;
+
+    // Mistakes, with how many were made while "sure".
+    const mistakes = new Map<string, { count: number; sureCount: number }>();
+    for (const r of responses) {
+      if (r.topic_id !== t.topicId || r.correct || !r.misconception || !MISCONCEPTIONS[r.misconception]) continue;
+      const m = mistakes.get(r.misconception) ?? { count: 0, sureCount: 0 };
+      m.count++;
+      if (r.pulse === "sure") m.sureCount++;
+      mistakes.set(r.misconception, m);
+    }
+    const mistakeList = [...mistakes.entries()]
+      .sort((a, b) => b[1].sureCount - a[1].sureCount || b[1].count - a[1].count)
+      .map(([code, m]) => ({ ...MISCONCEPTIONS[code], ...m }));
+
+    const engine = state.topics[t.topicId];
+    const grid = CPA_ORDER.map((cpa) => BLOOM_ORDER.map((bloom) => engine?.cellStatus[`${cpa}:${bloom}`] ?? ""));
+    const lag = engine?.lagPoints[0];
+    const startAt: CPAStage | null =
+      t.tag === "skill_gap" ? (lag ? (CPA_ORDER[Math.max(0, CPA_ORDER.indexOf(lag.cpa) - 1)] as CPAStage) : "concrete") :
+      t.tag === "procedural_not_conceptual" ? "pictorial" : null;
+
+    let status: TopicStatus;
+    let why: string;
+    if (t.tag === "not_yet_reached") {
+      status = "notReached";
+      why = "Waits for a topic it builds on";
+    } else if (t.tag === "skill_gap") {
+      status = "gap";
+      why = lag ? `Stuck on ${SHORT_STAGE[lag.cpa]} questions, at ${bloomLabel(lag.bloom)}` : "Couldn't get going";
+    } else if (t.tag === "procedural_not_conceptual") {
+      status = "fragile";
+      why = "Right in numbers, not in pictures: knows the steps, not the idea";
+    } else if (unsureShare >= 0.4) {
+      status = "fragile";
+      why = `Mastered, but unsure on ${conf.unsureRight} of ${right} right answers`;
+    } else {
+      status = "secure";
+      why = "Mastered with confidence";
+    }
+
+    return {
+      topicId: t.topicId,
+      name: t.name,
+      strand: t.strand,
+      status,
+      why,
+      confidence: conf,
+      questions: rs.length,
+      grid,
+      mistakes: mistakeList,
+      startAt,
+      blockedBy: status === "notReached" ? getTopic(t.topicId).dependsOn.filter((d) => state.topics[d]).map((d) => getTopic(d).name) : [],
+    };
+  });
+
+  // What matters most, in one order used by staff actions and the child's
+  // "next": real gaps (in book order, since later topics wait on them), then
+  // "knows the steps, not the idea", then mastered-but-unsure; confident
+  // mistakes ("sure but wrong") rank a topic higher within its group.
+  const isProcedural = (t: TopicInsight) => t.why.startsWith("Right in numbers");
+  const rank = (t: TopicInsight) =>
+    (t.status === "gap" ? 0 : isProcedural(t) ? 10 : 20) - (t.confidence.sureWrong > 0 ? 5 : 0);
+  const priority = topics
+    .map((t, i) => ({ t, i }))
+    .filter(({ t }) => t.status === "gap" || t.status === "fragile")
+    .sort((x, y) => rank(x.t) - rank(y.t) || x.i - y.i)
+    .map(({ t }) => t);
+
+  const actions: Insights["actions"] = priority.map((t) => {
+    const m = t.mistakes[0];
+    if (t.status === "gap") {
+      return {
+        topic: t.name,
+        what: m ? `Reteach. Main mistake: ${m.label.toLowerCase()}${m.sureCount ? ` (made ${m.sureCount}× while sure)` : ""}.` : "Reteach from the start of the topic.",
+        how: `Start with ${STAGE_WORDS[t.startAt ?? "concrete"]}, then move up.`,
+      };
+    }
+    return isProcedural(t)
+      ? { topic: t.name, what: `Connect the method to what it means${m ? ` (main mistake: ${m.label.toLowerCase()})` : ""}.`, how: "Have them draw or build each sum they can already calculate." }
+      : { topic: t.name, what: "Mastered but unsure: build confidence.", how: "Short mixed practice; ask them to explain answers aloud." };
+  });
+
+  const first = priority[0];
+  const tip = first?.mistakes[0]?.childTip;
+  return {
+    childName,
+    date: new Date(createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }),
+    strands: report.strands,
+    questionCount: report.questionCount,
+    durationMinutes: report.durationMinutes,
+    topics,
+    overall,
+    actions: actions.slice(0, 3),
+    nextForChild: first ? { topic: first.name, tip: tip ?? "We'll practise this together, step by step." } : null,
+    anxiety: report.mathAnxiety,
+  };
+}
+
+export function bloomLabel(b: BloomLevel) {
+  return b[0].toUpperCase() + b.slice(1);
+}

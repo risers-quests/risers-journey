@@ -113,7 +113,7 @@ export function Assessment({
             </div>
           </>
         ) : (
-          <div className="breadcrumb">{question.topicName}</div>
+          question.topicNumber ? <div className="breadcrumb">{question.topicName}</div> : null
         )}
 
         {item.cpa === "abstract" && !item.representation ? (

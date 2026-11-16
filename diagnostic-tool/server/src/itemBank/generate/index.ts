@@ -9,7 +9,7 @@ const TEMPLATES: Record<string, Record<string, Template>> = {
   "fractions-division": FRACTIONS_DIVISION_TEMPLATES,
 };
 
-export const MISCONCEPTIONS: Record<string, { label: string; detail: string }> = {
+export const MISCONCEPTIONS: Record<string, { label: string; detail: string; childTip: string }> = {
   ...FD_MISCONCEPTIONS,
 };
 

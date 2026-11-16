@@ -9,62 +9,76 @@ import { Rng, Template, build, frac, fracWithMixed, gcd, int, pick } from "./cor
 
 const TOPIC = "fractions-division";
 
-export const MISCONCEPTIONS: Record<string, { label: string; detail: string }> = {
+export const MISCONCEPTIONS: Record<string, { label: string; detail: string; childTip: string }> = {
   "fd-flips": {
     label: "Flips the fraction",
     detail: "Writes b/a for a ÷ b (people on top, things below), so shares come out the wrong way round.",
+    childTip: "The number of things goes on top. 7 rotis shared by 3 friends is 7/3 each.",
   },
   "fd-multiplies": {
     label: "Multiplies instead of sharing",
     detail: "Treats sharing as multiplying the two numbers.",
+    childTip: "Sharing makes each share smaller, so it's dividing, not multiplying.",
   },
   "fd-subtracts": {
     label: "Subtracts instead of sharing",
     detail: "Takes one number away from the other instead of sharing equally.",
+    childTip: "Sharing isn't taking away. Cut every one into equal slices and hand them out.",
   },
   "fd-adds": {
     label: "Adds the numbers",
     detail: "Combines the things and the people into one total.",
+    childTip: "Don't add the things and the people. Share the things among the people.",
   },
   "fd-whole-part-only": {
     label: "Ignores the leftover",
     detail: "Gives only the whole-number part of a share (7 ÷ 3 = 2) and drops the remainder.",
+    childTip: "Don't throw the leftovers away: cut them into equal slices too.",
   },
   "fd-unit-fraction-only": {
     label: "Forgets how many wholes",
     detail: "Answers 1/b, the size of one piece of one whole, instead of the full share a/b.",
+    childTip: "Each person gets one slice from every one of the things, not just one slice.",
   },
   "fd-wrong-whole": {
     label: "Uses the wrong number as the whole",
     detail: "Counts pieces against the number of things instead of the number of equal parts.",
+    childTip: "Count the equal parts of the whole to find the bottom number.",
   },
   "fd-names-divisor": {
     label: "Answers with the number of people",
     detail: "Gives the number of sharers instead of what each one gets.",
+    childTip: "The question asks how much each person gets, not how many people there are.",
   },
   "fd-no-sharing": {
     label: "Doesn't share at all",
     detail: "Gives the whole amount to each person.",
+    childTip: "Shared means split up: each person gets only part of the total.",
   },
   "fd-size-misjudged": {
     label: "Misjudges a fraction's size",
     detail: "Can't tell whether a/b is more or less than 1 (or than a whole number).",
+    childTip: "If the top number is bigger, the fraction is more than 1 whole.",
   },
   "fd-not-simplified": {
     label: "Doesn't simplify",
     detail: "Leaves a fraction that can be simplified, e.g. 9/6 instead of 3/2.",
+    childTip: "Look for a number that divides both top and bottom, and divide both.",
   },
   "fd-simplifies-one-part": {
     label: "Simplifies only one part",
     detail: "Divides the top (or the bottom) of a fraction but not both.",
+    childTip: "Whatever you divide the top by, divide the bottom by the same.",
   },
   "fd-unequal-shares": {
     label: "Unsure what 'equal' means",
     detail: "Doesn't yet see that sharing equally means every share is the same size.",
+    childTip: "Shared equally means everyone gets exactly the same amount.",
   },
   "fd-irrelevant-reason": {
     label: "Reasons from an irrelevant fact",
     detail: "Picks a reason that's true or tempting but doesn't decide the question.",
+    childTip: "Check the reason really answers the question.",
   },
 };
 

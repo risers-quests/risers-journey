@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Setup } from "./screens/Setup";
 import { Assessment } from "./screens/Assessment";
 import { AnxietyCheck } from "./screens/AnxietyCheck";
-import { Report } from "./screens/Report";
+import { Summary } from "./screens/Summary";
 import { SessionStatus } from "./types";
 import { forgetTest } from "./saved";
 import { Preview } from "./screens/Preview";
@@ -50,7 +50,7 @@ export function App() {
           }}
         />
       )}
-      {screen === "report" && sessionId && <Report sessionId={sessionId} />}
+      {screen === "report" && sessionId && <Summary sessionId={sessionId} />}
     </div>
   );
 }

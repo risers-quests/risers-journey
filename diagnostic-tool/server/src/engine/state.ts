@@ -78,6 +78,8 @@ export interface SessionState {
   anxietyResponses: AnxietyResponse[];
   /** When the skill questions ended (ms), so the report's duration doesn't depend on when it's opened. */
   skillEndedAt?: number;
+  /** Whether the report emails went out (see report/mail.ts). */
+  emailStatus?: { at: string; child: boolean; staff: boolean; note?: string };
 }
 
 export function createInitialState(strands: string[] = STRANDS): SessionState {
