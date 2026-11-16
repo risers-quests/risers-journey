@@ -76,6 +76,8 @@ export interface SessionState {
   maxQuestions: number;
   pendingQuestion: PendingQuestion | null;
   anxietyResponses: AnxietyResponse[];
+  /** When the skill questions ended (ms), so the report's duration doesn't depend on when it's opened. */
+  skillEndedAt?: number;
 }
 
 export function createInitialState(strands: string[] = STRANDS): SessionState {

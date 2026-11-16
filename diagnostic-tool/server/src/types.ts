@@ -71,7 +71,16 @@ export interface ShapeSpec {
   note?: string;
 }
 
-export type Representation = BarModelSpec | ConcreteSpec | NumberLineSpec | GridSpec | ShapeSpec | null;
+export interface SharingSpec {
+  /** Concrete sharing: `wholes` real objects, each cut into `people` equal slices; slice i of every object is person i's. */
+  kind: "sharing";
+  wholes: number;
+  people: number;
+  itemName: string;
+  peopleLabel: string;
+}
+
+export type Representation = BarModelSpec | ConcreteSpec | SharingSpec | NumberLineSpec | GridSpec | ShapeSpec | null;
 
 export interface Choice {
   id: string;

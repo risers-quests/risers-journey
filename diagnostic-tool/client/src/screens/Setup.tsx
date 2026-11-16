@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createSession, getSessionStatus } from "../api";
 import { SessionStatus } from "../types";
 import { forgetTest, rememberTest, savedTests } from "../saved";
-import { STRAND_CHOICES, minutesFor } from "../strands";
+import { STRAND_CHOICES } from "../strands";
 
 export function Setup({ onStart }: { onStart: (status: SessionStatus) => void }) {
   const [childName, setChildName] = useState("");
@@ -106,13 +106,13 @@ export function Setup({ onStart }: { onStart: (status: SessionStatus) => void })
               <span>
                 <b>{c.name}</b>
                 <small>
-                  {c.topics.length} topic{c.topics.length > 1 ? "s" : ""} · {minutesFor(c.topics.length)}: {c.topics.join(", ")}
+                  {c.topics.join(", ")}
                 </small>
               </span>
             </label>
           ))}
           <div className="strand-total">
-            {topicCount ? `${topicCount} topic${topicCount > 1 ? "s" : ""}, ${minutesFor(topicCount)}` : "Choose at least one strand"}
+            {topicCount ? `${topicCount} topic${topicCount > 1 ? "s" : ""}` : "Choose at least one strand"}
           </div>
         </fieldset>
         {error && <div style={{ color: "var(--soft-clay)", fontSize: "0.85rem" }}>{error}</div>}

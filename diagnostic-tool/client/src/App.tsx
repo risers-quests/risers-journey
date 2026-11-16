@@ -5,6 +5,7 @@ import { AnxietyCheck } from "./screens/AnxietyCheck";
 import { Report } from "./screens/Report";
 import { SessionStatus } from "./types";
 import { forgetTest } from "./saved";
+import { Preview } from "./screens/Preview";
 
 type Screen = "setup" | "assessment" | "anxietyCheck" | "report";
 
@@ -33,7 +34,7 @@ export function App() {
         <a className="brand-back" href="/staff/">← Staff home</a>
       </header>
 
-      {screen === "setup" && <Setup onStart={open} />}
+      {screen === "setup" && (new URLSearchParams(location.search).has("preview") ? <Preview /> : <Setup onStart={open} />)}
       {screen === "assessment" && sessionId && (
         <Assessment
           sessionId={sessionId}

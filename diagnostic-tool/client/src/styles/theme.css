@@ -512,3 +512,33 @@ a { color: var(--deep-teal); }
 .mistakes-box li { font-size: 0.85rem; margin: 4px 0; }
 .mistakes-box small { display: block; color: var(--ink-soft); line-height: 1.4; }
 .mistake-count { color: var(--soft-clay); font-weight: 700; }
+
+/* ---- Abstract: numbers only, worksheet style ---- */
+.prompt-abstract {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 2rem; font-weight: 700; color: var(--ink); text-align: center;
+  padding: 28px 16px; margin: 8px 0 20px; border-radius: 12px;
+  background: repeating-linear-gradient(#fff, #fff 31px, #e3edf5 32px);
+  border: 1.5px solid #cfdbe6;
+}
+@media (max-width: 520px) { .prompt-abstract { font-size: 1.5rem; padding: 20px 12px; } }
+.pulse-btn { white-space: nowrap; }
+
+/* ---- Concrete sharing: real objects cut into equal slices ---- */
+.sharing-wrap { background: #fffaf0; border: 1.5px solid #f0dfbf; border-radius: 12px; padding: 14px; margin: 8px 0 18px; }
+.sharing-wholes { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.sharing-whole { display: flex; flex-direction: column; align-items: center; font-size: 0.7rem; color: var(--ink-soft); }
+.sharing-caption { text-align: center; font-size: 0.85rem; color: var(--ink-soft); margin-top: 10px; }
+.sharing-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center; margin-top: 8px; font-size: 0.8rem; color: var(--ink); }
+.sharing-person { display: inline-flex; align-items: center; gap: 5px; }
+.sharing-swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.pulse-row { flex-wrap: wrap; }
+
+/* ---- Staff question preview ---- */
+.preview { max-width: 760px; margin: 0 auto; }
+.preview-item { margin-bottom: 16px; }
+.preview-cell { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brand-slate); margin-bottom: 6px; }
+.preview-choices { list-style: none; padding: 0; margin: 8px 0 0; }
+.preview-choices li { padding: 6px 10px; border-radius: 8px; margin: 4px 0; background: #f4f6f2; font-size: 0.92rem; }
+.preview-choices li.right { background: #eef7e2; font-weight: 600; }
+.preview-choices small { color: var(--soft-clay); font-weight: 500; }

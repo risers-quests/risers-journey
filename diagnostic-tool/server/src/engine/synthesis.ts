@@ -279,7 +279,11 @@ export function synthesizeReport(
   const mathAnxiety = computeMathAnxiety(state);
 
   const startedAt = new Date(assessedAt).getTime();
-  const durationMinutes = Math.max(1, Math.round((Date.now() - startedAt) / 60000));
+  // How long the skill questions took. (Was "now minus start", so a report
+  // opened a day later said 1,440 minutes.) Older sessions without an end
+  // time use their last answer.
+  const endedAt = state.skillEndedAt ?? (responses.length ? startedAt + responses.reduce((s, r) => s + r.hesitation_before_start_ms + r.solving_duration_ms, 0) : startedAt);
+  const durationMinutes = Math.max(1, Math.round((endedAt - startedAt) / 60000));
 
   return {
     childName,

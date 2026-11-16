@@ -11,7 +11,8 @@ import { selectNextQuestion, applyOutcome } from "./engine/skillEngine.js";
 import { readSignal } from "./engine/signalEngine.js";
 import { sanitizeItemForClient, getItemById, getTopic } from "./itemBank/index.js";
 import { STRANDS } from "./itemBank/topics.js";
-import { isGenerated } from "./itemBank/generate/index.js";
+import { isGenerated, generateItem, hasTemplate, MISCONCEPTIONS } from "./itemBank/generate/index.js";
+import { BLOOM_ORDER, CPA_ORDER } from "./types.js";
 import { ANXIETY_QUESTIONS } from "./itemBank/anxietyQuestionnaire.js";
 import { logTrace } from "./engine/state.js";
 import { buildGrid, buildSessionMap, buildBreadcrumb } from "./engine/view.js";
@@ -29,6 +30,20 @@ router.post("/sessions", async (req, res) => {
   if (!chosen.length) return res.status(400).json({ error: "choose at least one strand" });
   const { id } = await createSession(childName.trim().slice(0, 80), grade || "Grade 5", chosen);
   res.json({ sessionId: id });
+});
+
+// Question preview for staff: one fresh generated question per CPA x Bloom
+// cell of a topic, with the right answer and each wrong option's mistake.
+router.get("/preview/:topic", (req, res) => {
+  const topic = req.params.topic;
+  const out = [];
+  for (const cpa of CPA_ORDER) for (const bloom of BLOOM_ORDER) {
+    if (!hasTemplate(topic, cpa, bloom)) continue;
+    const it = generateItem(topic, cpa, bloom);
+    out.push({ ...it, mistakeLabels: Object.fromEntries(Object.entries(it.mistakes).map(([k, v]) => [k, v ? MISCONCEPTIONS[v]?.label ?? v : null])) });
+  }
+  if (!out.length) return res.status(404).json({ error: "no generated questions for this topic" });
+  res.json({ topic: getTopic(topic).name, items: out });
 });
 
 // Where a session is up to, for continuing it later (on the same device or
@@ -70,6 +85,7 @@ router.get("/sessions/:id/next-question", async (req, res) => {
       // questionnaire is a separate instrument administered next, not
       // interleaved with it — see anxietyQuestionnaire.ts for why.
       state.phase = "anxiety_questionnaire";
+      state.skillEndedAt = Date.now();
       await saveSessionState(sessionId, state);
       return res.json({ done: true, nextPhase: "anxiety_questionnaire" });
     }

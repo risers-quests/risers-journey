@@ -10,6 +10,7 @@ import { CPABloomGrid } from "../components/CPABloomGrid";
 import { SessionMap } from "../components/SessionMap";
 import { EngineTrace } from "../components/EngineTrace";
 import { PulseCheck } from "../components/PulseCheck";
+import { Sharing } from "../components/Sharing";
 
 export function Assessment({
   sessionId,
@@ -102,18 +103,28 @@ export function Assessment({
           </span>
         </div>
 
-        <div className="breadcrumb">{question.breadcrumb}</div>
+        {showPanel ? (
+          <>
+            <div className="breadcrumb">{question.breadcrumb}</div>
+            <div className="tag-row">
+              <span className="tag tag-cpa">{item.cpa}</span>
+              <span className="tag tag-bloom">{item.bloom}</span>
+              {question.isProceduralCheck && <span className="tag tag-badge-procedural">Side-probe</span>}
+            </div>
+          </>
+        ) : (
+          <div className="breadcrumb">{question.topicName}</div>
+        )}
 
-        <div className="tag-row">
-          <span className="tag tag-cpa">{item.cpa}</span>
-          <span className="tag tag-bloom">{item.bloom}</span>
-          {question.isProceduralCheck && <span className="tag tag-badge-procedural">Side-probe</span>}
-        </div>
-
-        <div className="prompt-text">{item.prompt}</div>
+        {item.cpa === "abstract" && !item.representation ? (
+          <div className="prompt-abstract">{item.prompt}</div>
+        ) : (
+          <div className="prompt-text">{item.prompt}</div>
+        )}
 
         {item.representation?.kind === "bar-model" && <BarModel spec={item.representation} />}
         {item.representation?.kind === "concrete" && <ConcreteObjects spec={item.representation} />}
+        {item.representation?.kind === "sharing" && <Sharing spec={item.representation} />}
         {item.representation?.kind === "number-line" && <NumberLine spec={item.representation} />}
         {item.representation?.kind === "grid" && <Grid spec={item.representation} />}
         {item.representation?.kind === "shape" && <Shape spec={item.representation} />}
@@ -132,7 +143,7 @@ export function Assessment({
 
         <div className="footer-row">
           <PulseCheck value={pulse} onChange={setPulse} />
-          <button className="btn btn-primary" disabled={!selectedChoiceId || loading} onClick={handleContinue}>
+          <button className="btn btn-primary" disabled={!selectedChoiceId || !pulse || loading} onClick={handleContinue}>
             Continue &rarr;
           </button>
         </div>

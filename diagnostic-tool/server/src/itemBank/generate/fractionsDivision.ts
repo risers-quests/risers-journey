@@ -159,7 +159,7 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
       {
         ...base("c-apply", "concrete", "apply", "fraction-notation", a, b, rng),
         prompt: `${a} ${food.many} are shared equally among ${b} ${people}. Which expression shows how many ${food.many} each gets?`,
-        representation: { kind: "concrete", icon: food.icon, itemCount: a, groups: b, groupLabel: people },
+        representation: { kind: "sharing", wholes: a, people: b, itemName: food.many, peopleLabel: people },
       },
       { a, b },
       `${a} ÷ ${b}`,
@@ -181,7 +181,7 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
       {
         ...base("c-analyze", "concrete", "analyze", "unit-fraction-reasoning", a, b, rng),
         prompt: `${a} ${food.many} are shared equally among ${b} ${people}. ${name} says each gets less than ${n + 1} ${food.many}. Is ${name} correct?`,
-        representation: { kind: "concrete", icon: food.icon, itemCount: a, groups: b, groupLabel: people },
+        representation: { kind: "sharing", wholes: a, people: b, itemName: food.many, peopleLabel: people },
       },
       { a, b },
       `Yes, because ${a} ÷ ${b} is between ${n} and ${n + 1}`,
@@ -194,21 +194,22 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
   },
 
   "concrete|evaluate": (rng, given) => {
+    const { food, people } = ctx(rng);
     const g = given && given.a < given.b ? given : null;
     const b = g ? g.b : int(rng, 3, 8);
     const a = g ? g.a : int(rng, 2, b - 1);
     return build(
       {
         ...base("c-evaluate", "concrete", "evaluate", "word-problem-setup", a, b, rng),
-        prompt: `A teacher wants to show the fraction ${frac(a, b)} using counters. Which setup best shows it?`,
-        representation: { kind: "concrete", icon: "●", itemCount: a, groups: b, groupLabel: "groups" },
+        prompt: `A teacher wants to show the fraction ${frac(a, b)} by sharing real ${food.many}. Which setup best shows it?`,
+        representation: { kind: "sharing", wholes: a, people: b, itemName: food.many, peopleLabel: people },
       },
       { a, b },
-      `${a} counters shared equally among ${b} groups; one group's share is ${frac(a, b)}`,
+      `${a} ${food.many} shared equally among ${b} ${people}; one share is ${frac(a, b)}`,
       [
-        { text: `${b} counters shared equally among ${a} groups`, mistake: "fd-flips" },
-        { text: `${a} groups of ${b} counters each`, mistake: "fd-multiplies" },
-        { text: `${a} counters and ${b} counters, added together`, mistake: "fd-adds" },
+        { text: `${b} ${food.many} shared equally among ${a} ${people}`, mistake: "fd-flips" },
+        { text: `${a} groups of ${b} ${food.many} each`, mistake: "fd-multiplies" },
+        { text: `${a} ${food.many} and ${b} ${food.many}, added together`, mistake: "fd-adds" },
       ]
     );
   },
@@ -221,7 +222,7 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
       {
         ...base("p-remember", "pictorial", "remember", "fraction-notation", a, b, rng),
         prompt: `The bar stands for ${a} ${food.many}, split into ${b} equal parts. What fraction of the whole bar is one part?`,
-        representation: { kind: "bar-model", totalLabel: `${a} ${food.many}`, parts: b, highlightParts: 1 },
+        representation: { kind: "bar-model", totalLabel: `${a} ${food.many}`, parts: b, highlightParts: 1, queryPartIndex: 0, segmentLabels: Array(b).fill("") },
       },
       { a, b },
       frac(1, b),
@@ -241,7 +242,7 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
       {
         ...base("p-understand", "pictorial", "understand", "equal-sharing", a, b, rng),
         prompt: `${a} ${food.many} are shared equally among ${b} ${people}. Based on the bar, how much does each get?`,
-        representation: { kind: "bar-model", totalLabel: `${a} ${food.many} / ${b} ${people}`, parts: b, highlightParts: 1 },
+        representation: { kind: "bar-model", totalLabel: `${a} ${food.many} / ${b} ${people}`, parts: b, highlightParts: 1, queryPartIndex: 0, segmentLabels: Array(b).fill("") },
       },
       { a, b },
       `Each gets ${amountOf(a, b, food)}`,
@@ -264,7 +265,7 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
       {
         ...base("p-apply", "pictorial", "apply", "word-problem-setup", a, b, rng),
         prompt: `The bar stands for ${a} ${food.many}, split into ${b} equal parts. How much does each part stand for?`,
-        representation: { kind: "bar-model", totalLabel: `${a} ${food.many}`, parts: b, highlightParts: 1 },
+        representation: { kind: "bar-model", totalLabel: `${a} ${food.many}`, parts: b, highlightParts: 1, queryPartIndex: 0, segmentLabels: Array(b).fill("") },
       },
       { a, b },
       `${fracWithMixed(a, b)} ${food.many}`,
@@ -286,7 +287,7 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
       {
         ...base("p-analyze", "pictorial", "analyze", "unit-fraction-reasoning", a, b, rng),
         prompt: `The bar stands for ${a} ${food.many}, split into ${b} equal parts. Which statement about one part is correct?`,
-        representation: { kind: "bar-model", totalLabel: `${a} ${food.many}`, parts: b, highlightParts: 1 },
+        representation: { kind: "bar-model", totalLabel: `${a} ${food.many}`, parts: b, highlightParts: 1, queryPartIndex: 0, segmentLabels: Array(b).fill("") },
       },
       { a, b },
       `Each part is ${frac(a, b)} ${food.many}, which is more than ${n} whole ${n > 1 ? food.many : food.one}`,
@@ -305,7 +306,7 @@ export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
       {
         ...base("p-evaluate", "pictorial", "evaluate", "word-problem-setup", a, b, rng),
         prompt: `${a} ${food.many} are shared equally among ${b} ${people}. Which description matches the bar model shown?`,
-        representation: { kind: "bar-model", totalLabel: `${a} ${food.many} / ${b} ${people}`, parts: b, highlightParts: 1 },
+        representation: { kind: "bar-model", totalLabel: `${a} ${food.many} / ${b} ${people}`, parts: b, highlightParts: 1, queryPartIndex: 0, segmentLabels: Array(b).fill("") },
       },
       { a, b },
       `A bar of ${a} ${food.many} split into ${b} equal parts; each part is ${frac(a, b)}`,

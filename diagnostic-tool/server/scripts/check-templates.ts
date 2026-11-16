@@ -34,6 +34,11 @@ for (const topic of topics) for (const cpa of CPA_ORDER) for (const bloom of BLO
     const rep = it.representation;
     if (rep?.kind === "concrete" && (rep.itemCount !== a || rep.groups !== b)) fail(`${where}: picture shows ${rep.itemCount}/${rep.groups}`);
     if (rep?.kind === "bar-model" && rep.parts !== b) fail(`${where}: bar has ${rep.parts} parts`);
+    if (rep?.kind === "bar-model" && (rep.segmentLabels ?? []).some((l) => l)) fail(`${where}: bar prints a label that could give the answer away`);
+    if (rep?.kind === "sharing" && (rep.wholes !== a || rep.people !== b)) fail(`${where}: sharing picture shows ${rep.wholes}/${rep.people}`);
+    if (cpa === "concrete" && rep?.kind === "concrete" && a % b !== 0) fail(`${where}: grouping picture can't show a share of ${a}/${b}`);
+    if (cpa === "abstract" && rep) fail(`${where}: abstract question has a picture`);
+    if (cpa !== "abstract" && !rep) fail(`${where}: ${cpa} question has no picture`);
     const right = it.choices.find((c) => c.id === it.correctChoiceId)!;
     // The right answer's value, where it states one, must be a ÷ b (or 1/b for "one part of the bar", or the whole share).
     const rv = leadValue(right.text);
@@ -50,7 +55,7 @@ for (const topic of topics) for (const cpa of CPA_ORDER) for (const bloom of BLO
     if (rv !== null) for (const c of it.choices) {
       if (c.id === it.correctChoiceId || it.mistakes[c.id] === "fd-not-simplified") continue;
       const v = leadValue(c.text);
-      if (v !== null && Math.abs(v - rv) < 1e-9 && !/divided|plus|minus|multiplied|÷|×|−|\+|counters|bar|is (greater|less)|equals|even/.test(c.text + right.text)) fail(`${where}: wrong option "${c.text}" equals right "${right.text}"`);
+      if (v !== null && Math.abs(v - rv) < 1e-9 && !/divided|plus|minus|multiplied|÷|×|−|\+|counters|shared equally|groups of|added together|bar|is (greater|less)|equals|even/.test(c.text + right.text)) fail(`${where}: wrong option "${c.text}" equals right "${right.text}"`);
     }
   }
   console.log(`${topic} ${cpa.padEnd(9)} ${bloom.padEnd(10)} ok · ${seen.size} different number pairs`);
