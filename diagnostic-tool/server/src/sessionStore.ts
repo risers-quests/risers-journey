@@ -1,6 +1,21 @@
-import { nanoid } from "nanoid";
-import { db } from "./db.js";
+import { AsyncLocalStorage } from "node:async_hooks";
+import { customAlphabet } from "nanoid";
 import { SessionState, createInitialState } from "./engine/state.js";
+
+// Sessions are saved through the Risers Journey progress Worker (the same
+// /sync service every quest page uses), which keeps them in Cloudflare's
+// free D1 database. One record per session:
+//   group "diagnostic", kid <session id>, week "session"
+//   state = { child_name, grade, created_at, status, state, responses }
+// The Worker's URL and site key are the public ones in the site's pages;
+// DIAGNOSTIC_STORE_URL / DIAGNOSTIC_STORE_KEY override them (e.g. to test).
+const STORE_URL = (process.env.DIAGNOSTIC_STORE_URL || "https://risers-term2-digital-quests-progress.highergrade.workers.dev").replace(/\/$/, "");
+const STORE_KEY = process.env.DIAGNOSTIC_STORE_KEY || "RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM";
+const GROUP = "diagnostic";
+const WEEK = "session";
+
+// The Worker accepts lowercase letters, digits and hyphens only.
+const newId = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", 12);
 
 export interface SessionRow {
   id: string;
@@ -9,42 +24,6 @@ export interface SessionRow {
   created_at: string;
   status: string;
   state: string;
-}
-
-export async function createSession(childName: string, grade: string): Promise<{ id: string; state: SessionState }> {
-  const id = nanoid(10);
-  const state = createInitialState();
-  await db.execute({
-    sql: `INSERT INTO sessions (id, child_name, grade, created_at, status, state) VALUES (?, ?, ?, ?, ?, ?)`,
-    args: [id, childName, grade, new Date().toISOString(), "in_progress", JSON.stringify(state)],
-  });
-  return { id, state };
-}
-
-export async function getSessionRow(sessionId: string): Promise<SessionRow> {
-  const result = await db.execute({ sql: `SELECT * FROM sessions WHERE id = ?`, args: [sessionId] });
-  const row = result.rows[0];
-  if (!row) throw new Error(`Session ${sessionId} not found`);
-  return row as unknown as SessionRow;
-}
-
-export async function getSessionState(sessionId: string): Promise<SessionState> {
-  const row = await getSessionRow(sessionId);
-  return JSON.parse(row.state as string) as SessionState;
-}
-
-export async function saveSessionState(sessionId: string, state: SessionState, status?: string): Promise<void> {
-  if (status) {
-    await db.execute({
-      sql: `UPDATE sessions SET state = ?, status = ? WHERE id = ?`,
-      args: [JSON.stringify(state), status, sessionId],
-    });
-  } else {
-    await db.execute({
-      sql: `UPDATE sessions SET state = ? WHERE id = ?`,
-      args: [JSON.stringify(state), sessionId],
-    });
-  }
 }
 
 export interface ResponseRecord {
@@ -68,39 +47,77 @@ export interface ResponseRecord {
   outcome: string | null;
 }
 
-export async function insertResponse(r: Omit<ResponseRecord, "id">): Promise<ResponseRecord> {
-  const id = nanoid(12);
-  await db.execute({
-    sql: `INSERT INTO responses (id, session_id, seq, topic_id, item_id, cpa, bloom, subskill, choice_id, correct, hesitation_before_start_ms, solving_duration_ms, answer_changes, pulse, is_reframe, reframe_of_seq, is_procedural_check, outcome)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    args: [
-      id,
-      r.session_id,
-      r.seq,
-      r.topic_id,
-      r.item_id,
-      r.cpa,
-      r.bloom,
-      r.subskill,
-      r.choice_id,
-      r.correct,
-      r.hesitation_before_start_ms,
-      r.solving_duration_ms,
-      r.answer_changes,
-      r.pulse,
-      r.is_reframe,
-      r.reframe_of_seq,
-      r.is_procedural_check,
-      r.outcome,
-    ],
+interface StoredSession {
+  child_name: string;
+  grade: string;
+  created_at: string;
+  status: string;
+  state: SessionState;
+  responses: ResponseRecord[];
+}
+
+// Within one request, a session is read from the store once and kept here
+// (saves update it too), so answering a question costs one read, not three.
+// Nothing is shared between requests: each starts with an empty cache.
+const requestCache = new AsyncLocalStorage<Map<string, StoredSession>>();
+export function withRequestCache(next: () => void): void {
+  requestCache.run(new Map(), next);
+}
+
+function syncUrl(sessionId: string): string {
+  return `${STORE_URL}/sync?group=${GROUP}&kid=${encodeURIComponent(sessionId)}&week=${WEEK}`;
+}
+
+async function load(sessionId: string): Promise<StoredSession> {
+  const cached = requestCache.getStore()?.get(sessionId);
+  if (cached) return cached;
+  if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(sessionId)) throw new Error(`Session ${sessionId} not found`);
+  const res = await fetch(syncUrl(sessionId), { headers: { "X-Site-Key": STORE_KEY } });
+  if (!res.ok) throw new Error(`store read failed (${res.status})`);
+  const body = (await res.json()) as { found: boolean; data?: { state: StoredSession } };
+  if (!body.found || !body.data) throw new Error(`Session ${sessionId} not found`);
+  requestCache.getStore()?.set(sessionId, body.data.state);
+  return body.data.state;
+}
+
+async function save(sessionId: string, session: StoredSession): Promise<void> {
+  const res = await fetch(`${STORE_URL}/sync`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Site-Key": STORE_KEY },
+    body: JSON.stringify({ group: GROUP, kid: sessionId, week: WEEK, state: session }),
   });
-  return { id, ...r };
+  if (!res.ok) throw new Error(`store write failed (${res.status}): ${await res.text()}`);
+  requestCache.getStore()?.set(sessionId, session);
+}
+
+export async function createSession(childName: string, grade: string): Promise<{ id: string; state: SessionState }> {
+  const id = newId();
+  const state = createInitialState();
+  await save(id, { child_name: childName, grade, created_at: new Date().toISOString(), status: "in_progress", state, responses: [] });
+  return { id, state };
+}
+
+export async function getSessionRow(sessionId: string): Promise<SessionRow> {
+  const s = await load(sessionId);
+  return { id: sessionId, child_name: s.child_name, grade: s.grade, created_at: s.created_at, status: s.status, state: JSON.stringify(s.state) };
+}
+
+export async function getSessionState(sessionId: string): Promise<SessionState> {
+  return (await load(sessionId)).state;
+}
+
+export async function saveSessionState(sessionId: string, state: SessionState, status?: string): Promise<void> {
+  const s = await load(sessionId);
+  await save(sessionId, { ...s, state, status: status ?? s.status });
+}
+
+export async function insertResponse(r: Omit<ResponseRecord, "id">): Promise<ResponseRecord> {
+  const s = await load(r.session_id);
+  const record = { id: newId(), ...r };
+  await save(r.session_id, { ...s, responses: [...s.responses, record] });
+  return record;
 }
 
 export async function getResponses(sessionId: string): Promise<ResponseRecord[]> {
-  const result = await db.execute({
-    sql: `SELECT * FROM responses WHERE session_id = ? ORDER BY seq ASC`,
-    args: [sessionId],
-  });
-  return result.rows as unknown as ResponseRecord[];
+  return [...(await load(sessionId)).responses].sort((a, b) => a.seq - b.seq);
 }

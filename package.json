@@ -7,7 +7,6 @@
     "build:diagnostic": "npm --prefix diagnostic-tool ci --no-audit --no-fund && npm --prefix diagnostic-tool run build:client"
   },
   "dependencies": {
-    "@libsql/client": "^0.14.0",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "nanoid": "^5.0.7"

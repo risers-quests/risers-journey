@@ -38,23 +38,20 @@ instruments* below for the full reasoning and sourcing.
 
 ## Stack
 
-- **Server**: Node.js + TypeScript + Express, persisted via
-  [Turso](https://turso.tech) (libSQL — SQLite-compatible, accessible over
-  the network) using `@libsql/client/web`, the pure HTTP/WebSocket build
-  with no native binary. Local dev and production both talk to the same
-  Turso database — a serverless function has no persistent local disk to
-  keep a session's data alive between requests, so there's no local-only
-  fallback (see *Deploying to Vercel* below for how to create the free-tier
-  database both need).
+- **Server**: Node.js + TypeScript + Express. Each session is saved as one
+  record through the Risers Journey progress Worker (the same `/sync`
+  service the quest pages use), which keeps it in Cloudflare's free D1
+  database (`server/src/sessionStore.ts`). No database setup or keys of
+  its own.
 - **Client**: React + TypeScript (Vite).
 - No auth — this is a pilot/demo build, not a deployment-ready product (see
   *Open questions* below, carried over from the design doc).
 
 ## Running it
 
-Needs a Turso database first (see *Deploying to Vercel* below for how to
-create the free one) — copy `server/.env.example` to `server/.env` and fill
-in `TURSO_DATABASE_URL` / `TURSO_AUTH_TOKEN`.
+No setup needed: sessions are saved through the progress Worker, so a
+local run saves to the same store as the live site (test sessions are
+records under group "diagnostic").
 
 ```bash
 npm install          # installs both workspaces
@@ -98,11 +95,11 @@ The tool is part of the Risers Journey site and its Vercel project
 - **Server**: `/api/diagnostic/...`, one Vercel function
   (`risers-journey/api/diagnostic.ts`, routed by the root `vercel.json`)
   that runs `server/src/app.ts`. Its packages are in the root `package.json`.
-- **Database**: Turso. The risers-journey Vercel project needs
-  `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` set (Production and Preview).
-  To make a database: create a free account at turso.tech, then
-  `turso db create lifehub-diagnostic`, `turso db show --url
-  lifehub-diagnostic` and `turso db tokens create lifehub-diagnostic`.
+- **Storage**: one record per session (group `diagnostic`, kid = the
+  session id, week `session`) through the progress Worker, in Cloudflare's
+  free D1 database. Nothing to configure on Vercel. The function runs in
+  Mumbai (`bom1`, root `vercel.json`), close to the Risers and to the
+  database (Singapore).
 
 ## How the design doc maps to this codebase
 
@@ -299,14 +296,11 @@ item in every topic was rewritten against two rules:
 
 ```
 server/
-  api/index.ts      Vercel serverless entry point (exports the Express app)
-  vercel.json        rewrites every request to api/index.ts
   src/
     itemBank/       topics.ts (the 15-topic prerequisite chain) + one file
                     per topic's 15 CPA×Bloom items + anxietyQuestionnaire.ts
     engine/         state, skillEngine, signalEngine (raw timing only), synthesis, view
-    db.ts           Turso/libSQL client + schema migration
-    sessionStore.ts persistence layer (async)
+    sessionStore.ts persistence layer: saves through the progress Worker
     app.ts          Express app (no .listen — shared by local + serverless)
     index.ts        local dev entry point (calls app.listen)
     routes.ts       REST API (skill assessment + separate anxiety-questionnaire endpoints)
