@@ -123,3 +123,6 @@ export const TOPICS: Topic[] = [
     dependsOn: ["geometry"],
   },
 ];
+
+/** The book's strands, in order. A test covers one or more of them. */
+export const STRANDS = ["Number & Algebra", "Measurement & Geometry", "Ratio & Proportion", "Data Handling"];

@@ -1,5 +1,5 @@
 import { BloomLevel, CPAStage, ENTRY_BLOOM, ENTRY_CPA } from "../types.js";
-import { TOPICS } from "../itemBank/topics.js";
+import { STRANDS, TOPICS } from "../itemBank/topics.js";
 import type { ClientItem } from "../itemBank/index.js";
 
 export type TopicStatus = "locked" | "in_progress" | "mastered" | "lag_point";
@@ -53,6 +53,9 @@ export interface AnxietyResponse {
 }
 
 export interface SessionState {
+  // The strands this test covers (chosen when it starts); topicOrder and
+  // topics hold only their topics. Older sessions have every strand.
+  strands?: string[];
   topicOrder: string[];
   currentTopicIndex: number;
   topics: Record<string, TopicEngineState>;
@@ -70,8 +73,8 @@ export interface SessionState {
   anxietyResponses: AnxietyResponse[];
 }
 
-export function createInitialState(): SessionState {
-  const topicOrder = TOPICS.map((t) => t.id);
+export function createInitialState(strands: string[] = STRANDS): SessionState {
+  const topicOrder = TOPICS.filter((t) => strands.includes(t.strand)).map((t) => t.id);
   const topics: Record<string, TopicEngineState> = {};
   topicOrder.forEach((id, idx) => {
     topics[id] = {
@@ -91,6 +94,7 @@ export function createInitialState(): SessionState {
   });
 
   return {
+    strands: STRANDS.filter((s) => strands.includes(s)),
     topicOrder,
     currentTopicIndex: 0,
     topics,

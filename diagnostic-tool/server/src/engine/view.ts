@@ -32,7 +32,7 @@ export interface SessionMapEntry {
 }
 
 export function buildSessionMap(state: SessionState): SessionMapEntry[] {
-  return TOPICS.map((topic) => {
+  return TOPICS.filter((topic) => state.topics[topic.id]).map((topic) => {
     const t = state.topics[topic.id];
     let status = "locked";
     if (t.status === "mastered") status = "cleared";

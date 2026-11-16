@@ -42,8 +42,14 @@ export function Report({ sessionId }: { sessionId: string }) {
           <div className="report-meta">
             Assessed {new Date(report.assessedAt).toLocaleDateString()} &middot; {report.questionCount} questions &middot;{" "}
             {report.durationMinutes} min
+            {report.strands && report.strands.length < 4 && <> &middot; Tested: {report.strands.join(", ")}</>}
           </div>
           <h1 className="headline">{report.headline}</h1>
+          {report.assumedPrerequisites && report.assumedPrerequisites.length > 0 && (
+            <p className="report-meta" style={{ marginTop: 6 }}>
+              Not tested this time, so assumed known: {report.assumedPrerequisites.join(" ")}
+            </p>
+          )}
         </div>
         <div className="report-actions">
           <button className="btn btn-secondary" onClick={() => window.print()}>

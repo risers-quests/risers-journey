@@ -48,7 +48,9 @@ function activeTopicId(state: SessionState): string | null {
     const t = state.topics[topicId];
     if (t.status !== "locked") continue;
     const topic = getTopic(topicId);
-    const prereqsMet = topic.dependsOn.every((dep) => state.topics[dep]?.status === "mastered");
+    // A prerequisite from a strand not in this test is assumed known (the
+    // report says so); otherwise it has to be mastered first.
+    const prereqsMet = topic.dependsOn.every((dep) => !state.topics[dep] || state.topics[dep].status === "mastered");
     if (prereqsMet) {
       t.status = "in_progress";
       logTrace(state, `Prerequisites cleared → unlocked ${topic.name}.`);

@@ -36,6 +36,8 @@ export interface ReportData {
   headline: string;
   subheadline: string;
   summary: { mastered: number; skillGap: number; proceduralNotConceptual: number; total: number };
+  strands: string[];
+  assumedPrerequisites: string[];
   bloomByStrand: { strand: string; assessed: boolean; deepest: BloomLevel | null }[];
   topics: TopicDiagnosis[];
   mathAnxiety: MathAnxietyResult;
@@ -223,7 +225,17 @@ export function synthesizeReport(
   grade: string,
   assessedAt: string
 ): ReportData {
-  const topics = TOPICS.map((t) => buildTopicDiagnosis(t.id, state, responses));
+  const topics = TOPICS.filter((t) => state.topics[t.id]).map((t) => buildTopicDiagnosis(t.id, state, responses));
+  const strands = state.strands ?? ALL_STRANDS;
+  // Prerequisites from strands not in this test, which were assumed known.
+  const assumed: string[] = [];
+  for (const id of state.topicOrder) {
+    const topic = getTopic(id);
+    const outside = topic.dependsOn.filter((d) => !state.topics[d]);
+    if (outside.length) {
+      assumed.push(`${topic.name} assumes ${outside.map((d) => getTopic(d).name).join(" and ")} (${getTopic(outside[0]).strand}), which wasn't in this test.`);
+    }
+  }
 
   const summary = {
     mastered: topics.filter((t) => t.tag === "mastered").length,
@@ -235,7 +247,7 @@ export function synthesizeReport(
   const strandTopics = (strand: string) => topics.filter((t) => t.strand === strand);
   const bloomByStrand = ALL_STRANDS.map((strand) => {
     const inStrand = strandTopics(strand);
-    if (inStrand.length === 0) return { strand, assessed: false, deepest: null };
+    if (inStrand.length === 0 || !strands.includes(strand)) return { strand, assessed: false, deepest: null };
     let deepestIdx = -1;
     for (const t of inStrand) {
       if (t.tag === "mastered") deepestIdx = Math.max(deepestIdx, BLOOM_ORDER.indexOf("analyze"));
@@ -255,6 +267,8 @@ export function synthesizeReport(
     grade,
     assessedAt,
     questionCount: state.totalQuestions,
+    strands,
+    assumedPrerequisites: assumed,
     durationMinutes,
     headline,
     subheadline,

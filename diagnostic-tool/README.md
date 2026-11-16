@@ -281,15 +281,17 @@ item in every topic was rewritten against two rules:
 - **Geometry/Patterns/Data Handling lean on lighter representations** than
   the original two fraction topics — see *The item bank's four
   representation kinds* above.
-- **Covering the whole book in one sitting.** The cap (`maxQuestions` in
-  `state.ts`) is 250, a safety stop rather than a target: in simulations a
-  whole-book test took 72–162 questions and ends by itself once every topic
-  is decided or held back by a gap it depends on. A full session's record
-  is about 0.45 KB per question (~115 KB at 250), within the store's 200 KB
-  per record. There is no pause during the test; if it's interrupted (page
-  closed, battery), the start page on that device offers to carry on from
-  the same question (`GET /sessions/:id/status`). The child sees "Topic 4 of
-  15" (topics reached so far), not a question count.
+- **One strand per sitting (or more).** Staff choose which strands a test
+  covers when it starts (Number & Algebra by default). In simulations:
+  Number & Algebra 38–46 questions, Measurement & Geometry 38–48, Ratio &
+  Proportion 14, Data Handling 8, the whole book 72–162. Only the chosen
+  topics are tested and reported; a prerequisite from a strand not in the
+  test (Measurement needs Large Numbers, Life Mathematics needs Fractions
+  and Division) is assumed known, and the report says so. The cap
+  (`maxQuestions`, 250) is a safety stop. A full session's record is about
+  0.45 KB per question, within the store's 200 KB per record. There is no
+  pause during a test; if it's interrupted (page closed, battery), the start
+  page on that device offers to carry on from the same question.
 
 ## Project layout
 

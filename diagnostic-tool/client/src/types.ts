@@ -143,6 +143,8 @@ export interface ReportData {
   headline: string;
   subheadline: string;
   summary: { mastered: number; skillGap: number; proceduralNotConceptual: number; total: number };
+  strands?: string[];
+  assumedPrerequisites?: string[];
   bloomByStrand: { strand: string; assessed: boolean; deepest: BloomLevel | null }[];
   topics: TopicDiagnosis[];
   mathAnxiety: MathAnxietyResult;
@@ -156,5 +158,6 @@ export interface SessionStatus {
   questionsAnswered: number;
   topicNumber: number;
   topicCount: number;
+  strands: string[];
   startedAt: string;
 }

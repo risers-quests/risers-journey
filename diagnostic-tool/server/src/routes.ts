@@ -10,6 +10,7 @@ import {
 import { selectNextQuestion, applyOutcome } from "./engine/skillEngine.js";
 import { readSignal } from "./engine/signalEngine.js";
 import { sanitizeItemForClient, getItemById, getTopic } from "./itemBank/index.js";
+import { STRANDS } from "./itemBank/topics.js";
 import { ANXIETY_QUESTIONS } from "./itemBank/anxietyQuestionnaire.js";
 import { logTrace } from "./engine/state.js";
 import { buildGrid, buildSessionMap, buildBreadcrumb } from "./engine/view.js";
@@ -18,11 +19,14 @@ import { synthesizeReport } from "./engine/synthesis.js";
 export const router = Router();
 
 router.post("/sessions", async (req, res) => {
-  const { childName, grade } = req.body ?? {};
+  const { childName, grade, strands } = req.body ?? {};
   if (!childName || typeof childName !== "string" || !childName.trim()) {
     return res.status(400).json({ error: "childName is required" });
   }
-  const { id } = await createSession(childName.trim().slice(0, 80), grade || "Grade 5");
+  // Which strands this test covers; none given means the whole book.
+  const chosen = Array.isArray(strands) ? STRANDS.filter((s) => strands.includes(s)) : STRANDS;
+  if (!chosen.length) return res.status(400).json({ error: "choose at least one strand" });
+  const { id } = await createSession(childName.trim().slice(0, 80), grade || "Grade 5", chosen);
   res.json({ sessionId: id });
 });
 
@@ -40,6 +44,7 @@ router.get("/sessions/:id/status", async (req, res) => {
       // Topics reached so far (started or decided).
       topicNumber: state.phase === "warmup" ? 0 : state.topicOrder.filter((id: string) => state.topics[id].status !== "locked").length,
       topicCount: state.topicOrder.length,
+      strands: state.strands ?? STRANDS,
       startedAt: row.created_at,
     });
   } catch {
