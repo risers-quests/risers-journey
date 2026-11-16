@@ -289,7 +289,7 @@
   function questWeek() {
     var b = project(meta('project'));
     if (!b || !meta('started')) return null;
-    return { n: sprint() - Q.startWeek(meta('started')) + 1, of: Q.weeksFor(b) };
+    return { n: sprint() - Q.startWeek(meta('started')) + 1, of: Q.lengthFor(b, meta('started')) };
   }
   // One line: the quest week, the Quest Master, when the quest is due.
   function topLine() {
@@ -314,7 +314,7 @@
   function deadline(id, started) {
     var b = project(id === undefined ? meta('project') : id);
     started = started === undefined ? meta('started') : started;
-    return b && started ? Q.deadline(started, Q.weeksFor(b)) : null;
+    return b && started ? Q.dueFor(b, started) : null;
   }
   var changing = false;
 
@@ -644,7 +644,7 @@
     var b = project(meta('project'));
     if (!b || !meta('started')) return [];
     var first = Q.startWeek(meta('started')), out = [];
-    for (var i = 0; i < Q.weeksFor(b); i++) {
+    for (var i = 0, n = Q.lengthFor(b, meta('started')); i < n; i++) {
       var w = Q.WEEKS[first - 1 + i];
       if (w) out.push({ n: i + 1, school: first + i, from: w[0], to: w[1] });
     }
@@ -1557,7 +1557,7 @@
     var ci = s.checkins['w' + w + '_staff'] || s.checkins['w' + w] || {};
     var b = project(m('project'), s);
     return {
-      build: b ? b.title : '', due: b && m('started') ? Q.deadline(m('started'), Q.weeksFor(b)) : null,
+      build: b ? b.title : '', due: b && m('started') ? Q.dueFor(b, m('started')) : null,
       idea: s.meta.own && s.meta.own.v && s.meta.own.v.st === 'waiting' ? s.meta.own.v.title : '',
       plan: !!(s.meta.planOk && s.meta.planOk.v && s.meta.planOk.v.st === 'waiting'),
       master: m('master' + w, '') || m('director' + w, ''), week: w, goal: (s.checkins['w' + (w - 1)] || {}).next || '',

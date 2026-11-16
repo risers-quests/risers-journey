@@ -111,4 +111,15 @@
     while (wed.getDay() !== 3) wed.setDate(wed.getDate() + 1);
     return { date: iso(wed), week: last, short: w + weeks - 1 > Q.WEEKS.length };
   };
+  // A quest's deadline for a team that started it on startIso, allowing for
+  // an extension (b.extendTo: a later date for everyone on that quest).
+  Q.dueFor = function (b, startIso) {
+    var d = Q.deadline(startIso, Q.weeksFor(b));
+    if (b.extendTo && b.extendTo > d.date) d = { date: b.extendTo, week: Q.weekOf(day(b.extendTo)), short: false, extended: true };
+    return d;
+  };
+  // How many school weeks a team has for its quest, extension included.
+  Q.lengthFor = function (b, startIso) {
+    return Math.max(Q.weeksFor(b), Q.dueFor(b, startIso).week - Q.startWeek(startIso) + 1);
+  };
 })();

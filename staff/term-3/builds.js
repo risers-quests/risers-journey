@@ -48,7 +48,7 @@
       var p = picks[g.id];
       // A team's own quest has its own name and length (meta.own).
       var b = p && (p.project === 'own' ? p.own && { title: p.own.title, weeks: +p.own.weeks } : POOL.filter(function (x) { return x.id === p.project; })[0]);
-      var due = b && p.started ? Q.deadline(p.started, Q.weeksFor(b)) : null;
+      var due = b && p.started ? Q.dueFor(b, p.started) : null;
       var a = el('a', 'bl-group', '<strong>' + g.name + '</strong><span>' + g.kids.join(', ') + '</span>' +
         '<em>' + (b ? esc(b.title) + (due ? ' · expected by ' + Q.nice(due.date) : '') : 'No project chosen yet') + '</em>' +
         (p && p.own && p.own.st === 'waiting' ? '<small class="qo-flag">💡 Own quest idea to OK: ' + esc(p.own.title) + '</small>' : '') +

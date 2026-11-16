@@ -56,6 +56,8 @@ window.T3_POOL = [
       ['Fly every design three times', 'Chart every design’s best flight', 'Make the winners’ board']
     ] },
   { id: 'sci-spy', cat: 'sci', level: 1, title: 'Spy science kit',
+    // Deadline extended: teams on this quest have until Wed 18 Nov 2026.
+    extendTo: '2026-11-18',
     what: 'You become science spies. You write secret messages in lemon juice that only show up with heat. You also dust for fingerprints and solve a pretend mystery at LifeHub.',
     hook: 'Some liquids change colour when heated or mixed. Everyone’s fingerprints are different.',
     make: 'A spy kit with invisible ink, a fingerprint set, and a mystery for the class to solve.',
