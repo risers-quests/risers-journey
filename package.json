@@ -1,0 +1,12 @@
+{
+  "name": "risers-journey",
+  "private": true,
+  "type": "module",
+  "description": "The site itself is static files, served as they are. This file is only for the diagnostic tool's server function (api/diagnostic.ts): its packages.",
+  "dependencies": {
+    "@libsql/client": "^0.14.0",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "nanoid": "^5.0.7"
+  }
+}

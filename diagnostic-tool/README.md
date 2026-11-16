@@ -63,10 +63,10 @@ npm install          # installs both workspaces
 npm run dev:server   # http://localhost:4001
 
 # terminal 2
-npm run dev:client   # http://localhost:5173 (proxies /api to the server)
+npm run dev:client   # http://localhost:5173/diagnostic/ (proxies /api/diagnostic to the server)
 ```
 
-Open `http://localhost:5173`, enter a child's name, and take the
+Open `http://localhost:5173/diagnostic/`, enter a child's name, and take the
 assessment. Toggle **"Hide engine internals"** on the assessment screen to
 see the interface the way a child would (the CPA×Bloom grid, session map,
 and engine trace are reviewer-only per the design doc's Screen 1
@@ -85,45 +85,23 @@ cd server && npm run dev &     # needs the server running
 npm run simulate
 ```
 
-## Deploying to Vercel (free tier)
+## Where it lives (Risers Journey site)
 
-The server is a single Express app exported for Vercel's Node runtime
-(`server/api/index.ts`), with `server/vercel.json` rewriting every request
-to it. To deploy the `server/` directory as its own Vercel project:
+The tool is part of the Risers Journey site and its Vercel project
+(Risers-Quests team), not a separate deployment:
 
-1. **Create a free Turso database** — install the Turso CLI or use
-   [turso.tech](https://turso.tech) to sign up (free tier), then:
-   ```bash
-   turso db create lifehub-diagnostic
-   turso db show lifehub-diagnostic --url        # → TURSO_DATABASE_URL
-   turso db tokens create lifehub-diagnostic       # → TURSO_AUTH_TOKEN
-   ```
-2. In the Vercel project's **Settings → Environment Variables**, add
-   `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` with the values from step 1.
-3. Set the project's **Root Directory** to `server` (if not already).
-4. Redeploy. The schema migration runs automatically on first request —
-   no separate migration step needed.
-
-Without those two env vars set, the server throws immediately on cold
-start (`db.ts` requires them) rather than silently falling back to
-something that would break just as badly — a serverless function's
-filesystem is read-only outside `/tmp` and isn't shared across
-invocations, so there's nowhere durable to put a local SQLite file anyway.
-
-Two separate things were causing `FUNCTION_INVOCATION_FAILED` on the first
-deploy attempts, in order: (1) `better-sqlite3` is a native addon that
-isn't guaranteed to load in Vercel's runtime, and (2) even `@libsql/client`'s
-*default* Node build statically pulls in a native `libsql` binary for its
-local-file support — which can fail to load the same way even when only
-used for a remote connection. Using `@libsql/client/web` (a pure
-HTTP/WebSocket build with no native code at all) removes that risk
-entirely — see `server/src/db.ts`.
-
-The client (`client/`) deploys as a normal static Vite app on its own
-Vercel project (or any static host). Set its `VITE_API_BASE_URL` env var
-to the deployed server's URL plus `/api` (see `client/.env.example`) —
-without it, the client calls a relative `/api` path that only resolves
-correctly in local dev, where Vite's proxy handles it.
+- **UI**: `/diagnostic/` on the site, linked from the staff home page. It is
+  the client app built into `risers-journey/diagnostic/` and committed as it
+  is (the site has no build step). After changing anything in `client/`, run
+  `npm run build:client` here and commit `diagnostic/` with your change.
+- **Server**: `/api/diagnostic/...`, one Vercel function
+  (`risers-journey/api/diagnostic.ts`, routed by the root `vercel.json`)
+  that runs `server/src/app.ts`. Its packages are in the root `package.json`.
+- **Database**: Turso. The risers-journey Vercel project needs
+  `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` set (Production and Preview).
+  To make a database: create a free account at turso.tech, then
+  `turso db create lifehub-diagnostic`, `turso db show --url
+  lifehub-diagnostic` and `turso db tokens create lifehub-diagnostic`.
 
 ## How the design doc maps to this codebase
 

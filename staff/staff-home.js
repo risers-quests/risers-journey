@@ -44,7 +44,8 @@
     app.appendChild(el('div', 'hd-tiles', window.LH_tiles([
       { title: 'Term 3', desc: 'Quests, weekly check-ins and assessments.', href: 'term-3/index.html', icon: 'skills', tone: 'amber' },
       { title: 'Term 2', desc: 'The Term 2 conference and quests.', href: 'term-2/index.html', icon: 'term', tone: 'slate' },
-      { title: 'Term 1', desc: 'The Term 1 conference.', href: 'term-1/index.html', icon: 'conf', tone: 'violet' }
+      { title: 'Term 1', desc: 'The Term 1 conference.', href: 'term-1/index.html', icon: 'conf', tone: 'violet' },
+      { title: 'Maths Diagnostic', desc: 'Grade 5 maths gaps and the SEMA maths-anxiety check.', href: '../diagnostic/', icon: 'check', tone: 'green' }
     ])));
   }
 
