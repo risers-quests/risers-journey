@@ -285,12 +285,17 @@ item in every topic was rewritten against two rules:
 - **Geometry/Patterns/Data Handling lean on lighter representations** than
   the original two fraction topics — see *The item bank's four
   representation kinds* above.
-- **The default 40-question session cap** (`maxQuestions` in `state.ts`)
-  was sized for a 2-topic pilot; across all 15 topics a child who clears
-  everything on the first try reaches roughly topic 6–7 before the cap,
-  same as any single diagnostic sitting wouldn't cover a full year's
-  material in one go — not a bug, but worth knowing when reading a report
-  with several "Not yet reached" topics.
+- **Covering the whole book in one test.** The cap (`maxQuestions` in
+  `state.ts`) is 200, a safety stop rather than a target: in simulations,
+  covering all 15 topics took 92 questions for a child who gets everything
+  right and 100–140 for one who gets 80–95% right, and the test ends by
+  itself once every topic is decided. A full session's record is about
+  0.45 KB per question (~70 KB at 150), well within the store's 200 KB per
+  record. Because it can take an hour or more, a child can **take a break**
+  at any question and carry on later: the start page lists unfinished
+  tests on that device, and the break screen shows a 12-character code to
+  continue on another device (`GET /sessions/:id/status`). The child sees
+  "Topic 4 of 15", not a question count.
 
 ## Project layout
 

@@ -14,9 +14,11 @@ import { PulseCheck } from "../components/PulseCheck";
 export function Assessment({
   sessionId,
   onSkillAssessmentDone,
+  onBreak,
 }: {
   sessionId: string;
   onSkillAssessmentDone: () => void;
+  onBreak: () => void;
 }) {
   const [question, setQuestion] = useState<NextQuestionResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -91,11 +93,18 @@ export function Assessment({
       <div className="card">
         <div className="top-bar">
           <span className="question-counter">
-            Question {question.questionNumber} of ~{question.maxQuestions}
+            {question.topicNumber
+              ? `Topic ${question.topicNumber} of ${question.topicCount} · question ${question.questionNumber}`
+              : `Warm-up · question ${question.questionNumber}`}
           </span>
-          <button className="btn btn-ghost" onClick={() => setShowPanel((v) => !v)}>
-            {showPanel ? "Hide" : "Show"} engine internals
-          </button>
+          <span className="top-actions">
+            <button className="btn btn-secondary" onClick={onBreak}>
+              Take a break
+            </button>
+            <button className="btn btn-ghost" onClick={() => setShowPanel((v) => !v)}>
+              {showPanel ? "Hide" : "Show"} engine internals
+            </button>
+          </span>
         </div>
 
         <div className="breadcrumb">{question.breadcrumb}</div>

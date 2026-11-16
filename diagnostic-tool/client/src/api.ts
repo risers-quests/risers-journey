@@ -1,4 +1,4 @@
-import { AnswerResponse, AnxietyQuestion, NextQuestionResponse, ReportData } from "./types";
+import { AnswerResponse, AnxietyQuestion, NextQuestionResponse, ReportData, SessionStatus } from "./types";
 
 // The UI is served by the Risers Journey site at /diagnostic/ and talks to
 // the server function at /api/diagnostic on the same site (api/diagnostic.ts
@@ -67,4 +67,11 @@ export async function submitAnxietyAnswers(
     body: JSON.stringify({ responses }),
   });
   await asJson<{ ok: boolean }>(res);
+}
+
+// Where a session is up to (for continuing it). Null if there's no such session.
+export async function getSessionStatus(sessionId: string): Promise<SessionStatus | null> {
+  const res = await fetch(`${BASE}/sessions/${encodeURIComponent(sessionId)}/status`);
+  if (res.status === 404) return null;
+  return asJson<SessionStatus>(res);
 }

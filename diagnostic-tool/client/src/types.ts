@@ -85,6 +85,8 @@ export interface NextQuestionResponse {
   seq?: number;
   questionNumber?: number;
   maxQuestions?: number;
+  topicNumber?: number;
+  topicCount?: number;
   isProceduralCheck?: boolean;
   breadcrumb?: string;
   topicName?: string;
@@ -145,4 +147,14 @@ export interface ReportData {
   topics: TopicDiagnosis[];
   mathAnxiety: MathAnxietyResult;
   glossary: { tag: string; label: string; description: string }[];
+}
+
+export interface SessionStatus {
+  sessionId: string;
+  childName: string;
+  phase: "warmup" | "assessment" | "anxiety_questionnaire" | "completed";
+  questionsAnswered: number;
+  topicNumber: number;
+  topicCount: number;
+  startedAt: string;
 }

@@ -485,3 +485,20 @@ table.topic-table td { padding: 12px 10px; border-bottom: 1px solid var(--line);
 
 a { color: var(--deep-teal); }
 :focus-visible { outline: 2px solid var(--brand-green); outline-offset: 2px; }
+
+/* ---- Pause and continue ---- */
+.resume-btn { display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; text-align: left; }
+.resume-btn + .resume-btn { margin-top: 8px; }
+.break-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 1.5rem; font-weight: 700; letter-spacing: 0.08em;
+  color: var(--ink); background: var(--warm-off-white);
+  border: 1px dashed var(--line); border-radius: 10px;
+  padding: 12px 14px; text-align: center; user-select: all;
+}
+.top-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.top-bar { gap: 8px; flex-wrap: wrap; }
+@media (max-width: 520px) {
+  .top-actions .btn { padding: 6px 12px; font-size: 0.85rem; }
+  .top-actions .btn-ghost { display: none; }
+}

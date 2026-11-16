@@ -26,6 +26,27 @@ router.post("/sessions", async (req, res) => {
   res.json({ sessionId: id });
 });
 
+// Where a session is up to, for continuing it later (on the same device or
+// another one, with its code).
+router.get("/sessions/:id/status", async (req, res) => {
+  try {
+    const row = await getSessionRow(req.params.id);
+    const state = JSON.parse(row.state);
+    res.json({
+      sessionId: row.id,
+      childName: row.child_name,
+      phase: state.phase,
+      questionsAnswered: state.totalQuestions,
+      // Topics reached so far (started or decided).
+      topicNumber: state.phase === "warmup" ? 0 : state.topicOrder.filter((id: string) => state.topics[id].status !== "locked").length,
+      topicCount: state.topicOrder.length,
+      startedAt: row.created_at,
+    });
+  } catch {
+    res.status(404).json({ error: "session not found" });
+  }
+});
+
 router.get("/sessions/:id/next-question", async (req, res) => {
   const sessionId = req.params.id;
   let state;
@@ -72,6 +93,9 @@ router.get("/sessions/:id/next-question", async (req, res) => {
     // warm-up, since that counter only advances once real scoring starts.
     questionNumber: pq.seq,
     maxQuestions: state.maxQuestions,
+    // Progress through the book, for the child: "Topic 4 of 15".
+    topicNumber: state.phase === "warmup" ? 0 : state.topicOrder.indexOf(pq.topicId) + 1,
+    topicCount: state.topicOrder.length,
     isProceduralCheck: pq.isProceduralCheck,
     breadcrumb: buildBreadcrumb(topicIdForView, state),
     topicName: topicIdForView ? getTopic(topicIdForView).name : "Warm-up",
