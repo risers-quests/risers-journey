@@ -235,7 +235,19 @@ misconception (listed in the staff email), right + unsure is fragile
 skill engine itself still moves on correctness alone. Anxiety stays the
 separate 8-question self-report at the end.
 
-## Generated questions (Fractions and Division so far)
+## Generated questions (Fractions and Division, More on Large Numbers so far)
+
+**Words children see.** CPA and Bloom's levels (concrete, pictorial,
+abstract, remember … evaluate) are how the engine judges and how staff
+read the reports; children never see them. The question screen shows only
+the topic and question number (engine details only with `?debug` in the
+address); the child's email is written for the child and their parents,
+with a "try this at home" idea per topic.
+
+**Concrete = hands-on.** Concrete questions are activities the child does
+on screen (cut and share rotis; build numbers on a place-value chart with
+exchanging). Where the activity is the answer, it's marked from what they
+did, so the mistake shows in their actions.
 
 Instead of one fixed question per CPA × Bloom cell, a topic can have a
 **template** per cell (`server/src/itemBank/generate/`). Each time, it picks

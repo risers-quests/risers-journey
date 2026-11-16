@@ -50,7 +50,7 @@ export function childEmail(ins: Insights): { subject: string; html: string } {
   const total = sure + ins.overall.unsureRight + ins.overall.unsureWrong;
   let body = section(
     `<div style="font-size:24px;font-weight:700;margin-bottom:4px;">Hi ${esc(ins.childName)}! 🎉</div>
-     <div style="font-size:15px;color:${C.soft};">Here's what your maths check on ${esc(ins.date)} showed.</div>`,
+     <div style="font-size:15px;color:${C.soft};">Here's what your maths check at LifeHub on ${esc(ins.date)} showed. Read it with your family!</div>`,
     "22px 24px 8px"
   );
   if (by("secure").length) body += section(h2("⭐ You've got these") + by("secure").map((t) => chip(t.name, "secure")).join(""));
@@ -59,6 +59,11 @@ export function childEmail(ins: Insights): { subject: string; html: string } {
     body += section(
       h2(`🚀 Next we'll learn: ${esc(ins.nextForChild.topic)}`) +
         `<div style="background:#fffaf0;border:1px solid #f0dfbf;border-radius:10px;padding:12px 14px;font-size:15px;line-height:1.5;">💡 ${esc(ins.nextForChild.tip)}</div>`
+    );
+    body += section(
+      h2("🏠 For parents: try this at home") +
+        `<div style="font-size:15px;line-height:1.5;">${esc(ins.nextForChild.atHome)}</div>
+         <div style="font-size:13px;color:${C.soft};margin-top:6px;">Ten minutes, a few times a week, helps more than one long session.</div>`
     );
   }
   if (sure > 0) {

@@ -12,7 +12,7 @@ import { EngineTrace } from "../components/EngineTrace";
 import { PulseCheck } from "../components/PulseCheck";
 import { Sharing } from "../components/Sharing";
 import { ShareActivity } from "../components/ShareActivity";
-import { ShareInteraction } from "../types";
+import { PlaceValueActivity, PlaceValueChart } from "../components/PlaceValue";
 
 export function Assessment({
   sessionId,
@@ -31,7 +31,9 @@ export function Assessment({
   const [selectedChoiceId, setSelectedChoiceId] = useState<string | null>(null);
   const [answerChanges, setAnswerChanges] = useState(0);
   const [pulse, setPulse] = useState<string | null>(null);
-  const [interaction, setInteraction] = useState<ShareInteraction | null>(null);
+  // What the child did in a hands-on activity, and whether they've done anything yet.
+  const [interaction, setInteraction] = useState<unknown>(null);
+  const [acted, setActed] = useState(false);
   const questionShownAt = useRef<number>(0);
   const firstInteractionAt = useRef<number | null>(null);
 
@@ -49,6 +51,7 @@ export function Assessment({
     setAnswerChanges(0);
     setPulse(null);
     setInteraction(null);
+    setActed(false);
     firstInteractionAt.current = null;
     questionShownAt.current = performance.now();
     setLoading(false);
@@ -76,7 +79,7 @@ export function Assessment({
     setLoading(true);
     await submitAnswer(sessionId, {
       choiceId: selectedChoiceId ?? "activity",
-      interaction: interaction ?? undefined,
+      interaction: (interaction ?? undefined) as never,
       hesitationBeforeStartMs: Math.max(0, hesitationBeforeStartMs),
       solvingDurationMs: Math.max(0, solvingDurationMs),
       answerChanges,
@@ -92,8 +95,11 @@ export function Assessment({
 
   const item = question.item;
   const byActivity = item.answerBy === "activity";
-  // Something has been done in the activity (a piece given out).
-  const acted = !!interaction && interaction.plates.some((n) => n > 0);
+  const onActivity = (it: unknown, did: boolean) => {
+    if (did && firstInteractionAt.current === null) firstInteractionAt.current = performance.now();
+    setInteraction(it);
+    setActed(did);
+  };
 
   return (
     <div className="assess-grid">
@@ -105,9 +111,12 @@ export function Assessment({
               : `Warm-up · question ${question.questionNumber}`}
           </span>
           <span className="top-actions">
-            <button className="btn btn-ghost" onClick={() => setShowPanel((v) => !v)}>
-              {showPanel ? "Hide" : "Show"} engine internals
-            </button>
+            {/* Staff only: add ?debug to the address to see how the engine is reasoning. */}
+            {new URLSearchParams(location.search).has("debug") && (
+              <button className="btn btn-ghost" onClick={() => setShowPanel((v) => !v)}>
+                {showPanel ? "Hide" : "Show"} engine internals
+              </button>
+            )}
           </span>
         </div>
 
@@ -133,24 +142,17 @@ export function Assessment({
         {item.representation?.kind === "bar-model" && <BarModel spec={item.representation} />}
         {item.representation?.kind === "concrete" && <ConcreteObjects spec={item.representation} />}
         {item.representation?.kind === "sharing" && <Sharing spec={item.representation} />}
+        {item.representation?.kind === "place-value-chart" && <PlaceValueChart spec={item.representation} />}
         {item.representation?.kind === "number-line" && <NumberLine spec={item.representation} />}
         {item.representation?.kind === "grid" && <Grid spec={item.representation} />}
         {item.representation?.kind === "shape" && <Shape spec={item.representation} />}
 
-        {item.activity?.kind === "share" && (
-          <ShareActivity
-            key={item.id}
-            spec={item.activity}
-            onChange={(it) => {
-              if (firstInteractionAt.current === null && it.plates.some((n) => n > 0)) firstInteractionAt.current = performance.now();
-              setInteraction(it);
-            }}
-          />
-        )}
+        {item.activity?.kind === "share" && <ShareActivity key={item.id} spec={item.activity} onChange={onActivity} />}
+        {item.activity?.kind === "place-value" && <PlaceValueActivity key={item.id} spec={item.activity} onChange={onActivity} />}
 
         {!byActivity && (
           <div className={`choices ${item.activity && !acted ? "choices-locked" : ""}`}>
-            {item.activity && !acted && <div className="choices-hint">Share them out first, then choose.</div>}
+            {item.activity && !acted && <div className="choices-hint">{item.activity.kind === "share" ? "Share them out first, then choose." : "Try it on the chart first, then choose."}</div>}
             {item.choices.map((choice) => (
               <button
                 key={choice.id}

@@ -56,10 +56,29 @@ export interface Insights {
   overall: Confidence;
   /** Staff: at most three things to do next, most important first. */
   actions: { topic: string; what: string; how: string }[];
-  /** Child: the topic to learn next, and one tip in kid language. */
-  nextForChild: { topic: string; tip: string } | null;
+  /** Child: the topic to learn next, one tip in kid language, and an everyday idea for parents. */
+  nextForChild: { topic: string; tip: string; atHome: string } | null;
   anxiety: ReportData["mathAnxiety"];
 }
+
+/** Everyday things a parent can do at home, per topic (plain words, no school jargon). */
+const AT_HOME: Record<string, string> = {
+  "more-large-numbers": "Read big numbers aloud together: prices in an advert, a car's cost, a city's population. Ask which is bigger, and by how much.",
+  "operations-large-numbers": "Add up a shopping bill together before the cashier does, then check who was right.",
+  "factors-multiples": "Arrange biscuits or coins into equal rows. How many different ways can 24 be laid out?",
+  "fractions-division": "Share rotis, a pizza or a cake at dinner: if 3 rotis are shared by 4 people, how much does each get? Let them do the cutting.",
+  "four-operations-fractions": "Cook with measuring cups: half a cup and a quarter cup together make how much?",
+  "decimals": "Read prices with paise or a ruler's centimetres and millimetres together; compare 2.5 and 2.35.",
+  "geometry": "Spot right angles and triangles around the house; fold paper to make angles.",
+  "measurement": "Weigh and measure together in the kitchen: grams on a packet, millilitres in a bottle.",
+  "perimeter-area": "Measure a room or table with steps or a tape: how far around it, and how many tiles would cover it?",
+  "volume-nets": "Unfold an empty box to see its flat shape, then build boxes from small blocks.",
+  "time-temperature": "Plan the day with the clock: if we leave at 4:15 and it takes 50 minutes, when do we arrive?",
+  "life-mathematics": "Look at discounts in shops: what does 20% off a ₹500 shirt really cost?",
+  "scales-directions": "Use a map or a phone map together: which way is north, and how far is it really?",
+  "data-handling": "Keep a tally for a week (weather, steps, screen time) and draw a bar chart together.",
+  "patterns-symmetry": "Look for patterns in rangoli, tiles or fabric; draw half a picture and let them mirror it.",
+};
 
 const STAGE_WORDS: Record<CPAStage, string> = {
   concrete: "real objects (cutting, sharing, counting)",
@@ -181,7 +200,7 @@ export function buildInsights(state: SessionState, responses: ResponseRecord[], 
     topics,
     overall,
     actions: actions.slice(0, 3),
-    nextForChild: first ? { topic: first.name, tip: tip ?? "We'll practise this together, step by step." } : null,
+    nextForChild: first ? { topic: first.name, tip: tip ?? "We'll practise this together, step by step.", atHome: AT_HOME[first.topicId] ?? "Talk about where this maths shows up in everyday life." } : null,
     anxiety: report.mathAnxiety,
   };
 }

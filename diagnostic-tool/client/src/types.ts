@@ -26,6 +26,8 @@ export interface NumberLineSpec {
   max: number;
   step: number;
   markers: { value: number; label: string }[];
+  /** Label only every nth tick (ends always labelled). */
+  labelEvery?: number;
   highlightRange?: [number, number];
 }
 
@@ -74,7 +76,23 @@ export interface ShareActivity {
   personOne: string;
   peopleLabel: string;
 }
-export type Activity = ShareActivity;
+export type Activity = ShareActivity | PlaceValueActivity;
+
+/** Hands-on place-value chart: tap + / − to put discs in columns; exchange 10 for 1 next door. */
+export interface PlaceValueActivity {
+  kind: "place-value";
+  /** "build": make target from nothing; "regroup": rearrange the starting discs into 9-or-fewer per column, same number; "change": change the starting number into target. */
+  mode: "build" | "regroup" | "change";
+  /** Place value of each column, largest first (e.g. 100000 … 1). */
+  columns: number[];
+  start: number[];
+  target: number;
+}
+
+/** What the child did on a place-value chart: discs per column. */
+export interface PlaceValueInteraction {
+  counts: number[];
+}
 
 /** What the child did in a share activity. */
 export interface ShareInteraction {
@@ -85,7 +103,13 @@ export interface ShareInteraction {
   leftover: number;
 }
 
-export type Representation = BarModelSpec | ConcreteSpec | SharingSpec | NumberLineSpec | GridSpec | ShapeSpec | null;
+export interface PlaceValueChartSpec {
+  /** Pictorial: discs drawn in labelled place-value columns (values only in the column headers). */
+  kind: "place-value-chart";
+  columns: { label: string; count: number }[];
+}
+
+export type Representation = BarModelSpec | ConcreteSpec | SharingSpec | PlaceValueChartSpec | NumberLineSpec | GridSpec | ShapeSpec | null;
 
 export interface ClientChoice {
   id: string;

@@ -1,16 +1,22 @@
 import { BloomLevel, CPAStage, Item } from "../../types.js";
 import { GeneratedItem, Rng, Template } from "./core.js";
 import { FRACTIONS_DIVISION_TEMPLATES, MISCONCEPTIONS as FD_MISCONCEPTIONS } from "./fractionsDivision.js";
+import { MORE_ON_LARGE_NUMBERS_TEMPLATES, MISCONCEPTIONS as LN_MISCONCEPTIONS } from "./moreOnLargeNumbers.js";
 
 export type { GeneratedItem } from "./core.js";
 
 /** Topics whose questions are generated, keyed "cpa|bloom". Others still use the hand-written bank. */
 const TEMPLATES: Record<string, Record<string, Template>> = {
   "fractions-division": FRACTIONS_DIVISION_TEMPLATES,
+  "more-large-numbers": MORE_ON_LARGE_NUMBERS_TEMPLATES,
 };
+
+/** Topics with generated questions. */
+export const GENERATED_TOPICS = Object.keys(TEMPLATES);
 
 export const MISCONCEPTIONS: Record<string, { label: string; detail: string; childTip: string }> = {
   ...FD_MISCONCEPTIONS,
+  ...LN_MISCONCEPTIONS,
 };
 
 export function hasTemplate(topicId: string, cpa: CPAStage, bloom: BloomLevel): boolean {

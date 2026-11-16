@@ -60,7 +60,7 @@ function Stepper({ label, value, min, max, onChange }: { label: string; value: n
  * plate's "−" to take one back). In "build" mode they first choose how
  * many things and people to use. Reports what they did after every change.
  */
-export function ShareActivity({ spec, onChange }: { spec: Spec; onChange: (it: ShareInteraction) => void }) {
+export function ShareActivity({ spec, onChange }: { spec: Spec; onChange: (it: ShareInteraction, acted: boolean) => void }) {
   const build = spec.mode === "build";
   const [wholes, setWholes] = useState(build ? 1 : spec.wholes);
   const [people, setPeople] = useState(build ? 2 : spec.people);
@@ -79,7 +79,7 @@ export function ShareActivity({ spec, onChange }: { spec: Spec; onChange: (it: S
     setPlates(Array(p).fill(0));
   }
   useEffect(() => {
-    onChange({ wholes, people, slices, plates, leftover });
+    onChange({ wholes, people, slices, plates, leftover }, plates.some((n) => n > 0));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wholes, people, slices, plates]);
 

@@ -1,7 +1,7 @@
 import { NumberLineSpec } from "../types";
 
 export function NumberLine({ spec }: { spec: NumberLineSpec }) {
-  const { min, max, step, markers, highlightRange } = spec;
+  const { min, max, step, markers, highlightRange, labelEvery = 1 } = spec;
   const span = max - min;
   const pct = (v: number) => ((v - min) / span) * 100;
 
@@ -20,10 +20,11 @@ export function NumberLine({ spec }: { spec: NumberLineSpec }) {
           />
         )}
         <div className="nl-baseline" />
-        {ticks.map((t) => (
+        {ticks.map((t, i) => (
           <div key={t} className="nl-tick" style={{ left: `${pct(t)}%` }}>
             <div className="nl-tick-mark" />
-            <div className="nl-tick-label">{t.toLocaleString()}</div>
+            {/* One fixed number format (240,000), whatever the device's region. */}
+            {(i % labelEvery === 0 || i === ticks.length - 1) && <div className="nl-tick-label">{t.toLocaleString("en-US")}</div>}
           </div>
         ))}
         {markers.map((m, i) => (

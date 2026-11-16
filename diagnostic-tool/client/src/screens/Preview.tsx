@@ -7,6 +7,7 @@ import { Grid } from "../components/Grid";
 import { Shape } from "../components/Shape";
 import { Activity, Representation } from "../types";
 import { ShareActivity } from "../components/ShareActivity";
+import { PlaceValueActivity, PlaceValueChart } from "../components/PlaceValue";
 
 interface PreviewItem {
   id: string;
@@ -27,12 +28,17 @@ const BASE = import.meta.env.VITE_API_BASE_URL ?? "/api/diagnostic";
 export function Preview() {
   const [data, setData] = useState<{ topic: string; items: PreviewItem[] } | null>(null);
   useEffect(() => {
-    fetch(`${BASE}/preview/fractions-division`).then((r) => r.json()).then(setData);
+    // ?preview=<topic id>, e.g. ?preview=more-large-numbers (default: fractions-division)
+    const topic = new URLSearchParams(location.search).get("preview") || "fractions-division";
+    fetch(`${BASE}/preview/${topic}`).then((r) => r.json()).then(setData);
   }, []);
   if (!data) return <div>Loading…</div>;
   return (
     <div className="preview">
       <h1>Question preview: {data.topic}</h1>
+      <p className="lede">
+        Topics: <a href="?preview=more-large-numbers">More on Large Numbers</a> · <a href="?preview=fractions-division">Fractions and Division</a>
+      </p>
       <p className="lede">One fresh question per level. Reload the page for new numbers and contexts. ✓ marks the right answer; each wrong option shows the mistake it stands for.</p>
       {data.items.map((it) => (
         <div className="card preview-item" key={it.id}>
@@ -45,7 +51,9 @@ export function Preview() {
           {it.representation?.kind === "grid" && <Grid spec={it.representation} />}
           {it.representation?.kind === "shape" && <Shape spec={it.representation} />}
           {it.activity?.kind === "share" && <ShareActivity spec={it.activity} onChange={() => undefined} />}
-          {it.answerBy === "activity" && <p className="preview-note">Answered by doing the activity: marked from what the child does (cut the leftovers? equal plates? the right fraction?).</p>}
+          {it.activity?.kind === "place-value" && <PlaceValueActivity spec={it.activity} onChange={() => undefined} />}
+          {it.representation?.kind === "place-value-chart" && <PlaceValueChart spec={it.representation} />}
+          {it.answerBy === "activity" && <p className="preview-note">Answered by doing the activity: marked from what the child actually does, not by choosing an option.</p>}
           <ul className="preview-choices">
             {it.choices.map((c) => (
               <li key={c.id} className={c.id === it.correctChoiceId ? "right" : ""}>
