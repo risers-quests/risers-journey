@@ -11,6 +11,8 @@ import { SessionMap } from "../components/SessionMap";
 import { EngineTrace } from "../components/EngineTrace";
 import { PulseCheck } from "../components/PulseCheck";
 import { Sharing } from "../components/Sharing";
+import { ShareActivity } from "../components/ShareActivity";
+import { ShareInteraction } from "../types";
 
 export function Assessment({
   sessionId,
@@ -29,6 +31,7 @@ export function Assessment({
   const [selectedChoiceId, setSelectedChoiceId] = useState<string | null>(null);
   const [answerChanges, setAnswerChanges] = useState(0);
   const [pulse, setPulse] = useState<string | null>(null);
+  const [interaction, setInteraction] = useState<ShareInteraction | null>(null);
   const questionShownAt = useRef<number>(0);
   const firstInteractionAt = useRef<number | null>(null);
 
@@ -45,6 +48,7 @@ export function Assessment({
     setSelectedChoiceId(null);
     setAnswerChanges(0);
     setPulse(null);
+    setInteraction(null);
     firstInteractionAt.current = null;
     questionShownAt.current = performance.now();
     setLoading(false);
@@ -65,13 +69,14 @@ export function Assessment({
   }
 
   async function handleContinue() {
-    if (!selectedChoiceId) return;
+    if (!selectedChoiceId && !byActivity) return;
     const now = performance.now();
     const hesitationBeforeStartMs = (firstInteractionAt.current ?? now) - questionShownAt.current;
     const solvingDurationMs = now - (firstInteractionAt.current ?? now);
     setLoading(true);
     await submitAnswer(sessionId, {
-      choiceId: selectedChoiceId,
+      choiceId: selectedChoiceId ?? "activity",
+      interaction: interaction ?? undefined,
       hesitationBeforeStartMs: Math.max(0, hesitationBeforeStartMs),
       solvingDurationMs: Math.max(0, solvingDurationMs),
       answerChanges,
@@ -86,6 +91,9 @@ export function Assessment({
   if (!question || !question.item) return null;
 
   const item = question.item;
+  const byActivity = item.answerBy === "activity";
+  // Something has been done in the activity (a piece given out).
+  const acted = !!interaction && interaction.plates.some((n) => n > 0);
 
   return (
     <div className="assess-grid">
@@ -129,21 +137,36 @@ export function Assessment({
         {item.representation?.kind === "grid" && <Grid spec={item.representation} />}
         {item.representation?.kind === "shape" && <Shape spec={item.representation} />}
 
-        <div className="choices">
-          {item.choices.map((choice) => (
-            <button
-              key={choice.id}
-              className={`choice-btn ${selectedChoiceId === choice.id ? "selected" : ""}`}
-              onClick={() => handleChoiceClick(choice.id)}
-            >
-              {choice.text}
-            </button>
-          ))}
-        </div>
+        {item.activity?.kind === "share" && (
+          <ShareActivity
+            key={item.id}
+            spec={item.activity}
+            onChange={(it) => {
+              if (firstInteractionAt.current === null && it.plates.some((n) => n > 0)) firstInteractionAt.current = performance.now();
+              setInteraction(it);
+            }}
+          />
+        )}
+
+        {!byActivity && (
+          <div className={`choices ${item.activity && !acted ? "choices-locked" : ""}`}>
+            {item.activity && !acted && <div className="choices-hint">Share them out first, then choose.</div>}
+            {item.choices.map((choice) => (
+              <button
+                key={choice.id}
+                className={`choice-btn ${selectedChoiceId === choice.id ? "selected" : ""}`}
+                onClick={() => handleChoiceClick(choice.id)}
+                disabled={!!item.activity && !acted}
+              >
+                {choice.text}
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="footer-row">
           <PulseCheck value={pulse} onChange={setPulse} />
-          <button className="btn btn-primary" disabled={!selectedChoiceId || !pulse || loading} onClick={handleContinue}>
+          <button className="btn btn-primary" disabled={(byActivity ? !acted : !selectedChoiceId) || !pulse || loading} onClick={handleContinue}>
             Continue &rarr;
           </button>
         </div>

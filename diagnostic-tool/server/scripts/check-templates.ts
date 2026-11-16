@@ -5,6 +5,7 @@
  */
 import { generateItem, hasTemplate, MISCONCEPTIONS } from "../src/itemBank/generate/index.js";
 import { BLOOM_ORDER, CPA_ORDER } from "../src/types.js";
+import { checkActivity } from "../src/itemBank/generate/activities.js";
 
 const N = Number(process.env.N || 20000);
 const topics = ["fractions-division"];
@@ -26,6 +27,31 @@ for (const topic of topics) for (const cpa of CPA_ORDER) for (const bloom of BLO
     const { a, b } = it.params;
     const where = `${cpa}/${bloom} a=${a} b=${b}`;
     seen.add(`${a}/${b}`);
+    // Hands-on activities answered by doing: check the marking instead of options.
+    if (it.answerBy === "activity") {
+      const act = it.activity!;
+      if (act.kind !== "share") { fail(`${where}: unknown activity`); continue; }
+      const slices = act.wholes % act.people === 0 ? 1 : act.people;
+      const per = (act.wholes * slices) / act.people;
+      const good = { wholes: act.wholes, people: act.people, slices, plates: Array(act.people).fill(per), leftover: 0 };
+      if (!checkActivity(act, good).correct) fail(`${where}: a perfect sharing was marked wrong`);
+      if (act.mode === "share") {
+        const n = Math.floor(act.wholes / act.people);
+        if (act.wholes % act.people) {
+          const r = checkActivity(act, { ...good, slices: 1, plates: Array(act.people).fill(n), leftover: act.wholes - n * act.people });
+          if (r.correct || r.misconception !== "fd-whole-part-only") fail(`${where}: leftover pieces not caught`);
+        }
+        const uneven = [...good.plates]; uneven[0] += 1; uneven[1] -= 1;
+        if (checkActivity(act, { ...good, plates: uneven }).misconception !== "fd-unequal-shares") fail(`${where}: unequal sharing not caught`);
+      } else {
+        const r = checkActivity(act, { wholes: act.people, people: act.wholes, slices: act.wholes, plates: Array(act.wholes).fill(act.people), leftover: 0 });
+        if (r.correct || r.misconception !== "fd-flips") fail(`${where}: upside-down build not caught as flipping`);
+        const twice = { wholes: act.wholes * 2, people: act.people * 2, slices: act.people * 2, plates: Array(act.people * 2).fill(act.wholes * 2), leftover: 0 };
+        if (!checkActivity(act, twice).correct) fail(`${where}: an equivalent build (${twice.wholes}/${twice.people}) was marked wrong`);
+      }
+      seen.add(`${a}/${b}`);
+      continue;
+    }
     if (it.choices.length !== 4) fail(`${where}: ${it.choices.length} choices`);
     if (new Set(it.choices.map((c) => c.text)).size !== 4) fail(`${where}: duplicate options`);
     if (!it.choices.some((c) => c.id === it.correctChoiceId)) fail(`${where}: no right answer`);
@@ -36,10 +62,13 @@ for (const topic of topics) for (const cpa of CPA_ORDER) for (const bloom of BLO
     if (rep?.kind === "bar-model" && rep.parts !== b) fail(`${where}: bar has ${rep.parts} parts`);
     if (rep?.kind === "bar-model" && (rep.segmentLabels ?? []).some((l) => l)) fail(`${where}: bar prints a label that could give the answer away`);
     if (rep?.kind === "sharing" && (rep.wholes !== a || rep.people !== b)) fail(`${where}: sharing picture shows ${rep.wholes}/${rep.people}`);
-    if (cpa === "concrete" && rep?.kind === "concrete" && a % b !== 0) fail(`${where}: grouping picture can't show a share of ${a}/${b}`);
-    if (cpa === "abstract" && rep) fail(`${where}: abstract question has a picture`);
-    if (cpa !== "abstract" && !rep) fail(`${where}: ${cpa} question has no picture`);
+    if (cpa === "concrete" && !it.activity) fail(`${where}: concrete question without a hands-on activity`);
+    if (cpa === "abstract" && (rep || it.activity)) fail(`${where}: abstract question has a picture or activity`);
+    if (cpa === "pictorial" && !rep) fail(`${where}: pictorial question has no picture`);
     const right = it.choices.find((c) => c.id === it.correctChoiceId)!;
+    // The question must not contain its own answer (in the text or a picture's labels).
+    const shown = [it.prompt, JSON.stringify(it.representation ?? {})].join(" ");
+    if (right.text.length > 2 && shown.includes(right.text)) fail(`${where}: the question shows its own answer "${right.text}"`);
     // The right answer's value, where it states one, must be a ÷ b (or 1/b for "one part of the bar", or the whole share).
     const rv = leadValue(right.text);
     const expected =

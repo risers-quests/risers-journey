@@ -66,5 +66,7 @@ export function sanitizeItemForClient(item: Item) {
     prompt: item.prompt,
     representation: item.representation,
     choices: shuffled.map((c) => ({ id: c.id, text: c.text })),
+    activity: item.activity,
+    answerBy: item.answerBy ?? "choice",
   };
 }

@@ -78,6 +78,11 @@ export function build(
   return { ...base, choices, correctChoiceId: "a", generated: true, params, mistakes };
 }
 
+/** An item answered by doing the activity (no options); the server marks what the child did. */
+export function buildActivity(base: Omit<Item, "choices" | "correctChoiceId">, params: Record<string, number>, activity: NonNullable<Item["activity"]>): GeneratedItem {
+  return { ...base, choices: [], correctChoiceId: "activity", activity, answerBy: "activity", generated: true, params, mistakes: {} };
+}
+
 export function cellKey(topicId: string, cpa: CPAStage, bloom: BloomLevel): string {
   return `${topicId}|${cpa}|${bloom}`;
 }

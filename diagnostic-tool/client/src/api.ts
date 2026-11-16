@@ -1,4 +1,4 @@
-import { AnswerResponse, AnxietyQuestion, NextQuestionResponse, SessionStatus } from "./types";
+import { ShareInteraction, AnswerResponse, AnxietyQuestion, NextQuestionResponse, SessionStatus } from "./types";
 
 // The UI is served by the Risers Journey site at /diagnostic/ and talks to
 // the server function at /api/diagnostic on the same site (api/diagnostic.ts
@@ -35,6 +35,8 @@ export interface AnswerPayload {
   solvingDurationMs: number;
   answerChanges: number;
   pulse: string | null;
+  /** What the child did in a hands-on activity. */
+  interaction?: ShareInteraction;
 }
 
 export async function submitAnswer(sessionId: string, payload: AnswerPayload): Promise<AnswerResponse> {

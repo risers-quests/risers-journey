@@ -80,6 +80,34 @@ export interface SharingSpec {
   peopleLabel: string;
 }
 
+/**
+ * Hands-on activities (the concrete stage, on screen). The child does
+ * something (cuts and shares, builds a number, tiles an area); with
+ * answerBy "activity" what they did *is* the answer and is marked by the
+ * server; otherwise it comes before choosing an option.
+ */
+export interface ShareActivity {
+  kind: "share";
+  /** "share": the things and people are given; "build": the child chooses how many of each to make the fraction wholes/people. */
+  mode: "share" | "build";
+  wholes: number;
+  people: number;
+  itemOne: string;
+  itemMany: string;
+  personOne: string;
+  peopleLabel: string;
+}
+export type Activity = ShareActivity;
+
+/** What the child did in a share activity. */
+export interface ShareInteraction {
+  wholes: number;
+  people: number;
+  slices: number;
+  plates: number[];
+  leftover: number;
+}
+
 export type Representation = BarModelSpec | ConcreteSpec | SharingSpec | NumberLineSpec | GridSpec | ShapeSpec | null;
 
 export interface Choice {
@@ -97,6 +125,10 @@ export interface Item {
   representation: Representation;
   choices: Choice[];
   correctChoiceId: string;
+  /** A hands-on activity (concrete stage). */
+  activity?: Activity;
+  /** "activity": the activity is the answer (no options); otherwise the options are. */
+  answerBy?: "choice" | "activity";
 }
 
 export interface Topic {

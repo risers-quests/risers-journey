@@ -565,3 +565,27 @@ a { color: var(--deep-teal); }
   .pulse-btn { flex: 1; padding: 8px 4px; font-size: 0.85rem; }
   .footer-row .btn-primary { width: 100%; }
 }
+
+/* ---- Hands-on: cut and share ---- */
+.share-activity { background: #fffaf0; border: 1.5px solid #f0dfbf; border-radius: 12px; padding: 14px; margin: 8px 0 18px; }
+.sa-controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; justify-content: center; margin-bottom: 10px; }
+.sa-stepper { display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--ink); }
+.sa-stepper button { width: 38px; height: 38px; border-radius: 10px; border: 1.5px solid var(--line); background: #fff; font-size: 1.3rem; font-weight: 700; color: var(--deep-teal); cursor: pointer; }
+.sa-stepper button:disabled { opacity: 0.35; cursor: default; }
+.sa-stepper b { min-width: 22px; text-align: center; font-size: 1.1rem; }
+.sa-note { font-size: 0.8rem; color: var(--ink-soft); }
+.sa-wholes { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 4px 0 8px; }
+.sa-left { text-align: center; font-size: 0.85rem; font-weight: 600; color: var(--warm-amber); margin-bottom: 10px; }
+.sa-plates { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.sa-plate { position: relative; }
+.sa-plate-tap { width: 100%; min-height: 96px; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px; border-radius: 50% / 38%; border: 2px solid #d9cfbf; background: #fff; cursor: pointer; }
+.sa-plate-tap:disabled { cursor: default; }
+.sa-plate-tap:not(:disabled):active { background: #fdf3df; }
+.sa-plate-name { font-size: 0.75rem; font-weight: 600; color: var(--ink-soft); }
+.sa-plate-pieces { display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; min-height: 22px; }
+.sa-plate-count { font-size: 0.75rem; color: var(--ink-soft); }
+.sa-undo { position: absolute; top: 2px; right: 4px; width: 26px; height: 26px; border-radius: 13px; border: 1px solid var(--line); background: #fff; font-weight: 700; color: var(--soft-clay); cursor: pointer; }
+.choices-locked { opacity: 0.55; }
+.choices-hint { font-size: 0.85rem; font-weight: 600; color: var(--warm-amber); margin-bottom: 4px; }
+.preview-note { font-size: 0.85rem; color: var(--deep-teal); font-weight: 600; }
+.sa-deal { margin-left: 10px; padding: 6px 12px; border-radius: 999px; border: 1.5px solid var(--deep-teal); background: #fff; color: var(--deep-teal); font-weight: 700; font-size: 0.85rem; cursor: pointer; }

@@ -15,6 +15,7 @@ import { sanitizeItemForClient, getItemById, getTopic } from "./itemBank/index.j
 import { STRANDS } from "./itemBank/topics.js";
 import { isGenerated, generateItem, hasTemplate, signature, MISCONCEPTIONS } from "./itemBank/generate/index.js";
 import { BLOOM_ORDER, CPA_ORDER } from "./types.js";
+import { checkActivity } from "./itemBank/generate/activities.js";
 import { buildInsights } from "./engine/insights.js";
 import { childEmail, staffEmail } from "./report/emails.js";
 import { sendReports } from "./report/mail.js";
@@ -178,13 +179,20 @@ router.post("/sessions/:id/answer", async (req, res) => {
   const pq = state.pendingQuestion;
   if (!pq) return res.status(400).json({ error: "no pending question for this session" });
 
-  const { choiceId, hesitationBeforeStartMs, solvingDurationMs, answerChanges, pulse } = req.body ?? {};
+  const { choiceId, hesitationBeforeStartMs, solvingDurationMs, answerChanges, pulse, interaction } = req.body ?? {};
   if (typeof choiceId !== "string") return res.status(400).json({ error: "choiceId is required" });
 
   const item = pq.item ?? getItemById(pq.itemId);
-  const correct = item.correctChoiceId === choiceId;
-  // Generated questions: which mistake the chosen wrong answer stands for.
-  const misconception = !correct && pq.item ? pq.item.mistakes[choiceId] ?? null : null;
+  let correct: boolean;
+  let misconception: string | null;
+  if (item.answerBy === "activity" && item.activity) {
+    // The child's actions are the answer: marked from what they did.
+    ({ correct, misconception } = checkActivity(item.activity, interaction));
+  } else {
+    correct = item.correctChoiceId === choiceId;
+    // Generated questions: which mistake the chosen wrong answer stands for.
+    misconception = !correct && pq.item ? pq.item.mistakes[choiceId] ?? null : null;
+  }
   const signal = readSignal({
     hesitationBeforeStartMs: Number(hesitationBeforeStartMs) || 0,
     solvingDurationMs: Number(solvingDurationMs) || 0,
@@ -210,6 +218,7 @@ router.post("/sessions/:id/answer", async (req, res) => {
     is_procedural_check: pq.isProceduralCheck ? 1 : 0,
     outcome: null,
     misconception,
+    interaction: interaction && typeof interaction === "object" ? interaction : undefined,
   });
 
   let loopOutcome: string = "warmup";

@@ -1,4 +1,4 @@
-import { Rng, Template, build, frac, fracWithMixed, gcd, int, pick } from "./core.js";
+import { Rng, Template, build, buildActivity, frac, fracWithMixed, gcd, int, pick } from "./core.js";
 
 /**
  * Fractions and Division, generated. Every cell tests the same idea the
@@ -100,6 +100,13 @@ const FOODS = [
 const PEOPLE = ["children", "friends", "cousins", "classmates", "players", "neighbours"] as const;
 const NAMES = ["Priya", "Arjun", "Meera", "Kabir", "Ananya", "Rohan", "Zara", "Ishaan", "Diya", "Vihaan", "Sara", "Aditya"] as const;
 
+const ONE: Record<string, string> = { children: "child", friends: "friend", cousins: "cousin", classmates: "classmate", players: "player", neighbours: "neighbour" };
+
+/** The cut-and-share activity: a things among b people (or, to build, the fraction a/b). */
+function share(mode: "share" | "build", a: number, b: number, food: { one: string; many: string }, people: string) {
+  return { kind: "share" as const, mode, wholes: a, people: b, itemOne: food.one, itemMany: food.many, personOne: ONE[people] ?? people, peopleLabel: people };
+}
+
 function ctx(rng: Rng) {
   return { food: pick(rng, FOODS), people: pick(rng, PEOPLE), name: pick(rng, NAMES) };
 }
@@ -122,109 +129,98 @@ function amountOf(n: number, d: number, food: { one: string; many: string }) {
 }
 
 export const FRACTIONS_DIVISION_TEMPLATES: Record<string, Template> = {
-  // ---------------- CONCRETE ----------------
+  // ---------------- CONCRETE: hands-on, cut and share ----------------
+  // The child cuts the things and deals the pieces onto plates. At
+  // remember/understand/evaluate what they do is the answer; at
+  // apply/analyze they share first, then choose.
   "concrete|remember": (rng) => {
     const { food, people } = ctx(rng);
     const b = int(rng, 2, 8);
     const a = b * int(rng, 1, 4);
-    return build(
+    return buildActivity(
       {
         ...base("c-remember", "concrete", "remember", "equal-sharing", a, b, rng),
-        prompt: `Look at the ${a} ${food.many} being shared equally among ${b} ${people}. What does 'shared equally' mean here?`,
-        representation: { kind: "concrete", icon: food.icon, itemCount: a, groups: b, groupLabel: people },
+        prompt: `Share the ${a} ${food.many} equally among the ${b} ${people}. Tap a plate to give it the next one.`,
+        representation: null,
       },
       { a, b },
-      `Each of the ${b} ${people} gets the same amount`,
-      [
-        { text: `The first ${people.slice(0, -1)} to ask gets the most`, mistake: "fd-unequal-shares" },
-        { text: `The oldest gets more ${food.many}`, mistake: "fd-unequal-shares" },
-        { text: "It doesn't matter how they are shared", mistake: "fd-unequal-shares" },
-      ]
+      share("share", a, b, food, people)
     );
   },
 
   "concrete|understand": (rng) => {
     const { food, people } = ctx(rng);
-    const b = int(rng, 2, 8);
-    const k = int(rng, 2, 5);
-    const a = b * k;
-    return build(
+    const { a, b } = nonMultiple(rng, 2, 13, 2, 7);
+    return buildActivity(
       {
         ...base("c-understand", "concrete", "understand", "equal-sharing", a, b, rng),
-        prompt: `${a} ${food.many} are shared equally among ${b} ${people}, shown below. How many ${food.many} does each get?`,
-        representation: { kind: "concrete", icon: food.icon, itemCount: a, groups: b, groupLabel: people },
+        prompt: `Share the ${a} ${food.many} equally among the ${b} ${people}, so nothing is left over. You can cut them into equal pieces first.`,
+        representation: null,
       },
       { a, b },
-      String(k),
-      [
-        { text: String(b), mistake: "fd-names-divisor" },
-        { text: String(a), mistake: "fd-no-sharing" },
-        { text: String(a - b), mistake: "fd-subtracts" },
-        { text: String(a + b), mistake: "fd-adds" },
-        { text: String(k + 1), mistake: null },
-      ]
+      share("share", a, b, food, people)
     );
   },
 
-  "concrete|apply": (rng, given) => {
+  "concrete|apply": (rng) => {
     const { food, people } = ctx(rng);
-    const { a, b } = given ?? nonMultiple(rng, 3, 15, 2, 7);
-    return build(
-      {
-        ...base("c-apply", "concrete", "apply", "fraction-notation", a, b, rng),
-        prompt: `${a} ${food.many} are shared equally among ${b} ${people}. Which expression shows how many ${food.many} each gets?`,
-        representation: { kind: "sharing", wholes: a, people: b, itemName: food.many, peopleLabel: people },
-      },
-      { a, b },
-      `${a} ÷ ${b}`,
-      [
-        { text: `${b} ÷ ${a}`, mistake: "fd-flips" },
-        { text: `${a} × ${b}`, mistake: "fd-multiplies" },
-        { text: `${a} − ${b}`, mistake: "fd-subtracts" },
-        { text: `${a} + ${b}`, mistake: "fd-adds" },
-      ]
-    );
+    const { a, b } = nonMultiple(rng, 3, 15, 2, 7);
+    return {
+      ...build(
+        {
+          ...base("c-apply", "concrete", "apply", "fraction-notation", a, b, rng),
+          prompt: `Share the ${a} ${food.many} equally among the ${b} ${people}. Then: which expression shows how much each gets?`,
+          representation: null,
+        },
+        { a, b },
+        `${a} ÷ ${b}`,
+        [
+          { text: `${b} ÷ ${a}`, mistake: "fd-flips" },
+          { text: `${a} × ${b}`, mistake: "fd-multiplies" },
+          { text: `${a} − ${b}`, mistake: "fd-subtracts" },
+          { text: `${a} + ${b}`, mistake: "fd-adds" },
+        ]
+      ),
+      activity: share("share", a, b, food, people),
+    };
   },
 
-  "concrete|analyze": (rng, given) => {
+  "concrete|analyze": (rng) => {
     const { food, people, name } = ctx(rng);
-    const { a, b } = given && given.a > given.b && given.a % given.b ? given : nonMultiple(rng, 5, 17, 2, 7);
+    const { a, b } = nonMultiple(rng, 5, 17, 2, 7);
     const n = Math.floor(a / b);
     if (n < 1) return FRACTIONS_DIVISION_TEMPLATES["concrete|analyze"](rng);
-    return build(
-      {
-        ...base("c-analyze", "concrete", "analyze", "unit-fraction-reasoning", a, b, rng),
-        prompt: `${a} ${food.many} are shared equally among ${b} ${people}. ${name} says each gets less than ${n + 1} ${food.many}. Is ${name} correct?`,
-        representation: { kind: "sharing", wholes: a, people: b, itemName: food.many, peopleLabel: people },
-      },
-      { a, b },
-      `Yes, because ${a} ÷ ${b} is between ${n} and ${n + 1}`,
-      [
-        { text: `No, because ${a} ÷ ${b} is more than ${n + 1}`, mistake: "fd-size-misjudged" },
-        { text: `No, each gets exactly ${n}, with nothing left over`, mistake: "fd-whole-part-only" },
-        { text: `No, because ${food.many} can't be shared equally like this`, mistake: "fd-irrelevant-reason" },
-      ]
-    );
+    return {
+      ...build(
+        {
+          ...base("c-analyze", "concrete", "analyze", "unit-fraction-reasoning", a, b, rng),
+          prompt: `Share the ${a} ${food.many} equally among the ${b} ${people}. ${name} says each gets less than ${n + 1} ${food.many}. Is ${name} right?`,
+          representation: null,
+        },
+        { a, b },
+        `Yes: each gets ${n} whole and some pieces, which is less than ${n + 1}`,
+        [
+          { text: `No: each gets more than ${n + 1}`, mistake: "fd-size-misjudged" },
+          { text: `No: each gets exactly ${n}, and the rest are left over`, mistake: "fd-whole-part-only" },
+          { text: `No: ${food.many} can't be shared equally like this`, mistake: "fd-irrelevant-reason" },
+        ]
+      ),
+      activity: share("share", a, b, food, people),
+    };
   },
 
-  "concrete|evaluate": (rng, given) => {
+  "concrete|evaluate": (rng) => {
     const { food, people } = ctx(rng);
-    const g = given && given.a < given.b ? given : null;
-    const b = g ? g.b : int(rng, 3, 10);
-    const a = g ? g.a : int(rng, 2, b - 1);
-    return build(
+    const b = int(rng, 3, 10);
+    const a = int(rng, 2, b - 1);
+    return buildActivity(
       {
         ...base("c-evaluate", "concrete", "evaluate", "word-problem-setup", a, b, rng),
-        prompt: `A teacher wants to show the fraction ${frac(a, b)} by sharing real ${food.many}. Which setup best shows it?`,
-        representation: { kind: "sharing", wholes: a, people: b, itemName: food.many, peopleLabel: people },
+        prompt: `Set up a sharing where each of the ${people} gets ${frac(a, b)} of a ${food.one}. Choose how many ${food.many} and how many ${people}, then share them out.`,
+        representation: null,
       },
       { a, b },
-      `${a} ${food.many} shared equally among ${b} ${people}; one share is ${frac(a, b)}`,
-      [
-        { text: `${b} ${food.many} shared equally among ${a} ${people}`, mistake: "fd-flips" },
-        { text: `${a} groups of ${b} ${food.many} each`, mistake: "fd-multiplies" },
-        { text: `${a} ${food.many} and ${b} ${food.many}, added together`, mistake: "fd-adds" },
-      ]
+      share("build", a, b, food, people)
     );
   },
 

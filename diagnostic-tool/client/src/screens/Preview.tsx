@@ -5,7 +5,8 @@ import { Sharing } from "../components/Sharing";
 import { NumberLine } from "../components/NumberLine";
 import { Grid } from "../components/Grid";
 import { Shape } from "../components/Shape";
-import { Representation } from "../types";
+import { Activity, Representation } from "../types";
+import { ShareActivity } from "../components/ShareActivity";
 
 interface PreviewItem {
   id: string;
@@ -15,6 +16,8 @@ interface PreviewItem {
   representation: Representation;
   choices: { id: string; text: string }[];
   correctChoiceId: string;
+  activity?: Activity;
+  answerBy?: string;
   mistakeLabels: Record<string, string | null>;
 }
 
@@ -41,6 +44,8 @@ export function Preview() {
           {it.representation?.kind === "number-line" && <NumberLine spec={it.representation} />}
           {it.representation?.kind === "grid" && <Grid spec={it.representation} />}
           {it.representation?.kind === "shape" && <Shape spec={it.representation} />}
+          {it.activity?.kind === "share" && <ShareActivity spec={it.activity} onChange={() => undefined} />}
+          {it.answerBy === "activity" && <p className="preview-note">Answered by doing the activity: marked from what the child does (cut the leftovers? equal plates? the right fraction?).</p>}
           <ul className="preview-choices">
             {it.choices.map((c) => (
               <li key={c.id} className={c.id === it.correctChoiceId ? "right" : ""}>

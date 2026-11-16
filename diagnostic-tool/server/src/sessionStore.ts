@@ -47,6 +47,8 @@ export interface ResponseRecord {
   outcome: string | null;
   /** Generated questions: the mistake a wrong answer stands for (see itemBank/generate). */
   misconception?: string | null;
+  /** What the child did in a hands-on activity (concrete questions). */
+  interaction?: unknown;
 }
 
 interface StoredSession {
