@@ -99,10 +99,10 @@ export function createInitialState(): SessionState {
     engineTrace: [],
     phase: "warmup",
     warmupRemaining: 2,
-    // A safety stop, not a target: covering a whole book (all 15 topics) took
-    // 92-152 questions in simulations, and the test ends by itself once every
-    // topic is decided. A session can be paused and continued later.
-    maxQuestions: 200,
+    // A safety stop, not a target: covering the whole book (all 15 topics)
+    // took 72-162 questions in simulations, and the test ends by itself once
+    // every topic is decided (or held back by a gap it depends on).
+    maxQuestions: 250,
     pendingQuestion: null,
     anxietyResponses: [],
   };

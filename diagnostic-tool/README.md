@@ -275,27 +275,22 @@ item in every topic was rewritten against two rules:
   norms — see *Two separate instruments* above.
 - **No auth, no multi-session history, no teacher/remediation-system
   integration** — all flagged as unresolved in Section 10.
-- **The prerequisite graph is a single linear chain**, matching the
-  textbook's own chapter order, rather than the "real" dependency graph
-  (e.g. Perimeter and Area doesn't strictly require Time and Temperature
-  first). This makes one weak topic block everything after it in a single
-  sitting — a reasonable tradeoff for a pilot testing "does the engine
-  correctly diagnose one topic," but worth revisiting before this is used
-  to plan a full year's remediation order.
+- **Prerequisites are judged from the questions, not a validated
+  curriculum map** (`itemBank/topics.ts`). A gap holds back only the
+  topics that build on it; six topics have no prerequisite and are always
+  tested. Worth reviewing with a maths teacher before relying on it.
 - **Geometry/Patterns/Data Handling lean on lighter representations** than
   the original two fraction topics — see *The item bank's four
   representation kinds* above.
-- **Covering the whole book in one test.** The cap (`maxQuestions` in
-  `state.ts`) is 200, a safety stop rather than a target: in simulations,
-  covering all 15 topics took 92 questions for a child who gets everything
-  right and 100–140 for one who gets 80–95% right, and the test ends by
-  itself once every topic is decided. A full session's record is about
-  0.45 KB per question (~70 KB at 150), well within the store's 200 KB per
-  record. Because it can take an hour or more, a child can **take a break**
-  at any question and carry on later: the start page lists unfinished
-  tests on that device, and the break screen shows a 12-character code to
-  continue on another device (`GET /sessions/:id/status`). The child sees
-  "Topic 4 of 15", not a question count.
+- **Covering the whole book in one sitting.** The cap (`maxQuestions` in
+  `state.ts`) is 250, a safety stop rather than a target: in simulations a
+  whole-book test took 72–162 questions and ends by itself once every topic
+  is decided or held back by a gap it depends on. A full session's record
+  is about 0.45 KB per question (~115 KB at 250), within the store's 200 KB
+  per record. There is no pause during the test; if it's interrupted (page
+  closed, battery), the start page on that device offers to carry on from
+  the same question (`GET /sessions/:id/status`). The child sees "Topic 4 of
+  15" (topics reached so far), not a question count.
 
 ## Project layout
 

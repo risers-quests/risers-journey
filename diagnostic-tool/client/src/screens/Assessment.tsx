@@ -14,11 +14,9 @@ import { PulseCheck } from "../components/PulseCheck";
 export function Assessment({
   sessionId,
   onSkillAssessmentDone,
-  onBreak,
 }: {
   sessionId: string;
   onSkillAssessmentDone: () => void;
-  onBreak: () => void;
 }) {
   const [question, setQuestion] = useState<NextQuestionResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -98,9 +96,6 @@ export function Assessment({
               : `Warm-up · question ${question.questionNumber}`}
           </span>
           <span className="top-actions">
-            <button className="btn btn-secondary" onClick={onBreak}>
-              Take a break
-            </button>
             <button className="btn btn-ghost" onClick={() => setShowPanel((v) => !v)}>
               {showPanel ? "Hide" : "Show"} engine internals
             </button>

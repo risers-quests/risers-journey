@@ -8,8 +8,6 @@ export function Setup({ onStart }: { onStart: (status: SessionStatus) => void })
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [unfinished, setUnfinished] = useState<SessionStatus[]>([]);
-  const [code, setCode] = useState("");
-  const [codeError, setCodeError] = useState<string | null>(null);
 
   // Tests started on this device that aren't finished yet.
   useEffect(() => {
@@ -43,20 +41,6 @@ export function Setup({ onStart }: { onStart: (status: SessionStatus) => void })
     }
   }
 
-  async function handleCode(e: React.FormEvent) {
-    e.preventDefault();
-    const id = code.trim().toLowerCase();
-    if (!id) return;
-    setCodeError(null);
-    const status = await getSessionStatus(id).catch(() => null);
-    if (!status) {
-      setCodeError("No test with that code. Check it and try again.");
-      return;
-    }
-    rememberTest({ id, childName: status.childName, startedAt: status.startedAt });
-    onStart(status);
-  }
-
   return (
     <div className="setup-wrap">
       <h1>Maths Diagnostic</h1>
@@ -66,13 +50,12 @@ export function Setup({ onStart }: { onStart: (status: SessionStatus) => void })
         separate questionnaire at the end asks how maths feels.
       </p>
       <p className="lede" style={{ marginTop: -8 }}>
-        It can take an hour or more. Stop whenever you need a break: every answer is saved, and the test carries
-        on from the same question.
+        Plan for one sitting of about an hour to an hour and a half, with no breaks during the test.
       </p>
 
       {unfinished.length > 0 && (
         <div className="card setup-form" style={{ marginBottom: 16 }}>
-          <label>Carry on with a test</label>
+          <label>Interrupted? (the page closed, the battery ran out) Carry on from the same question</label>
           {unfinished.map((s) => (
             <button key={s.sessionId} className="btn btn-secondary resume-btn" type="button" onClick={() => onStart(s)}>
               <span>
@@ -112,16 +95,6 @@ export function Setup({ onStart }: { onStart: (status: SessionStatus) => void })
         </button>
       </form>
 
-      <form className="setup-form card" style={{ marginTop: 16 }} onSubmit={handleCode}>
-        <div>
-          <label htmlFor="code">Started on another device? Enter its code</label>
-          <input id="code" value={code} onChange={(e) => setCode(e.target.value)} placeholder="e.g. 3jwmtyaclv3m" autoCapitalize="none" autoCorrect="off" spellCheck={false} />
-        </div>
-        {codeError && <div style={{ color: "var(--soft-clay)", fontSize: "0.85rem" }}>{codeError}</div>}
-        <button className="btn btn-secondary" type="submit" disabled={!code.trim()}>
-          Continue that test
-        </button>
-      </form>
     </div>
   );
 }

@@ -94,7 +94,9 @@ router.get("/sessions/:id/next-question", async (req, res) => {
     questionNumber: pq.seq,
     maxQuestions: state.maxQuestions,
     // Progress through the book, for the child: "Topic 4 of 15".
-    topicNumber: state.phase === "warmup" ? 0 : state.topicOrder.indexOf(pq.topicId) + 1,
+    // Counts topics reached so far (not the book position), so it never
+    // jumps when a topic is held back by a gap.
+    topicNumber: state.phase === "warmup" ? 0 : state.topicOrder.filter((id) => state.topics[id].status !== "locked").length,
     topicCount: state.topicOrder.length,
     isProceduralCheck: pq.isProceduralCheck,
     breadcrumb: buildBreadcrumb(topicIdForView, state),

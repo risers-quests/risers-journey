@@ -1,17 +1,20 @@
 import { Topic } from "../types.js";
 
 /**
- * The full Grade 5 syllabus, in the same order as the textbook's own table
- * of contents — each topic depends on the one directly before it, so the
- * engine only ever unlocks a topic once its immediate predecessor is
- * mastered. This is a deliberate simplification of the "real" prerequisite
- * graph (e.g. Perimeter and Area doesn't strictly require Time and
- * Temperature) in favour of a single linear building-blocks chain that
- * matches how the textbook itself sequences the year — see README.
+ * The full Grade 5 syllabus, in the textbook's own order (the order topics
+ * are tested in). Each topic lists only what it really builds on, judged
+ * from its questions: e.g. Decimals needs Fractions and Division (tenths as
+ * fractions), Volume needs Perimeter and Area (volume = layers of area),
+ * Measurement needs Large Numbers (km -> m is thousands). Topics with no
+ * prerequisite (Geometry, Perimeter and Area, Time and Temperature, Scales
+ * and Directions, Data Handling) are always tested.
  *
- * "Fractions" is split into the two topics the pilot already had fully
- * built out (Fractions and Division, then Four Operations of Fractions),
- * so the chapter count here is 15 topics covering the book's 14 chapters.
+ * So a gap holds back only the topics that depend on it; every other topic
+ * is still assessed in the same sitting. (This replaced a single linear
+ * chain, where one early gap ended the whole test.)
+ *
+ * "Fractions" is split into two topics (Fractions and Division, then Four
+ * Operations of Fractions), so 15 topics cover the book's 14 chapters.
  */
 export const TOPICS: Topic[] = [
   {
@@ -54,28 +57,28 @@ export const TOPICS: Topic[] = [
     strand: "Number & Algebra",
     name: "Decimals",
     shortLabel: "Decimals",
-    dependsOn: ["four-operations-fractions"],
+    dependsOn: ["fractions-division"],
   },
   {
     id: "geometry",
     strand: "Measurement & Geometry",
     name: "Geometry",
     shortLabel: "Geometry",
-    dependsOn: ["decimals"],
+    dependsOn: [],
   },
   {
     id: "measurement",
     strand: "Measurement & Geometry",
     name: "Measurement",
     shortLabel: "Measurement",
-    dependsOn: ["geometry"],
+    dependsOn: ["more-large-numbers"],
   },
   {
     id: "perimeter-area",
     strand: "Measurement & Geometry",
     name: "Perimeter and Area",
     shortLabel: "Perimeter & Area",
-    dependsOn: ["measurement"],
+    dependsOn: [],
   },
   {
     id: "volume-nets",
@@ -89,34 +92,34 @@ export const TOPICS: Topic[] = [
     strand: "Measurement & Geometry",
     name: "Time and Temperature",
     shortLabel: "Time & Temperature",
-    dependsOn: ["volume-nets"],
+    dependsOn: [],
   },
   {
     id: "life-mathematics",
     strand: "Ratio & Proportion",
     name: "Life Mathematics",
     shortLabel: "Life Mathematics",
-    dependsOn: ["time-temperature"],
+    dependsOn: ["fractions-division"],
   },
   {
     id: "scales-directions",
     strand: "Ratio & Proportion",
     name: "Scales and Directions",
     shortLabel: "Scales & Directions",
-    dependsOn: ["life-mathematics"],
+    dependsOn: [],
   },
   {
     id: "data-handling",
     strand: "Data Handling",
     name: "Data Handling",
     shortLabel: "Data Handling",
-    dependsOn: ["scales-directions"],
+    dependsOn: [],
   },
   {
     id: "patterns-symmetry",
     strand: "Measurement & Geometry",
     name: "Patterns and Symmetry",
     shortLabel: "Patterns & Symmetry",
-    dependsOn: ["data-handling"],
+    dependsOn: ["geometry"],
   },
 ];
