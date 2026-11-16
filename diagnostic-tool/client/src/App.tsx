@@ -12,12 +12,16 @@ export function App() {
 
   return (
     <div className="app-shell">
-      <div className="brand-row">
-        <div className="brand-badge">L</div>
-        <div>
-          <div className="brand-name">LifeHub Foundations</div>
+      <header className="brand-row">
+        <div className="brand-left">
+          <img className="brand-logo" src="/assets/lifehub-logo.png" alt="LifeHub" />
+          <div className="brand-name">
+            Maths Diagnostic
+            <span>LifeHub Foundations</span>
+          </div>
         </div>
-      </div>
+        <a className="brand-back" href="/staff/">← Staff home</a>
+      </header>
 
       {screen === "setup" && (
         <Setup

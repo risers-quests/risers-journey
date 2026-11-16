@@ -1,3 +1,4 @@
 {
+  "outputDirectory": ".",
   "rewrites": [{ "source": "/api/diagnostic/:path*", "destination": "/api/diagnostic" }]
 }

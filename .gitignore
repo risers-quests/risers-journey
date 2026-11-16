@@ -1,3 +1,5 @@
 node_modules/
 .vercel/
 .env
+# Built by Vercel on every deploy (npm run build), from diagnostic-tool/client
+diagnostic/

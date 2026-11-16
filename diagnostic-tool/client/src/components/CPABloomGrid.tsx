@@ -48,7 +48,7 @@ export function CPABloomGrid({ cells, topicLabel }: { cells: GridCellView[]; top
         <span><span className="dot" style={{ background: "var(--deep-teal)" }} />Cleared</span>
         <span><span className="dot" style={{ background: "var(--warm-amber)" }} />Current</span>
         <span><span className="dot" style={{ background: "var(--tan)" }} />Back-probe</span>
-        <span><span className="dot" style={{ background: "#efe9db" }} />Not yet tested</span>
+        <span><span className="dot" style={{ background: "#edf1ec" }} />Not yet tested</span>
       </div>
     </div>
   );
