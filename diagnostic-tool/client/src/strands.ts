@@ -45,6 +45,7 @@ export const ENGLISH8_TOPIC_CHOICES = [
   { id: "e8-voice", chapter: "Grammar · Ch 14", name: "Active and Passive Voice", about: "Doer and receiver, be + past participle in every tense, active ↔ passive" },
   { id: "e8-speech", chapter: "Grammar · Ch 15", name: "Direct and Indirect Speech", about: "Statements, questions and commands; tense, pronoun and time-word changes, both ways" },
   { id: "e8-sentences", chapter: "Grammar · Ch 11–12", name: "Simple, Compound and Complex Sentences", about: "Clauses, joining words, and changing one kind of sentence into another" },
+  { id: "e8-conditionals", chapter: "Grammar · Ch 17", name: "Conditionals", about: "First, second and third conditionals: making them from prompts, what they mean" },
 ];
 
 // The book's strands, as offered on the start page.
