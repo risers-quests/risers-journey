@@ -196,6 +196,7 @@
       <table class="rep" id="progTable"></table>
       <details><summary class="sub" style="cursor:pointer">Recent results</summary><table class="rep" id="recentTable"></table></details>
       <p class="sub" id="syncNote"></p>
+      <div><button class="btn small" id="startOver">↺ Start over (clear all progress)</button></div>
     </div>
     <div class="note"><b>The target mix for this service:</b> the <b>pastor</b> is always clearest → <b>worship leader</b> next → <b>Singer 2</b> just underneath → <b>keyboard</b> supporting the voices → <b>playback music</b> soft in the background → <b>audience mic</b> barely there.<br><br>
     Pick the band above: a real recording puts each singer and instrument on its own channel, like a real desk. The walk-in and walk-out songs are real recordings too. To practise with real voices, record each part separately on a phone (a 2-minute sermon clip, the keyboard, each singer) and tap <i>load recording</i> under a channel.</div>
@@ -1075,16 +1076,24 @@ const stars=n=>'★'.repeat(n)+'☆'.repeat(3-n);
 const best=k=>PG.results.filter(r=>r.act===k).reduce((a,r)=>Math.max(a,r.stars),0);
 const totalStars=()=>ACTS.reduce((a,x)=>a+best(x.k),0);
 const rankOf=n=>{let i=0; RANKS.forEach((r,j)=>{if(n>=r[0]) i=j;}); return i;};
-function mergeResults(list){
+/* "Start over" stores a reset time; results from before it are dropped on every device, so an old copy
+   on another iPad can't bring the history back. */
+function mergeResults(list,resetAt){
+  if(resetAt&&(!PG.resetAt||resetAt>PG.resetAt)) PG.resetAt=resetAt;
   const seen=new Set(PG.results.map(r=>r.id));
   (list||[]).forEach(r=>{ if(r&&r.id&&!seen.has(r.id)){ PG.results.push(r); seen.add(r.id); } });
+  if(PG.resetAt) PG.results=PG.results.filter(r=>r.date>PG.resetAt);
   PG.results.sort((a,b)=>a.date<b.date?-1:1); PG.results=PG.results.slice(-300);
+}
+function startOver(){
+  if(!confirm('Start over? This clears every star, rank and result'+(KID?' on every device':' on this device')+'. It can\'t be undone.')) return;
+  PG={results:[],resetAt:new Date().toISOString()}; saveLocal(); syncNow();
 }
 function saveLocal(){ try{ localStorage.setItem(PKEY,JSON.stringify(PG)); }catch(e){} }
 async function pull(){
   if(!KID) return false;
   try{ const r=await fetch(SYNC(),{headers:{'X-Site-Key':SITE_KEY}}); if(!r.ok) return false; const d=await r.json();
-    if(d.found&&d.data&&d.data.state) mergeResults(d.data.state.results); return true; }catch(e){ return false; }
+    if(d.found&&d.data&&d.data.state) mergeResults(d.data.state.results,d.data.state.resetAt); return true; }catch(e){ return false; }
 }
 async function push(){
   if(!KID) return false;
@@ -1127,6 +1136,8 @@ function renderProgress(){
 }
 function progInit(){
   try{ PG=JSON.parse(localStorage.getItem(PKEY))||{results:[]}; if(!Array.isArray(PG.results)) PG={results:[]}; }catch(e){ PG={results:[]}; }
+  mergeResults([],PG.resetAt);
+  $('startOver').addEventListener('click',startOver);
   renderProgress();
   if(KID) pull().then(()=>{ saveLocal(); renderProgress(); });
   if(/[?&]progress\b/.test(location.search)) setTimeout(()=>$('progress').scrollIntoView({behavior:'smooth'}),50);
