@@ -627,3 +627,86 @@ a { color: var(--deep-teal); }
 .bars-part.query { background: #fdf3df; border-color: var(--warm-amber); color: var(--warm-amber); font-size: 1rem; }
 .bars-part.ghost { background: transparent; border-style: dashed; border-color: var(--warm-amber); color: var(--warm-amber); }
 .grade-note { display: block; margin-top: 6px; font-size: 0.8rem; color: var(--warm-amber); font-weight: 600; }
+
+/* ---- Reports: one test, and a child's history ---- */
+.rp { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+.rp-welldone { text-align: center; margin: 4px 0 12px; }
+.rp-head { border-radius: 16px; padding: 20px 22px; color: #fff; background: linear-gradient(120deg, var(--deep-teal) 0%, #5f9a2a 55%, var(--brand-green) 100%); }
+.rp-head h1 { margin: 2px 0 4px; color: #fff; font-size: 1.7rem; }
+.rp-head p { margin: 0; opacity: 0.92; }
+.rp-eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.rp-card { background: var(--card-bg); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+.rp-card h2 { font-size: 1.1rem; margin: 0 0 8px; }
+.rp-sub { margin: 0 0 10px; color: var(--ink-soft); font-size: 0.9rem; line-height: 1.45; }
+.rp-top { display: flex; align-items: center; gap: 20px; }
+.rp-top-text p { margin: 0 0 6px; font-size: 1rem; }
+.rp-top-text h2 { margin-bottom: 6px; }
+.rp-note { color: var(--ink-soft); font-size: 0.82rem !important; }
+.rp-ring { position: relative; flex: 0 0 auto; width: 132px; height: 132px; }
+.rp-ring-track { fill: none; stroke: #e7ece3; stroke-width: 11; }
+.rp-ring-fill { fill: none; stroke: var(--deep-teal); stroke-width: 11; stroke-linecap: round; }
+.rp-ring-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; }
+.rp-ring-text b { font-family: var(--font-serif); font-size: 2rem; color: var(--deep-teal); }
+.rp-ring-text span { font-size: 0.85rem; color: var(--ink-soft); }
+.rp-ring-text small { font-size: 0.72rem; color: var(--ink-soft); }
+.rp-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.rp-group { border-radius: 14px; padding: 14px 16px; }
+.rp-group h3 { margin: 0 0 8px; font-size: 1rem; }
+.rp-group ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.rp-group li b { display: block; color: var(--ink); }
+.rp-group li span { display: block; font-size: 0.85rem; color: var(--ink-soft); line-height: 1.4; margin-top: 2px; }
+.st-secure { background: #eef7e2; } .st-secure h3 { color: #2f6b12; }
+.st-fragile { background: #fdf3df; } .st-fragile h3 { color: #8a5d14; }
+.st-gap { background: #fcebee; } .st-gap h3 { color: #a33a52; }
+.st-later { background: #eef1ec; } .st-later h3 { color: #4f6577; }
+.cpa-list { display: flex; flex-direction: column; gap: 8px; }
+.cpa-topic { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.cpa-topic summary { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; cursor: pointer; list-style: none; }
+.cpa-topic summary::-webkit-details-marker { display: none; }
+.cpa-name { flex: 1 1 160px; font-weight: 600; }
+.cpa-stages { display: flex; flex-wrap: wrap; gap: 6px; }
+.cpa-pill { font-size: 0.8rem; font-weight: 600; padding: 4px 9px; border-radius: 999px; white-space: nowrap; }
+.cpa-pill small { font-weight: 500; opacity: 0.8; text-transform: capitalize; }
+.cpa-ok { background: #e3f2d3; color: #2f6b12; }
+.cpa-part { background: #fdf0d6; color: #8a5d14; }
+.cpa-no { background: #fbe1e6; color: #a33a52; }
+.cpa-none { background: #eef1ec; color: #6b7b88; }
+.cpa-grid { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.82rem; }
+.cpa-grid th { font-weight: 600; color: var(--ink-soft); padding: 4px; text-align: center; }
+.cpa-grid tbody th { text-align: left; white-space: nowrap; }
+.cpa-grid td { text-align: center; padding: 6px 2px; border-radius: 6px; }
+.g-ok { color: #2f6b12; background: #e3f2d3; font-weight: 700; }
+.g-no { color: #a33a52; background: #fbe1e6; font-weight: 700; }
+.g-none { color: #9aa8b3; }
+.cpa-grid td.g-ok, .cpa-grid td.g-no, .cpa-grid td.g-none { border: 2px solid #fff; }
+.cpa-start { margin: 8px 0 0; font-size: 0.85rem; color: #a33a52; font-weight: 600; }
+.cpa-key { margin: 10px 0 0; font-size: 0.8rem; color: var(--ink-soft); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.cpa-key span { padding: 1px 6px; border-radius: 4px; }
+.rp-next { background: #fffaf0; border-color: #f0dfbf; }
+.rp-next p { margin: 6px 0 0; line-height: 1.5; }
+.rp-adults summary { font-weight: 600; cursor: pointer; }
+.rp-adults ol { margin: 10px 0 0; padding-left: 20px; line-height: 1.5; }
+.rp-adults li span { display: block; color: var(--ink-soft); font-size: 0.9rem; }
+.rp-mistakes { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.rp-mistakes small { color: var(--ink-soft); }
+.rp-mistakes span { display: block; font-size: 0.9rem; color: var(--ink-soft); margin-top: 2px; }
+.rp-tests { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.rp-tests a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); text-decoration: none; }
+.rp-tests a:hover { border-color: var(--deep-teal); }
+.rp-test-date { display: flex; flex-direction: column; min-width: 92px; }
+.rp-test-date small { color: var(--ink-soft); }
+.rp-chips { flex: 1; display: flex; flex-wrap: wrap; gap: 6px; }
+.rp-chip { font-size: 0.78rem; padding: 3px 8px; border-radius: 999px; }
+.rp-open { color: var(--deep-teal); font-weight: 600; white-space: nowrap; }
+.rp-foot { max-width: 760px; margin: 16px auto 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.report-links { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+.report-links a { color: var(--deep-teal); font-weight: 600; }
+.cpa-scroll { overflow-x: auto; }
+@media (max-width: 520px) {
+  .rp-top { flex-direction: column; text-align: center; }
+  .rp-tests a { flex-wrap: wrap; }
+  .rp-chips { order: 3; flex-basis: 100%; }
+  .rp-open { margin-left: auto; }
+  .cpa-grid { font-size: 0.7rem; min-width: 330px; }
+  .cpa-grid tbody th { white-space: normal; }
+}

@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react";
-import { getSummary, resendEmail, Summary as SummaryData } from "../api";
+import { getFullReport, resendEmail } from "../api";
+import { FullReport } from "../reportTypes";
+import { ReportView } from "../components/ReportView";
 
-const LOOK: Record<string, { icon: string; word: string; cls: string }> = {
-  secure: { icon: "⭐", word: "Got it", cls: "sum-secure" },
-  fragile: { icon: "🌱", word: "Nearly there", cls: "sum-fragile" },
-  gap: { icon: "🔧", word: "Next to learn", cls: "sum-gap" },
-  notReached: { icon: "⏸", word: "Coming later", cls: "sum-later" },
-};
-
-/** The on-site result: one line per topic, the next step, and whether the detailed reports were emailed. */
-export function Summary({ sessionId }: { sessionId: string }) {
-  const [data, setData] = useState<SummaryData | null>(null);
+/**
+ * A finished test's report: shown at the end of the test, and opened from
+ * the child's report history (?report=<code>). Also says whether the
+ * detailed reports were emailed.
+ */
+export function Summary({ sessionId, fromHistory = false }: { sessionId: string; fromHistory?: boolean }) {
+  const [data, setData] = useState<FullReport | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   useEffect(() => {
-    getSummary(sessionId).then(setData);
+    getFullReport(sessionId).then(setData, (e) => setError(String(e.message || e)));
   }, [sessionId]);
-  if (!data) return <div className="setup-wrap">Getting your results…</div>;
+  if (error) return <div className="setup-wrap">Couldn't open this report: {error}</div>;
+  if (!data) return <div className="setup-wrap">Getting the report…</div>;
 
   async function resend() {
     setSending(true);
@@ -25,42 +26,30 @@ export function Summary({ sessionId }: { sessionId: string }) {
   }
   const e = data.email;
   return (
-    <div className="summary">
-      <h1>Well done, {data.childName}! 🎉</h1>
-      <div className="sum-list">
-        {data.topics.map((t) => (
-          <div key={t.name} className={`sum-row ${LOOK[t.status].cls}`}>
-            <span className="sum-icon">{LOOK[t.status].icon}</span>
-            <span className="sum-topic">{t.name}</span>
-            <span className="sum-word">{LOOK[t.status].word}</span>
-          </div>
-        ))}
-      </div>
-      {data.next && (
-        <div className="sum-next">
-          <b>🚀 Next: {data.next.topic}</b>
-          <span>💡 {data.next.tip}</span>
-        </div>
-      )}
-      {data.sureTotal > 0 && (
-        <p className="sum-sure">
-          🎯 When you were sure, you were right <b>{data.sureRight} of {data.sureTotal}</b> times.
-        </p>
-      )}
-      <div className="sum-email">
-        {e && e.child && e.staff ? (
-          <>📧 The full reports have been emailed to {data.childName} and to LifeHub staff.</>
-        ) : e && e.staff ? (
-          <>📧 The staff report was emailed. {data.childName}'s report couldn't be sent{e.note ? ` (${e.note})` : ""}.</>
-        ) : (
-          <>
-            📧 The reports weren't emailed{e?.note ? `: ${e.note}` : ""}.{" "}
-            <button className="btn btn-secondary" onClick={resend} disabled={sending}>
-              {sending ? "Sending…" : "Send them again"}
-            </button>
-          </>
+    <>
+      {!fromHistory && <h1 className="rp-welldone">Well done, {data.childName}! 🎉</h1>}
+      <ReportView childName={data.childName} report={data.report} />
+      <div className="rp-foot">
+        <a className="btn btn-secondary" href={`?child=${encodeURIComponent(data.kid)}`}>
+          All of {data.childName}'s reports →
+        </a>
+        {!fromHistory && (
+          <p className="sum-email">
+            {e && e.child && e.staff ? (
+              <>📧 The full reports have been emailed to {data.childName} and to LifeHub staff.</>
+            ) : e && e.staff ? (
+              <>📧 The staff report was emailed. {data.childName}'s report couldn't be sent{e.note ? ` (${e.note})` : ""}.</>
+            ) : (
+              <>
+                📧 The reports weren't emailed{e?.note ? `: ${e.note}` : ""}.{" "}
+                <button className="btn btn-secondary" onClick={resend} disabled={sending}>
+                  {sending ? "Sending…" : "Send them again"}
+                </button>
+              </>
+            )}
+          </p>
         )}
       </div>
-    </div>
+    </>
   );
 }

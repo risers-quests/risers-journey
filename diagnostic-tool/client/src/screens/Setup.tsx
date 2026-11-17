@@ -8,8 +8,10 @@ import { STRAND_CHOICES } from "../strands";
 // script (diagnostic-tool/email), never on the site; it matches by name.
 const RISERS = ["Benjamin", "Chris", "Elyon", "Eva", "Gabby", "Karis", "Michael", "Owen", "Pranavi", "Shalom", "Yokesh", "Zach"];
 
-export function Setup({ onStart }: { onStart: (status: SessionStatus) => void }) {
-  const [childName, setChildName] = useState("");
+export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) => void; signedIn?: string | null }) {
+  // A Riser signed in on this device is chosen already.
+  const me = RISERS.find((n) => n.toLowerCase() === (signedIn || "").toLowerCase()) ?? "";
+  const [childName, setChildName] = useState(me);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [unfinished, setUnfinished] = useState<SessionStatus[]>([]);
@@ -129,6 +131,16 @@ export function Setup({ onStart }: { onStart: (status: SessionStatus) => void })
         </button>
       </form>
 
+      <div className="card setup-form" style={{ marginTop: 16 }}>
+        <label>Past reports</label>
+        <div className="report-links">
+          {(me ? [me] : RISERS).map((n) => (
+            <a key={n} href={`?child=${n.toLowerCase()}`}>
+              {me ? `See all of ${n}'s reports →` : n}
+            </a>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

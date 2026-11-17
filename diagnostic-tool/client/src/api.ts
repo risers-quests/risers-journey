@@ -1,3 +1,4 @@
+import { FullReport, History } from "./reportTypes";
 import { ShareInteraction, AnswerResponse, AnxietyQuestion, NextQuestionResponse, SessionStatus } from "./types";
 
 // The UI is served by the Risers Journey site at /diagnostic/ and talks to
@@ -89,4 +90,14 @@ export async function getSummary(sessionId: string): Promise<Summary> {
 
 export async function resendEmail(sessionId: string): Promise<Summary["email"]> {
   return asJson<Summary["email"]>(await fetch(`${BASE}/sessions/${sessionId}/email`, { method: "POST" }));
+}
+
+/** A finished test's full report (also adds it to the child's report history if missing). */
+export async function getFullReport(sessionId: string): Promise<FullReport> {
+  return asJson<FullReport>(await fetch(`${BASE}/sessions/${encodeURIComponent(sessionId)}/full`));
+}
+
+/** A child's report history and the combined report across all their tests. */
+export async function getHistory(kid: string): Promise<History> {
+  return asJson<History>(await fetch(`${BASE}/children/${encodeURIComponent(kid)}/reports`));
 }

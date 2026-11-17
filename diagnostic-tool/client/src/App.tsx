@@ -6,8 +6,21 @@ import { Summary } from "./screens/Summary";
 import { SessionStatus } from "./types";
 import { forgetTest } from "./saved";
 import { Preview } from "./screens/Preview";
+import { History } from "./screens/History";
 
 type Screen = "setup" | "assessment" | "anxietyCheck" | "report";
+
+const params = new URLSearchParams(location.search);
+// Opened from a child's report history: ?child=<name> (all their reports) or ?report=<test code> (one report).
+const CHILD = params.get("child");
+const REPORT = params.get("report");
+// A Riser signed in on this device (the site's one sign-in), e.g. "eva".
+let SIGNED_IN: string | null = null;
+try {
+  SIGNED_IN = localStorage.getItem("imm-l3-kid");
+} catch {
+  /* storage blocked */
+}
 
 export function App() {
   const [screen, setScreen] = useState<Screen>("setup");
@@ -31,10 +44,20 @@ export function App() {
             <span>LifeHub Foundations</span>
           </div>
         </div>
-        <a className="brand-back" href="/staff/">← Staff home</a>
+        {CHILD || REPORT || SIGNED_IN ? (
+          <a className="brand-back" href="/">← Home</a>
+        ) : (
+          <a className="brand-back" href="/staff/">← Staff home</a>
+        )}
       </header>
 
-      {screen === "setup" && (new URLSearchParams(location.search).has("preview") ? <Preview /> : <Setup onStart={open} />)}
+      {CHILD ? (
+        <History kid={CHILD} />
+      ) : REPORT ? (
+        <Summary sessionId={REPORT} fromHistory />
+      ) : (
+        screen === "setup" && (params.has("preview") ? <Preview /> : <Setup onStart={open} signedIn={SIGNED_IN} />)
+      )}
       {screen === "assessment" && sessionId && (
         <Assessment
           sessionId={sessionId}

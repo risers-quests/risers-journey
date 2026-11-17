@@ -8,7 +8,11 @@ import {
   getResponses,
   loadHistory,
   saveHistory,
+  loadReports,
+  saveReport,
+  childKey,
 } from "./sessionStore.js";
+import { reportEntry, combine } from "./report/history.js";
 import { selectNextQuestion, applyOutcome } from "./engine/skillEngine.js";
 import { readSignal } from "./engine/signalEngine.js";
 import { sanitizeItemForClient, getItemById, getTopic } from "./itemBank/index.js";
@@ -25,6 +29,14 @@ async function insightsFor(sessionId: string) {
   const row = await getSessionRow(sessionId);
   const responses = await getResponses(sessionId);
   return { state, row, insights: buildInsights(state, responses, row.child_name, row.grade, row.created_at) };
+}
+
+/** Adds this finished test to the child's report history (their dashboard reads it). */
+async function recordReport(sessionId: string) {
+  const { row, insights } = await insightsFor(sessionId);
+  const entry = reportEntry(sessionId, row.grade, row.created_at, insights, await getResponses(sessionId));
+  await saveReport(row.child_name, entry);
+  return { row, insights, entry };
 }
 
 /** Builds both report emails and sends them; records the result on the session. */
@@ -302,7 +314,10 @@ router.post("/sessions/:id/anxiety-answers", async (req, res) => {
   logTrace(state, `Anxiety questionnaire complete (${cleaned.length}/${ANXIETY_QUESTIONS.length} answered).`);
   await saveSessionState(sessionId, state, "completed");
 
-  // The test is finished: email the child's and the staff report. A failed
+  // The test is finished: add it to the child's report history.
+  await recordReport(sessionId).catch((e) => logTrace(state, `Report history not saved: ${e}`));
+
+  // Email the child's and the staff report. A failed
   // send doesn't stop the child seeing their summary; staff can resend.
   const email = await emailReports(sessionId).catch((e) => ({ at: new Date().toISOString(), child: false, staff: false, note: String(e) }));
   res.json({ ok: true, email });
@@ -339,6 +354,39 @@ router.get("/sessions/:id/summary", async (req, res) => {
     sureTotal: insights.overall.sureRight + insights.overall.sureWrong,
     email: state.emailStatus ?? null,
   });
+});
+
+// One test's full report (the screen at the end of a test, and from the
+// child's report history). Saves it to the history if it isn't there yet.
+router.get("/sessions/:id/full", async (req, res) => {
+  let data;
+  try {
+    data = await insightsFor(req.params.id);
+  } catch {
+    return res.status(404).json({ error: "session not found" });
+  }
+  const { state, row, insights } = data;
+  if (state.phase !== "completed") return res.status(400).json({ error: "the test isn't finished" });
+  const entry = reportEntry(req.params.id, row.grade, row.created_at, insights, await getResponses(req.params.id));
+  const kid = childKey(row.child_name);
+  try {
+    const h = await loadReports(kid);
+    if (!h.reports.some((r) => r.id === entry.id)) await saveReport(row.child_name, entry);
+  } catch {
+    /* the report still shows; it is saved next time */
+  }
+  res.json({ childName: insights.childName, kid, report: entry, email: state.emailStatus ?? null });
+});
+
+// A child's report history (newest first) and the combined report across all their tests.
+router.get("/children/:kid/reports", async (req, res) => {
+  const kid = childKey(req.params.kid);
+  try {
+    const h = await loadReports(kid);
+    res.json({ kid, childName: h.childName || kid.charAt(0).toUpperCase() + kid.slice(1), reports: h.reports, combined: combine(h.reports) });
+  } catch {
+    res.status(502).json({ error: "couldn't read the report history" });
+  }
 });
 
 // Send the report emails again (e.g. after email was set up).

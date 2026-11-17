@@ -130,8 +130,13 @@ export async function getResponses(sessionId: string): Promise<ResponseRecord[]>
 // One record per child (group "diagnostic-history", kid = first name):
 // { topics: { <topicId>: [question signatures] } }. Used so a child never
 // gets the same numbers in a topic again.
+/** A child's key: their first name, lower case (the same key the site's Riser sign-in uses, e.g. "eva"). */
+export function childKey(child: string): string {
+  return child.trim().split(/\s+/)[0].toLowerCase().replace(/[^a-z0-9-]/g, "");
+}
+
 function historyUrl(child: string): string | null {
-  const kid = child.trim().toLowerCase().replace(/[^a-z0-9-]/g, "");
+  const kid = childKey(child);
   return kid ? `${STORE_URL}/sync?group=diagnostic-history&kid=${kid}&week=seen` : null;
 }
 
@@ -148,7 +153,7 @@ export async function loadHistory(child: string): Promise<Record<string, string[
 }
 
 export async function saveHistory(child: string, topics: Record<string, string[]>): Promise<void> {
-  const kid = child.trim().toLowerCase().replace(/[^a-z0-9-]/g, "");
+  const kid = childKey(child);
   if (!kid) return;
   // Keep the most recent 600 per topic (well under the store's record size).
   const trimmed = Object.fromEntries(Object.entries(topics).map(([t, list]) => [t, [...new Set(list)].slice(-600)]));
@@ -157,4 +162,68 @@ export async function saveHistory(child: string, topics: Record<string, string[]
     headers: { "Content-Type": "application/json", "X-Site-Key": STORE_KEY },
     body: JSON.stringify({ group: "diagnostic-history", kid, week: "seen", state: { topics: trimmed } }),
   }).catch(() => undefined);
+}
+
+// ---- Each child's finished tests (their report history) ----
+// One record per child (group "diagnostic-history", kid = first name,
+// week "reports"): { childName, reports: ReportEntry[] }, newest first.
+// Written when a test finishes; the dashboard's report history and the
+// combined report are read from it.
+export interface ReportTopic {
+  topicId: string;
+  name: string;
+  strand: string;
+  status: "secure" | "fragile" | "gap" | "notReached";
+  why: string;
+  questions: number;
+  /** CPA rows (concrete, pictorial, abstract) x Bloom columns: "cleared" | "struggled" | "". */
+  grid: string[][];
+  startAt: string | null;
+  mistakes: { label: string; childTip: string; count: number; sureCount: number }[];
+  blockedBy: string[];
+}
+export interface ReportEntry {
+  id: string;
+  date: string;
+  grade: string;
+  minutes: number;
+  questions: number;
+  right: number;
+  sureRight: number;
+  sureTotal: number;
+  topics: ReportTopic[];
+  next: { topic: string; tip: string; atHome: string } | null;
+  actions: { topic: string; what: string; how: string }[];
+}
+export interface ReportHistory {
+  childName: string;
+  reports: ReportEntry[];
+}
+
+function reportsUrl(kid: string): string {
+  return `${STORE_URL}/sync?group=diagnostic-history&kid=${kid}&week=reports`;
+}
+
+export async function loadReports(kid: string): Promise<ReportHistory> {
+  if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(kid)) return { childName: "", reports: [] };
+  const res = await fetch(reportsUrl(kid), { headers: { "X-Site-Key": STORE_KEY } });
+  if (!res.ok) throw new Error(`store read failed (${res.status})`);
+  const body = (await res.json()) as { found: boolean; data?: { state: ReportHistory } };
+  return body.found && body.data ? { childName: body.data.state.childName ?? "", reports: body.data.state.reports ?? [] } : { childName: "", reports: [] };
+}
+
+/** Adds (or replaces) one test's report in the child's history. */
+export async function saveReport(childName: string, entry: ReportEntry): Promise<void> {
+  const kid = childKey(childName);
+  if (!kid) return;
+  const h = await loadReports(kid);
+  const reports = [entry, ...h.reports.filter((r) => r.id !== entry.id)]
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 60);
+  const res = await fetch(`${STORE_URL}/sync`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Site-Key": STORE_KEY },
+    body: JSON.stringify({ group: "diagnostic-history", kid, week: "reports", state: { childName: childName.trim(), reports } }),
+  });
+  if (!res.ok) throw new Error(`store write failed (${res.status})`);
 }
