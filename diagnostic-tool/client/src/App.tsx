@@ -40,7 +40,7 @@ export function App() {
         <div className="brand-left">
           <img className="brand-logo" src="/assets/lifehub-logo.png" alt="LifeHub" />
           <div className="brand-name">
-            Maths Diagnostic
+            Skill Check
             <span>LifeHub Foundations</span>
           </div>
         </div>

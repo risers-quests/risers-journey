@@ -29,9 +29,9 @@ export function History({ kid }: { kid: string }) {
   if (!reports.length)
     return (
       <div className="setup-wrap">
-        <h1>{childName}'s maths reports</h1>
-        <p className="lede">No finished tests yet. Reports appear here after each test.</p>
-        <a className="btn btn-primary" href={`./?for=${encodeURIComponent(data.kid)}`}>Start a maths test</a>
+        <h1>{childName}'s reports</h1>
+        <p className="lede">No Skill Checks finished yet. Reports appear here after each one.</p>
+        <a className="btn btn-primary" href={`./?for=${encodeURIComponent(data.kid)}`}>Start a Skill Check</a>
       </div>
     );
 
@@ -41,7 +41,7 @@ export function History({ kid }: { kid: string }) {
     <div className="rp">
       <header className="rp-head">
         <div>
-          <p className="rp-eyebrow">Maths reports</p>
+          <p className="rp-eyebrow">Skill Check reports</p>
           <h1>{childName}</h1>
           <p>
             {c.tests} test{c.tests === 1 ? "" : "s"}
@@ -51,7 +51,7 @@ export function History({ kid }: { kid: string }) {
       </header>
 
       <a className="btn btn-primary rp-start" href={`./?for=${encodeURIComponent(data.kid)}`}>
-        Start a new maths test →
+        Start a new Skill Check →
       </a>
 
       <section className="rp-card rp-top">

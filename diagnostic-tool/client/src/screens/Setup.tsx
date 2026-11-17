@@ -10,12 +10,24 @@ const RISERS = ["Benjamin", "Chris", "Elyon", "Eva", "Gabby", "Karis", "Michael"
 // Risers working from the Grade 4 book; everyone else starts at Grade 5 (staff can still change it).
 const RISER_GRADE: Record<string, string> = { Eva: "Grade 4" };
 const gradeFor = (name: string) => RISER_GRADE[name] ?? "Grade 5";
+// Subjects a Skill Check can cover. Only Maths so far; add more here as they're built.
+const SUBJECTS = ["Maths"];
+function staffSignedIn(): boolean {
+  try {
+    return !!localStorage.getItem("rj-staff-name");
+  } catch {
+    return false;
+  }
+}
 
 export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) => void; signedIn?: string | null }) {
   // A Riser signed in on this device is chosen already.
   const me = RISERS.find((n) => n.toLowerCase() === (signedIn || "").toLowerCase()) ?? "";
   // ?for=<name> (from a child's reports page) chooses that Riser too.
   const forName = RISERS.find((n) => n.toLowerCase() === (new URLSearchParams(location.search).get("for") || "").toLowerCase()) ?? "";
+  // A Riser on their own device: their name and grade are known, so they only choose what to check.
+  const kidMode = !!me && !staffSignedIn();
+  const [subject, setSubject] = useState(SUBJECTS[0]);
   const [childName, setChildNameRaw] = useState(me || forName);
   function setChildName(name: string) {
     setChildNameRaw(name);
@@ -44,7 +56,7 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
       const open: SessionStatus[] = [];
       list.forEach((s, i) => {
         if (!s) forgetTest(saved[i].id);
-        else if (s.phase !== "completed") open.push(s);
+        else if (s.phase !== "completed" && (!kidMode || s.childName === me)) open.push(s);
       });
       setUnfinished(open);
     });
@@ -71,16 +83,25 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
 
   return (
     <div className="setup-wrap">
-      <h1>Maths Diagnostic</h1>
-      <p className="lede">
-        Maths questions that work through the book, topic by topic. It shows which topics are
-        mastered, where there's a real skill gap, and where a method is memorised but not understood. A short,
-        separate questionnaire at the end asks how maths feels.
-      </p>
-      <p className="lede" style={{ marginTop: -8 }}>
-        Choose which part of the book to test. One strand per sitting keeps it short enough for a child to stay
-        fresh; there are no breaks during a test.
-      </p>
+      <h1>{kidMode ? `Skill Check, ${me}` : "Skill Check"}</h1>
+      {kidMode ? (
+        <p className="lede">
+          Choose a subject and the topics to check. The questions get harder as you go, so finding some of them hard is
+          normal: that's how we find what to learn next. A few short questions at the end ask how the subject feels.
+        </p>
+      ) : (
+        <>
+          <p className="lede">
+            Questions that work through the book, topic by topic. It shows which topics are mastered, where there's a real
+            skill gap, and where a method is memorised but not understood. A short, separate questionnaire at the end asks
+            how the subject feels.
+          </p>
+          <p className="lede" style={{ marginTop: -8 }}>
+            Choose what to check. One strand or topic per sitting keeps it short enough for a child to stay fresh; there are
+            no breaks during a test.
+          </p>
+        </>
+      )}
 
       {unfinished.length > 0 && (
         <div className="card setup-form" style={{ marginBottom: 16 }}>
@@ -103,7 +124,7 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
       )}
 
       <form className="setup-form card" onSubmit={handleSubmit}>
-        <div>
+        {!kidMode && <div>
           <label htmlFor="childName">Who is taking the test?</label>
           <select id="childName" value={childName} onChange={(e) => setChildName(e.target.value)}>
             <option value="">Choose a Riser…</option>
@@ -111,13 +132,22 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
               <option key={n}>{n}</option>
             ))}
           </select>
-        </div>
-        <div>
+        </div>}
+        {!kidMode && <div>
           <label htmlFor="grade">Grade</label>
           <select id="grade" value={grade} onChange={(e) => setGrade(e.target.value)}>
             <option>Grade 5</option>
             <option>Grade 4</option>
           </select>
+        </div>}
+        <div>
+          <label htmlFor="subject">Subject</label>
+          <select id="subject" value={subject} onChange={(e) => setSubject(e.target.value)}>
+            {SUBJECTS.map((s) => (
+              <option key={s}>{s}</option>
+            ))}
+          </select>
+          <small className="grade-note">More subjects are coming.</small>
 
         </div>
         {grade === "Grade 4" && (

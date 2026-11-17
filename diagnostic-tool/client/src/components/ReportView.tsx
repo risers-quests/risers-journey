@@ -9,7 +9,7 @@ export function ReportView({ childName, report }: { childName: string; report: R
     <div className="rp">
       <header className="rp-head">
         <div>
-          <p className="rp-eyebrow">Maths report</p>
+          <p className="rp-eyebrow">Skill Check report · Maths</p>
           <h1>{childName}</h1>
           <p>
             {report.grade} · {fmtDate(report.date)}

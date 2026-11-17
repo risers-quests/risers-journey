@@ -104,15 +104,15 @@
       ['Try-out data', 'staff/term-3/try-out.html']],
     'Term 2': [['Term 2 Conference', 'end-of-term-2/staff/index.html'], ['Term 2 Quests', 'staff/quests/index.html']],
     'Term 1': [['Term 1 Conference', 'term-1-conference/index.html?view=staff']],
-    'Maths Diagnostic': [['Start a test', 'diagnostic/index.html'], ['Grade 4 questions', 'diagnostic/index.html?preview=more-large-numbers&grade=4'],
+    'Skill Check': [['Start a Skill Check', 'diagnostic/index.html'], ['Grade 4 questions', 'diagnostic/index.html?preview=more-large-numbers&grade=4'],
       ['Grade 5 questions', 'diagnostic/index.html?preview=more-large-numbers']]
   } : {
     'Term 3': [['Term 3 Quest', 'term-3/quest/index.html'],
       ['Weekly Check-in', 'term-3/check-in/index.html'], ['My Schedule', 'term-3/schedule/index.html'], ['Assessments', 'term-3/assessments/index.html']],
     'Term 2': [['Term 2 Conference', 'end-of-term-2/index.html'], ['Term 2 Quests', 'dashboard/index.html']],
-    'Term 1': [['Term 1 Conference', 'term-1-conference/index.html']],
-    'Maths': [['Take a maths test', 'diagnostic/index.html'], ['My maths reports', 'diagnostic/index.html?child=' + encodeURIComponent((function () { try { return localStorage.getItem(KID_KEY) || ''; } catch (e) { return ''; } })())]]
+    'Term 1': [['Term 1 Conference', 'term-1-conference/index.html']]
   };
+  var kidKey = (function () { try { return localStorage.getItem(KID_KEY) || ''; } catch (e) { return ''; } })();
 
   var NAV = isStaff ? [
     // Only the staff Home itself (not end-of-term-2/staff/ and the like).
@@ -120,19 +120,23 @@
     { label: 'Term 3', href: root + 'staff/term-3/index.html', icon: 'skills', short: 'Term 3', match: /\/term-3\// },
     { label: 'Term 2', href: root + 'staff/term-2/index.html', icon: 'term', short: 'Term 2', match: /\/(staff\/term-2|end-of-term-2|staff\/quests)\// },
     { label: 'Term 1', href: root + 'staff/term-1/index.html', icon: 'conf', short: 'Term 1', match: /\/(staff\/term-1|term-1-conference)\// },
-    { label: 'Maths Diagnostic', href: root + 'diagnostic/index.html', icon: 'paper', short: 'Maths', match: /\/diagnostic\// },
+    { label: 'Skill Check', href: root + 'diagnostic/index.html', icon: 'check', short: 'Skill Check', match: /\/diagnostic\// },
     { label: 'Risers’ links', href: root + 'staff/links/index.html', icon: 'link', short: 'Links', match: /\/staff\/links\// }
   ] : [
     { label: 'Home', href: root + 'index.html', icon: 'home', match: /\/(index\.html)?$/, exact: true },
     { label: 'Term 3', href: root + 'term-3/index.html', icon: 'skills', short: 'Term 3', match: /\/term-3\// },
     { label: 'Term 2', href: root + 'term-2/index.html', icon: 'term', short: 'Term 2', match: /\/(term-2|end-of-term-2|dashboard)\// },
     { label: 'Term 1', href: root + 'term-1/index.html', icon: 'conf', short: 'Term 1', match: /\/(term-1|term-1-conference)\// },
-    { label: 'Maths', href: root + 'diagnostic/index.html', icon: 'paper', short: 'Maths', match: /\/diagnostic\// }
+    // Skill Check (take one) and My Reports (results) share a page; the address tells them apart.
+    { label: 'Skill Check', href: root + 'diagnostic/index.html', icon: 'check', short: 'Skill Check', match: /\/diagnostic\//, notQuery: 'child=' },
+    { label: 'My Reports', href: root + 'diagnostic/index.html?child=' + encodeURIComponent(kidKey), icon: 'paper', short: 'Reports', match: /\/diagnostic\//, query: 'child=' }
   ];
 
 
   function isActive(item) {
     if (!item.match) return false;
+    if (item.query && location.search.indexOf(item.query) === -1) return false;
+    if (item.notQuery && location.search.indexOf(item.notQuery) !== -1) return false;
     var path = location.pathname;
     if (item.exact) {
       // Home is the site root only, not every folder's index.html.

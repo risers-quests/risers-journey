@@ -39,7 +39,8 @@
       '<p>Where would you like to go today?</p>'));
     app.appendChild(el('div', 'hd-tiles', window.LH_tiles([
       { title: 'Term 3', desc: 'Your weekly check-in and everything else for this term.', href: 'term-3/index.html', icon: 'skills', tone: 'amber' },
-      { title: 'Maths reports', desc: 'Your maths check-ups: what you’ve got and what to learn next.', href: 'diagnostic/?child=' + encodeURIComponent(kidKey), icon: 'paper', tone: 'green' }
+      { title: 'Skill Check', desc: 'Show what you know in a subject, one topic at a time.', href: 'diagnostic/', icon: 'check', tone: 'green' },
+      { title: 'My Reports', desc: 'Your Skill Check results: what you’ve got and what to learn next.', href: 'diagnostic/?child=' + encodeURIComponent(kidKey), icon: 'paper', tone: 'rose' }
     ].concat([
       { title: 'Term 2', desc: 'Your Term 2 conference and quests.', href: 'term-2/index.html', icon: 'term', tone: 'slate' },
       { title: 'Term 1', desc: 'Your Term 1 conference.', href: 'term-1/index.html', icon: 'conf', tone: 'violet' }
