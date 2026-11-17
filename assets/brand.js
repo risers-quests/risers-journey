@@ -105,7 +105,7 @@
     'Term 2': [['Term 2 Conference', 'end-of-term-2/staff/index.html'], ['Term 2 Quests', 'staff/quests/index.html']],
     'Term 1': [['Term 1 Conference', 'term-1-conference/index.html?view=staff']],
     'Skill Check': [['Start a Skill Check', 'diagnostic/index.html'], ['Grade 4 questions', 'diagnostic/index.html?preview=more-large-numbers&grade=4'],
-      ['Grade 5 questions', 'diagnostic/index.html?preview=more-large-numbers']]
+      ['Grade 5 questions', 'diagnostic/index.html?preview=more-large-numbers'], ['Grade 8 questions', 'diagnostic/index.html?preview=g8-rational-numbers&grade=8']]
   } : {
     'Term 3': [['Term 3 Quest', 'term-3/quest/index.html'],
       ['Weekly Check-in', 'term-3/check-in/index.html'], ['My Schedule', 'term-3/schedule/index.html'], ['Assessments', 'term-3/assessments/index.html']],

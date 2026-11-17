@@ -3,13 +3,15 @@ import { staffSignedIn } from "../staff";
 import { createSession, getSessionStatus } from "../api";
 import { SessionStatus } from "../types";
 import { forgetTest, rememberTest, savedTests } from "../saved";
-import { GRADE4_TOPIC_CHOICES, STRAND_CHOICES } from "../strands";
+import { GRADE4_TOPIC_CHOICES, GRADE8_TOPIC_CHOICES, STRAND_CHOICES } from "../strands";
 
 // The 12 Risers. Their report email addresses are kept only in the email
 // script (diagnostic-tool/email), never on the site; it matches by name.
 const RISERS = ["Benjamin", "Chris", "Elyon", "Eva", "Gabby", "Karis", "Michael", "Owen", "Pranavi", "Shalom", "Yokesh", "Zach"];
-// Risers working from the Grade 4 book; everyone else starts at Grade 5 (staff can still change it).
-const RISER_GRADE: Record<string, string> = { Eva: "Grade 4" };
+// Risers working from another grade's book; everyone else starts at Grade 5 (staff can still change it).
+const RISER_GRADE: Record<string, string> = { Eva: "Grade 4", Benjamin: "Grade 8" };
+// Grades tested chapter by chapter (their own book), and the chapters ready.
+const CHAPTERS: Record<string, typeof GRADE4_TOPIC_CHOICES> = { "Grade 4": GRADE4_TOPIC_CHOICES, "Grade 8": GRADE8_TOPIC_CHOICES };
 const gradeFor = (name: string) => RISER_GRADE[name] ?? "Grade 5";
 // Subjects a Skill Check can cover. Only Maths so far; add more here as they're built.
 const SUBJECTS = ["Maths"];
@@ -33,8 +35,12 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
   // One strand per sitting by default, so a test stays well under an hour.
   const [strands, setStrands] = useState<string[]>(["Number & Algebra"]);
   const [grade, setGrade] = useState(gradeFor(me || forName));
-  // Grade 4: one topic per sitting by default; tick more to test them together.
-  const [g4Topics, setG4Topics] = useState<string[]>([GRADE4_TOPIC_CHOICES[0].id]);
+  // Grade 4 and 8: one chapter per sitting by default; tick more to test them together.
+  const [g4Topics, setG4Topics] = useState<string[]>([(CHAPTERS[gradeFor(me || forName)] ?? GRADE4_TOPIC_CHOICES)[0].id]);
+  const chapters = CHAPTERS[grade];
+  useEffect(() => {
+    if (chapters) setG4Topics([chapters[0].id]);
+  }, [grade]);
   function toggleTopic(id: string) {
     setG4Topics((list) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id]));
   }
@@ -63,7 +69,7 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
     setError(null);
     try {
       const name = childName.trim();
-      const sessionId = await createSession(name, grade, grade === "Grade 4" ? ["Number & Algebra"] : strands, grade === "Grade 4" ? g4Topics : undefined);
+      const sessionId = await createSession(name, grade, chapters ? ["Number & Algebra"] : strands, chapters ? g4Topics : undefined);
       rememberTest({ id: sessionId, childName: name, startedAt: new Date().toISOString() });
       const status = await getSessionStatus(sessionId);
       if (!status) throw new Error("Couldn't start the test");
@@ -132,6 +138,7 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
           <select id="grade" value={grade} onChange={(e) => setGrade(e.target.value)}>
             <option>Grade 5</option>
             <option>Grade 4</option>
+            <option>Grade 8</option>
           </select>
         </div>}
         <div>
@@ -144,10 +151,10 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
           <small className="grade-note">More subjects are coming.</small>
 
         </div>
-        {grade === "Grade 4" && (
+        {chapters && (
           <fieldset className="strand-pick">
-            <legend>Which topics? (from the Grade 4 book)</legend>
-            {GRADE4_TOPIC_CHOICES.map((t) => (
+            <legend>Which topics? (from the {grade} book)</legend>
+            {chapters.map((t) => (
               <label key={t.id} className={"strand-option" + (g4Topics.includes(t.id) ? " on" : "")}>
                 <input type="checkbox" checked={g4Topics.includes(t.id)} onChange={() => toggleTopic(t.id)} />
                 <span>
@@ -161,7 +168,7 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
             <div className="strand-total">
               {g4Topics.length ? `${g4Topics.length} topic${g4Topics.length > 1 ? "s" : ""}` : "Choose at least one topic"}
             </div>
-            <small className="grade-note">More Grade 4 chapters are being added.</small>
+            <small className="grade-note">More {grade} chapters are being added.</small>
           </fieldset>
         )}
         {grade === "Grade 5" && <fieldset className="strand-pick">
@@ -182,7 +189,7 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
           </div>
         </fieldset>}
         {error && <div style={{ color: "var(--soft-clay)", fontSize: "0.85rem" }}>{error}</div>}
-        <button className="btn btn-primary" type="submit" disabled={loading || !childName.trim() || (grade === "Grade 5" ? !strands.length : !g4Topics.length)}>
+        <button className="btn btn-primary" type="submit" disabled={loading || !childName.trim() || (chapters ? !g4Topics.length : !strands.length)}>
           {loading ? "Starting…" : "Start the test"}
         </button>
       </form>

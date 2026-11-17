@@ -35,6 +35,16 @@ Early Mathematics Anxiety, SEMA** — validated for grades 3–6), reported
 side by side rather than combined into one live signal. See *Two separate
 instruments* below for the full reasoning and sourcing.
 
+## Grade 8 (Benjamin)
+
+Grade 8 follows its own book (Selina Concise Mathematics 8) with its own
+topics (`g8-…` in `itemBank/topics.ts`), chosen chapter by chapter on the
+start page like Grade 4. Theme 1, Number System, is in: Rational Numbers,
+Exponents, Squares and Square Roots, Cubes and Cube Roots, Playing with
+Numbers (`itemBank/generate/*G8.ts`). All questions are generated, with a
+named mistake behind every wrong option, and are covered by the stress test.
+Not yet: Sets (needs a "sort into circles" activity) and Themes 2–6.
+
 ## Stack
 
 - **Server**: Node.js + TypeScript + Express. Each session is saved as one

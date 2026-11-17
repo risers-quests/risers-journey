@@ -28,7 +28,7 @@ export type Rng = () => number;
  */
 let currentGrade = 5;
 export function setGrade(g: number) {
-  currentGrade = g === 4 ? 4 : 5;
+  currentGrade = g === 4 ? 4 : g === 8 ? 8 : 5;
 }
 export const G = () => (currentGrade === 4 ? 10 : 1);
 export const D = () => (currentGrade === 4 ? 1 : 0);
@@ -110,6 +110,21 @@ export function build(
 /** An item answered by doing the activity (no options); the server marks what the child did. */
 export function buildActivity(base: Omit<Item, "choices" | "correctChoiceId">, params: Record<string, number>, activity: NonNullable<Item["activity"]>): GeneratedItem {
   return { ...base, choices: [], correctChoiceId: "activity", activity, answerBy: "activity", generated: true, params, mistakes: {} };
+}
+
+/** Powers written the way the book prints them: 10⁴, 2⁻³. */
+export function sup(n: number): string {
+  const s = "⁰¹²³⁴⁵⁶⁷⁸⁹";
+  return (n < 0 ? "⁻" : "") + String(Math.abs(n)).split("").map((d) => s[Number(d)]).join("");
+}
+
+/** A fraction in lowest terms with its sign in front (−3/4); whole numbers stay whole. */
+export function rat(n: number, d: number): string {
+  if (d < 0) (n = -n), (d = -d);
+  if (n === 0) return "0";
+  const g = gcd(Math.abs(n), d);
+  const a = Math.abs(n) / g, b = d / g;
+  return (n < 0 ? "−" : "") + (b === 1 ? String(a) : `${a}/${b}`);
 }
 
 export function cellKey(topicId: string, cpa: CPAStage, bloom: BloomLevel): string {

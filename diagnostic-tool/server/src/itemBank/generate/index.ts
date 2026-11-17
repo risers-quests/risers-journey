@@ -4,6 +4,11 @@ import { FRACTIONS_DIVISION_TEMPLATES, MISCONCEPTIONS as FD_MISCONCEPTIONS } fro
 import { MORE_ON_LARGE_NUMBERS_TEMPLATES, MISCONCEPTIONS as LN_MISCONCEPTIONS } from "./moreOnLargeNumbers.js";
 import { OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES, MISCONCEPTIONS as OP_MISCONCEPTIONS } from "./operationsOnLargeNumbers.js";
 import { FACTORS_MULTIPLES_G4_TEMPLATES, MISCONCEPTIONS as FM4_MISCONCEPTIONS } from "./factorsMultiplesG4.js";
+import { RATIONAL_G8_TEMPLATES, MISCONCEPTIONS as RAT8_MISCONCEPTIONS } from "./rationalG8.js";
+import { EXPONENTS_G8_TEMPLATES, MISCONCEPTIONS as EXP8_MISCONCEPTIONS } from "./exponentsG8.js";
+import { SQUARES_G8_TEMPLATES, MISCONCEPTIONS as SQ8_MISCONCEPTIONS } from "./squaresG8.js";
+import { CUBES_G8_TEMPLATES, MISCONCEPTIONS as CUBE8_MISCONCEPTIONS } from "./cubesG8.js";
+import { PLAYING_G8_TEMPLATES, MISCONCEPTIONS as PLAY8_MISCONCEPTIONS } from "./playingNumbersG8.js";
 
 export type { GeneratedItem } from "./core.js";
 
@@ -22,10 +27,20 @@ const GRADE4_TEMPLATES: Record<string, Record<string, Template>> = {
   "factors-multiples": FACTORS_MULTIPLES_G4_TEMPLATES,
 };
 
+/** Grade 8 (its own book and topics): every topic's questions are generated. */
+const GRADE8_TEMPLATES: Record<string, Record<string, Template>> = {
+  "g8-rational-numbers": RATIONAL_G8_TEMPLATES,
+  "g8-exponents": EXPONENTS_G8_TEMPLATES,
+  "g8-squares": SQUARES_G8_TEMPLATES,
+  "g8-cubes": CUBES_G8_TEMPLATES,
+  "g8-playing-numbers": PLAYING_G8_TEMPLATES,
+};
+
 /** Topics with generated questions (Grade 5; Grade 4 also uses GRADE4_TEMPLATES). */
 export const GENERATED_TOPICS = Object.keys(TEMPLATES);
 
 function templatesFor(topicId: string, grade: number): Record<string, Template> | undefined {
+  if (grade === 8) return GRADE8_TEMPLATES[topicId];
   return (grade === 4 ? GRADE4_TEMPLATES[topicId] : undefined) ?? TEMPLATES[topicId];
 }
 
@@ -34,6 +49,11 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...LN_MISCONCEPTIONS,
   ...OP_MISCONCEPTIONS,
   ...FM4_MISCONCEPTIONS,
+  ...RAT8_MISCONCEPTIONS,
+  ...EXP8_MISCONCEPTIONS,
+  ...SQ8_MISCONCEPTIONS,
+  ...CUBE8_MISCONCEPTIONS,
+  ...PLAY8_MISCONCEPTIONS,
 };
 
 export function hasTemplate(topicId: string, cpa: CPAStage, bloom: BloomLevel, grade = 5): boolean {
@@ -94,3 +114,6 @@ export function isGenerated(item: Item): item is GeneratedItem {
 
 /** Topics ready at Grade 4, in book order (offered one by one on the start page). */
 export const GRADE4_TOPICS = ["more-large-numbers", "operations-large-numbers", "factors-multiples"];
+
+/** Grade 8 chapters ready, in book order (offered one by one on the start page). */
+export const GRADE8_TOPICS = Object.keys(GRADE8_TEMPLATES);

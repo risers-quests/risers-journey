@@ -32,7 +32,8 @@ export function Preview() {
   useEffect(() => {
     // ?preview=<topic id>, e.g. ?preview=more-large-numbers (default: fractions-division)
     const topic = new URLSearchParams(location.search).get("preview") || "fractions-division";
-    const g = new URLSearchParams(location.search).get("grade") === "4" ? "?grade=4" : "";
+    const gr = new URLSearchParams(location.search).get("grade");
+    const g = gr === "4" || gr === "8" ? `?grade=${gr}` : "";
     fetch(`${BASE}/preview/${topic}${g}`).then((r) => r.json()).then(setData);
   }, []);
   if (!data) return <div>Loading…</div>;
@@ -43,6 +44,8 @@ export function Preview() {
         Grade 5: <a href="?preview=more-large-numbers">Large Numbers</a> · <a href="?preview=operations-large-numbers">Operations</a> · <a href="?preview=fractions-division">Fractions and Division</a>
         <br />
         Grade 4: <a href="?preview=more-large-numbers&grade=4">Large Numbers</a> · <a href="?preview=operations-large-numbers&grade=4">Operations</a> · <a href="?preview=factors-multiples&grade=4">Factors and Multiples</a>
+        <br />
+        Grade 8: <a href="?preview=g8-rational-numbers&grade=8">Rational Numbers</a> · <a href="?preview=g8-exponents&grade=8">Exponents</a> · <a href="?preview=g8-squares&grade=8">Squares</a> · <a href="?preview=g8-cubes&grade=8">Cubes</a> · <a href="?preview=g8-playing-numbers&grade=8">Playing with Numbers</a>
       </p>
       <p className="lede">One fresh question per level. Reload the page for new numbers and contexts. ✓ marks the right answer; each wrong option shows the mistake it stands for.</p>
       {data.items.map((it) => (

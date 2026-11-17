@@ -112,7 +112,7 @@ export function GroupActivity({ spec, onChange }: { spec: Spec; onChange: (it: G
         </div>
       </div>
 
-      <p className="ga-hint">Drag {spec.itemMany} into the {spec.basketOne}s, or tap a {spec.basketOne} to drop one in. Tap an {spec.itemMany.replace(/s$/, "")} in a {spec.basketOne} to put it back.</p>
+      <p className="ga-hint">Drag {spec.itemMany} into the {spec.basketOne}s, or tap a {spec.basketOne} to drop one in. Tap {/^[aeiou]/i.test(spec.itemMany) ? "an" : "a"} {spec.itemMany.replace(/s$/, "")} in a {spec.basketOne} to put it back.</p>
 
       <div className="ga-baskets">
         {baskets.map((n, i) => (
@@ -134,7 +134,7 @@ export function GroupActivity({ spec, onChange }: { spec: Spec; onChange: (it: G
               ))}
             </div>
             <div className="ga-basket-art" data-drop={i} aria-hidden="true">
-              🧺
+              {spec.basketIcon ?? "🧺"}
             </div>
           </div>
         ))}

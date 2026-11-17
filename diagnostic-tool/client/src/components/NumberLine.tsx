@@ -24,7 +24,7 @@ export function NumberLine({ spec }: { spec: NumberLineSpec }) {
           <div key={t} className="nl-tick" style={{ left: `${pct(t)}%` }}>
             <div className="nl-tick-mark" />
             {/* One fixed number format, Indian grouping as in the books (2,40,000), whatever the device's region. */}
-            {(i % labelEvery === 0 || i === ticks.length - 1) && <div className="nl-tick-label">{t.toLocaleString("en-IN")}</div>}
+            {(i % labelEvery === 0 || i === ticks.length - 1) && <div className="nl-tick-label">{(Math.round(t * 1e9) / 1e9 || 0).toLocaleString("en-IN")}</div>}
           </div>
         ))}
         {markers.map((m, i) => (

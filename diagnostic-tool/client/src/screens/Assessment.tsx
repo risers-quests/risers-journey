@@ -157,7 +157,7 @@ export function Assessment({
 
         {!byActivity && (
           <div className={`choices ${item.activity && !acted ? "choices-locked" : ""}`}>
-            {item.activity && !acted && <div className="choices-hint">{item.activity.kind === "share" ? "Share them out first, then choose." : item.activity.kind === "group" ? "Try it with the apples first, then choose." : "Try it on the chart first, then choose."}</div>}
+            {item.activity && !acted && <div className="choices-hint">{item.activity.kind === "share" ? "Share them out first, then choose." : item.activity.kind === "group" ? `Try it with the ${item.activity.itemMany} first, then choose.` : "Try it on the chart first, then choose."}</div>}
             {item.choices.map((choice) => (
               <button
                 key={choice.id}

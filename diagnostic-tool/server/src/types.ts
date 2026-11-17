@@ -120,6 +120,8 @@ export interface GroupActivity {
   icon: string;
   itemMany: string;
   basketOne: string;
+  /** The container's picture (default a basket); "" for none (e.g. rows of tiles). */
+  basketIcon?: string;
   /** "equal": how many baskets. */
   baskets?: number;
   /** "size": how many go in each basket; "size" shows this many empty baskets to fill. */
@@ -207,6 +209,8 @@ export interface Topic {
   dependsOn: string[];
   /** The Grade 4 book's own name for this chapter, where it differs. */
   grade4Name?: string;
+  /** Set for a topic from another grade's book only (e.g. 8): never part of a Grade 5 strand test. */
+  grade?: number;
 }
 
 export type DiagnosisTag = "mastered" | "skill_gap" | "procedural_not_conceptual" | "not_yet_reached";

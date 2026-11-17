@@ -97,6 +97,8 @@ export interface GroupActivity {
   icon: string;
   itemMany: string;
   basketOne: string;
+  /** The container's picture (default a basket); "" for none (e.g. rows of tiles). */
+  basketIcon?: string;
   /** "equal": how many baskets. */
   baskets?: number;
   /** "size": how many go in each basket; "size" shows this many empty baskets to fill. */

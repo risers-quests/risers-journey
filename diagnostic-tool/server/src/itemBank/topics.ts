@@ -126,5 +126,17 @@ export const TOPICS: Topic[] = [
   },
 ];
 
+/**
+ * Grade 8 (Selina Concise Mathematics 8), Theme 1: Number System, in the
+ * book's order. Grade 8 tests are chosen chapter by chapter (GRADE8_TOPICS).
+ */
+TOPICS.push(
+  { id: "g8-rational-numbers", strand: "Number & Algebra", name: "Rational Numbers", shortLabel: "Rational Numbers", dependsOn: [], grade: 8 },
+  { id: "g8-exponents", strand: "Number & Algebra", name: "Exponents (Powers)", shortLabel: "Exponents", dependsOn: [], grade: 8 },
+  { id: "g8-squares", strand: "Number & Algebra", name: "Squares and Square Roots", shortLabel: "Squares & Roots", dependsOn: [], grade: 8 },
+  { id: "g8-cubes", strand: "Number & Algebra", name: "Cubes and Cube Roots", shortLabel: "Cubes & Roots", dependsOn: ["g8-squares"], grade: 8 },
+  { id: "g8-playing-numbers", strand: "Number & Algebra", name: "Playing with Numbers", shortLabel: "Playing with Numbers", dependsOn: [], grade: 8 }
+);
+
 /** The book's strands, in order. A test covers one or more of them. */
 export const STRANDS = ["Number & Algebra", "Measurement & Geometry", "Ratio & Proportion", "Data Handling"];

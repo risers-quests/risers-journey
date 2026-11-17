@@ -1,6 +1,6 @@
 import { BloomLevel, CPAStage, ENTRY_BLOOM, ENTRY_CPA } from "../types.js";
 import { STRANDS, TOPICS } from "../itemBank/topics.js";
-import { GRADE4_TOPICS } from "../itemBank/generate/index.js";
+import { GRADE4_TOPICS, GRADE8_TOPICS } from "../itemBank/generate/index.js";
 import type { ClientItem } from "../itemBank/index.js";
 import type { GeneratedItem } from "../itemBank/generate/index.js";
 
@@ -85,10 +85,14 @@ export interface SessionState {
   emailStatus?: { at: string; child: boolean; staff: boolean; note?: string };
 }
 
-/** `topics`: Grade 4 tests are chosen topic by topic (any of GRADE4_TOPICS); otherwise by strand. */
+/** `topics`: Grade 4 and Grade 8 tests are chosen topic by topic (GRADE4_TOPICS, GRADE8_TOPICS); Grade 5 by strand. */
 export function createInitialState(strands: string[] = STRANDS, grade = 5, chosenTopics?: string[]): SessionState {
   const topicOrder = TOPICS.filter((t) =>
-    grade === 4 ? GRADE4_TOPICS.includes(t.id) && (!chosenTopics || chosenTopics.includes(t.id)) : strands.includes(t.strand)
+    grade === 4
+      ? GRADE4_TOPICS.includes(t.id) && (!chosenTopics || chosenTopics.includes(t.id))
+      : grade === 8
+        ? GRADE8_TOPICS.includes(t.id) && (!chosenTopics || chosenTopics.includes(t.id))
+        : !t.grade && strands.includes(t.strand)
   ).map((t) => t.id);
   const topics: Record<string, TopicEngineState> = {};
   topicOrder.forEach((id, idx) => {

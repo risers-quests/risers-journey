@@ -12,7 +12,7 @@
  *     caught as the right misconception
  * Run: npx tsx scripts/check-templates.ts   (N=2000 for a quicker run)
  */
-import { GENERATED_TOPICS, GRADE4_TOPICS, MISCONCEPTIONS, generateItem, GeneratedItem } from "../src/itemBank/generate/index.js";
+import { GENERATED_TOPICS, GRADE4_TOPICS, GRADE8_TOPICS, MISCONCEPTIONS, generateItem, GeneratedItem } from "../src/itemBank/generate/index.js";
 import { checkActivity } from "../src/itemBank/generate/activities.js";
 import { verify as verifyLargeNumbers, dropZeros } from "../src/itemBank/generate/moreOnLargeNumbers.js";
 import { verify as verifyOperations } from "../src/itemBank/generate/operationsOnLargeNumbers.js";
@@ -54,6 +54,56 @@ const VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
   // Grade 4 only (Grade 5 factors are hand-written).
   "factors-multiples": (it) => verifyFactorsG4(it),
 };
+
+// ---- Grade 8: the right answer recomputed from the numbers, independently ----
+const num = (t: string) => Number(t.replace(/−/g, "-").replace(/,/g, "").replace(/[^\d.\-/].*$/, ""));
+const fracVal = (t: string) => {
+  const m = t.replace(/−/g, "-").match(/^(-?\d+)\/(\d+)$/);
+  return m ? Number(m[1]) / Number(m[2]) : num(t);
+};
+function verifyG8(it: GeneratedItem): string | null {
+  const p = it.params;
+  const right = it.choices.find((c) => c.id === it.correctChoiceId)!.text;
+  const cell = `${it.topicId}|${it.cpa}|${it.bloom}`;
+  const want: Record<string, () => number> = {
+    "g8-rational-numbers|abstract|understand": () => p.a / p.b + (p.s * p.c) / p.d,
+    "g8-rational-numbers|abstract|apply": () => (-p.a / p.b) / (p.c / p.d),
+    "g8-rational-numbers|pictorial|evaluate": () => (p.a - p.b) / p.d,
+    "g8-rational-numbers|pictorial|apply": () => (p.a + 1) / p.d,
+    "g8-exponents|abstract|apply": () => (-p.a) ** p.n,
+    "g8-squares|abstract|remember": () => p.n,
+    "g8-squares|abstract|apply": () => 2 ** p.i * 3 ** p.j * 5 ** p.k,
+    "g8-squares|pictorial|analyze": () => 2 * p.n + 1,
+    "g8-squares|pictorial|remember": () => p.n * p.n,
+    "g8-cubes|abstract|remember": () => p.n ** 3,
+    "g8-cubes|abstract|understand": () => p.n,
+    "g8-cubes|abstract|evaluate": () => p.a * p.b,
+    "g8-cubes|pictorial|apply": () => 8 * p.n ** 3,
+    "g8-playing-numbers|abstract|apply": () => 9 * (p.a - p.b),
+    "g8-playing-numbers|abstract|analyze": () => p.t,
+    "g8-playing-numbers|pictorial|analyze": () => (p.a + p.b + p.c) % 9,
+  };
+  if (want[cell]) {
+    const w = want[cell](), got = fracVal(right);
+    if (Math.abs(w - got) > 1e-9) return `right answer "${right}" is ${got}, should be ${w}`;
+  }
+  if (cell === "g8-playing-numbers|pictorial|evaluate" && (p.a + num(right) + p.c) % 9 !== 0) return `${p.a}${right}${p.c} isn't divisible by 9`;
+  if (cell === "g8-cubes|abstract|analyze") {
+    const n = p.s ** 3 * (p.t ? p.p * p.p : p.p);
+    const k = Math.round(Math.cbrt(n * num(right)));
+    if (k ** 3 !== n * num(right)) return `${n} × ${right} isn't a cube`;
+  }
+  if (cell === "g8-squares|abstract|analyze") {
+    const n = p.s * p.s * p.p;
+    const k = Math.round(Math.sqrt(n * num(right)));
+    if (k * k !== n * num(right)) return `${n} × ${right} isn't a square`;
+  }
+  // No wrong option may have the same value as the right one (for plain numbers and fractions).
+  if (/^−?\d+(\/\d+)?$/.test(right))
+    for (const c of it.choices) if (c.id !== it.correctChoiceId && /^−?\d+(\/\d+)?$/.test(c.text) && Math.abs(fracVal(c.text) - fracVal(right)) < 1e-9) return `wrong option "${c.text}" equals the right one`;
+  return null;
+}
+for (const t of GRADE8_TOPICS) VERIFY[t] = verifyG8;
 
 // ---- activities: a perfect attempt, and typical mistakes ----
 function checkActivityItem(it: GeneratedItem, where: string) {
@@ -133,7 +183,7 @@ function checkActivityItem(it: GeneratedItem, where: string) {
   } else fail(`${where}: unknown activity`);
 }
 
-const RUNS: [string, number][] = [...GENERATED_TOPICS.map((t) => [t, 5] as [string, number]), ...GRADE4_TOPICS.map((t) => [t, 4] as [string, number])];
+const RUNS: [string, number][] = [...GENERATED_TOPICS.map((t) => [t, 5] as [string, number]), ...GRADE4_TOPICS.map((t) => [t, 4] as [string, number]), ...GRADE8_TOPICS.map((t) => [t, 8] as [string, number])];
 for (const [topic, grade] of RUNS) {
   for (const cpa of CPA_ORDER)
     for (const bloom of BLOOM_ORDER) {
@@ -187,5 +237,5 @@ for (const [topic, grade] of RUNS) {
       console.log(`G${grade} ${topic.padEnd(20)} ${cpa.padEnd(9)} ${bloom.padEnd(10)} ${String(seen.size).padStart(6)} different`);
     }
 }
-console.log(failures ? `\n${failures} FAILURES` : `\nAll ${RUNS.length * 15 * N} generated questions passed (Grade 5 and Grade 4).`);
+console.log(failures ? `\n${failures} FAILURES` : `\nAll ${RUNS.length * 15 * N} generated questions passed (Grades 4, 5 and 8).`);
 process.exit(failures ? 1 : 0);
