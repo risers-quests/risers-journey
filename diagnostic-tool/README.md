@@ -45,9 +45,15 @@ start page like Grade 4. In so far (`itemBank/generate/*G8.ts`):
 - Theme 2, Ratio and Proportion: Percent, Profit Loss and Discount,
   Interest, Direct and Inverse Variations. Their hands-on level uses the
   shading activity (`ShadeActivity`): tap a square to shade up to it.
+- Theme 3, Algebra: Algebraic Expressions, Identities, Factorisation,
+  Linear Equations, Linear Inequations. Hands-on: bags of x marbles,
+  sharing into bags (equations), sharing each term's tiles (factorising),
+  shading the area model (identities), shading numbered squares
+  (inequations). `generate/algebra.ts` writes expressions as the book does.
 All questions are generated, with a named mistake behind every wrong
-option, and are covered by the stress test. Not yet: Sets (needs a "sort
-into circles" activity) and Themes 3–6.
+option, and are covered by the stress test (algebra answers are checked by
+substituting numbers). Not yet: Sets (needs a "sort into circles"
+activity) and Themes 4–6.
 
 ## Stack
 

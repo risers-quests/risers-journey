@@ -127,8 +127,8 @@ export const TOPICS: Topic[] = [
 ];
 
 /**
- * Grade 8 (Selina Concise Mathematics 8), Themes 1 and 2 (Number System;
- * Ratio and Proportion), in the
+ * Grade 8 (Selina Concise Mathematics 8), Themes 1–3 (Number System;
+ * Ratio and Proportion; Algebra), in the
  * book's order. Grade 8 tests are chosen chapter by chapter (GRADE8_TOPICS).
  */
 TOPICS.push(
@@ -141,7 +141,13 @@ TOPICS.push(
   { id: "g8-percent", strand: "Ratio & Proportion", name: "Percent and Percentage", shortLabel: "Percent", dependsOn: [], grade: 8 },
   { id: "g8-profit-loss", strand: "Ratio & Proportion", name: "Profit, Loss and Discount", shortLabel: "Profit & Loss", dependsOn: ["g8-percent"], grade: 8 },
   { id: "g8-interest", strand: "Ratio & Proportion", name: "Interest (Simple and Compound)", shortLabel: "Interest", dependsOn: ["g8-percent"], grade: 8 },
-  { id: "g8-variation", strand: "Ratio & Proportion", name: "Direct and Inverse Variations", shortLabel: "Variation", dependsOn: [], grade: 8 }
+  { id: "g8-variation", strand: "Ratio & Proportion", name: "Direct and Inverse Variations", shortLabel: "Variation", dependsOn: [], grade: 8 },
+  // Theme 3: Algebra.
+  { id: "g8-expressions", strand: "Number & Algebra", name: "Algebraic Expressions", shortLabel: "Expressions", dependsOn: [], grade: 8 },
+  { id: "g8-identities", strand: "Number & Algebra", name: "Identities", shortLabel: "Identities", dependsOn: ["g8-expressions"], grade: 8 },
+  { id: "g8-factorisation", strand: "Number & Algebra", name: "Factorisation", shortLabel: "Factorisation", dependsOn: ["g8-expressions"], grade: 8 },
+  { id: "g8-linear-equations", strand: "Number & Algebra", name: "Linear Equations in One Variable", shortLabel: "Linear Equations", dependsOn: [], grade: 8 },
+  { id: "g8-inequations", strand: "Number & Algebra", name: "Linear Inequations", shortLabel: "Inequations", dependsOn: [], grade: 8 }
 );
 
 /** The book's strands, in order. A test covers one or more of them. */

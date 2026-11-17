@@ -30,7 +30,9 @@ export function ShadeActivity({ spec, onChange }: { spec: Spec; onChange: (it: S
             className={`shade-cell${i < shaded ? " on" : ""}`}
             aria-label={`shade ${i + 1} square${i ? "s" : ""}`}
             onClick={() => set(shaded === i + 1 ? i : i + 1)}
-          />
+          >
+            {spec.numbered ? i + 1 : null}
+          </button>
         ))}
       </div>
       <div className="shade-controls">

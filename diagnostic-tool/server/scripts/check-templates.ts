@@ -104,6 +104,16 @@ function verifyG8(it: GeneratedItem): string | null {
     "g8-variation|pictorial|understand": () => (p.W * p.D) / p.W2,
     "g8-variation|pictorial|remember": () => p.m * p.u,
     "g8-variation|abstract|remember": () => p.m * p.u,
+    "g8-expressions|abstract|remember": () => p.a * p.k + p.b,
+    "g8-expressions|concrete|apply": () => p.a * p.k + p.r,
+    "g8-identities|abstract|apply": () => 10000 - p.c * p.c,
+    "g8-identities|abstract|evaluate": () => p.s * p.s - 2 * p.p,
+    "g8-identities|pictorial|evaluate": () => (p.big + p.c) ** 2,
+    "g8-linear-equations|pictorial|remember": () => p.x,
+    "g8-linear-equations|pictorial|analyze": () => p.k,
+    "g8-linear-equations|pictorial|evaluate": () => p.x,
+    "g8-linear-equations|abstract|evaluate": () => p.small,
+    "g8-inequations|abstract|evaluate": () => p.k,
   };
   if (want[cell]) {
     const w = want[cell](), got = fracVal(right);
@@ -119,6 +129,27 @@ function verifyG8(it: GeneratedItem): string | null {
     const n = p.s * p.s * p.p;
     const k = Math.round(Math.sqrt(n * num(right)));
     if (k * k !== n * num(right)) return `${n} × ${right} isn't a square`;
+  }
+  // Algebra: the right answer must equal the question's expression at several values of x.
+  const evalAt = (s: string, x: number, y = 2) => {
+    const js = s.replace(/−/g, "-").replace(/x³/g, "(x*x*x)").replace(/x²/g, "(x*x)").replace(/y²/g, "(y*y)")
+      .replace(/(\d)\s*([xy(])/g, "$1*$2").replace(/\)\s*\(/g, ")*(").replace(/\)\s*([xy\d])/g, ")*$1").replace(/([xy])\s*\(/g, "$1*(").replace(/xy/g, "x*y");
+    return Function("x", "y", `return ${js};`)(x, y) as number;
+  };
+  const ALG: Record<string, () => string> = {
+    "g8-expressions|abstract|understand": () => `(${p.a}x + ${p.b}) - (${p.c}x - ${p.d})`,
+    "g8-expressions|abstract|apply": () => `${p.a}x(${p.b}x + ${p.s * p.c})`,
+    "g8-expressions|abstract|analyze": () => `(${p.a}x + ${p.b})(${p.c}x + ${p.d})`,
+    "g8-expressions|pictorial|analyze": () => `(x + ${p.a})(x + ${p.b})`,
+    "g8-identities|abstract|analyze": () => `(${p.a}x + ${p.b}y)(${p.a}x + ${p.b}y)`,
+  };
+  if (ALG[cell]) {
+    const q = ALG[cell]();
+    for (const xv of [2, 3, -1]) if (Math.abs(evalAt(q, xv) - evalAt(right, xv)) > 1e-9) return `right answer "${right}" doesn't equal ${q} at x = ${xv}`;
+  }
+  if (cell === "g8-factorisation|abstract|apply" || cell === "g8-factorisation|abstract|analyze") {
+    const q = cell.endsWith("apply") ? `x² + ${p.m + p.nn}x + ${p.m * p.nn}` : `x² - ${p.m - p.nn}x - ${p.m * p.nn}`;
+    for (const xv of [2, 3, -1]) if (Math.abs(evalAt(q, xv) - evalAt(right, xv)) > 1e-9) return `"${right}" doesn't multiply out to ${q}`;
   }
   // No wrong option may have the same value as the right one (for plain numbers and fractions).
   if (/^−?\d+(\/\d+)?$/.test(right))

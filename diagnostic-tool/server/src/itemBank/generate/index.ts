@@ -13,6 +13,11 @@ import { PERCENT_G8_TEMPLATES, MISCONCEPTIONS as PCT8_MISCONCEPTIONS } from "./p
 import { PROFIT_LOSS_G8_TEMPLATES, MISCONCEPTIONS as PL8_MISCONCEPTIONS } from "./profitLossG8.js";
 import { INTEREST_G8_TEMPLATES, MISCONCEPTIONS as INT8_MISCONCEPTIONS } from "./interestG8.js";
 import { VARIATION_G8_TEMPLATES, MISCONCEPTIONS as VAR8_MISCONCEPTIONS } from "./variationG8.js";
+import { EXPRESSIONS_G8_TEMPLATES, MISCONCEPTIONS as EX8_MISCONCEPTIONS } from "./expressionsG8.js";
+import { IDENTITIES_G8_TEMPLATES, MISCONCEPTIONS as ID8_MISCONCEPTIONS } from "./identitiesG8.js";
+import { FACTORISATION_G8_TEMPLATES, MISCONCEPTIONS as FAC8_MISCONCEPTIONS } from "./factorisationG8.js";
+import { EQUATIONS_G8_TEMPLATES, MISCONCEPTIONS as EQ8_MISCONCEPTIONS } from "./equationsG8.js";
+import { INEQUATIONS_G8_TEMPLATES, MISCONCEPTIONS as INEQ8_MISCONCEPTIONS } from "./inequationsG8.js";
 
 export type { GeneratedItem } from "./core.js";
 
@@ -42,6 +47,11 @@ const GRADE8_TEMPLATES: Record<string, Record<string, Template>> = {
   "g8-profit-loss": PROFIT_LOSS_G8_TEMPLATES,
   "g8-interest": INTEREST_G8_TEMPLATES,
   "g8-variation": VARIATION_G8_TEMPLATES,
+  "g8-expressions": EXPRESSIONS_G8_TEMPLATES,
+  "g8-identities": IDENTITIES_G8_TEMPLATES,
+  "g8-factorisation": FACTORISATION_G8_TEMPLATES,
+  "g8-linear-equations": EQUATIONS_G8_TEMPLATES,
+  "g8-inequations": INEQUATIONS_G8_TEMPLATES,
 };
 
 /** Topics with generated questions (Grade 5; Grade 4 also uses GRADE4_TEMPLATES). */
@@ -66,6 +76,11 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...PL8_MISCONCEPTIONS,
   ...INT8_MISCONCEPTIONS,
   ...VAR8_MISCONCEPTIONS,
+  ...EX8_MISCONCEPTIONS,
+  ...ID8_MISCONCEPTIONS,
+  ...FAC8_MISCONCEPTIONS,
+  ...EQ8_MISCONCEPTIONS,
+  ...INEQ8_MISCONCEPTIONS,
 };
 
 export function hasTemplate(topicId: string, cpa: CPAStage, bloom: BloomLevel, grade = 5): boolean {

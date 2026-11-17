@@ -18,6 +18,11 @@ export const GRADE8_TOPIC_CHOICES = [
   { id: "g8-profit-loss", chapter: "Chapter 8", name: "Profit, Loss and Discount", about: "Profit and loss %, overheads, discount, GST after discount" },
   { id: "g8-interest", chapter: "Chapter 9", name: "Interest", about: "Simple and compound interest, yearly and half-yearly" },
   { id: "g8-variation", chapter: "Chapter 10", name: "Direct and Inverse Variations", about: "Unit method, workers and days, speed and time, time and work" },
+  { id: "g8-expressions", chapter: "Chapter 11", name: "Algebraic Expressions", about: "Like terms, value, adding and subtracting, multiplying, dividing" },
+  { id: "g8-identities", chapter: "Chapter 12", name: "Identities", about: "(a ± b)², a² − b², using them to work things out" },
+  { id: "g8-factorisation", chapter: "Chapter 13", name: "Factorisation", about: "Common factor, perfect squares, a² − b², x² + px + q" },
+  { id: "g8-linear-equations", chapter: "Chapter 14", name: "Linear Equations", about: "Solving, brackets, x on both sides, word problems" },
+  { id: "g8-inequations", chapter: "Chapter 15", name: "Linear Inequations", about: "On the number line, solving, when the sign flips, solution sets" },
 ];
 
 // The book's strands, as offered on the start page.

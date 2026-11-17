@@ -29,8 +29,9 @@ export function NumberLine({ spec }: { spec: NumberLineSpec }) {
         ))}
         {markers.map((m, i) => (
           <div key={i} className="nl-marker" style={{ left: `${pct(m.value)}%` }}>
-            <div className="nl-marker-dot" />
-            <div className="nl-marker-label">{m.label}</div>
+            {/* "○" / "●" mark an open / closed end (inequations): drawn as the dot itself, no label. */}
+            <div className={`nl-marker-dot${m.label === "○" ? " open" : m.label === "●" ? " closed" : ""}`} />
+            {m.label !== "○" && m.label !== "●" && <div className="nl-marker-label">{m.label}</div>}
           </div>
         ))}
       </div>

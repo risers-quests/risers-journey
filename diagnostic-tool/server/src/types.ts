@@ -149,6 +149,8 @@ export interface ShadeActivity {
   cols: number;
   target: number;
   unit?: string;
+  /** Number the squares 1, 2, 3 … (e.g. the natural numbers in an inequation). */
+  numbered?: boolean;
   /** Results of known mistakes, so a wrong amount is named. */
   wrong?: { value: number; mistake: string }[];
 }
