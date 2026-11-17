@@ -81,7 +81,7 @@ export const EXPRESSIONS_G8_TEMPLATES: Record<string, Template> = {
   "concrete|remember": (rng) => {
     const a = int(rng, 2, 4), k = int(rng, 3, 5);
     return buildActivity(
-      { ...base("c-remember", "concrete", "remember", "terms", rng), prompt: `Every bag holds x marbles, and x = ${k}. Fill bags to show ${a}x.`, representation: null },
+      { ...base("c-remember", "concrete", "remember", "terms", rng), prompt: `x = ${k}, so each bag holds ${k} marbles and stands for one x. Put ${k} marbles in each bag you need to show ${a}x.`, representation: null },
       { a, k },
       bags({ mode: "size", items: a * k, size: k, maxBaskets: a + 2 })
     );
@@ -89,7 +89,7 @@ export const EXPRESSIONS_G8_TEMPLATES: Record<string, Template> = {
   "concrete|understand": (rng) => {
     const a = int(rng, 1, 3), b = int(rng, 1, 3), k = int(rng, 2, 4);
     return buildActivity(
-      { ...base("c-understand", "concrete", "understand", "like terms", rng), prompt: `Every bag holds x marbles, and x = ${k}. Fill bags to show ${a}x + ${b}x.`, representation: null },
+      { ...base("c-understand", "concrete", "understand", "like terms", rng), prompt: `x = ${k}, so each bag holds ${k} marbles and stands for one x. Put ${k} marbles in each bag you need to show ${expr([[a, "x"]])} + ${expr([[b, "x"]])}.`, representation: null },
       { a, b, k },
       bags({ mode: "size", items: (a + b) * k, size: k, maxBaskets: a + b + 2 })
     );
@@ -100,7 +100,7 @@ export const EXPRESSIONS_G8_TEMPLATES: Record<string, Template> = {
     return build(
       {
         ...base("c-apply", "concrete", "apply", "value", rng),
-        prompt: `Every bag holds x marbles, and x = ${k}. Fill bags of ${k}; the ones left over are the + ${r}. What is ${a}x + ${r} when x = ${k}?`,
+        prompt: `x = ${k}, so each bag holds ${k} marbles and stands for one x. Show ${a}x + ${r}: put ${k} marbles in each of ${a} bags and leave ${r} in the pile. How many marbles is ${a}x + ${r} when x = ${k}?`,
         representation: null,
         activity: bags({ mode: "size", items: v, size: k, maxBaskets: a + 2 }),
       },
@@ -115,11 +115,11 @@ export const EXPRESSIONS_G8_TEMPLATES: Record<string, Template> = {
     );
   },
   "concrete|analyze": (rng) => {
-    const a = int(rng, 1, 3), c = int(rng, 1, 3), b = int(rng, 1, 3), k = int(rng, 3, 4);
+    const a = int(rng, 1, 3), c = int(rng, 1, 3), k = int(rng, 3, 4), b = int(rng, 1, k - 1);
     return build(
       {
         ...base("c-analyze", "concrete", "analyze", "like terms", rng),
-        prompt: `Every bag holds x marbles (x = ${k}). Fill bags to show ${expr([[a, "x"], [b, ""], [c, "x"]])}. Which is the same expression, simplified?`,
+        prompt: `x = ${k}, so each bag holds ${k} marbles and stands for one x; loose marbles are the number part. Show ${expr([[a, "x"], [b, ""], [c, "x"]])} with bags of ${k} and loose marbles. Which is the same expression, simplified?`,
         representation: null,
         activity: bags({ mode: "size", items: (a + c) * k + b, size: k, maxBaskets: a + c + 2 }),
       },
@@ -134,14 +134,14 @@ export const EXPRESSIONS_G8_TEMPLATES: Record<string, Template> = {
     );
   },
   "concrete|evaluate": (rng) => {
-    const a = int(rng, 2, 3), b = int(rng, 2, 3), k = int(rng, 3, 4);
+    const a = int(rng, 2, 3), k = int(rng, 3, 5), b = int(rng, 1, k - 1); // fewer loose than a bag holds
     const name = pick(rng, ["Meera", "Arjun", "Kabir", "Diya", "Rohan", "Sara"]);
     return build(
       {
         ...base("c-evaluate", "concrete", "evaluate", "like terms", rng),
-        prompt: `${name} says ${a}x + ${b} = ${a + b}x. Check with bags of x = ${k}: fill bags to show ${a}x + ${b}. Is ${name} right?`,
+        prompt: `${name} says ${a}x + ${b} = ${a + b}x. Test it with x = ${k}: put ${k} marbles in each bag to show ${a}x, and leave the other ${b} in the pile. That's ${a}x + ${b}. Would ${a + b} full bags (${a + b}x) be the same?`,
         representation: null,
-        activity: bags({ mode: "size", items: a * k + b, size: k, maxBaskets: a + 2 }),
+        activity: bags({ mode: "size", items: a * k + b, size: k, maxBaskets: a }),
       },
       { a, b, k },
       `No: ${a}x + ${b} is ${a * k + b} marbles, but ${a + b}x is ${(a + b) * k}`,

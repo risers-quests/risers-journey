@@ -84,6 +84,7 @@ const DIAG: Record<Kind, { right: boolean; equal: boolean }> = {
   rhombus: { right: true, equal: false },
   square: { right: true, equal: true },
 };
+const px = (k: number) => (k === 1 ? "x" : `${k}x`);
 const diagText = (right: boolean, equal: boolean) => `${right ? "At 90°" : "Not at 90°"}, ${equal ? "equal" : "not equal"}`;
 
 export const QUADRILATERALS_G8_TEMPLATES: Record<string, Template> = {
@@ -172,7 +173,7 @@ export const QUADRILATERALS_G8_TEMPLATES: Record<string, Template> = {
     const [p, q] = pick(rng, [[3, 2], [4, 5], [7, 2], [5, 1], [2, 1], [3, 1], [5, 4], [7, 5], [2, 7]] as const);
     const x = 180 / (p + q);
     return build(
-      { ...base("p-apply", "pictorial", "apply", "next-door angles", rng), prompt: `In this parallelogram, two next-door angles are ${p}x and ${q}x. What is the larger angle?`, representation: quad("parallelogram", { angleLabels: [`${p}x`, `${q}x`, "", ""] }) },
+      { ...base("p-apply", "pictorial", "apply", "next-door angles", rng), prompt: `In this parallelogram, two next-door angles are ${px(p)} and ${px(q)}. What is the larger angle?`, representation: quad("parallelogram", { angleLabels: [px(p), px(q), "", ""] }) },
       { p, q },
       `${Math.max(p, q) * x}°`,
       [
