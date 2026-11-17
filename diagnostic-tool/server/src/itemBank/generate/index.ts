@@ -32,6 +32,7 @@ import { VOLUME_G8_TEMPLATES, MISCONCEPTIONS as VOL8_MISCONCEPTIONS } from "./vo
 import { DATA_G8_TEMPLATES, MISCONCEPTIONS as DH8_MISCONCEPTIONS } from "./dataG8.js";
 import { PROBABILITY_G8_TEMPLATES, MISCONCEPTIONS as PR8_MISCONCEPTIONS } from "./probabilityG8.js";
 import { VOICE_E8_TEMPLATES, MISCONCEPTIONS as VOI_E8_MISCONCEPTIONS } from "./voiceE8.js";
+import { SPEECH_E8_TEMPLATES, MISCONCEPTIONS as SP_E8_MISCONCEPTIONS } from "./speechE8.js";
 
 export type { GeneratedItem } from "./core.js";
 
@@ -84,6 +85,7 @@ const GRADE8_TEMPLATES: Record<string, Record<string, Template>> = {
 /** Grade 8 English (English Rose Reader 8): topic ids start "e8-". */
 const ENGLISH8_TEMPLATES: Record<string, Record<string, Template>> = {
   "e8-voice": VOICE_E8_TEMPLATES,
+  "e8-speech": SPEECH_E8_TEMPLATES,
 };
 
 /** Topics with generated questions (Grade 5; Grade 4 also uses GRADE4_TEMPLATES). */
@@ -128,6 +130,7 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...DH8_MISCONCEPTIONS,
   ...PR8_MISCONCEPTIONS,
   ...VOI_E8_MISCONCEPTIONS,
+  ...SP_E8_MISCONCEPTIONS,
 };
 
 export function hasTemplate(topicId: string, cpa: CPAStage, bloom: BloomLevel, grade = 5): boolean {

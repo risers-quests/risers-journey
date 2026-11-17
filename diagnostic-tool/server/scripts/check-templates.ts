@@ -22,6 +22,7 @@ import { verify as verifyDecimalsG4 } from "../src/itemBank/generate/decimalsG4.
 import { BLOOM_ORDER, CPA_ORDER } from "../src/types.js";
 import { tidySentence } from "../src/itemBank/generate/activities.js";
 import { verify as verifyVoiceE8 } from "../src/itemBank/generate/voiceE8.js";
+import { verify as verifySpeechE8 } from "../src/itemBank/generate/speechE8.js";
 
 const N = Number(process.env.N || 20000);
 let failures = 0;
@@ -211,6 +212,7 @@ for (const t of GRADE8_TOPICS) VERIFY[t] = verifyG8;
 // ---- Grade 8 English: the right answer is the bank's, independently rebuilt ----
 const ENGLISH_VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
   "e8-voice": verifyVoiceE8,
+  "e8-speech": verifySpeechE8,
 };
 for (const t of ENGLISH8_TOPICS) VERIFY[t] = ENGLISH_VERIFY[t] ?? (() => null);
 

@@ -1,5 +1,5 @@
 import { Rng, Template, pick } from "./core.js";
-import { Misconceptions, baseFor, cap, card, choose, doIt, entry, mark, shuffle, tapWords, tiles } from "./english.js";
+import { Misconceptions, baseFor, cap, card, choose, doIt, entry, entryIn, mark, shuffle, tapWords, tiles } from "./english.js";
 
 /**
  * Active and Passive Voice, Grade 8 English (English Rose Reader 8,
@@ -268,13 +268,12 @@ export const VOICE_E8_TEMPLATES: Record<string, Template> = {
   },
   "concrete|evaluate": (rng, g) => {
     // a passive with one wrong word: tap it
-    const withAgree = BANK.filter((e) => AGREE[e.aux] && !e.aux.includes(" "));
-    const [i, e] = entry(rng, withAgree, g);
+    const [i, e] = entryIn(rng, BANK, (e) => !!AGREE[e.aux] && !e.aux.includes(" "), g);
     const wrongAux = AGREE[e.aux];
     return doIt(
       base("c-evaluate", "concrete", "evaluate", "correct a passive", rng),
       "One word in this sentence is wrong. Tap it.",
-      p(i, 1),
+      p(i),
       tapWords(passive(e, wrongAux), wrongAux, [{ phrase: e.pp, mistake: "voice-agreement" }, { phrase: e.agent, mistake: "voice-agreement" }])
     );
   },

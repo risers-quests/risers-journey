@@ -172,7 +172,8 @@ TOPICS.push(
  * client's ENGLISH8_TOPIC_CHOICES.
  */
 TOPICS.push(
-  { id: "e8-voice", strand: "Grammar", name: "Active and Passive Voice", shortLabel: "Active & Passive", dependsOn: [], grade: 8, subject: "English" }
+  { id: "e8-voice", strand: "Grammar", name: "Active and Passive Voice", shortLabel: "Active & Passive", dependsOn: [], grade: 8, subject: "English" },
+  { id: "e8-speech", strand: "Grammar", name: "Direct and Indirect Speech", shortLabel: "Reported Speech", dependsOn: [], grade: 8, subject: "English" }
 );
 
 /** English strands (Grade 8). */

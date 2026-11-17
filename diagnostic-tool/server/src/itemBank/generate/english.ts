@@ -39,6 +39,18 @@ export function entry<T>(rng: Rng, bank: readonly T[], given?: Record<string, nu
   return [i, bank[i]];
 }
 
+/**
+ * Choose an entry that passes `ok`, by its index in the whole bank (so a
+ * sentence is the same question in every level of a topic and isn't met
+ * twice). Re-uses `given.i` when that entry passes.
+ */
+export function entryIn<T>(rng: Rng, bank: readonly T[], ok: (x: T) => boolean, given?: Record<string, number>): [number, T] {
+  if (given && Number.isInteger(given.i) && bank[given.i] && ok(bank[given.i])) return [given.i, bank[given.i]];
+  const idx = bank.map((x, i) => (ok(x) ? i : -1)).filter((i) => i >= 0);
+  const i = idx[Math.floor(rng() * idx.length)];
+  return [i, bank[i]];
+}
+
 /** Item base for one cell. */
 export function baseFor(prefix: string, topicId: string) {
   return (cell: string, cpa: Cpa, bloom: Bloom, subskill: string, rng: Rng) => ({
@@ -97,6 +109,14 @@ export const card = (lines: string[], caption?: string): TextSpec => ({ kind: "t
 export function mark(sentence: string, phrase: string): string {
   const at = sentence.indexOf(phrase);
   if (at < 0) throw new Error(`"${phrase}" not in "${sentence}"`);
+  return sentence.slice(0, at) + "[[" + phrase + "]]" + sentence.slice(at + phrase.length);
+}
+
+/** Like mark(), but only whole words ("was" doesn't match inside "wasp"). */
+export function markWord(sentence: string, phrase: string): string {
+  const m = new RegExp(`(^|[^A-Za-z’'])(${phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})(?![A-Za-z])`).exec(sentence);
+  if (!m) throw new Error(`"${phrase}" not a whole word in "${sentence}"`);
+  const at = m.index + m[1].length;
   return sentence.slice(0, at) + "[[" + phrase + "]]" + sentence.slice(at + phrase.length);
 }
 

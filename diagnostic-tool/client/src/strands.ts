@@ -43,6 +43,7 @@ export const GRADE8_TOPIC_CHOICES = [
 // grammar comes with (Scope and Sequence). Add a line as each is ready.
 export const ENGLISH8_TOPIC_CHOICES = [
   { id: "e8-voice", chapter: "Grammar · Ch 14", name: "Active and Passive Voice", about: "Doer and receiver, be + past participle in every tense, active ↔ passive" },
+  { id: "e8-speech", chapter: "Grammar · Ch 15", name: "Direct and Indirect Speech", about: "Statements, questions and commands; tense, pronoun and time-word changes, both ways" },
 ];
 
 // The book's strands, as offered on the start page.
