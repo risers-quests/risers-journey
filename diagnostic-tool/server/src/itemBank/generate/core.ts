@@ -94,6 +94,8 @@ export function build(
   for (const w of wrong) {
     if (picked.length === 3) break;
     if (seen.has(w.text)) continue;
+    // Grade 4 numbers stay below 10,00,000 (the book's range), wrong options included.
+    if (currentGrade === 4 && (w.text.match(/\d+(?:,\d+)*/g) ?? []).some((x) => Number(x.replace(/,/g, "")) >= 1000000)) continue;
     seen.add(w.text);
     picked.push(w);
   }

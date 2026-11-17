@@ -244,9 +244,11 @@ ready at Grade 4 are listed in `GRADE4_TOPICS` (`generate/index.ts`); a
 Grade 4 test offers only those. Large Numbers follows the book (numbers up
 to 9,99,999 on the lakhs chart; place and face value; number names;
 rounding to the nearest ten, hundred or thousand; largest/smallest number
-from given digits; Roman numerals 1–100). Operations still uses the old
-"one place value smaller" ladder (G() and D() in `generate/core.ts`) until
-it is rebuilt from book chapters 2–4. The stress test runs every topic at
+from given digits; Roman numerals 1–100). Operations follows chapters
+2–4: add and subtract up to 6 digits, ×/÷ 10, 100, 1000, the 11–15 times
+tables, 4-digit ÷ 1-digit bar models, 3-digit ÷ 2-digit with a remainder,
+and estimating 3-digit × 2-digit. At Grade 4, `build()` drops any wrong
+option with a number of 10 lakh or more. The stress test runs every topic at
 Grade 5 and the Grade 4 topics at Grade 4.
 
 **Numbers are written as the books write them:** Indian grouping

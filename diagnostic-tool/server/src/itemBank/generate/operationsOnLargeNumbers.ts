@@ -1,4 +1,4 @@
-import { D, G, Rng, Template, build, buildActivity, int, pick, fmt } from "./core.js";
+import { Rng, Template, build, buildActivity, fmt, gradeNow, int, pick } from "./core.js";
 
 /**
  * Operations on Large Numbers, generated. One ladder: the four operations
@@ -9,6 +9,11 @@ import { D, G, Rng, Template, build, buildActivity, int, pick, fmt } from "./cor
  *             units, "times as many")
  *   abstract  x10/x100, carrying, subtracting across zeros, order of
  *             operations, checking an answer by estimating
+ * Grade 4 (book chapters 2-4): the same 6-digit add/subtract and x10/x100
+ * ladder (the book goes to 6 digits); division pictures stay within
+ * 4-digit ÷ 1-digit; recall mixes in the 11-15 times tables; "order of
+ * operations" (not in the Grade 4 book) becomes 3-digit ÷ 2-digit with a
+ * remainder; estimation uses 3-digit × 2-digit.
  * Wrong options are the results of real mistakes (adding without carrying,
  * taking the smaller digit from the larger, working left to right…),
  * computed from the numbers. Replaces a bank whose concrete level was
@@ -64,6 +69,21 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
     detail: "Accepts an answer far too big or small instead of estimating first.",
     childTip: "Round the numbers and estimate first, so you know roughly what to expect.",
   },
+  "ops-table-slip": {
+    label: "Times-table slip",
+    detail: "Gives a neighbouring fact from the times table (13 × 7 answered as 13 × 6 or 13 × 8).",
+    childTip: "Build big tables from ones you know: 13 × 7 is 10 × 7 and 3 × 7.",
+  },
+  "ops-remainder-too-big": {
+    label: "Leaves a remainder bigger than the divisor",
+    detail: "Stops dividing too early, so the remainder is as big as (or bigger than) the number divided by.",
+    childTip: "The remainder must be smaller than the number you divide by; if not, it goes in once more.",
+  },
+  "ops-drops-remainder": {
+    label: "Forgets the remainder",
+    detail: "Gives only the quotient when the division doesn't come out exactly.",
+    childTip: "Multiply back to check: quotient × divisor + remainder should give the number you started with.",
+  },
   "ops-estimate-off": {
     label: "Estimates with the wrong rounding",
     detail: "Rounds to the wrong place, or uses awkward numbers, so the estimate is off by a factor of 10.",
@@ -72,8 +92,11 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
 };
 
 const SIX = [100000, 10000, 1000, 100, 10, 1];
-/** The place-value chart's columns: Grade 5 lakhs … ones; Grade 4 ten thousands … ones. */
-const COLS = () => (G() === 10 ? SIX.slice(1) : SIX);
+/** Both grades: numbers up to 6 digits on the lakhs chart (the Grade 4 book goes to 9,99,999). */
+const G = () => 1;
+const COLS = () => SIX;
+/** Division pictures: Grade 4 stays within 4-digit ÷ 1-digit (book chapter 4). */
+const DV = () => (gradeNow() === 4 ? 100 : 1);
 const NAMES = ["Priya", "Arjun", "Meera", "Kabir", "Ananya", "Rohan", "Zara", "Ishaan", "Diya", "Vihaan", "Sara", "Aditya"] as const;
 const digits = (n: number) => SIX.map((p) => Math.floor(n / p) % 10);
 
@@ -242,10 +265,12 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
       { whole, p },
       fmt(q),
       [
-        { text: fmt(whole + p), mistake: "ops-wrong-operation" },
+        ...(gradeNow() === 4 && whole + p >= 1000000 ? [] : [{ text: fmt(whole + p), mistake: "ops-wrong-operation" }]),
         { text: fmt(subSmallerFromLarger(whole, p)), mistake: "ops-smaller-from-larger" },
         { text: fmt(q + (10000 / G())), mistake: null },
         { text: fmt(Math.abs(q - (10000 / G()))), mistake: null },
+        { text: fmt(q + 1000), mistake: null },
+        { text: fmt(Math.abs(q - 1000)), mistake: null },
       ]
     );
   },
@@ -278,6 +303,8 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
           { text: fmt(big + small), mistake: "ops-wrong-operation" },
           { text: fmt(big - small + (1000 / G())), mistake: null },
           { text: fmt(big - small - (1000 / G())), mistake: null },
+          { text: fmt(big - small + 10000), mistake: null },
+          { text: fmt(Math.abs(big - small - 10000)), mistake: null },
         ]
       );
     }
@@ -286,9 +313,9 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   "pictorial|analyze": (rng) => {
     // Equal units: total known, find one unit (division).
     const k = int(rng, 3, 8);
-    const unitV = roundish(rng, (12000 / G()), (120000 / G()), (1000 / G()));
+    const unitV = roundish(rng, (12000 / DV()), (120000 / DV()), (1000 / DV()));
     const total = k * unitV;
-    if (total >= (1000000 / G())) return OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES["pictorial|analyze"](rng);
+    if (total >= (DV() > 1 ? 10000 : 1000000)) return OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES["pictorial|analyze"](rng);
     const [what] = pick(rng, THINGS);
     return build(
       {
@@ -310,9 +337,9 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   "pictorial|evaluate": (rng) => {
     // "A is k times as many as B; together N." B = N / (k + 1).
     const k = int(rng, 2, 5);
-    const b = roundish(rng, (20000 / G()), (150000 / G()), (1000 / G()));
+    const b = roundish(rng, (20000 / DV()), (150000 / DV()), (1000 / DV()));
     const total = b * (k + 1);
-    if (total >= (1000000 / G())) return OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES["pictorial|evaluate"](rng);
+    if (total >= (DV() > 1 ? 10000 : 1000000)) return OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES["pictorial|evaluate"](rng);
     const name = pick(rng, NAMES);
     const wrongB = Math.round(total / k);
     return build(
@@ -340,6 +367,22 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
 
   // ---------------- ABSTRACT ----------------
   "abstract|remember": (rng) => {
+    if (gradeNow() === 4 && rng() < 0.5) {
+      // Times tables of 11-15 (book chapter 3).
+      const t = int(rng, 11, 15);
+      const m = int(rng, 3, 9);
+      return build(
+        { ...base("a-remember", "abstract", "remember", "times-tables", t * m, rng), prompt: `${t} × ${m} = ?`, representation: null },
+        { n: t, f: m, d: 0 },
+        fmt(t * m),
+        [
+          { text: fmt(t * (m - 1)), mistake: "ops-table-slip" },
+          { text: fmt(t * (m + 1)), mistake: "ops-table-slip" },
+          { text: fmt(t + m), mistake: "ops-wrong-operation" },
+          { text: fmt((t - 10) * m + 10), mistake: null },
+        ]
+      );
+    }
     const f = pick(rng, [10, 100, (1000 / G())]);
     const n = int(rng, 12, 980) * (f === (1000 / G()) ? 1 : int(rng, 1, 9));
     if (n * f >= 10000000 || n % 10 === 0) return OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES["abstract|remember"](rng);
@@ -360,6 +403,8 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
             { text: fmt(big * 10), mistake: "ops-zeros-wrong" },
             { text: fmt(big / 10), mistake: "ops-zeros-wrong" },
             { text: fmt(n + f), mistake: "ops-wrong-operation" },
+            { text: fmt(big + f), mistake: null },
+            { text: fmt(big - f), mistake: null },
           ]
     );
   },
@@ -405,6 +450,25 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
   },
 
   "abstract|analyze": (rng) => {
+    if (gradeNow() === 4) {
+      // 3-digit ÷ 2-digit with a remainder (book chapter 4).
+      const d = int(rng, 12, 39);
+      const q = int(rng, 4, Math.floor(999 / d));
+      const r = int(rng, 1, d - 1);
+      const n = q * d + r;
+      if (n < 100 || n > 999) return OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES["abstract|analyze"](rng);
+      return build(
+        { ...base("a-analyze", "abstract", "analyze", "division", n, rng), prompt: `${fmt(n)} ÷ ${d} = ? (quotient and remainder)`, representation: null },
+        { n, d, q, r },
+        `${q} remainder ${r}`,
+        [
+          { text: `${q - 1} remainder ${r + d}`, mistake: "ops-remainder-too-big" },
+          { text: `${q}`, mistake: "ops-drops-remainder" },
+          { text: `${q + 1} remainder ${r}`, mistake: null },
+          { text: `${q} remainder ${r + 1 < d ? r + 1 : r - 1}`, mistake: null },
+        ]
+      );
+    }
     // Order of operations: a + b × c  or  a − b × c.
     const plus = rng() < 0.6;
     const b = roundish(rng, (2000 / G()), (90000 / G()), (1000 / G()));
@@ -428,7 +492,7 @@ export const OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES: Record<string, Template> = {
 
   "abstract|evaluate": (rng) => {
     // Is a claimed product sensible? Check by estimating.
-    const a = G() === 10 ? int(rng, 110, 980) : int(rng, 1100, 9800); // Grade 4: 3-digit × 2-digit
+    const a = gradeNow() === 4 ? int(rng, 110, 980) : int(rng, 1100, 9800); // Grade 4: 3-digit × 2-digit
     const b = int(rng, 11, 89);
     const real = a * b;
     const lead = (n: number) => Number(String(n)[0]) * 10 ** (String(n).length - 1);
@@ -476,6 +540,7 @@ export function verify(item: { cpa: string; bloom: string; params: Record<string
     case "abstract|apply":
       return num(right) === p.a - p.b ? null : `difference wrong: ${right}`;
     case "abstract|analyze":
+      if (p.g === 4) return right === `${p.q} remainder ${p.r}` && p.q * p.d + p.r === p.n && p.r < p.d ? null : `division wrong: ${right}`;
       return num(right) === (p.plus ? p.a + p.b * p.c : p.a - p.b * p.c) ? null : `order of operations wrong: ${right}`;
     case "abstract|evaluate": {
       const sensible = p.claimed === p.a * p.b;

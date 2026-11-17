@@ -110,8 +110,7 @@ for (const [topic, grade] of RUNS) {
           it = generateItem(topic, cpa, bloom, { grade });
           if (grade === 4) {
             // Grade 4: numbers stay below 10,00,000 (pictures and activities
-            // included). Large Numbers uses the lakhs column (the book goes
-            // to 9,99,999); Operations stays within ten thousands for now.
+            // included). Both topics use the lakhs column (the book goes to 9,99,999).
             const nums: number[] = [];
             const walk = (v: unknown): void => {
               if (typeof v === "number") nums.push(v);
@@ -120,7 +119,7 @@ for (const [topic, grade] of RUNS) {
             };
             walk([it.prompt, it.choices, it.representation, it.activity]);
             if (nums.some((x) => x >= 1000000)) fail(`${topic} G4 ${cpa}/${bloom}: a number of ten lakh or more`);
-            const maxCol = topic === "more-large-numbers" ? 100000 : 10000;
+            const maxCol = 100000; // both Grade 4 topics use the lakhs chart (book: up to 9,99,999)
             if (it.activity && "columns" in it.activity && it.activity.columns[0] > maxCol) fail(`${topic} G4 ${cpa}/${bloom}: chart has too many columns`);
           }
         } catch (e) {
