@@ -102,6 +102,27 @@
   .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#14261c;border:1px solid var(--green);border-radius:12px;padding:10px 14px;max-width:560px;width:calc(100% - 32px);z-index:15;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
   .toast.miss{background:#2a1618;border-color:var(--red)}
   .toast .why{color:var(--muted);font-size:13px;margin-top:3px}
+  .status.on{color:var(--amber)}
+  .led.sl{background:#1d2a1f;border-color:#253}
+  .led.sl.on{background:var(--green);box-shadow:0 0 8px var(--green)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .stars{color:var(--amber);letter-spacing:1px;margin-left:6px;font-size:12px}
+  .btn.primary .stars{color:#5a3d00}
+  .lockmsg{font-size:12px;color:var(--muted)}
+  /* cue sheet */
+  .cues{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px}
+  .cue{flex:0 0 auto;min-width:118px;max-width:170px;background:var(--desk);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-size:12px;color:var(--muted)}
+  .cue b{display:block;color:var(--text);font-size:13.5px}
+  .cue.now{border-color:var(--amber);background:#2a2414}
+  .cue.next{border-style:dashed;border-color:var(--blue)}
+  .cue.done-ok{border-color:var(--green)} .cue.done-bad{border-color:var(--red)}
+  /* stage team */
+  .stage{display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:var(--desk);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px}
+  .stage .say{flex:1;min-width:220px;font-size:15px}
+  /* progress */
+  .prog{margin-bottom:18px}
+  .rankbar{height:8px;background:#0b0c0f;border-radius:4px;overflow:hidden}
+  .rankbar div{height:100%;background:var(--amber)}
 </style>
 </head>
 <body>
@@ -120,7 +141,7 @@
         <span class="tag">Start here</span>
         <h3>1 · Sound check: build the mix</h3>
         <p>Before the service, the desk is a mess: every fader down, the GAINs set wrong, a channel muted. Bring each channel up until the whole mix is right. You're timed.</p>
-        <div class="row"><button class="btn primary" data-mode="build">Start the sound check</button></div>
+        <div class="row"><button class="btn primary" data-mode="build" data-act="build">Start the sound check</button></div>
       </div>
       <div class="card">
         <span class="tag">Free play</span>
@@ -133,16 +154,43 @@
         <h3>2 · Sunday Service</h3>
         <p>A 3-minute service where things go wrong, just like on a real Sunday. Spot each problem and fix it fast. You can't pause the service.</p>
         <div class="row">
-          <button class="btn primary" data-mode="live" data-level="beginner">Beginner</button>
-          <button class="btn" data-mode="live" data-level="advanced">Advanced (ears only)</button>
+          <button class="btn primary" data-mode="live" data-level="beginner" data-act="live-b">Beginner</button>
+          <button class="btn" data-mode="live" data-level="advanced" data-act="live-a">Advanced (ears only)</button>
+        </div>
+      </div>
+      <div class="card">
+        <span class="tag">Running order</span>
+        <h3>3 · Follow the service order</h3>
+        <p>Walk-in music, welcome, songs, prayer, sermon… Each part needs a different desk. Watch the cue sheet and change the desk the moment each part starts: mics that aren't in use go off.</p>
+        <div class="row">
+          <button class="btn primary" data-mode="cue" data-level="beginner" data-act="cue-b">Beginner</button>
+          <button class="btn" data-mode="cue" data-level="advanced" data-act="cue-a">Advanced (no dots, faster)</button>
+        </div>
+      </div>
+      <div class="card">
+        <span class="tag">Troubleshooting</span>
+        <h3>4 · "I can't hear anything!"</h3>
+        <p>Someone can't be heard. Is the problem on your desk or on the stage? Use the green SIG light to decide, fix the desk yourself, or send the stage team.</p>
+        <div class="row">
+          <button class="btn primary" data-mode="trouble" data-level="beginner" data-act="trouble-b">Beginner</button>
+          <button class="btn" data-mode="trouble" data-level="advanced" data-act="trouble-a">Advanced (two faults)</button>
         </div>
       </div>
       <div class="card">
         <span class="tag">Listening game</span>
-        <h3>3 · Sound Engineer Emergency</h3>
+        <h3>5 · Sound Engineer Emergency</h3>
         <p>The desk is locked and the meters are hidden. Something goes wrong, and you have 10 seconds to name the problem by ear alone.</p>
-        <div class="row"><button class="btn primary" data-mode="emergency">Play 8 rounds</button></div>
+        <div class="row"><button class="btn primary" data-mode="emergency" data-act="emergency">Play 8 rounds</button></div>
       </div>
+    </div>
+    <div class="card prog" id="progress">
+      <span class="tag">My progress</span>
+      <h3 id="rankName">Trainee</h3>
+      <div class="rankbar"><div id="rankBar" style="width:0%"></div></div>
+      <p id="rankNext"></p>
+      <table class="rep" id="progTable"></table>
+      <details><summary class="sub" style="cursor:pointer">Recent results</summary><table class="rep" id="recentTable"></table></details>
+      <p class="sub" id="syncNote"></p>
     </div>
     <div class="note"><b>The target mix for this service:</b> the <b>pastor</b> is always clearest → <b>worship leader</b> next → <b>Singer 2</b> just underneath → <b>keyboard</b> supporting the voices → <b>playback music</b> soft in the background → <b>audience mic</b> barely there.<br><br>
     The sounds are built-in stand-ins. To practise with real voices, record each part separately on a phone (a 2-minute sermon clip, the keyboard, each singer) and tap <i>load recording</i> under a channel.</div>
@@ -156,12 +204,15 @@
       <div class="pill" id="pScore">Score<b id="score">0</b></div>
       <div class="alert" id="alert"><div id="alertMain">Listening…</div><div class="why" id="alertWhy"></div></div>
     </div>
+    <div class="cues hidden" id="cues"></div>
+    <div class="stage hidden" id="stage"><div class="say" id="stageSay"></div><button class="btn primary" id="stageBtn">🏃 Send the stage team to check the mic</button></div>
     <div class="desk" id="desk"></div>
 
     <details class="learn" id="learn">
       <summary>📘 What does each control do?</summary>
       <div class="learn-grid">
         <div><b>GAIN (top knob)</b>How strongly the microphone's signal comes <i>into</i> the desk. Set it so the voice is strong but the red CLIP light never comes on.</div>
+        <div><b>SIG light (green)</b>Signal is reaching the desk from the stage. If it's off, the problem is before the desk: the mic's switch, its battery or its cable. Send the stage team.</div>
         <div><b>CLIP light</b>Red means too much signal is coming in and the sound is distorting. Fix it with GAIN, not the fader: the fader comes after the problem.</div>
         <div><b>HI EQ</b>Turns the high frequencies up or down. Turning it down makes things softer and darker, and is a quick way to tame a feedback squeal.</div>
         <div><b>MUTE</b>Switches a channel off instantly. Lit red = off. Many "broken mic" emergencies turn out to be a muted channel.</div>
@@ -222,8 +273,11 @@ defaults();
 const gainLin=id=>dbToLin(S[id].gainDb);
 const pre=id=>S[id].src*gainLin(id);
 const eff=id=>S[id].mute?0:pre(id)*S[id].fader*FMAX;
+let ROV=null;   // per-part target ranges (service order); null = the normal service mix
+const rng=id=>(ROV&&ROV[id])||BY[id].range;
 function stat(id){
-  const e=eff(id),[lo,hi]=BY[id].range;
+  const e=eff(id),[lo,hi]=rng(id);
+  if(hi<=0.02) return e<=hi?'ok':'on';   // this channel should be off right now
   if(pre(id)>CLIP) return 'clip';
   if(e<lo-1e-9) return 'low';
   if(e>hi) return 'high';
@@ -422,7 +476,7 @@ function buildDesk(){
     el.innerHTML=`
       <div class="chname"><i style="background:${c.color}"></i>${c.name}</div>
       <div class="ctl"><label>Gain</label><input class="knob" type="range" min="-20" max="12" step="0.5" data-k="gainDb"><div class="val" data-v="gainDb"></div></div>
-      <div class="clip"><span class="led"></span>CLIP</div>
+      <div class="clip"><span class="led sl"></span>SIG<span class="led cl" style="margin-left:8px"></span>CLIP</div>
       <div class="ctl"><label>Hi EQ</label><input class="knob" type="range" min="-12" max="6" step="0.5" data-k="hi"><div class="val" data-v="hi"></div></div>
       <button class="mute">MUTE</button>
       <div class="fwrap">${faderHTML()}</div>
@@ -430,7 +484,7 @@ function buildDesk(){
       <div class="status"></div>
       <button class="load">load recording</button><input type="file" accept="audio/*" class="hidden"><div class="fname"></div>`;
     desk.appendChild(el);
-    const u={el,led:el.querySelector('.led'),bar:el.querySelector('.bar'),fdb:el.querySelector('.fdb'),status:el.querySelector('.status'),mute:el.querySelector('.mute'),knobs:el.querySelectorAll('.knob'),vals:el.querySelectorAll('.val')};
+    const u={el,led:el.querySelector('.led.cl'),sig:el.querySelector('.led.sl'),bar:el.querySelector('.bar'),fdb:el.querySelector('.fdb'),status:el.querySelector('.status'),mute:el.querySelector('.mute'),knobs:el.querySelectorAll('.knob'),vals:el.querySelectorAll('.val')};
     u.knobs.forEach(k=>k.addEventListener('input',()=>{S[c.id][k.dataset.k]=parseFloat(k.value); applyAudio(c.id); refresh(c.id);}));
     u.mute.addEventListener('click',()=>{S[c.id].mute=!S[c.id].mute; applyAudio(c.id); refresh(c.id);});
     u.drawFader=makeFader(el.querySelector('.fader'),()=>S[c.id].fader,v=>{S[c.id].fader=v; applyAudio(c.id); refresh(c.id,true);});
@@ -462,7 +516,8 @@ function drawLoop(){
     CH.forEach(c=>{
       const u=UI[c.id]; u.bar.style.height=(meterLevel(A[c.id].an)*100)+'%';
       u.led.classList.toggle('on',pre(c.id)>CLIP||(c.id==='pastor'&&fb.amp>0.12));
-      const st=stat(c.id); u.status.className='status '+st; u.status.textContent=st==='ok'?'● good':st==='low'?'▼ too quiet':st==='clip'?'⚠ clipping: GAIN ↓':'▲ too loud';
+      u.sig.classList.toggle('on',pre(c.id)>0.03);
+      const st=stat(c.id); u.status.className='status '+st; u.status.textContent=st==='ok'?'● good':st==='low'?'▼ too quiet':st==='clip'?'⚠ clipping: GAIN ↓':st==='on'?'✕ should be off':'▲ too loud';
     });
     UI.master.bar.style.height=(meterLevel(masterAn)*100)+'%';
   }
@@ -518,7 +573,7 @@ let toastTimer=null, suspendTimer=null;
 function setAlert(main,why,cls){ $('alertMain').innerHTML=main; $('alertWhy').textContent=why||''; $('alert').className='alert'+(cls?' '+cls:''); }
 function toast(html,miss,ms){const t=$('toast'); t.innerHTML=html; t.className='toast'+(miss?' miss':''); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.add('hidden'),ms||7000);}
 function now(){return ctx.currentTime-T0;}
-const STATE_WORD={low:'too quiet',high:'too loud',clip:'clipping, turn GAIN down'};
+const STATE_WORD={low:'too quiet',high:'too loud',clip:'clipping, turn GAIN down',on:'should be off'};
 function offChannels(){ return CH.filter(c=>stat(c.id)!=='ok').map(c=>`${c.name.charAt(0)+c.name.slice(1).toLowerCase()} (${STATE_WORD[stat(c.id)]})`); }
 function idleAlert(){
   const off=offChannels();
@@ -558,10 +613,12 @@ async function startMode(m,lv){
   mode=m; T0=ctx.currentTime; active=[]; log=[]; healthT=0; totalT=0; score=0; nextEv=m==='live'?(level==='beginner'?30:20):8;
   if(m==='build'||m==='explore') scramble('zero'); else if(m==='live') scramble('mild');
   const desk=$('desk');
-  desk.classList.toggle('hide-status', m==='live'&&level==='advanced' || m==='emergency');
+  desk.classList.toggle('hide-status', (m==='live'||m==='cue'||m==='trouble')&&level==='advanced' || m==='emergency');
+  $('cues').classList.toggle('hidden',m!=='cue'); $('stage').classList.toggle('hidden',m!=='trouble');
   desk.classList.toggle('ears-only', m==='emergency');
   desk.classList.toggle('locked', m==='emergency');
-  $('pTime').classList.toggle('hidden',m!=='live'&&m!=='build'); $('pTime').firstChild.textContent=m==='build'?'Time':'Time left'; $('pScore').classList.toggle('hidden',m==='explore'||m==='build'); $('pHealth').classList.toggle('hidden',m!=='live');
+  $('pTime').classList.toggle('hidden',!['live','build','cue','trouble'].includes(m)); $('pTime').firstChild.textContent=m==='build'||m==='trouble'?'Time':'Time left';
+  $('pScore').classList.toggle('hidden',m==='explore'||m==='build'); $('pScore').firstChild.textContent=m==='trouble'?'Round':'Score'; $('score').textContent='0'; $('pHealth').classList.toggle('hidden',m!=='live');
   $('learn').open = m==='explore';
   clearInterval(tickIv);
   if(m==='explore'){ $('modeName').textContent='Explore'; setAlert('🎧 The desk starts from zero. Build the mix, then play with it.','Try this: bring the pastor up first, then push the keyboard way up and hear it cover him; turn a GAIN until the CLIP light flashes. Notice what each one sounds like.'); }
@@ -571,6 +628,8 @@ async function startMode(m,lv){
   if(m==='live'){ $('modeName').textContent=level==='beginner'?'Service · Beginner':'Service · Advanced'; DUR=180;
     setAlert('⛪ The service has started, but the desk was left in a mess.','Fix every channel to ● good first. Then listen: more problems will come, and you can\'t pause the service.','live');
     tickIv=setInterval(liveTick,DT*1000); }
+  if(m==='cue'){ $('modeName').textContent='Service order'+(level==='advanced'?' · Adv.':''); cueStart(); }
+  if(m==='trouble'){ $('modeName').textContent='No sound!'+(level==='advanced'?' · Adv.':''); trStart(); }
   if(m==='emergency'){ $('modeName').textContent='Emergency'; setAlert('🚨 Sound Engineer Emergency','Listen. Name the problem by ear.'); emStart(); }
 }
 /* Start from a desk that needs work.
@@ -608,15 +667,16 @@ function buildTick(){
     const text=`Church Sound Desk – Sound check\nDate: ${new Date().toLocaleDateString()}\nTime to build the mix: ${t.toFixed(0)}s\nTime spent clipping: ${clipped}s`;
     showReport(`<div class="tag">Sound check done</div><h2>The mix is ready ✅</h2>
       <div style="display:flex;gap:18px;flex-wrap:wrap;margin:8px 0"><div><div class="big">${t.toFixed(0)}s</div><div class="sub">to build the mix</div></div><div><div class="big">${clipped}s</div><div class="sub">spent clipping</div></div></div>
-      <div class="note">💡 ${tip}</div>`, text, ()=>startMode('build'));
+      <div class="note">💡 ${tip}</div>`, text, ()=>startMode('build'),
+      {act:'build',stars:t<=60&&build.clipTicks*DT<=2?3:t<=120?2:1,summary:`${t.toFixed(0)}s to build · ${clipped}s clipping`});
   }
 }
 function resetState(){
-  defaults(); fb.risk=false; fb.forced=false; fb.amp=0; if(fb.g) fb.g.gain.value=0;
+  defaults(); ROV=null; fb.risk=false; fb.forced=false; fb.amp=0; if(fb.g) fb.g.gain.value=0;
   if(ctx){ CH.forEach(c=>applyAudio(c.id,true)); refreshAll(); }
 }
 function stopAll(){
-  clearInterval(tickIv); clearTimeout(em.timer); clearInterval(em.cd); mode=null;
+  clearInterval(tickIv); clearTimeout(em.timer); clearInterval(em.cd); clearTimeout(tr.timer); mode=null;
   if(ctx){ masterGain.gain.setTargetAtTime(0,ctx.currentTime,0.05); clearTimeout(suspendTimer); suspendTimer=setTimeout(()=>ctx.suspend(),200); }
   ['emPanel','report','toast'].forEach(i=>$(i).classList.add('hidden'));
   $('session').classList.add('hidden'); $('menu').classList.remove('hidden'); $('stopBtn').classList.add('hidden');
@@ -677,17 +737,17 @@ function finishLive(){
   showReport(`<div class="tag">Service over</div><h2>Your report</h2>
     <div style="display:flex;gap:18px;flex-wrap:wrap;margin:8px 0"><div><div class="big">${score}</div><div class="sub">score</div></div><div><div class="big">${fixed.length}/${log.length}</div><div class="sub">fixed</div></div><div><div class="big">${avg.toFixed(1)}s</div><div class="sub">avg fix time</div></div><div><div class="big">${health}%</div><div class="sub">mix health</div></div></div>
     <table class="rep"><tr><th></th><th>Problem</th><th>Time</th><th>Pts</th></tr>${rows||'<tr><td colspan=4>No problems this time.</td></tr>'}</table>
-    <div class="note">💡 ${tip}</div>`, text, ()=>startMode('live',level));
+    <div class="note">💡 ${tip}</div>`, text, ()=>startMode('live',level),
+    {act:'live-'+level[0],stars:fixed.length===log.length&&health>=75?3:fixed.length*2>=log.length&&health>=50?2:1,summary:`Score ${score} · ${fixed.length}/${log.length} fixed · health ${health}%`});
 }
-function showReport(html,text,again){
+function showReport(html,text,again,rec){
+  if(rec) html+=recordResult(rec);
   $('reportBody').innerHTML=html+`<p class="sub" style="margin-top:12px">Copy your results for your portfolio or Weekly Conference:</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="copyBtn">📋 Copy results</button><button class="btn primary" id="againBtn">Play again</button><button class="btn" id="menuBtn">Menu</button></div>
     <textarea class="copy hidden" id="copyTxt" readonly></textarea>`;
   $('report').classList.remove('hidden');
   $('copyBtn').onclick=async()=>{try{await navigator.clipboard.writeText(text); $('copyBtn').textContent='✅ Copied';}catch(e){const ta=$('copyTxt'); ta.value=text; ta.classList.remove('hidden'); ta.select(); $('copyBtn').textContent='Select & copy below';}};
-  $('againBtn').onclick=()=>{$('report').classList.add('hidden'); startMode(mode||'live',level);};
   $('menuBtn').onclick=stopAll;
-  mode=mode; // keep for again
   $('againBtn').onclick=()=>{$('report').classList.add('hidden'); again();};
 }
 
@@ -732,11 +792,276 @@ function emFinish(){
   const text=`Church Sound Desk – Sound Engineer Emergency\nDate: ${new Date().toLocaleDateString()}\nCorrect: ${em.right}/${em.total}\n`+em.results.map(r=>`- ${r.ok?'✓':'✗'} ${r.label}`).join('\n');
   const tip=em.right>=7?'Great ears! Now try the Sunday Service in Advanced mode.':em.right>=4?'Good start. Replay and listen for WHICH sound changed before deciding.':'Go back to Explore mode and make each problem happen yourself, so you learn what it sounds like.';
   showReport(`<div class="tag">Emergency over</div><h2>You got <span style="color:var(--amber)">${em.right}/${em.total}</span></h2>
-    <table class="rep"><tr><th>#</th><th></th><th>Problem</th></tr>${rows}</table><div class="note">💡 ${tip}</div>`, text, ()=>startMode('emergency'));
+    <table class="rep"><tr><th>#</th><th></th><th>Problem</th></tr>${rows}</table><div class="note">💡 ${tip}</div>`, text, ()=>startMode('emergency'),
+    {act:'emergency',stars:em.right>=7?3:em.right>=5?2:1,summary:`${em.right}/${em.total} named by ear`});
+}
+
+/* ---- Follow the service order (cue sheet) ----
+   Each part of the service needs a different desk. Channels not listed for a part should be off
+   (muted or fader down): an open mic nobody is using only adds noise and feedback risk.
+   Marked per part: how fast the desk was right after the part began, and how long it stayed right. */
+const SCENES={
+  walkin:  {name:'Walk-in music', who:'Playback music only, louder than usual. Every mic off.', r:{playback:[0.45,0.9]}},
+  welcome: {name:'Welcome',       who:'Pastor only. Music off.', r:{pastor:[0.7,1.4]}},
+  worship: {name:'Worship songs', who:'Worship leader, Singer 2, keyboard, playback soft underneath. Pastor off.', r:{leader:[0.5,1.0],singer:[0.3,0.75],keys:[0.18,0.55],playback:[0.08,0.38]}},
+  prayer:  {name:'Prayer',        who:'Pastor, with the keyboard very soft underneath.', r:{pastor:[0.7,1.4],keys:[0.05,0.25]}},
+  sermon:  {name:'Sermon',        who:'Pastor only. Everything else off.', r:{pastor:[0.7,1.4]}},
+  offering:{name:'Offering',      who:'Keyboard alone, louder than in the songs.', r:{keys:[0.45,0.9]}},
+  response:{name:'Response song', who:'Worship leader and keyboard only.', r:{leader:[0.5,1.0],keys:[0.18,0.55]}},
+  walkout: {name:'Walk-out music',who:'Playback music only. Every mic off.', r:{playback:[0.45,0.9]}},
+};
+const ORDERS=[
+  ['walkin','welcome','worship','prayer','sermon','response','walkout'],
+  ['walkin','worship','welcome','offering','sermon','prayer','walkout'],
+  ['walkin','welcome','prayer','worship','sermon','offering','walkout'],
+];
+const OFF=[0,0.02];
+function rangesFor(key){ const r=SCENES[key].r; return Object.fromEntries(CH.map(c=>[c.id,c.id==='audience'?c.range:(r[c.id]||OFF)])); }
+const cue={order:[],idx:-1,len:24,pre:10,cur:null,lastOrder:-1};
+function cueStart(){
+  let o; do{ o=Math.floor(Math.random()*ORDERS.length); }while(o===cue.lastOrder&&ORDERS.length>1); cue.lastOrder=o;
+  cue.order=ORDERS[o]; cue.idx=-1; cue.cur=null; cue.len=level==='beginner'?24:16; cue.pre=10; log=[]; score=0;
+  ROV=rangesFor(cue.order[0]);
+  renderCues();
+  tickIv=setInterval(cueTick,DT*1000);
+}
+function renderCues(){
+  $('cues').innerHTML=cue.order.map((k,i)=>{
+    const done=log[i], cls=i===cue.idx?'now':i===cue.idx+1?'next':done?(done.pts>=60?'done-ok':'done-bad'):'';
+    const tag=i===cue.idx?'▶ NOW':i===cue.idx+1?'NEXT':done?(done.pts>=60?'✅ '+done.pts:'⚠ '+done.pts):(i+1)+'';
+    return `<div class="cue ${cls}"><span>${tag}</span><b>${SCENES[k].name}</b>${SCENES[k].who}</div>`;
+  }).join('');
+  const now=$('cues').querySelector('.now,.next'); if(now) now.scrollIntoView({block:'nearest',inline:'nearest'});
+}
+function closePart(){
+  const c=cue.cur; if(!c) return;
+  const grace=level==='beginner'?6:4;
+  const readyPts=c.readyAt==null?0:c.readyAt<=grace?50:Math.max(10,Math.round(50-(c.readyAt-grace)*5));
+  const hold=c.okT/Math.max(c.tot,0.01), pts=readyPts+Math.round(50*hold);
+  log.push({key:c.key,name:SCENES[c.key].name,ready:c.readyAt,hold,pts}); score+=pts; $('score').textContent=score;
+  if(pts>=60) toast(`✅ <b>${SCENES[c.key].name}</b> · ready in ${c.readyAt.toFixed(1)}s · +${pts}`);
+  else toast(`⚠ <b>${SCENES[c.key].name}</b> · ${c.readyAt==null?'the desk was never right for this part':'ready in '+c.readyAt.toFixed(1)+'s, then it drifted'} · +${pts}<div class="why">This part needed: ${SCENES[c.key].who}</div>`,true,8000);
+  cue.cur=null;
+}
+function cueTick(){
+  if(mode!=='cue') return;
+  const t=now(), L=cue.len, n=cue.order.length, end=cue.pre+n*L;
+  const left=Math.max(0,end-t); $('timeLeft').textContent=Math.floor(left/60)+':'+String(Math.floor(left%60)).padStart(2,'0');
+  if(t<cue.pre){
+    const first=SCENES[cue.order[0]];
+    setAlert(`🚪 Doors open in ${Math.ceil(cue.pre-t)}s. First up: <b>${first.name}</b>`,first.who+' Get the desk ready now.','live');
+    return;
+  }
+  const idx=Math.floor((t-cue.pre)/L);
+  if(idx>=n){ closePart(); return finishCue(); }
+  if(idx!==cue.idx){
+    closePart(); cue.idx=idx; const key=cue.order[idx];
+    ROV=rangesFor(key); cue.cur={key,t0:cue.pre+idx*L,okT:0,tot:0,readyAt:null};
+    renderCues();
+  }
+  const c=cue.cur, pt=t-c.t0, sc=SCENES[c.key];
+  const allOk=CH.every(ch=>stat(ch.id)==='ok');
+  if(allOk&&c.readyAt==null) c.readyAt=pt;
+  c.tot+=DT; if(allOk) c.okT+=DT;
+  const off=offChannels(), nextKey=cue.order[idx+1], toNext=L-pt;
+  const main=`▶ <b>NOW: ${sc.name}</b>`+(level==='beginner'&&off.length?' · 🔧 '+off.join(' · '):allOk?' · ✅ desk is right':'');
+  const why=nextKey&&toNext<=8?`⏭️ NEXT in ${Math.ceil(toNext)}s: ${SCENES[nextKey].name}. ${SCENES[nextKey].who} Change the desk when it starts, not before.`:sc.who;
+  setAlert(main,why,allOk?'good':'live');
+}
+function finishCue(){
+  clearInterval(tickIv); ROV=null;
+  const avg=log.length?Math.round(log.reduce((a,l)=>a+l.pts,0)/log.length):0;
+  const ready=log.filter(l=>l.ready!=null);
+  const avgReady=ready.length?ready.reduce((a,l)=>a+l.ready,0)/ready.length:0;
+  const rows=log.map(l=>`<tr><td>${l.pts>=60?'✅':'⚠'}</td><td>${l.name}</td><td>${l.ready==null?'never':l.ready.toFixed(1)+'s'}</td><td>${Math.round(l.hold*100)}%</td><td>${l.pts}</td></tr>`).join('');
+  const missed=log.filter(l=>l.pts<40);
+  const tip=missed.length?`You missed "${missed[0].name}" (${SCENES[missed[0].key].who}) Before the service, read the order and plan each change: which mics go on, which go off.`:
+            avg>=80?(level==='beginner'?'Smooth service! Try Advanced: shorter parts and no status dots.':'You ran that like a real Sunday. Next: offer to shadow the sound team during an actual service.'):
+            'Watch the NEXT warning: get your hands on the right faders before the part starts, then move the moment it begins.';
+  const text=`Church Sound Desk – Service order (${level})\nDate: ${new Date().toLocaleDateString()}\nAverage per part: ${avg}/100\nAverage time to get each part right: ${avgReady.toFixed(1)}s\n`+log.map(l=>`- ${l.name}: ${l.ready==null?'never right':'ready in '+l.ready.toFixed(1)+'s'}, held ${Math.round(l.hold*100)}%`).join('\n');
+  showReport(`<div class="tag">Service over</div><h2>Service order report</h2>
+    <div style="display:flex;gap:18px;flex-wrap:wrap;margin:8px 0"><div><div class="big">${avg}</div><div class="sub">average per part (of 100)</div></div><div><div class="big">${avgReady.toFixed(1)}s</div><div class="sub">to get each part right</div></div></div>
+    <table class="rep"><tr><th></th><th>Part</th><th>Ready in</th><th>Held right</th><th>Pts</th></tr>${rows}</table>
+    <div class="note">💡 ${tip}</div>`, text, ()=>startMode('cue',level),
+    {act:'cue-'+level[0],stars:avg>=80&&!missed.length?3:avg>=55&&missed.length<=1?2:1,summary:`${avg}/100 per part · ready in ${avgReady.toFixed(1)}s`});
+}
+
+/* ---- "I can't hear anything!" troubleshooting ----
+   The SIG light says whether signal reaches the desk. Lit: the fault is on the desk (mute, fader, GAIN, master).
+   Off: it's on the stage (battery, mic switch, cable), so send the stage team. */
+const WHO={pastor:'the pastor',leader:'the worship leader',singer:'Singer 2',keys:'the keyboard'};
+const DESK_FAULTS={
+  mute:  {apply:id=>{S[id].mute=true;},     what:'The channel was MUTED.'},
+  fader: {apply:id=>{S[id].fader=0;},       what:'The FADER was all the way down.'},
+  gain:  {apply:id=>{S[id].gainDb=-20;},    what:'The GAIN was turned right down, so the signal came in far too weak.'},
+};
+const STAGE_FAULTS={
+  battery:'The radio mic\'s battery was flat. The stage team put in a fresh one.',
+  switch: 'The switch on the microphone itself was off. The stage team switched it on.',
+  cable:  'The cable had come out of the stage box. The stage team plugged it back in.',
+};
+const tr={rounds:[],i:0,cur:null,timer:null,walking:false,results:[]};
+function trPlan(){
+  // deal faults and people like cards, so the same one doesn't come up twice in a row
+  const deck=a=>{let d=[];return ()=>{ if(!d.length) d=a.slice().sort(()=>Math.random()-.5); return d.pop(); };};
+  const nextId=deck(Object.keys(WHO)), nextDesk=deck(Object.keys(DESK_FAULTS)), nextStage=deck(Object.keys(STAGE_FAULTS));
+  const one=k=>k==='stage'?{stage:nextStage()}:{desk:[nextDesk()]};
+  let plan=level==='beginner'?['desk','stage','desk','master','stage','desk'].map(k=>k==='master'?{master:true}:one(k))
+    :[{stage:nextStage(),desk:[nextDesk()]},one('desk'),{desk:['mute','fader'].concat(Math.random()<.5?['gain']:[])},{master:true,desk:[nextDesk()]},one('stage'),{stage:nextStage(),desk:[nextDesk()]}];
+  plan=plan.sort(()=>Math.random()-.5);
+  return plan.map(p=>({...p,id:nextId()}));
+}
+function trStart(){ tr.rounds=trPlan(); tr.i=0; tr.results=[]; trRound(); }
+function trRound(){
+  clearInterval(tickIv); clearTimeout(tr.timer);
+  resetState();
+  const r=tr.rounds[tr.i];
+  if(r.master) master.fader=0;
+  (r.desk||[]).forEach(k=>DESK_FAULTS[k].apply(r.id));
+  if(r.stage) S[r.id].src=0;
+  CH.forEach(c=>applyAudio(c.id,true)); refreshAll(); applyMaster();
+  tr.cur={r,t0:now(),trips:0,wasted:0,hinted:false,stageFixed:!r.stage};
+  tr.walking=false; $('stageBtn').disabled=false; $('stageBtn').textContent='🏃 Send the stage team to check the mic';
+  $('score').textContent=`${tr.i+1}/${tr.rounds.length}`;
+  $('stageSay').innerHTML=r.master?'🙋 <b>"Nobody can hear anything at all!"</b>':`🙋 <b>"I can't hear ${WHO[r.id]}!"</b>`;
+  setAlert('🔎 Find the fault.','Check the SIG light first. Lit = signal reaches the desk, so the problem is on your desk. Off = the problem is on the stage.','live');
+  tickIv=setInterval(trTick,DT*1000);
+}
+function trFixed(){ const r=tr.cur.r; return S[r.id].src>0.5&&stat(r.id)==='ok'&&master.fader>=0.6&&CH.every(c=>r.master?stat(c.id)==='ok':true); }
+function trTick(){
+  if(mode!=='trouble'||!tr.cur) return;
+  const c=tr.cur, t=now()-c.t0;
+  $('timeLeft').textContent=Math.floor(t)+'s';
+  if(trFixed()) return trDone(true);
+  if(t>60) return trDone(false);
+  if(level==='beginner'&&!c.hinted&&t>12){
+    c.hinted=true;
+    const r=c.r, nm=BY[r.id].name.toLowerCase();
+    setAlert(r.master?'💡 Every channel looks fine, so look at the end of the chain.':`💡 Look at the ${nm} channel's green SIG light.`,
+      r.master?'Signal goes: mic → GAIN → MUTE → FADER → MASTER → speakers. If nothing at all comes out, the MASTER fader is the common point.':
+      'SIG lit: check MUTE, FADER, GAIN and MASTER on the desk. SIG off: no signal is arriving, so send the stage team.','live');
+    if(!r.master){ UI[r.id].el.classList.add('flash'); setTimeout(()=>UI[r.id].el.classList.remove('flash'),3200); }
+  }
+}
+function trSend(){
+  if(mode!=='trouble'||!tr.cur||tr.walking) return;
+  const c=tr.cur; c.trips++; tr.walking=true;
+  $('stageBtn').disabled=true; $('stageBtn').textContent='🏃 Stage team is checking…';
+  tr.timer=setTimeout(()=>{
+    tr.walking=false; $('stageBtn').disabled=false; $('stageBtn').textContent='🏃 Send the stage team to check the mic';
+    if(!tr.cur||tr.cur!==c) return;
+    if(!c.stageFixed){ c.stageFixed=true; S[c.r.id].src=1; applyAudio(c.r.id); toast(`🎤 <b>Stage team:</b> ${STAGE_FAULTS[c.r.stage]}`+(c.r.desk?'<div class="why">Now check the desk too: the SIG light is back, but is it all right?</div>':''),false,7000); }
+    else { c.wasted++; toast(`🎤 <b>Stage team:</b> "The mic is fine, it's working." That cost you time.<div class="why">The SIG light was already on, so signal was reaching the desk. The problem is on your desk.</div>`,true,8000); }
+  },level==='beginner'?5000:7000);
+}
+function trDone(ok){
+  clearInterval(tickIv);
+  const c=tr.cur, r=c.r, t=now()-c.t0; tr.cur=null;
+  const causes=[r.stage?STAGE_FAULTS[r.stage]:null,...(r.desk||[]).map(k=>DESK_FAULTS[k].what),r.master?'The MASTER fader was down, so nothing went to the speakers.':null].filter(Boolean);
+  tr.results.push({who:r.master?'everyone':WHO[r.id],causes,ok,time:t,wasted:c.wasted});
+  if(ok) toast(`✅ <b>Sorted in ${t.toFixed(1)}s</b><div class="why">${causes.join(' ')}</div>`,false,6000);
+  else { toast(`⏰ <b>Out of time.</b> Here's what it was:<div class="why">${causes.join(' ')}</div>`,true,9000); }
+  setAlert(ok?'✅ Fixed!':'⏰ Out of time','Next problem coming…',ok?'good':'live');
+  tr.i++;
+  tr.timer=setTimeout(()=>{ if(mode!=='trouble') return; if(tr.i>=tr.rounds.length) trFinish(); else trRound(); },3000);
+}
+function trFinish(){
+  const res=tr.results, solved=res.filter(x=>x.ok), wasted=res.reduce((a,x)=>a+x.wasted,0);
+  const avg=solved.length?solved.reduce((a,x)=>a+x.time,0)/solved.length:0;
+  const rows=res.map((x,i)=>`<tr><td>${i+1}</td><td>${x.ok?'✅':'⏰'}</td><td>${x.who}</td><td>${x.causes.join(' ')}</td><td>${x.ok?x.time.toFixed(1)+'s':'–'}</td><td>${x.wasted||''}</td></tr>`).join('');
+  const tip=wasted>1?'You sent the stage team when the problem was on the desk. Check the SIG light first: lit means look at your own desk.':
+            solved.length<res.length?'Work through the chain in order: SIG light → MUTE → FADER → GAIN → MASTER. Don\'t skip around.':
+            avg>15?'Right answers, now get faster: check the same order every time until it\'s automatic.':
+            level==='beginner'?'Sharp! Try Advanced: some problems have two faults at once.':'You troubleshoot like a pro. A real sound desk has the same chain.';
+  const text=`Church Sound Desk – "I can't hear anything!" (${level})\nDate: ${new Date().toLocaleDateString()}\nSolved: ${solved.length}/${res.length}\nAverage time: ${avg.toFixed(1)}s\nUnneeded stage trips: ${wasted}\n`+res.map(x=>`- ${x.who}: ${x.causes.join(' ')} (${x.ok?x.time.toFixed(1)+'s':'not solved'})`).join('\n');
+  showReport(`<div class="tag">Troubleshooting over</div><h2>Your report</h2>
+    <div style="display:flex;gap:18px;flex-wrap:wrap;margin:8px 0"><div><div class="big">${solved.length}/${res.length}</div><div class="sub">solved</div></div><div><div class="big">${avg.toFixed(1)}s</div><div class="sub">average time</div></div><div><div class="big">${wasted}</div><div class="sub">unneeded stage trips</div></div></div>
+    <table class="rep"><tr><th>#</th><th></th><th>Who</th><th>What it was</th><th>Time</th><th>Wasted trips</th></tr>${rows}</table>
+    <div class="note">💡 ${tip}</div>`, text, ()=>startMode('trouble',level),
+    {act:'trouble-'+level[0],stars:solved.length===res.length&&wasted===0&&avg<=15?3:solved.length>=res.length-1&&wasted<=1&&avg<=25?2:1,summary:`${solved.length}/${res.length} solved · ${avg.toFixed(1)}s avg · ${wasted} wasted trips`});
+}
+
+/* ---- Levels and progress ----
+   Results are kept on this device and, for a signed-in Riser, in the same progress store the quests use,
+   so they follow her across devices. */
+const ACTS=[
+  {k:'build',name:'Sound check'},
+  {k:'live-b',name:'Sunday Service · Beginner'},{k:'live-a',name:'Sunday Service · Advanced',needs:'live-b'},
+  {k:'cue-b',name:'Service order · Beginner'},{k:'cue-a',name:'Service order · Advanced',needs:'cue-b'},
+  {k:'trouble-b',name:'"I can\'t hear anything!" · Beginner'},{k:'trouble-a',name:'"I can\'t hear anything!" · Advanced',needs:'trouble-b'},
+  {k:'emergency',name:'Sound Engineer Emergency'},
+];
+const RANKS=[[0,'🎧 Trainee'],[4,'🎚️ Desk helper'],[10,'🎛️ Desk operator'],[17,'🔊 Sound engineer'],[22,'⭐ Head of sound']];
+const KID=(()=>{try{return (localStorage.getItem('imm-l3-kid')||'').toLowerCase();}catch(e){return '';}})();
+const PKEY='sounddesk-progress::'+(KID||'guest');
+const WORKER='https://risers-term2-digital-quests-progress.highergrade.workers.dev', SITE_KEY='RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+const SYNC=()=>WORKER+'/sync?group=sound-desk&kid='+encodeURIComponent(KID)+'&week=progress';
+let PG={results:[]}, syncState='';
+const stars=n=>'★'.repeat(n)+'☆'.repeat(3-n);
+const best=k=>PG.results.filter(r=>r.act===k).reduce((a,r)=>Math.max(a,r.stars),0);
+const totalStars=()=>ACTS.reduce((a,x)=>a+best(x.k),0);
+const rankOf=n=>{let i=0; RANKS.forEach((r,j)=>{if(n>=r[0]) i=j;}); return i;};
+function mergeResults(list){
+  const seen=new Set(PG.results.map(r=>r.id));
+  (list||[]).forEach(r=>{ if(r&&r.id&&!seen.has(r.id)){ PG.results.push(r); seen.add(r.id); } });
+  PG.results.sort((a,b)=>a.date<b.date?-1:1); PG.results=PG.results.slice(-300);
+}
+function saveLocal(){ try{ localStorage.setItem(PKEY,JSON.stringify(PG)); }catch(e){} }
+async function pull(){
+  if(!KID) return false;
+  try{ const r=await fetch(SYNC(),{headers:{'X-Site-Key':SITE_KEY}}); if(!r.ok) return false; const d=await r.json();
+    if(d.found&&d.data&&d.data.state) mergeResults(d.data.state.results); return true; }catch(e){ return false; }
+}
+async function push(){
+  if(!KID) return false;
+  try{ const r=await fetch(SYNC(),{method:'POST',headers:{'Content-Type':'application/json','X-Site-Key':SITE_KEY},
+      body:JSON.stringify({group:'sound-desk',kid:KID,week:'progress',state:PG})}); const d=await r.json(); return r.ok&&!!d.ok; }catch(e){ return false; }
+}
+async function syncNow(){
+  syncState=KID?'Saving…':''; renderProgress();
+  const ok=(await pull())&&(await push()); saveLocal();
+  syncState=!KID?'':ok?'✅ Saved to your account':'⚠ Saved on this device only (no connection)'; renderProgress();
+}
+function recordResult(rec){
+  const before=best(rec.act), rankBefore=rankOf(totalStars());
+  const r={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),act:rec.act,name:(ACTS.find(a=>a.k===rec.act)||{}).name||rec.act,stars:rec.stars,summary:rec.summary,date:new Date().toISOString()};
+  mergeResults([r]); saveLocal(); syncNow();
+  const rankAfter=rankOf(totalStars());
+  const unlocked=ACTS.filter(a=>a.needs===rec.act&&before<2&&rec.stars>=2);
+  return `<div class="note" style="margin-top:10px;border-left-color:var(--green)"><span class="stars" style="font-size:20px;margin:0">${stars(rec.stars)}</span>
+    ${rec.stars>before?' <b>New best!</b>':''}${rankAfter>rankBefore?`<br>🎉 <b>You're now ${RANKS[rankAfter][1]}!</b>`:''}
+    ${unlocked.map(a=>`<br>🔓 <b>Unlocked:</b> ${a.name}`).join('')}</div>`;
+}
+function renderProgress(){
+  const n=totalStars(), ri=rankOf(n), nextR=RANKS[ri+1];
+  $('rankName').textContent=RANKS[ri][1]+' · '+n+' ★';
+  $('rankBar').style.width=Math.round(100*n/(ACTS.length*3))+'%';
+  $('rankNext').textContent=nextR?`${nextR[0]-n} more ★ to become ${nextR[1]}. Earn stars by doing well in each activity; your best result counts.`:'Top rank. Keep your skills sharp!';
+  $('progTable').innerHTML='<tr><th>Activity</th><th>Best</th><th>Played</th></tr>'+ACTS.map(a=>{
+    const locked=a.needs&&best(a.needs)<2, played=PG.results.filter(r=>r.act===a.k).length;
+    return `<tr><td>${a.name}</td><td>${locked?'🔒':`<span class="stars" style="margin:0">${stars(best(a.k))}</span>`}</td><td>${played||'–'}</td></tr>`;}).join('');
+  const recent=PG.results.slice(-10).reverse();
+  $('recentTable').innerHTML=recent.length?'<tr><th>Date</th><th>Activity</th><th>Result</th><th></th></tr>'+recent.map(r=>`<tr><td>${new Date(r.date).toLocaleDateString(undefined,{day:'numeric',month:'short'})}</td><td>${r.name}</td><td>${r.summary||''}</td><td class="stars" style="margin:0">${stars(r.stars)}</td></tr>`).join(''):'<tr><td>Nothing yet. Start with the sound check!</td></tr>';
+  $('syncNote').textContent=syncState||(KID?'':'Sign in on the home page to save your progress to your account.');
+  document.querySelectorAll('[data-act]').forEach(b=>{
+    if(!b.dataset.label) b.dataset.label=b.textContent;
+    const a=ACTS.find(x=>x.k===b.dataset.act), locked=a&&a.needs&&best(a.needs)<2;
+    b.disabled=!!locked;
+    b.innerHTML=b.dataset.label+(locked?' 🔒':best(b.dataset.act)?`<span class="stars">${stars(best(b.dataset.act))}</span>`:'');
+    b.title=locked?'Unlocks with ★★ on Beginner':'';
+  });
+}
+function progInit(){
+  try{ PG=JSON.parse(localStorage.getItem(PKEY))||{results:[]}; if(!Array.isArray(PG.results)) PG={results:[]}; }catch(e){ PG={results:[]}; }
+  renderProgress();
+  if(KID) pull().then(()=>{ saveLocal(); renderProgress(); });
+  if(/[?&]progress\b/.test(location.search)) setTimeout(()=>$('progress').scrollIntoView({behavior:'smooth'}),50);
 }
 
 /* ---- wiring ---- */
-document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>startMode(b.dataset.mode,b.dataset.level)));
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{ if(!b.disabled) startMode(b.dataset.mode,b.dataset.level); }));
+$('stageBtn').addEventListener('click',trSend);
+progInit();
 $('stopBtn').addEventListener('click',stopAll);
 })();
 </script>

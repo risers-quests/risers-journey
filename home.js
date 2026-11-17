@@ -31,7 +31,8 @@
   // Tools added for one Riser only, keyed by their sign-in name.
   var OWN_TILES = {
     karis: [
-      { title: 'Sound Desk', desc: 'Practise live church sound: fix problems by ear, fast.', href: 'tools/sound-desk/index.html', icon: 'sound', tone: 'violet' }
+      { title: 'Sound Desk', desc: 'Practise live church sound: fix problems by ear, fast.', href: 'tools/sound-desk/index.html', icon: 'sound', tone: 'violet' },
+      { title: 'Sound Desk Progress', desc: 'Your stars, your rank and your recent results.', href: 'tools/sound-desk/index.html?progress', icon: 'paper', tone: 'amber' }
     ]
   };
 
