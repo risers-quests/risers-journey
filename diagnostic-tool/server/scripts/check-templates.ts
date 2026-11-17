@@ -12,7 +12,7 @@
  *     caught as the right misconception
  * Run: npx tsx scripts/check-templates.ts   (N=2000 for a quicker run)
  */
-import { GENERATED_TOPICS, GRADE4_TOPICS, GRADE8_TOPICS, MISCONCEPTIONS, generateItem, GeneratedItem } from "../src/itemBank/generate/index.js";
+import { ENGLISH8_TOPICS, GENERATED_TOPICS, GRADE4_TOPICS, GRADE8_TOPICS, MISCONCEPTIONS, generateItem, GeneratedItem } from "../src/itemBank/generate/index.js";
 import { checkActivity } from "../src/itemBank/generate/activities.js";
 import { verify as verifyLargeNumbers, dropZeros } from "../src/itemBank/generate/moreOnLargeNumbers.js";
 import { verify as verifyOperations } from "../src/itemBank/generate/operationsOnLargeNumbers.js";
@@ -20,6 +20,8 @@ import { verify as verifyFactorsG4 } from "../src/itemBank/generate/factorsMulti
 import { verify as verifyFractionsG4 } from "../src/itemBank/generate/fractionsG4.js";
 import { verify as verifyDecimalsG4 } from "../src/itemBank/generate/decimalsG4.js";
 import { BLOOM_ORDER, CPA_ORDER } from "../src/types.js";
+import { tidySentence } from "../src/itemBank/generate/activities.js";
+import { verify as verifyVoiceE8 } from "../src/itemBank/generate/voiceE8.js";
 
 const N = Number(process.env.N || 20000);
 let failures = 0;
@@ -206,6 +208,11 @@ function verifyG8(it: GeneratedItem): string | null {
   return null;
 }
 for (const t of GRADE8_TOPICS) VERIFY[t] = verifyG8;
+// ---- Grade 8 English: the right answer is the bank's, independently rebuilt ----
+const ENGLISH_VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
+  "e8-voice": verifyVoiceE8,
+};
+for (const t of ENGLISH8_TOPICS) VERIFY[t] = ENGLISH_VERIFY[t] ?? (() => null);
 
 // ---- activities: a perfect attempt, and typical mistakes ----
 function checkActivityItem(it: GeneratedItem, where: string) {
@@ -353,10 +360,36 @@ function checkActivityItem(it: GeneratedItem, where: string) {
     if (!Number.isInteger(act.target) || act.target < 0 || act.target > act.rows * act.cols) fail(`${where}: can't shade ${act.target} of ${act.rows * act.cols}`);
     if (!checkActivity(act, { shaded: act.target }).correct) fail(`${where}: the right shading was marked wrong`);
     for (const w of act.wrong ?? []) if (checkActivity(act, { shaded: w.value }).misconception !== w.mistake) fail(`${where}: shading ${w.value} not caught as ${w.mistake}`);
+  } else if (act.kind === "words") {
+    if (!act.target.length) fail(`${where}: nothing to tap`);
+    if (act.target.length === act.tokens.length) fail(`${where}: every word is the answer`);
+    if (!checkActivity(act, { picked: act.target }).correct) fail(`${where}: the right words were marked wrong`);
+    for (const x of act.alsoRight ?? []) if (!checkActivity(act, { picked: x }).correct) fail(`${where}: an also-right marking was marked wrong`);
+    for (const w of act.wrongSets ?? []) if ((act.alsoRight ?? []).some((x) => x.join() === w.cells.join())) fail(`${where}: a mistake pattern is also right`);
+    if (checkActivity(act, { picked: [] }).correct) fail(`${where}: tapping nothing is marked right`);
+    for (const w of act.wrongSets ?? []) if (checkActivity(act, { picked: w.cells }).misconception !== w.mistake) fail(`${where}: a wrong tap not caught as ${w.mistake}`);
+  } else if (act.kind === "order") {
+    // the right sentence must be buildable from the tiles, each tile once
+    const want = act.answers[0];
+    const used: number[] = [];
+    const left = act.tiles.map((t, i) => ({ t, i }));
+    let rest = want;
+    while (rest.length) {
+      const k = left.findIndex((x) => rest.startsWith(x.t) && (rest.length === x.t.length || rest[x.t.length] === " " || /^[.,?!’']/.test(rest.slice(x.t.length))));
+      if (k < 0) break;
+      used.push(left[k].i);
+      rest = rest.slice(left[k].t.length).trimStart();
+      left.splice(k, 1);
+    }
+    if (rest.length) fail(`${where}: "${want}" can't be built from the tiles ${JSON.stringify(act.tiles)}`);
+    else if (!checkActivity(act, { order: used }).correct) fail(`${where}: the right sentence was marked wrong`);
+    if (tidySentence(act.tiles.join(" ")) === tidySentence(want)) fail(`${where}: tiles start in the right order`);
+    for (const w of act.wrong ?? []) if (act.answers.some((a) => tidySentence(a) === tidySentence(w.text))) fail(`${where}: a 'mistake' equals the right answer`);
   } else fail(`${where}: unknown activity`);
 }
 
-const RUNS: [string, number][] = [...GENERATED_TOPICS.map((t) => [t, 5] as [string, number]), ...GRADE4_TOPICS.map((t) => [t, 4] as [string, number]), ...GRADE8_TOPICS.map((t) => [t, 8] as [string, number])];
+const RUNS: [string, number][] = [...GENERATED_TOPICS.map((t) => [t, 5] as [string, number]), ...GRADE4_TOPICS.map((t) => [t, 4] as [string, number]), ...GRADE8_TOPICS.map((t) => [t, 8] as [string, number]), ...ENGLISH8_TOPICS.map((t) => [t, 8] as [string, number])];
+for (let k = RUNS.length - 1; k >= 0; k--) if (process.env.ONLY && !RUNS[k][0].startsWith(process.env.ONLY)) RUNS.splice(k, 1);
 for (const [topic, grade] of RUNS) {
   for (const cpa of CPA_ORDER)
     for (const bloom of BLOOM_ORDER) {
@@ -413,5 +446,5 @@ for (const [topic, grade] of RUNS) {
       console.log(`G${grade} ${topic.padEnd(20)} ${cpa.padEnd(9)} ${bloom.padEnd(10)} ${String(seen.size).padStart(6)} different`);
     }
 }
-console.log(failures ? `\n${failures} FAILURES` : `\nAll ${RUNS.length * 15 * N} generated questions passed (Grades 4, 5 and 8).`);
+console.log(failures ? `\n${failures} FAILURES` : `\nAll ${RUNS.length * 15 * N} generated questions passed (Grades 4, 5 and 8, Maths and English).`);
 process.exit(failures ? 1 : 0);

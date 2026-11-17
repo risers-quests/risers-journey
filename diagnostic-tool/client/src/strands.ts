@@ -38,6 +38,13 @@ export const GRADE8_TOPIC_CHOICES = [
   { id: "g8-probability", chapter: "Chapter 25", name: "Probability", about: "Coins, dice, cards and spinners; experiments; 'not'" },
 ];
 
+// Grade 8 English (English Rose Reader 8): topics offered one by one (ids
+// match the server's ENGLISH8_TOPICS). "chapter" is the reader chapter the
+// grammar comes with (Scope and Sequence). Add a line as each is ready.
+export const ENGLISH8_TOPIC_CHOICES = [
+  { id: "e8-voice", chapter: "Grammar · Ch 14", name: "Active and Passive Voice", about: "Doer and receiver, be + past participle in every tense, active ↔ passive" },
+];
+
 // The book's strands, as offered on the start page.
 export const STRAND_CHOICES = [
   { name: "Number & Algebra", topics: ["Large numbers", "Operations on large numbers", "Factors and multiples", "Fractions and division", "Four operations of fractions", "Decimals"] },

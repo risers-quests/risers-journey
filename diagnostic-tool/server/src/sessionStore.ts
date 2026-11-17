@@ -94,9 +94,9 @@ async function save(sessionId: string, session: StoredSession): Promise<void> {
   requestCache.getStore()?.set(sessionId, session);
 }
 
-export async function createSession(childName: string, grade: string, strands?: string[], topics?: string[]): Promise<{ id: string; state: SessionState }> {
+export async function createSession(childName: string, grade: string, strands?: string[], topics?: string[], subject: "Maths" | "English" = "Maths"): Promise<{ id: string; state: SessionState }> {
   const id = newId();
-  const state = createInitialState(strands, gradeNumber(grade), topics);
+  const state = createInitialState(strands, gradeNumber(grade), topics, subject);
   await save(id, { child_name: childName, grade, created_at: new Date().toISOString(), status: "in_progress", state, responses: [] });
   return { id, state };
 }
@@ -186,6 +186,8 @@ export interface ReportEntry {
   id: string;
   date: string;
   grade: string;
+  /** "Maths" or "English" (older reports: Maths). */
+  subject?: string;
   minutes: number;
   questions: number;
   right: number;

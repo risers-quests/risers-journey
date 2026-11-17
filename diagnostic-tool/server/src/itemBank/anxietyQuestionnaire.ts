@@ -39,3 +39,27 @@ export const ANXIETY_QUESTIONS: AnxietyQuestion[] = [
   { id: "aq-7", factor: "situational", text: "How do you feel when someone checks your math homework?" },
   { id: "aq-8", factor: "situational", text: "How do you feel when you're not sure if your math answer is right?" },
 ];
+
+/**
+ * The English version (Grade 8 English tests): the same two factors and
+ * 3-point scale, worded about reading, writing and grammar. Honest note:
+ * SEMA is a maths scale; this is our adaptation in the spirit of the
+ * foreign-language reading and writing anxiety scales (FLRAS, SLWAI), not a
+ * validated English instrument. Read it as a useful conversation starter.
+ */
+export const ENGLISH_ANXIETY_QUESTIONS: AnxietyQuestion[] = [
+  // The subject itself: reading, writing and grammar
+  { id: "eq-1", factor: "numerical", text: "How do you feel when you have to read a long passage or chapter?" },
+  { id: "eq-2", factor: "numerical", text: "How do you feel when you have to write a composition or a letter?" },
+  { id: "eq-3", factor: "numerical", text: "How do you feel when you meet a word you don't know?" },
+  { id: "eq-4", factor: "numerical", text: "How do you feel about grammar exercises (passive voice, reported speech)?" },
+  // Being tested or watched
+  { id: "eq-5", factor: "situational", text: "How do you feel right before an English test?" },
+  { id: "eq-6", factor: "situational", text: "How do you feel when you're asked to read aloud or recite in front of the class?" },
+  { id: "eq-7", factor: "situational", text: "How do you feel when someone corrects your writing?" },
+  { id: "eq-8", factor: "situational", text: "How do you feel when you're not sure if your answer is right?" },
+];
+
+export function anxietyQuestionsFor(subject?: string): AnxietyQuestion[] {
+  return subject === "English" ? ENGLISH_ANXIETY_QUESTIONS : ANXIETY_QUESTIONS;
+}

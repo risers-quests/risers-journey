@@ -24,16 +24,19 @@ export const STATUS: Record<TopicStatus, { icon: string; child: string; staff: s
   notReached: { icon: "⏸", child: "Coming later", staff: "Not reached", fg: "#4f6577", bg: "#eaf0f5" },
 };
 
+/** The subject as it reads mid-sentence: "maths", but always "English". */
+const subj = (ins: Insights) => (ins.subject === "Maths" ? "maths" : ins.subject);
+
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
-function shell(title: string, body: string): string {
+function shell(title: string, body: string, subject = "Maths"): string {
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title></head>
 <body style="margin:0;padding:0;background:${C.paper};font-family:Inter,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:${C.ink};">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.paper};"><tr><td align="center" style="padding:20px 12px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:620px;background:#ffffff;border:1px solid ${C.line};border-radius:14px;">
 <tr><td style="height:6px;background:${C.brand};border-radius:14px 14px 0 0;font-size:0;line-height:0;">&nbsp;</td></tr>
 ${body}
-<tr><td style="padding:14px 24px 20px;font-size:12px;color:${C.soft};border-top:1px solid ${C.line};">LifeHub Foundations · Maths Diagnostic</td></tr>
+<tr><td style="padding:14px 24px 20px;font-size:12px;color:${C.soft};border-top:1px solid ${C.line};">LifeHub Foundations · ${subject} Diagnostic</td></tr>
 </table></td></tr></table></body></html>`;
 }
 
@@ -57,7 +60,7 @@ export function childEmail(ins: Insights): { subject: string; html: string } {
   };
   let body = section(
     `<div style="font-size:24px;font-weight:700;margin-bottom:4px;">Well done, ${esc(ins.childName)}!</div>
-     <div style="font-size:15px;color:${C.soft};">Your maths Skill Check at LifeHub on ${esc(ins.date)}.</div>`,
+     <div style="font-size:15px;color:${C.soft};">Your ${subj(ins)} Skill Check at LifeHub on ${esc(ins.date)}.</div>`,
     "22px 24px 8px"
   );
   if (asked > 0) {
@@ -72,7 +75,7 @@ export function childEmail(ins: Insights): { subject: string; html: string } {
   body += list("Strengths", ["secure"], "✓", "#3f8a1c");
   body += list("Areas to grow", ["fragile", "gap"], "↑", "#c4851d");
   body += section(`<div style="font-size:15px;">Keep going!<br><span style="color:${C.soft};">Your teachers at LifeHub</span></div>`, "8px 24px 22px");
-  return { subject: `${ins.childName}, your maths Skill Check results`, html: shell("Your maths Skill Check", body) };
+  return { subject: `${ins.childName}, your ${subj(ins)} Skill Check results`, html: shell(`Your ${subj(ins)} Skill Check`, body, ins.subject) };
 }
 
 /** What being sure said about the child, in plain words (no numbers). Same as the report page. */
@@ -114,7 +117,7 @@ export function staffEmail(ins: Insights): { subject: string; html: string } {
   const answered = o.sureRight + o.unsureRight + o.sureWrong + o.unsureWrong;
 
   let body = section(
-    `<div style="font-size:22px;font-weight:700;">${esc(ins.childName)} · maths diagnostic</div>
+    `<div style="font-size:22px;font-weight:700;">${esc(ins.childName)} · ${subj(ins)} diagnostic</div>
      <div style="font-size:13px;color:${C.soft};margin-top:4px;">${esc(ins.date)} · ${esc(ins.strands.join(", "))} · ${ins.questionCount} questions · ${ins.durationMinutes} min</div>
      <div style="margin-top:14px;">${(["secure", "fragile", "gap", "notReached"] as TopicStatus[])
        .filter((s) => count(s))
@@ -193,12 +196,12 @@ export function staffEmail(ins: Insights): { subject: string; html: string } {
     const factor = (label: string, v: number) =>
       `<div style="font-size:12px;margin-top:8px;">${label} <span style="color:${C.soft};">${v}/${a.factorMax}</span></div>${bar([[v, "#e0a75e"], [a.factorMax - v, C.line]], a.factorMax, 8)}`;
     body += section(
-      h2(`Maths anxiety: <span style="color:${lvl[1]};background:${lvl[2]};padding:2px 8px;border-radius:999px;font-size:13px;">${lvl[0]}</span>`) +
-        factor("Worry about the maths itself", a.numericalScore) +
+      h2(`${ins.subject} anxiety: <span style="color:${lvl[1]};background:${lvl[2]};padding:2px 8px;border-radius:999px;font-size:13px;">${lvl[0]}</span>`) +
+        factor(ins.subject === "English" ? "Worry about reading, writing and grammar" : "Worry about the maths itself", a.numericalScore) +
         factor("Worry about being tested or watched", a.situationalScore) +
-        `<div style="font-size:11px;color:${C.soft};margin-top:10px;">From the 8-question self-report at the end (adapted from SEMA). The bands are our estimate, not clinical cut-offs. Read it alongside the results, not as their cause.</div>`
+        `<div style="font-size:11px;color:${C.soft};margin-top:10px;">From the 8-question self-report at the end (${ins.subject === "English" ? "our adaptation of SEMA to English" : "adapted from SEMA"}). The bands are our estimate, not clinical cut-offs. Read it alongside the results, not as their cause.</div>`
     );
   }
 
-  return { subject: `Maths diagnostic: ${ins.childName}, ${ins.date}`, html: shell(`${ins.childName} · maths diagnostic`, body) };
+  return { subject: `${ins.subject} diagnostic: ${ins.childName}, ${ins.date}`, html: shell(`${ins.childName} · ${subj(ins)} diagnostic`, body, ins.subject) };
 }

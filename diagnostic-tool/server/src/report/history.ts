@@ -13,6 +13,7 @@ export function reportEntry(id: string, grade: string, createdAt: string, ins: I
     id,
     date: createdAt,
     grade,
+    subject: ins.subject,
     minutes: ins.durationMinutes,
     questions: scored.length,
     right: scored.filter((r) => r.correct).length,

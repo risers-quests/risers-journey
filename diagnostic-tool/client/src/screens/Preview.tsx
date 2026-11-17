@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { OrderActivity, TextCard, WordsActivity } from "../components/EnglishVisuals";
+import { ENGLISH8_TOPIC_CHOICES } from "../strands";
 import { FigureCards, MeasureActivity, PickActivity, PiePicture, PizzaActivity, TilesActivity } from "../components/G4Visuals";
 import { abstractClass } from "../promptStyle";
 import { BarModel } from "../components/BarModel";
@@ -50,12 +52,33 @@ export function Preview() {
         Grade 4: <a href="?preview=more-large-numbers&grade=4">Large Numbers</a> · <a href="?preview=operations-large-numbers&grade=4">Operations</a> · <a href="?preview=factors-multiples&grade=4">Factors and Multiples</a>
         <br />
         Grade 8: <a href="?preview=g8-rational-numbers&grade=8">Rational Numbers</a> · <a href="?preview=g8-exponents&grade=8">Exponents</a> · <a href="?preview=g8-squares&grade=8">Squares</a> · <a href="?preview=g8-cubes&grade=8">Cubes</a> · <a href="?preview=g8-playing-numbers&grade=8">Playing with Numbers</a> · <a href="?preview=g8-sets&grade=8">Sets</a> · <a href="?preview=g8-percent&grade=8">Percent</a> · <a href="?preview=g8-profit-loss&grade=8">Profit and Loss</a> · <a href="?preview=g8-interest&grade=8">Interest</a> · <a href="?preview=g8-variation&grade=8">Variation</a> · <a href="?preview=g8-expressions&grade=8">Expressions</a> · <a href="?preview=g8-identities&grade=8">Identities</a> · <a href="?preview=g8-factorisation&grade=8">Factorisation</a> · <a href="?preview=g8-linear-equations&grade=8">Equations</a> · <a href="?preview=g8-inequations&grade=8">Inequations</a> · <a href="?preview=g8-shapes&grade=8">Shapes</a> · <a href="?preview=g8-quadrilaterals&grade=8">Quadrilaterals</a> · <a href="?preview=g8-constructions&grade=8">Constructions</a> · <a href="?preview=g8-solids&grade=8">3-D in 2-D</a> · <a href="?preview=g8-symmetry&grade=8">Symmetry</a> · <a href="?preview=g8-circles&grade=8">Circles</a> · <a href="?preview=g8-area&grade=8">Area</a> · <a href="?preview=g8-volume&grade=8">Volume</a> · <a href="?preview=g8-data&grade=8">Data</a> · <a href="?preview=g8-probability&grade=8">Probability</a>
+        <br />
+        Grade 8 English:{" "}
+        {ENGLISH8_TOPIC_CHOICES.map((t, i) => (
+          <span key={t.id}>
+            {i ? " · " : ""}
+            <a href={`?preview=${t.id}&grade=8`}>{t.name}</a>
+          </span>
+        ))}
       </p>
       <p className="lede">One fresh question per level. Reload the page for new numbers and contexts. ✓ marks the right answer; each wrong option shows the mistake it stands for.</p>
       {data.items.map((it) => (
         <div className="card preview-item" key={it.id}>
           <div className="preview-cell">{it.cpa} · {it.bloom}</div>
           {it.cpa === "abstract" && !it.representation ? <div className={abstractClass(it.prompt)}>{it.prompt}</div> : <div className="prompt-text">{it.prompt}</div>}
+          {it.representation?.kind === "text" && <TextCard spec={it.representation} />}
+          {it.activity?.kind === "words" && (
+            <>
+              <WordsActivity spec={it.activity} onChange={() => undefined} />
+              <p className="preview-note">Right: {it.activity.target.map((i) => it.activity?.kind === "words" ? it.activity.tokens[i] : "").join(" ")}{it.activity.wrongSets?.length ? ` · named mistakes: ${it.activity.wrongSets.map((w) => w.mistake).join(", ")}` : ""}</p>
+            </>
+          )}
+          {it.activity?.kind === "order" && (
+            <>
+              <OrderActivity spec={it.activity} onChange={() => undefined} />
+              <p className="preview-note">Right: {it.activity.answers[0]}{it.activity.wrong?.length ? ` · named mistakes: ${it.activity.wrong.map((w) => w.mistake).join(", ")}` : ""}</p>
+            </>
+          )}
           {it.representation?.kind === "bar-model" && <BarModel spec={it.representation} />}
           {it.representation?.kind === "concrete" && <ConcreteObjects spec={it.representation} />}
           {it.representation?.kind === "sharing" && <Sharing spec={it.representation} />}

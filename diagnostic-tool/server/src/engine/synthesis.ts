@@ -2,7 +2,7 @@ import { SessionState } from "./state.js";
 import { ResponseRecord } from "../sessionStore.js";
 import { TOPICS, getTopic, topicName } from "../itemBank/index.js";
 import { MISCONCEPTIONS } from "../itemBank/generate/index.js";
-import { ANXIETY_QUESTIONS, AnxietyFactor } from "../itemBank/anxietyQuestionnaire.js";
+import { anxietyQuestionsFor, AnxietyFactor } from "../itemBank/anxietyQuestionnaire.js";
 import { BLOOM_ORDER, BloomLevel, CPAStage, DiagnosisTag } from "../types.js";
 
 export interface TopicDiagnosis {
@@ -33,6 +33,8 @@ export interface MathAnxietyResult {
 export interface ReportData {
   childName: string;
   grade: string;
+  /** "Maths" or "English". */
+  subject: string;
   assessedAt: string;
   questionCount: number;
   durationMinutes: number;
@@ -61,7 +63,8 @@ const TAG_RECOMMENDATION: Record<DiagnosisTag, string> = {
   not_yet_reached: "Will be assessed once its prerequisite gap closes.",
 };
 
-const ALL_STRANDS = ["Number & Algebra", "Measurement & Geometry", "Ratio & Proportion", "Data Handling"];
+const MATHS_STRANDS = ["Number & Algebra", "Measurement & Geometry", "Ratio & Proportion", "Data Handling"];
+const ENGLISH_STRANDS_ALL = ["Grammar", "Vocabulary", "Punctuation & Spelling", "Literature"];
 
 function fmtSec(ms: number) {
   return `${(ms / 1000).toFixed(1)}s`;
@@ -148,7 +151,7 @@ function buildTopicDiagnosis(topicId: string, state: SessionState, responses: Re
       if (lag) {
         evidence.push(`Struggle persisted across representations around ${lag.cpa}·${lag.bloom}; ${lag.reason}`);
       }
-      evidence.push(`This reflects the skill assessment alone — see the separate Math Confidence Check below for whether anxiety may also be a factor.`);
+      evidence.push(`This reflects the skill assessment alone — see the separate confidence check below for whether anxiety may also be a factor.`);
     }
   }
 
@@ -198,12 +201,12 @@ function buildHeadline(childName: string, topics: TopicDiagnosis[]): { headline:
       headline: mastered.length
         ? `${childName} is solid on ${masteredList} — but has a prerequisite gap in ${skillGap.name.toLowerCase()}.`
         : `${childName} has a prerequisite gap in ${skillGap.name.toLowerCase()} that is holding back later topics.`,
-      subheadline: `This is what the skill assessment alone shows. The separate Math Confidence Check below looks at whether anxiety may also be part of the picture — read both sections together before deciding how to respond.`,
+      subheadline: `This is what the skill assessment alone shows. The separate confidence check below looks at whether anxiety may also be part of the picture — read both sections together before deciding how to respond.`,
     };
   }
   return {
     headline: `${childName} shows full mastery across every topic assessed this session.`,
-    subheadline: `Accuracy stayed consistent across Concrete, Pictorial, and Abstract representations. See the separate Math Confidence Check below for how ${childName} feels about math day-to-day.`,
+    subheadline: `Accuracy stayed consistent across Concrete, Pictorial, and Abstract representations. See the separate confidence check below for how ${childName} feels about the subject day-to-day.`,
   };
 }
 
@@ -216,6 +219,7 @@ function buildHeadline(childName: string, topics: TopicDiagnosis[]): { headline:
  * can be validated against real pilot data.
  */
 function computeMathAnxiety(state: SessionState): MathAnxietyResult {
+  const ANXIETY_QUESTIONS = anxietyQuestionsFor(state.subject);
   const factorMax = ANXIETY_QUESTIONS.filter((q) => q.factor === "numerical").length * 3;
   const maxScore = ANXIETY_QUESTIONS.length * 3;
 
@@ -245,6 +249,7 @@ export function synthesizeReport(
   assessedAt: string
 ): ReportData {
   const topics = TOPICS.filter((t) => state.topics[t.id]).map((t) => buildTopicDiagnosis(t.id, state, responses));
+  const ALL_STRANDS = state.subject === "English" ? ENGLISH_STRANDS_ALL : MATHS_STRANDS;
   const strands = state.strands ?? ALL_STRANDS;
   // Prerequisites from strands not in this test, which were assumed known.
   const assumed: string[] = [];
@@ -288,6 +293,7 @@ export function synthesizeReport(
   return {
     childName,
     grade,
+    subject: state.subject ?? "Maths",
     assessedAt,
     questionCount: state.totalQuestions,
     strands,

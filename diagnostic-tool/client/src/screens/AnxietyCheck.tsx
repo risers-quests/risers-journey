@@ -10,11 +10,15 @@ const OPTIONS: { score: number; emoji: string; label: string }[] = [
 
 export function AnxietyCheck({ sessionId, onComplete }: { sessionId: string; onComplete: () => void }) {
   const [questions, setQuestions] = useState<AnxietyQuestion[] | null>(null);
+  const [subject, setSubject] = useState("Maths");
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    getAnxietyQuestions(sessionId).then(setQuestions);
+    getAnxietyQuestions(sessionId).then((d) => {
+      setSubject(d.subject);
+      setQuestions(d.questions);
+    });
   }, [sessionId]);
 
   if (!questions) return <div className="app-shell">Loading…</div>;
@@ -30,7 +34,7 @@ export function AnxietyCheck({ sessionId, onComplete }: { sessionId: string; onC
 
   return (
     <div className="anxiety-check">
-      <h1 className="serif">One last thing — how does math make you feel?</h1>
+      <h1 className="serif">One last thing — how does {subject === "English" ? "English" : "math"} make you feel?</h1>
       <p className="anxiety-intro">
         This is separate from the questions you just did — there are no right or wrong answers here. Just pick
         whatever feels true for you.

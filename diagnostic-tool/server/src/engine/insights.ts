@@ -48,6 +48,8 @@ export interface TopicInsight {
 
 export interface Insights {
   childName: string;
+  /** "Maths" or "English". */
+  subject: string;
   date: string;
   strands: string[];
   questionCount: number;
@@ -86,6 +88,14 @@ const STAGE_WORDS: Record<CPAStage, string> = {
   abstract: "numbers and symbols",
 };
 
+/** English stages, as staff read them. */
+const STAGE_WORDS_EN: Record<CPAStage, string> = {
+  concrete: "hands-on work with real sentences (marking words, building sentences from cards)",
+  pictorial: "marked-up sentences and passages",
+  abstract: "the rule and the terms on their own",
+};
+
+const SHORT_STAGE_EN: Record<CPAStage, string> = { concrete: "hands-on", pictorial: "marked-sentence", abstract: "rule-only" };
 const SHORT_STAGE: Record<CPAStage, string> = { concrete: "real-object", pictorial: "picture", abstract: "numbers-only" };
 
 function emptyConfidence(): Confidence {
@@ -144,10 +154,10 @@ export function buildInsights(state: SessionState, responses: ResponseRecord[], 
       why = "Waits for a topic it builds on";
     } else if (t.tag === "skill_gap") {
       status = "gap";
-      why = lag ? `Stuck on ${SHORT_STAGE[lag.cpa]} questions, at ${bloomLabel(lag.bloom)}` : "Couldn't get going";
+      why = lag ? `Stuck on ${(state.subject === "English" ? SHORT_STAGE_EN : SHORT_STAGE)[lag.cpa]} questions, at ${bloomLabel(lag.bloom)}` : "Couldn't get going";
     } else if (t.tag === "procedural_not_conceptual") {
       status = "fragile";
-      why = "Right in numbers, not in pictures: knows the steps, not the idea";
+      why = state.subject === "English" ? "Right in rules, not in real sentences: knows the rule, not how it works" : "Right in numbers, not in pictures: knows the steps, not the idea";
     } else if (unsureShare >= 0.4) {
       status = "fragile";
       why = `Mastered, but unsure on ${conf.unsureRight} of ${right} right answers`;
@@ -175,7 +185,7 @@ export function buildInsights(state: SessionState, responses: ResponseRecord[], 
   // "next": real gaps (in book order, since later topics wait on them), then
   // "knows the steps, not the idea", then mastered-but-unsure; confident
   // mistakes ("sure but wrong") rank a topic higher within its group.
-  const isProcedural = (t: TopicInsight) => t.why.startsWith("Right in numbers");
+  const isProcedural = (t: TopicInsight) => t.why.startsWith("Right in ");
   const rank = (t: TopicInsight) =>
     (t.status === "gap" ? 0 : isProcedural(t) ? 10 : 20) - (t.confidence.sureWrong > 0 ? 5 : 0);
   const priority = topics
@@ -190,11 +200,11 @@ export function buildInsights(state: SessionState, responses: ResponseRecord[], 
       return {
         topic: t.name,
         what: m ? `Reteach. Main mistake: ${m.label.toLowerCase()}${m.sureCount ? ` (made ${m.sureCount}× while sure)` : ""}.` : "Reteach from the start of the topic.",
-        how: `Start with ${STAGE_WORDS[t.startAt ?? "concrete"]}, then move up.`,
+        how: `Start with ${(report.subject === "English" ? STAGE_WORDS_EN : STAGE_WORDS)[t.startAt ?? "concrete"]}, then move up.`,
       };
     }
     return isProcedural(t)
-      ? { topic: t.name, what: `Connect the method to what it means${m ? ` (main mistake: ${m.label.toLowerCase()})` : ""}.`, how: "Have them draw or build each sum they can already calculate." }
+      ? { topic: t.name, what: `Connect the method to what it means${m ? ` (main mistake: ${m.label.toLowerCase()})` : ""}.`, how: report.subject === "English" ? "Have them mark the parts of real sentences from their reader and say why each is right." : "Have them draw or build each sum they can already calculate." }
       : { topic: t.name, what: "Mastered but unsure: build confidence.", how: "Short mixed practice; ask them to explain answers aloud." };
   });
 
@@ -202,6 +212,7 @@ export function buildInsights(state: SessionState, responses: ResponseRecord[], 
   const tip = first?.mistakes[0]?.childTip;
   return {
     childName,
+    subject: report.subject,
     date: new Date(createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }),
     strands: report.strands,
     questionCount: report.questionCount,
@@ -209,7 +220,7 @@ export function buildInsights(state: SessionState, responses: ResponseRecord[], 
     topics,
     overall,
     actions: actions.slice(0, 3),
-    nextForChild: first ? { topic: first.name, tip: tip ?? "We'll practise this together, step by step.", atHome: AT_HOME[first.topicId] ?? "Talk about where this maths shows up in everyday life." } : null,
+    nextForChild: first ? { topic: first.name, tip: tip ?? "We'll practise this together, step by step.", atHome: AT_HOME[first.topicId] ?? (report.subject === "English" ? "Read together for ten minutes a day, and talk about what you read: who, why, and what you'd have done." : "Talk about where this maths shows up in everyday life.") } : null,
     anxiety: report.mathAnxiety,
   };
 }

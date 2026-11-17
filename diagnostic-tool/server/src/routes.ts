@@ -19,7 +19,7 @@ import { selectNextQuestion, applyOutcome } from "./engine/skillEngine.js";
 import { readSignal } from "./engine/signalEngine.js";
 import { sanitizeItemForClient, getItemById, getTopic, topicName } from "./itemBank/index.js";
 import { STRANDS } from "./itemBank/topics.js";
-import { isGenerated, generateItem, hasTemplate, signature, MISCONCEPTIONS, GRADE4_TOPICS, GRADE8_TOPICS } from "./itemBank/generate/index.js";
+import { isGenerated, generateItem, hasTemplate, signature, MISCONCEPTIONS, GRADE4_TOPICS, GRADE8_TOPICS, ENGLISH8_TOPICS } from "./itemBank/generate/index.js";
 import { BLOOM_ORDER, CPA_ORDER } from "./types.js";
 import { checkActivity } from "./itemBank/generate/activities.js";
 import { buildInsights } from "./engine/insights.js";
@@ -49,7 +49,7 @@ async function emailReports(sessionId: string) {
   await saveSessionState(sessionId, state);
   return result;
 }
-import { ANXIETY_QUESTIONS } from "./itemBank/anxietyQuestionnaire.js";
+import { anxietyQuestionsFor } from "./itemBank/anxietyQuestionnaire.js";
 import { logTrace } from "./engine/state.js";
 import { buildGrid, buildSessionMap, buildBreadcrumb } from "./engine/view.js";
 import { synthesizeReport } from "./engine/synthesis.js";
@@ -58,6 +58,7 @@ export const router = Router();
 
 router.post("/sessions", async (req, res) => {
   const { childName, grade, strands, topics } = req.body ?? {};
+  const subject = req.body?.subject === "English" ? "English" : "Maths";
   if (!childName || typeof childName !== "string" || !childName.trim()) {
     return res.status(400).json({ error: "childName is required" });
   }
@@ -67,10 +68,12 @@ router.post("/sessions", async (req, res) => {
   const name = childName.trim().slice(0, 80);
   // Grade 4 and Grade 8: the topics chosen one by one (none given means every topic ready at that grade).
   const g = gradeNumber(grade);
-  const ready = g === 4 ? GRADE4_TOPICS : g === 8 ? GRADE8_TOPICS : null;
+  // English (Grade 8 only so far): its own topics.
+  if (subject === "English" && g !== 8) return res.status(400).json({ error: "English is ready for Grade 8 only" });
+  const ready = subject === "English" ? ENGLISH8_TOPICS : g === 4 ? GRADE4_TOPICS : g === 8 ? GRADE8_TOPICS : null;
   const chosenTopics = ready && Array.isArray(topics) ? ready.filter((t) => topics.includes(t)) : undefined;
   if (ready && chosenTopics && !chosenTopics.length) return res.status(400).json({ error: "choose at least one topic" });
-  const { id, state } = await createSession(name, `Grade ${g}`, chosen, chosenTopics);
+  const { id, state } = await createSession(name, `Grade ${g}`, chosen, chosenTopics, subject);
   if (!state.topicOrder.length) return res.status(400).json({ error: "no topics ready for that grade and strand yet" });
   // Numbers this child has had before (in earlier tests) are off limits.
   const history = await loadHistory(name);
@@ -85,7 +88,7 @@ router.post("/sessions", async (req, res) => {
 // cell of a topic, with the right answer and each wrong option's mistake.
 router.get("/preview/:topic", (req, res) => {
   const topic = req.params.topic;
-  const g = topic.startsWith("g8-") ? 8 : gradeNumber(String(req.query.grade ?? ""));
+  const g = topic.startsWith("g8-") || topic.startsWith("e8-") ? 8 : gradeNumber(String(req.query.grade ?? ""));
   const out = [];
   for (const cpa of CPA_ORDER) for (const bloom of BLOOM_ORDER) {
     if (!hasTemplate(topic, cpa, bloom, g)) continue;
@@ -111,6 +114,7 @@ router.get("/sessions/:id/status", async (req, res) => {
       topicNumber: state.phase === "warmup" ? 0 : state.topicOrder.filter((id: string) => state.topics[id].status !== "locked").length,
       topicCount: state.topicOrder.length,
       strands: state.strands ?? STRANDS,
+      subject: state.subject ?? "Maths",
       startedAt: row.created_at,
     });
   } catch {
@@ -289,12 +293,13 @@ router.post("/sessions/:id/answer", async (req, res) => {
 
 router.get("/sessions/:id/anxiety-questions", async (req, res) => {
   const sessionId = req.params.id;
+  let state;
   try {
-    await getSessionState(sessionId);
+    state = await getSessionState(sessionId);
   } catch {
     return res.status(404).json({ error: "session not found" });
   }
-  res.json({ questions: ANXIETY_QUESTIONS.map((q) => ({ id: q.id, text: q.text })) });
+  res.json({ subject: state.subject ?? "Maths", questions: anxietyQuestionsFor(state.subject).map((q) => ({ id: q.id, text: q.text })) });
 });
 
 router.post("/sessions/:id/anxiety-answers", async (req, res) => {
@@ -309,7 +314,7 @@ router.post("/sessions/:id/anxiety-answers", async (req, res) => {
   const { responses } = req.body ?? {};
   if (!Array.isArray(responses)) return res.status(400).json({ error: "responses array is required" });
 
-  const validIds = new Set(ANXIETY_QUESTIONS.map((q) => q.id));
+  const validIds = new Set(anxietyQuestionsFor(state.subject).map((q) => q.id));
   const cleaned = responses
     .filter((r: unknown): r is { questionId: string; score: number } => {
       const rec = r as { questionId?: unknown; score?: unknown };
@@ -319,7 +324,7 @@ router.post("/sessions/:id/anxiety-answers", async (req, res) => {
 
   state.anxietyResponses = cleaned;
   state.phase = "completed";
-  logTrace(state, `Anxiety questionnaire complete (${cleaned.length}/${ANXIETY_QUESTIONS.length} answered).`);
+  logTrace(state, `Anxiety questionnaire complete (${cleaned.length}/${validIds.size} answered).`);
   await saveSessionState(sessionId, state, "completed");
 
   // The test is finished: add it to the child's report history.

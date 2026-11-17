@@ -1,6 +1,6 @@
 import { BloomLevel, CPAStage, ENTRY_BLOOM, ENTRY_CPA } from "../types.js";
-import { STRANDS, TOPICS } from "../itemBank/topics.js";
-import { GRADE4_TOPICS, GRADE8_TOPICS } from "../itemBank/generate/index.js";
+import { ENGLISH_STRANDS, STRANDS, TOPICS } from "../itemBank/topics.js";
+import { ENGLISH8_TOPICS, GRADE4_TOPICS, GRADE8_TOPICS } from "../itemBank/generate/index.js";
 import type { ClientItem } from "../itemBank/index.js";
 import type { GeneratedItem } from "../itemBank/generate/index.js";
 
@@ -64,6 +64,8 @@ export interface SessionState {
   strands?: string[];
   /** 4 or 5 (older sessions: 5). Grade 4 uses only the topics generated for it. */
   grade?: number;
+  /** "English" for an English test (older sessions: Maths). */
+  subject?: "Maths" | "English";
   topicOrder: string[];
   currentTopicIndex: number;
   topics: Record<string, TopicEngineState>;
@@ -86,9 +88,12 @@ export interface SessionState {
 }
 
 /** `topics`: Grade 4 and Grade 8 tests are chosen topic by topic (GRADE4_TOPICS, GRADE8_TOPICS); Grade 5 by strand. */
-export function createInitialState(strands: string[] = STRANDS, grade = 5, chosenTopics?: string[]): SessionState {
+export function createInitialState(strands: string[] = STRANDS, grade = 5, chosenTopics?: string[], subject: "Maths" | "English" = "Maths"): SessionState {
+  const english = subject === "English";
   const topicOrder = TOPICS.filter((t) =>
-    grade === 4
+    english
+      ? ENGLISH8_TOPICS.includes(t.id) && (!chosenTopics || chosenTopics.includes(t.id))
+      : grade === 4
       ? GRADE4_TOPICS.includes(t.id) && (!chosenTopics || chosenTopics.includes(t.id))
       : grade === 8
         ? GRADE8_TOPICS.includes(t.id) && (!chosenTopics || chosenTopics.includes(t.id))
@@ -114,7 +119,9 @@ export function createInitialState(strands: string[] = STRANDS, grade = 5, chose
 
   return {
     grade,
-    strands: STRANDS.filter((s) => strands.includes(s)),
+    // English: the strands of the topics chosen.
+    strands: english ? ENGLISH_STRANDS.filter((s) => topicOrder.some((id) => TOPICS.find((t) => t.id === id)?.strand === s)) : STRANDS.filter((s) => strands.includes(s)),
+    ...(english ? { subject } : {}),
     topicOrder,
     currentTopicIndex: 0,
     topics,

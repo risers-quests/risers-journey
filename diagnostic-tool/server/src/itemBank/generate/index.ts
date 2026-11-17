@@ -31,6 +31,7 @@ import { AREA_G8_TEMPLATES, MISCONCEPTIONS as AR8_MISCONCEPTIONS } from "./areaG
 import { VOLUME_G8_TEMPLATES, MISCONCEPTIONS as VOL8_MISCONCEPTIONS } from "./volumeG8.js";
 import { DATA_G8_TEMPLATES, MISCONCEPTIONS as DH8_MISCONCEPTIONS } from "./dataG8.js";
 import { PROBABILITY_G8_TEMPLATES, MISCONCEPTIONS as PR8_MISCONCEPTIONS } from "./probabilityG8.js";
+import { VOICE_E8_TEMPLATES, MISCONCEPTIONS as VOI_E8_MISCONCEPTIONS } from "./voiceE8.js";
 
 export type { GeneratedItem } from "./core.js";
 
@@ -80,10 +81,16 @@ const GRADE8_TEMPLATES: Record<string, Record<string, Template>> = {
   "g8-probability": PROBABILITY_G8_TEMPLATES,
 };
 
+/** Grade 8 English (English Rose Reader 8): topic ids start "e8-". */
+const ENGLISH8_TEMPLATES: Record<string, Record<string, Template>> = {
+  "e8-voice": VOICE_E8_TEMPLATES,
+};
+
 /** Topics with generated questions (Grade 5; Grade 4 also uses GRADE4_TEMPLATES). */
 export const GENERATED_TOPICS = Object.keys(TEMPLATES);
 
 function templatesFor(topicId: string, grade: number): Record<string, Template> | undefined {
+  if (topicId.startsWith("e8-")) return ENGLISH8_TEMPLATES[topicId];
   if (grade === 8) return GRADE8_TEMPLATES[topicId];
   return (grade === 4 ? GRADE4_TEMPLATES[topicId] : undefined) ?? TEMPLATES[topicId];
 }
@@ -120,6 +127,7 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...VOL8_MISCONCEPTIONS,
   ...DH8_MISCONCEPTIONS,
   ...PR8_MISCONCEPTIONS,
+  ...VOI_E8_MISCONCEPTIONS,
 };
 
 export function hasTemplate(topicId: string, cpa: CPAStage, bloom: BloomLevel, grade = 5): boolean {
@@ -183,3 +191,6 @@ export const GRADE4_TOPICS = ["more-large-numbers", "operations-large-numbers", 
 
 /** Grade 8 chapters ready, in book order (offered one by one on the start page). */
 export const GRADE8_TOPICS = Object.keys(GRADE8_TEMPLATES);
+
+/** Grade 8 English topics ready, in the order offered (one by one on the start page). */
+export const ENGLISH8_TOPICS = Object.keys(ENGLISH8_TEMPLATES);

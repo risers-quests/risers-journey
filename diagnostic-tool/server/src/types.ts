@@ -262,7 +262,51 @@ export interface ShadeInteraction {
 }
 
 
-export type Activity = ShareActivity | PlaceValueActivity | GroupActivity | ShadeActivity | PizzaActivity | TilesActivity | PickActivity | MeasureActivity;
+/**
+ * English (Grade 8): a passage or sentences, as a picture of the language.
+ * In each line, [[words]] are highlighted and ___ is a blank to fill.
+ */
+export interface TextSpec {
+  kind: "text";
+  lines: string[];
+  /** A small label above the card, e.g. "Rahul said:" or the poem's title. */
+  caption?: string;
+}
+
+/**
+ * English hands-on: tap words in a sentence to mark them (the verb, the
+ * dependent clause, where a comma goes). What is marked is the answer:
+ * exactly the `target` words (indices into `tokens`).
+ */
+export interface WordsActivity {
+  kind: "words";
+  tokens: string[];
+  target: number[];
+  /** Other markings that are also right (e.g. "by him" as well as "him"). */
+  alsoRight?: number[][];
+  /** Patterns that typical mistakes would mark, so a wrong attempt is named. */
+  wrongSets?: { cells: number[]; mistake: string }[];
+}
+export interface WordsInteraction {
+  picked: number[];
+}
+
+/**
+ * English hands-on: build a sentence from word tiles, in order. Spare tiles
+ * (a wrong tense, "were" for "was") let a mistake show in what is built.
+ * The answer is the built sentence, compared as text.
+ */
+export interface OrderActivity {
+  kind: "order";
+  tiles: string[];
+  answers: string[];
+  wrong?: { text: string; mistake: string }[];
+}
+export interface OrderInteraction {
+  order: number[];
+}
+
+export type Activity = WordsActivity | OrderActivity | ShareActivity | PlaceValueActivity | GroupActivity | ShadeActivity | PizzaActivity | TilesActivity | PickActivity | MeasureActivity;
 
 /** Hands-on place-value chart: tap + / − to put discs in columns; exchange 10 for 1 next door. */
 export interface PlaceValueActivity {
@@ -342,7 +386,7 @@ export interface FigureSpec {
 }
 
 
-export type Representation = BarModelSpec | ConcreteSpec | SharingSpec | PlaceValueChartSpec | BarsSpec | NumberLineSpec | GridSpec | ShapeSpec | FigureSpec | PieSpec | FiguresSpec | null;
+export type Representation = TextSpec | BarModelSpec | ConcreteSpec | SharingSpec | PlaceValueChartSpec | BarsSpec | NumberLineSpec | GridSpec | ShapeSpec | FigureSpec | PieSpec | FiguresSpec | null;
 
 export interface Choice {
   id: string;
@@ -375,6 +419,8 @@ export interface Topic {
   grade4Name?: string;
   /** Set for a topic from another grade's book only (e.g. 8): never part of a Grade 5 strand test. */
   grade?: number;
+  /** "English" for English topics (ids e8-…); Maths otherwise. */
+  subject?: "English";
 }
 
 export type DiagnosisTag = "mastered" | "skill_gap" | "procedural_not_conceptual" | "not_yet_reached";

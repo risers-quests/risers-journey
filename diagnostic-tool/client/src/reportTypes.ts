@@ -21,6 +21,7 @@ export interface ReportEntry {
   id: string;
   date: string;
   grade: string;
+  subject?: string;
   minutes: number;
   questions: number;
   right: number;

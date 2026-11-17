@@ -165,5 +165,21 @@ TOPICS.push(
   { id: "g8-probability", strand: "Data Handling", name: "Probability", shortLabel: "Probability", dependsOn: [], grade: 8 }
 );
 
+/**
+ * Grade 8 English (English Rose Reader 8, Macmillan / Frank Bros.), chosen
+ * topic by topic (ENGLISH8_TOPICS). Grammar topics are named as in the
+ * book's Scope and Sequence; the chapter each one comes with is in the
+ * client's ENGLISH8_TOPIC_CHOICES.
+ */
+TOPICS.push(
+  { id: "e8-voice", strand: "Grammar", name: "Active and Passive Voice", shortLabel: "Active & Passive", dependsOn: [], grade: 8, subject: "English" }
+);
+
+/** English strands (Grade 8). */
+export const ENGLISH_STRANDS = ["Grammar", "Vocabulary", "Punctuation & Spelling", "Literature"];
+
+export type Subject = "Maths" | "English";
+export const subjectOfTopic = (id: string): Subject => (id.startsWith("e8-") ? "English" : "Maths");
+
 /** The book's strands, in order. A test covers one or more of them. */
 export const STRANDS = ["Number & Algebra", "Measurement & Geometry", "Ratio & Proportion", "Data Handling"];

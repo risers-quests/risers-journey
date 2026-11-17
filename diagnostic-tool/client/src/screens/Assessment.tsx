@@ -1,3 +1,4 @@
+import { OrderActivity, TextCard, WordsActivity } from "../components/EnglishVisuals";
 import { useEffect, useRef, useState } from "react";
 import { GroupActivity } from "../components/GroupActivity";
 import { FigureCards, MeasureActivity, PickActivity, PiePicture, PizzaActivity, TilesActivity } from "../components/G4Visuals";
@@ -145,6 +146,7 @@ export function Assessment({
           <div className="prompt-text">{item.prompt}</div>
         )}
 
+        {item.representation?.kind === "text" && <TextCard spec={item.representation} />}
         {item.representation?.kind === "bar-model" && <BarModel spec={item.representation} />}
         {item.representation?.kind === "concrete" && <ConcreteObjects spec={item.representation} />}
         {item.representation?.kind === "sharing" && <Sharing spec={item.representation} />}
@@ -157,6 +159,8 @@ export function Assessment({
         {item.representation?.kind === "figures" && <FigureCards spec={item.representation} />}
         {item.representation?.kind === "figure" && <Figure spec={item.representation} />}
 
+        {item.activity?.kind === "words" && <WordsActivity key={item.id} spec={item.activity} onChange={onActivity} />}
+        {item.activity?.kind === "order" && <OrderActivity key={item.id} spec={item.activity} onChange={onActivity} />}
         {item.activity?.kind === "share" && <ShareActivity key={item.id} spec={item.activity} onChange={onActivity} />}
         {item.activity?.kind === "place-value" && <PlaceValueActivity key={item.id} spec={item.activity} onChange={onActivity} />}
         {item.activity?.kind === "group" && <GroupActivity key={item.id} spec={item.activity} onChange={onActivity} />}
@@ -175,7 +179,7 @@ export function Assessment({
               : item.activity.kind === "pizza" ? "Try it on the pizza first, then choose."
               : item.activity.kind === "tiles" ? "Try it on the grid first, then choose."
               : item.activity.kind === "pick" ? "Tap the cards first, then choose."
-              : item.activity.kind === "measure" ? "Try it first, then choose."
+              : item.activity.kind === "measure" || item.activity.kind === "words" || item.activity.kind === "order" ? "Try it first, then choose."
               : "Try it on the chart first, then choose."
             }</div>}
             {item.choices.map((choice) => (

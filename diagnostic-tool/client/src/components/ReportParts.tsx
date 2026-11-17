@@ -96,7 +96,7 @@ export const STAFF_WORD: Record<TopicStatus, { word: string; cls: string }> = {
 
 /** Why a topic is fragile, for staff. */
 export function nearlyWhy(why: string): string {
-  return why.startsWith("Right in numbers") ? "Right with numbers, but not yet with pictures or objects." : "Right, but not sure yet.";
+  return why.startsWith("Right in numbers") ? "Right with numbers, but not yet with pictures or objects." : why.startsWith("Right in rules") ? "Knows the rule, but not yet in real sentences." : "Right, but not sure yet.";
 }
 
 const STAGES = ["Concrete", "Pictorial", "Abstract"];

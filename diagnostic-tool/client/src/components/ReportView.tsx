@@ -11,7 +11,7 @@ export function ReportView({ childName, report, title }: { childName: string; re
   return (
     <div className="rp">
       <header className="rp-head">
-        <p className="rp-eyebrow">Maths Skill Check</p>
+        <p className="rp-eyebrow">{report.subject ?? "Maths"} Skill Check</p>
         <h1>{title ?? childName}</h1>
         <p>
           {report.grade} · {fmtDate(report.date)}

@@ -37,7 +37,7 @@ export function History({ kid }: { kid: string }) {
   return (
     <div className="rp">
       <header className="rp-head">
-        <p className="rp-eyebrow">Maths Skill Checks</p>
+        <p className="rp-eyebrow">Skill Checks</p>
         <h1>{childName}</h1>
         <p>
           {c.tests} check{c.tests === 1 ? "" : "s"}
@@ -73,7 +73,7 @@ export function History({ kid }: { kid: string }) {
               <a href={`?report=${r.id}`}>
                 <span className="rp-test-date">
                   <b>{fmtDate(r.date)}</b>
-                  <small>{r.grade}</small>
+                  <small>{r.subject ?? "Maths"} · {r.grade}</small>
                 </span>
                 <span className="rp-test-score">
                   <b>{r.right}</b>/{r.questions} right

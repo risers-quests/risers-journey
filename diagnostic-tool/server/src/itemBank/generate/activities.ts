@@ -1,4 +1,4 @@
-import { Activity, GroupInteraction, MeasureInteraction, PickInteraction, PizzaInteraction, PlaceValueInteraction, ShadeInteraction, ShareInteraction, TilesInteraction } from "../../types.js";
+import { Activity, OrderInteraction, WordsInteraction, GroupInteraction, MeasureInteraction, PickInteraction, PizzaInteraction, PlaceValueInteraction, ShadeInteraction, ShareInteraction, TilesInteraction } from "../../types.js";
 import { dropZeros } from "./moreOnLargeNumbers.js";
 
 /**
@@ -6,6 +6,8 @@ import { dropZeros } from "./moreOnLargeNumbers.js";
  * not, which mistake it shows (codes from the topic's MISCONCEPTIONS).
  */
 export function checkActivity(activity: Activity, interaction: unknown): { correct: boolean; misconception: string | null } {
+  if (activity.kind === "words") return checkWords(activity, interaction as WordsInteraction);
+  if (activity.kind === "order") return checkOrder(activity, interaction as OrderInteraction);
   if (activity.kind === "share") return checkShare(activity, interaction as ShareInteraction);
   if (activity.kind === "place-value") return checkPlaceValue(activity, interaction as PlaceValueInteraction);
   if (activity.kind === "group") return checkGroup(activity, interaction as GroupInteraction);
@@ -172,4 +174,28 @@ export function checkMeasure(a: Extract<Activity, { kind: "measure" }>, it: Meas
   const total = it.counts.map(nat).reduce((s, c, i) => s + c * a.pieces[i].value, 0);
   if (total === a.target) return { correct: true, misconception: null };
   return { correct: false, misconception: (a.wrong ?? []).find((w) => w.value === total)?.mistake ?? null };
+}
+
+/** English: the words tapped must be exactly the target words. */
+export function checkWords(a: Extract<Activity, { kind: "words" }>, it: WordsInteraction): { correct: boolean; misconception: string | null } {
+  if (!it || !Array.isArray(it.picked)) return { correct: false, misconception: null };
+  const key = (xs: number[]) => [...new Set(xs.map((x) => Math.floor(Number(x))).filter((x) => x >= 0 && x < a.tokens.length))].sort((x, y) => x - y).join(",");
+  const got = key(it.picked);
+  if (got === key(a.target) || a.alsoRight?.some((x) => key(x) === got)) return { correct: true, misconception: null };
+  return { correct: false, misconception: a.wrongSets?.find((w) => key(w.cells) === got)?.mistake ?? null };
+}
+
+/** A sentence as text, spaces tidied (no space before . , ? ! ' or after an opening quote). */
+export function tidySentence(s: string): string {
+  return s.replace(/\s+/g, " ").replace(/\s+([.,?!;:’'])/g, "$1").replace(/([‘])\s+/g, "$1").trim();
+}
+
+/** English: the tiles in the order built must make one of the right sentences. */
+export function checkOrder(a: Extract<Activity, { kind: "order" }>, it: OrderInteraction): { correct: boolean; misconception: string | null } {
+  if (!it || !Array.isArray(it.order)) return { correct: false, misconception: null };
+  const idx = it.order.map((x) => Math.floor(Number(x)));
+  if (idx.some((x) => !(x >= 0 && x < a.tiles.length)) || new Set(idx).size !== idx.length) return { correct: false, misconception: null };
+  const built = tidySentence(idx.map((i) => a.tiles[i]).join(" "));
+  if (a.answers.some((ans) => tidySentence(ans) === built)) return { correct: true, misconception: null };
+  return { correct: false, misconception: a.wrong?.find((w) => tidySentence(w.text) === built)?.mistake ?? null };
 }

@@ -15,11 +15,11 @@ async function asJson<T>(res: Response): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export async function createSession(childName: string, grade: string, strands: string[], topics?: string[]): Promise<string> {
+export async function createSession(childName: string, grade: string, strands: string[], topics?: string[], subject = "Maths"): Promise<string> {
   const res = await fetch(`${BASE}/sessions`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ childName, grade, strands, topics }),
+    body: JSON.stringify({ childName, grade, strands, topics, subject }),
   });
   const data = await asJson<{ sessionId: string }>(res);
   return data.sessionId;
@@ -50,10 +50,10 @@ export async function submitAnswer(sessionId: string, payload: AnswerPayload): P
 }
 
 
-export async function getAnxietyQuestions(sessionId: string): Promise<AnxietyQuestion[]> {
+export async function getAnxietyQuestions(sessionId: string): Promise<{ subject: string; questions: AnxietyQuestion[] }> {
   const res = await fetch(`${BASE}/sessions/${sessionId}/anxiety-questions`);
-  const data = await asJson<{ questions: AnxietyQuestion[] }>(res);
-  return data.questions;
+  const data = await asJson<{ subject?: string; questions: AnxietyQuestion[] }>(res);
+  return { subject: data.subject ?? "Maths", questions: data.questions };
 }
 
 export async function submitAnxietyAnswers(
