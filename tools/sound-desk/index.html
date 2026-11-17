@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Church Sound Desk Simulator</title>
+<style>
+  :root{
+    --bg:#0f1115; --desk:#181b21; --strip:#20242c; --strip2:#262b34; --line:#323844;
+    --text:#ebe7df; --muted:#9aa1ad; --amber:#f2b84b; --green:#5fd38d; --red:#ff5d5d; --blue:#5fb3f9;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  button{font:inherit;color:inherit;cursor:pointer}
+  .wrap{max-width:1100px;margin:0 auto;padding:16px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+  header h1{font-size:20px;margin:0;letter-spacing:.3px}
+  header h1 span{color:var(--amber)}
+  .sub{color:var(--muted);font-size:13px}
+  .btn{background:var(--strip2);border:1px solid var(--line);border-radius:10px;padding:9px 14px}
+  .btn:hover{border-color:#4a5263}
+  .btn.primary{background:var(--amber);color:#1b1404;border-color:var(--amber);font-weight:600}
+  .btn.small{padding:5px 10px;font-size:13px}
+  .hidden{display:none!important}
+
+  /* menu */
+  .menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:8px 0 18px}
+  .card{background:var(--desk);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
+  .card h3{margin:0;font-size:17px}
+  .card p{margin:0;color:var(--muted);font-size:14px}
+  .card .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+  .tag{display:inline-block;font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--amber)}
+  .note{background:#1a1e25;border-left:3px solid var(--amber);padding:10px 12px;border-radius:6px;color:var(--muted);font-size:13.5px}
+
+  /* status bar */
+  .statusbar{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap;margin-bottom:10px}
+  .pill{background:var(--desk);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:13px;color:var(--muted)}
+  .pill b{color:var(--text);font-size:16px;display:block}
+  .alert{flex:1;min-width:240px;background:var(--desk);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:14px;display:flex;flex-direction:column;justify-content:center}
+  .alert.live{border-color:var(--red);background:#2a1618}
+  .alert.good{border-color:var(--green);background:#14261c}
+  .alert .why{color:var(--muted);font-size:13px;margin-top:3px}
+
+  /* desk */
+  .desk{background:var(--desk);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .strip{flex:0 0 108px;background:var(--strip);border:1px solid var(--line);border-radius:12px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative}
+  .strip.master{background:#22201a;border-color:#4a412a;flex-basis:116px}
+  .chname{font-weight:700;font-size:12px;letter-spacing:.6px;text-align:center;line-height:1.2;min-height:30px;display:flex;align-items:center}
+  .chname i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;flex:0 0 8px}
+  .ctl{width:100%;text-align:center}
+  .ctl label{display:block;font-size:10.5px;letter-spacing:.8px;color:var(--muted);text-transform:uppercase}
+  .ctl .val{font-size:11px;color:var(--text);font-variant-numeric:tabular-nums}
+  input[type=range].knob{width:100%;accent-color:var(--amber);margin:2px 0}
+  .clip{width:100%;display:flex;justify-content:center;gap:5px;align-items:center;font-size:10px;color:var(--muted);letter-spacing:.8px}
+  .led{width:10px;height:10px;border-radius:50%;background:#3a1d1d;border:1px solid #552}
+  .led.on{background:var(--red);box-shadow:0 0 8px var(--red)}
+  .mute{width:100%;border-radius:8px;border:1px solid var(--line);background:#2b303a;padding:6px 0;font-size:12px;font-weight:700;letter-spacing:1px}
+  .mute.on{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 0 10px rgba(255,93,93,.5)}
+  .fwrap{display:flex;gap:8px;align-items:stretch;height:210px}
+  .fader{position:relative;width:34px;height:100%;touch-action:none;cursor:ns-resize}
+  .fader .track{position:absolute;left:15px;top:10px;bottom:10px;width:4px;background:#0b0c0f;border-radius:2px}
+  .fader .unity{position:absolute;left:4px;right:4px;height:1px;background:#6b7280}
+  .fader .unity::after{content:"0";position:absolute;left:-9px;top:-7px;font-size:9px;color:var(--muted)}
+  .fader .cap{position:absolute;left:3px;width:28px;height:30px;border-radius:5px;background:linear-gradient(#e9e9e9,#a9adb5);border:1px solid #111;transform:translateY(-50%);box-shadow:0 2px 4px rgba(0,0,0,.6)}
+  .fader .cap::after{content:"";position:absolute;left:3px;right:3px;top:50%;height:2px;background:#222}
+  .meter{width:12px;height:100%;background:#0b0c0f;border-radius:3px;position:relative;overflow:hidden;padding:10px 0}
+  .meter .bar{position:absolute;left:0;right:0;bottom:0;height:0;background:linear-gradient(to top,var(--green) 0%,var(--green) 65%,var(--amber) 82%,var(--red) 100%);background-size:100% 190px;background-position:bottom}
+  .fdb{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .status{font-size:11px;font-weight:700;height:16px}
+  .status.ok{color:var(--green)} .status.low{color:var(--blue)} .status.high{color:var(--amber)}
+  .hide-status .status{visibility:hidden}
+  .ears-only .meter .bar{opacity:0} .ears-only .led{visibility:hidden}
+  .locked .strip{pointer-events:none;opacity:.55}
+  .load{font-size:10.5px;color:var(--muted);text-decoration:underline;cursor:pointer;background:none;border:0;padding:0}
+  .fname{font-size:10px;color:var(--amber);max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .strip.flash{animation:flash 1s ease-in-out 3}
+  @keyframes flash{50%{border-color:var(--red);box-shadow:0 0 0 2px rgba(255,93,93,.4)}}
+
+  /* learn panel */
+  details.learn{margin-top:14px;background:var(--desk);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+  details.learn summary{cursor:pointer;font-weight:600}
+  .learn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px}
+  .learn-grid div{background:var(--strip);border-radius:10px;padding:10px 12px;font-size:13.5px;color:var(--muted)}
+  .learn-grid b{color:var(--text);display:block;margin-bottom:2px}
+
+  /* overlays */
+  .overlay{position:fixed;inset:0;background:rgba(5,6,8,.78);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+  .panel{background:var(--desk);border:1px solid var(--line);border-radius:16px;padding:20px;max-width:560px;width:100%;max-height:90vh;overflow:auto}
+  .panel h2{margin:0 0 6px;font-size:20px}
+  .choices{display:grid;gap:8px;margin:14px 0}
+  .choices button{text-align:left;background:var(--strip2);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+  .choices button.right{background:#173323;border-color:var(--green)}
+  .choices button.wrong{background:#361a1c;border-color:var(--red)}
+  .countdown{height:6px;background:#0b0c0f;border-radius:3px;overflow:hidden;margin-top:8px}
+  .countdown div{height:100%;background:var(--amber);width:100%}
+  table.rep{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0}
+  table.rep td,table.rep th{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left}
+  table.rep th{color:var(--muted);font-weight:500}
+  .big{font-size:30px;font-weight:700;color:var(--amber)}
+  textarea.copy{width:100%;height:140px;background:#0b0c0f;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12px}
+  .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#14261c;border:1px solid var(--green);border-radius:12px;padding:10px 14px;max-width:560px;width:calc(100% - 32px);z-index:15;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+  .toast.miss{background:#2a1618;border-color:var(--red)}
+  .toast .why{color:var(--muted);font-size:13px;margin-top:3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>⛪ Church Sound Desk <span>Simulator</span></h1>
+      <div class="sub">Practise live church sound. No mixer, no church, no band. Headphones recommended.</div>
+    </div>
+    <div style="display:flex;gap:8px"><button class="btn small hidden" id="stopBtn">■ Stop &amp; back to menu</button><a class="btn small" href="../../index.html" style="text-decoration:none">← Home</a></div>
+  </header>
+
+  <section id="menu">
+    <div class="menu">
+      <div class="card">
+        <span class="tag">Start here</span>
+        <h3>1 · Explore the desk</h3>
+        <p>A service is playing. Move every control and listen to what changes. The dots under each channel tell you if it's too quiet ▼, too loud ▲, or just right ●.</p>
+        <div class="row"><button class="btn primary" data-mode="explore">Open the desk</button></div>
+      </div>
+      <div class="card">
+        <span class="tag">Live practice</span>
+        <h3>2 · Sunday Service</h3>
+        <p>A 3-minute service where things go wrong, just like on a real Sunday. Spot each problem and fix it fast. You can't pause the service.</p>
+        <div class="row">
+          <button class="btn primary" data-mode="live" data-level="beginner">Beginner</button>
+          <button class="btn" data-mode="live" data-level="advanced">Advanced (ears only)</button>
+        </div>
+      </div>
+      <div class="card">
+        <span class="tag">Listening game</span>
+        <h3>3 · Sound Engineer Emergency</h3>
+        <p>The desk is locked and the meters are hidden. Something goes wrong, and you have 10 seconds to name the problem by ear alone.</p>
+        <div class="row"><button class="btn primary" data-mode="emergency">Play 8 rounds</button></div>
+      </div>
+    </div>
+    <div class="note"><b>The target mix for this service:</b> the <b>pastor</b> is always clearest → <b>worship leader</b> next → <b>Singer 2</b> just underneath → <b>keyboard</b> supporting the voices → <b>playback music</b> soft in the background → <b>audience mic</b> barely there.<br><br>
+    The sounds are built-in stand-ins. To practise with real voices, record each part separately on a phone (a 2-minute sermon clip, the keyboard, each singer) and tap <i>load recording</i> under a channel.</div>
+  </section>
+
+  <section id="session" class="hidden">
+    <div class="statusbar">
+      <div class="pill" id="pMode">Mode<b id="modeName">–</b></div>
+      <div class="pill" id="pTime">Time left<b id="timeLeft">–</b></div>
+      <div class="pill" id="pHealth">Mix health<b id="health">–</b></div>
+      <div class="pill" id="pScore">Score<b id="score">0</b></div>
+      <div class="alert" id="alert"><div id="alertMain">Listening…</div><div class="why" id="alertWhy"></div></div>
+    </div>
+    <div class="desk" id="desk"></div>
+
+    <details class="learn" id="learn">
+      <summary>📘 What does each control do?</summary>
+      <div class="learn-grid">
+        <div><b>GAIN (top knob)</b>How strongly the microphone's signal comes <i>into</i> the desk. Set it so the voice is strong but the red CLIP light never comes on.</div>
+        <div><b>CLIP light</b>Red means too much signal is coming in and the sound is distorting. Fix it with GAIN, not the fader: the fader comes after the problem.</div>
+        <div><b>HI EQ</b>Turns the high frequencies up or down. Turning it down makes things softer and darker, and is a quick way to tame a feedback squeal.</div>
+        <div><b>MUTE</b>Switches a channel off instantly. Lit red = off. Many "broken mic" emergencies turn out to be a muted channel.</div>
+        <div><b>FADER</b>How much of the channel goes out to the speakers. The "0" line is normal level. Most of a sound engineer's work happens here.</div>
+        <div><b>METER</b>The bar beside the fader shows how loud the channel is right now. Green is healthy. Red is too hot.</div>
+        <div><b>Status dot</b>● just right · ▼ too quiet · ▲ too loud, for <i>this</i> service's target mix. In Advanced mode it disappears and you use your ears.</div>
+        <div><b>MASTER</b>The overall volume to the speakers (and your headphones). It doesn't fix the balance between channels.</div>
+      </div>
+    </details>
+  </section>
+</div>
+
+<div class="overlay hidden" id="linecheck"><div class="panel" style="text-align:center"><h2>🎙️ Line check…</h2><p class="sub">Testing each microphone before the service starts.</p></div></div>
+
+<div class="overlay hidden" id="emPanel"><div class="panel">
+  <div class="tag" id="emRound">Round 1 of 8</div>
+  <h2 id="emTitle">Listen to the normal mix…</h2>
+  <p class="sub" id="emSub">In a moment, something will go wrong.</p>
+  <div class="countdown hidden" id="emCountWrap"><div id="emCount"></div></div>
+  <div class="choices" id="emChoices"></div>
+  <div id="emExplain" class="note hidden"></div>
+  <div style="display:flex;gap:8px;margin-top:12px"><button class="btn primary hidden" id="emNext">Next round →</button></div>
+</div></div>
+
+<div class="overlay hidden" id="report"><div class="panel" id="reportBody"></div></div>
+
+<div class="toast hidden" id="toast"></div>
+
+<script>
+(()=>{
+const FMAX=1.25, CLIP=1.7, DT=0.05;
+const CH=[
+  {id:'pastor',  name:'PASTOR',         color:'#f2b84b', range:[0.70,1.40]},
+  {id:'leader',  name:'WORSHIP LEADER', color:'#5fb3f9', range:[0.50,1.00]},
+  {id:'singer',  name:'SINGER 2',       color:'#8fd18b', range:[0.30,0.75]},
+  {id:'keys',    name:'KEYBOARD',       color:'#c792ea', range:[0.18,0.55]},
+  {id:'playback',name:'PLAYBACK MUSIC', color:'#ff8a80', range:[0.08,0.38]},
+  {id:'audience',name:'AUDIENCE MIC',   color:'#9aa1ad', range:[0.00,0.30]},
+];
+const BY=Object.fromEntries(CH.map(c=>[c.id,c]));
+const S={}; // channel state
+const master={fader:0.8};
+const $=id=>document.getElementById(id);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rand=(a,b)=>a+Math.random()*(b-a);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const dbToLin=d=>Math.pow(10,d/20);
+const fmtDb=l=>l<=0.0005?'−∞':((l>=1?'+':'')+(20*Math.log10(l)).toFixed(1).replace('-','−'));
+
+function defaults(){
+  CH.forEach(c=>{
+    const mid=(c.range[0]+c.range[1])/2 || 0.15;
+    S[c.id]={src:1,gainDb:0,hi:0,mute:false,fader:clamp((c.id==='audience'?0.14:mid)/FMAX,0,1)};
+  });
+  master.fader=0.8;
+}
+defaults();
+const gainLin=id=>dbToLin(S[id].gainDb);
+const pre=id=>S[id].src*gainLin(id);
+const eff=id=>S[id].mute?0:pre(id)*S[id].fader*FMAX;
+function stat(id){
+  const e=eff(id),[lo,hi]=BY[id].range;
+  if(pre(id)>CLIP) return 'high';
+  if(e<lo-1e-9) return 'low';
+  if(e>hi) return 'high';
+  return 'ok';
+}
+
+/* ---------------- AUDIO ---------------- */
+let ctx=null, A={}, masterGain, limiter, masterAn, noiseBuf, calibrated=false;
+const fb={risk:false,forced:false,threshold:9,amp:0};
+const loopVal=()=>S.pastor.mute?0:gainLin('pastor')*S.pastor.fader*FMAX*dbToLin(S.pastor.hi);
+
+function shaperCurve(){
+  const n=2048,c=new Float32Array(n);
+  for(let i=0;i<n;i++){const x=(i/(n-1))*2-1; c[i]=Math.tanh(x*1.8)/1.8*1.15;}
+  return c;
+}
+function buildGraph(){
+  ctx=new (window.AudioContext||window.webkitAudioContext)();
+  noiseBuf=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate);
+  const d=noiseBuf.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+  masterGain=ctx.createGain(); masterGain.gain.value=0;
+  limiter=ctx.createDynamicsCompressor();
+  limiter.threshold.value=-8; limiter.knee.value=2; limiter.ratio.value=20; limiter.attack.value=0.003; limiter.release.value=0.15;
+  masterAn=ctx.createAnalyser(); masterAn.fftSize=1024;
+  masterGain.connect(limiter); limiter.connect(masterAn); masterAn.connect(ctx.destination);
+  const curve=shaperCurve();
+  CH.forEach(c=>{
+    const n={};
+    n.synth=ctx.createGain();           // synth sources land here
+    n.trim=ctx.createGain();            // calibration
+    n.rawAn=ctx.createAnalyser(); n.rawAn.fftSize=2048;
+    n.file=ctx.createGain(); n.file.gain.value=0;  // loaded recordings land here
+    n.src=ctx.createGain();             // event multiplier (pastor walks away, etc.)
+    n.gain=ctx.createGain();            // GAIN knob
+    n.shaper=ctx.createWaveShaper(); n.shaper.curve=curve; n.shaper.oversample='2x';
+    n.hi=ctx.createBiquadFilter(); n.hi.type='highshelf'; n.hi.frequency.value=3000;
+    n.mute=ctx.createGain(); n.fader=ctx.createGain();
+    n.an=ctx.createAnalyser(); n.an.fftSize=1024;
+    n.synth.connect(n.trim); n.trim.connect(n.rawAn); n.trim.connect(n.src);
+    n.file.connect(n.src);
+    n.src.connect(n.gain); n.gain.connect(n.shaper); n.shaper.connect(n.hi); n.hi.connect(n.mute);
+    n.mute.connect(n.fader); n.fader.connect(n.an); n.an.connect(masterGain);
+    A[c.id]=n;
+  });
+  // feedback oscillator enters the pastor channel at the GAIN stage
+  fb.osc=ctx.createOscillator(); fb.osc.frequency.value=2750; fb.g=ctx.createGain(); fb.g.gain.value=0;
+  const fbLfo=ctx.createOscillator(); fbLfo.frequency.value=6; const fbLfoG=ctx.createGain(); fbLfoG.gain.value=12;
+  fbLfo.connect(fbLfoG); fbLfoG.connect(fb.osc.frequency); fbLfo.start();
+  fb.osc.connect(fb.g); fb.g.connect(A.pastor.gain); fb.osc.start();
+  buildSynths();
+  CH.forEach(c=>applyAudio(c.id,true));
+}
+function applyAudio(id,instant){
+  if(!ctx) return;
+  const n=A[id],s=S[id],t=ctx.currentTime,tc=instant?0.001:0.03;
+  n.src.gain.setTargetAtTime(s.src,t,instant?0.001:0.12);
+  n.gain.gain.setTargetAtTime(gainLin(id),t,tc);
+  n.hi.gain.setTargetAtTime(s.hi,t,tc);
+  n.mute.gain.setTargetAtTime(s.mute?0:1,t,0.01);
+  n.fader.gain.setTargetAtTime(s.fader*FMAX,t,tc);
+}
+function applyMaster(){ if(ctx&&calibrated) masterGain.gain.setTargetAtTime(master.fader*FMAX,ctx.currentTime,0.03); }
+
+/* ---- synthesized stand-in sources ---- */
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+const BPM=76, BEAT=60/BPM;
+const PROG=[[55,59,62],[50,54,57],[52,55,59],[48,52,55]];          // G D Em C
+const MEL=[[71,71,74,71],[69,66,69,69],[67,71,67,64],[64,67,72,67]];
+const V={};
+function noiseSource(){const s=ctx.createBufferSource(); s.buffer=noiseBuf; s.loop=true; s.start(); return s;}
+function voice(dest,formants,lfoDepth){
+  const o=ctx.createOscillator(); o.type='sawtooth'; o.frequency.value=220;
+  const lfo=ctx.createOscillator(); lfo.frequency.value=5.3; const lg=ctx.createGain(); lg.gain.value=lfoDepth;
+  lfo.connect(lg); lg.connect(o.frequency); lfo.start();
+  const env=ctx.createGain(); env.gain.value=0;
+  formants.forEach(([f,q,g])=>{const b=ctx.createBiquadFilter(); b.type='bandpass'; b.frequency.value=f; b.Q.value=q; const gg=ctx.createGain(); gg.gain.value=g; o.connect(b); b.connect(gg); gg.connect(env);});
+  env.connect(dest); o.start();
+  return {o,env};
+}
+function buildSynths(){
+  // Pastor: speech-like babble
+  const p={}; p.o=ctx.createOscillator(); p.o.type='sawtooth'; p.o.frequency.value=120;
+  p.f1=ctx.createBiquadFilter(); p.f1.type='bandpass'; p.f1.Q.value=5;
+  p.f2=ctx.createBiquadFilter(); p.f2.type='bandpass'; p.f2.Q.value=7;
+  p.lp=ctx.createBiquadFilter(); p.lp.type='lowpass'; p.lp.frequency.value=350;
+  p.g2=ctx.createGain(); p.g2.gain.value=0.7; p.g3=ctx.createGain(); p.g3.gain.value=0.35;
+  p.env=ctx.createGain(); p.env.gain.value=0;
+  p.o.connect(p.f1); p.f1.connect(p.env); p.o.connect(p.f2); p.f2.connect(p.g2); p.g2.connect(p.env);
+  p.o.connect(p.lp); p.lp.connect(p.g3); p.g3.connect(p.env);
+  p.env.connect(A.pastor.synth); p.o.start();
+  const pn=noiseSource(); p.hp=ctx.createBiquadFilter(); p.hp.type='highpass'; p.hp.frequency.value=3200;
+  p.cons=ctx.createGain(); p.cons.gain.value=0; pn.connect(p.hp); p.hp.connect(p.cons); p.cons.connect(A.pastor.synth);
+  p.next=0; p.left=0; p.base=125; V.pastor=p;
+  // Singers
+  V.leader=voice(A.leader.synth,[[800,5,1],[1150,6,.8],[420,1.2,.5]],4);
+  V.singer=voice(A.singer.synth,[[480,5,1],[900,6,.7],[2600,8,.25]],5);
+  // Playback pad
+  const pad={oscs:[]}; pad.lp=ctx.createBiquadFilter(); pad.lp.type='lowpass'; pad.lp.frequency.value=850;
+  pad.g=ctx.createGain(); pad.g.gain.value=0.22; pad.lp.connect(pad.g); pad.g.connect(A.playback.synth);
+  for(let i=0;i<6;i++){const o=ctx.createOscillator(); o.type='sawtooth'; o.detune.value=i%2?9:-9; o.connect(pad.lp); o.start(); pad.oscs.push(o);}
+  V.pad=pad;
+  // Audience room tone
+  const an=noiseSource(); const bp=ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=380; bp.Q.value=0.6;
+  const ag=ctx.createGain(); ag.gain.value=0.5; const al=ctx.createOscillator(); al.frequency.value=0.17; const alg=ctx.createGain(); alg.gain.value=0.25;
+  al.connect(alg); alg.connect(ag.gain); al.start(); an.connect(bp); bp.connect(ag); ag.connect(A.audience.synth);
+  V.music={next:0,beat:0};
+  setInterval(schedule,40);
+}
+const VOWELS=[[730,1090],[270,2290],[300,870],[530,1840],[570,840],[640,1190]];
+function schedPastor(until){
+  const p=V.pastor;
+  if(p.next<ctx.currentTime) p.next=ctx.currentTime+0.05;
+  while(p.next<until){
+    if(p.left<=0){ p.left=Math.floor(rand(6,13)); p.base=rand(115,140); p.phraseStart=p.left; }
+    const t=p.next, dur=rand(0.11,0.24), v=pick(VOWELS);
+    const decline=1-0.12*(1-p.left/p.phraseStart);
+    p.f1.frequency.setTargetAtTime(v[0],t,0.02); p.f2.frequency.setTargetAtTime(v[1],t,0.02);
+    p.o.frequency.setTargetAtTime(p.base*decline*rand(0.93,1.08),t,0.03);
+    p.env.gain.setTargetAtTime(1,t,0.015); p.env.gain.setTargetAtTime(0.05,t+dur*0.72,0.025);
+    if(Math.random()<0.5){p.cons.gain.setTargetAtTime(0.35,t-0.03,0.006);p.cons.gain.setTargetAtTime(0,t+0.01,0.01);}
+    p.next+=dur; p.left--;
+    if(p.left<=0){ p.env.gain.setTargetAtTime(0,p.next,0.03); p.next+=rand(0.35,0.95); }
+  }
+}
+function harmonyAbove(m,pcs){for(let n=m+1;n<m+10;n++) if(pcs.includes(n%12)) return n; return m+4;}
+function keyNote(m,t,dur,vel){
+  const o=ctx.createOscillator(); o.type='triangle'; o.frequency.value=mtof(m);
+  const g=ctx.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vel,t+0.01); g.gain.exponentialRampToValueAtTime(0.004,t+dur);
+  o.connect(g); g.connect(A.keys.synth); o.start(t); o.stop(t+dur+0.05);
+}
+function kick(t){const o=ctx.createOscillator(),g=ctx.createGain(); o.frequency.setValueAtTime(110,t); o.frequency.exponentialRampToValueAtTime(45,t+0.12);
+  g.gain.setValueAtTime(0.9,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.28); o.connect(g); g.connect(A.playback.synth); o.start(t); o.stop(t+0.3);}
+function shaker(t){const s=ctx.createBufferSource(); s.buffer=noiseBuf; const h=ctx.createBiquadFilter(); h.type='highpass'; h.frequency.value=6500;
+  const g=ctx.createGain(); g.gain.setValueAtTime(0.18,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.07); s.connect(h); h.connect(g); g.connect(A.playback.synth); s.start(t,Math.random()); s.stop(t+0.08);}
+function schedMusic(until){
+  const m=V.music;
+  if(m.next<ctx.currentTime) m.next=ctx.currentTime+0.05;
+  while(m.next<until){
+    const t=m.next, b=m.beat, bar=Math.floor(b/4)%4, bi=b%4, ch=PROG[bar], pcs=ch.map(x=>x%12);
+    ch.forEach(n=>keyNote(n+12,t,BEAT*0.98,0.16)); if(bi===0) keyNote(ch[0]-12,t,BEAT*3.8,0.3);
+    if(bi===0) V.pad.oscs.forEach((o,i)=>o.frequency.setValueAtTime(mtof(ch[Math.floor(i/2)]-12),t));
+    if(bi===0||bi===2) kick(t); shaker(t); shaker(t+BEAT/2);
+    const mel=MEL[bar][bi], harm=harmonyAbove(mel,pcs);
+    const L=V.leader, Sg=V.singer;
+    L.o.frequency.setTargetAtTime(mtof(mel),t,0.025); Sg.o.frequency.setTargetAtTime(mtof(harm),t,0.025);
+    [L,Sg].forEach(v=>{v.env.gain.setTargetAtTime(1,t,0.04); v.env.gain.setTargetAtTime(0.55,t+BEAT*0.8,0.04);});
+    if(bar===3&&bi===3) [L,Sg].forEach(v=>v.env.gain.setTargetAtTime(0,t+BEAT*0.55,0.05));
+    m.beat++; m.next+=BEAT;
+  }
+}
+function schedule(){ if(!ctx||ctx.state!=='running') return; const until=ctx.currentTime+0.25; schedPastor(until); schedMusic(until); }
+
+function rms(an){const b=new Float32Array(an.fftSize); an.getFloatTimeDomainData(b); let s=0; for(let i=0;i<b.length;i++) s+=b[i]*b[i]; return Math.sqrt(s/b.length);}
+function calibrate(){
+  return new Promise(res=>{
+    const sums={}; CH.forEach(c=>sums[c.id]=0); let k=0;
+    const iv=setInterval(()=>{CH.forEach(c=>sums[c.id]+=rms(A[c.id].rawAn)); k++;
+      if(k>=35){clearInterval(iv);
+        CH.forEach(c=>{const r=sums[c.id]/k; A[c.id].trim.gain.value=clamp(0.1/Math.max(r,1e-4),0.05,40);});
+        calibrated=true; res();}
+    },100);
+  });
+}
+
+/* ---- loading a real recording onto a channel ---- */
+async function loadFile(id,file,nameEl){
+  try{
+    const buf=await ctx.decodeAudioData(await file.arrayBuffer());
+    const d=buf.getChannelData(0); let s=0,n=0; for(let i=0;i<d.length;i+=8){s+=d[i]*d[i];n++;}
+    const r=Math.sqrt(s/n)||0.01;
+    const n2=A[id];
+    if(n2.player){try{n2.player.stop()}catch(e){}}
+    const src=ctx.createBufferSource(); src.buffer=buf; src.loop=true; src.connect(n2.file); src.start();
+    n2.player=src; n2.file.gain.value=clamp(0.1/r,0.05,40); n2.trim.gain.value=0;
+    nameEl.textContent='▶ '+file.name;
+  }catch(e){ nameEl.textContent='Could not read that file'; }
+}
+
+/* ---------------- DESK UI ---------------- */
+const UI={};
+function makeFader(el,get,set){
+  const cap=el.querySelector('.cap');
+  const draw=()=>{cap.style.top=`calc(10px + ${(1-get())*100}% - ${(1-get())*20}px)`;};
+  let drag=false;
+  const move=e=>{const r=el.getBoundingClientRect(); const v=clamp(1-(e.clientY-r.top-10)/(r.height-20),0,1); set(v); draw();};
+  el.addEventListener('pointerdown',e=>{drag=true; el.setPointerCapture(e.pointerId); move(e); e.preventDefault();});
+  el.addEventListener('pointermove',e=>{if(drag) move(e);});
+  el.addEventListener('pointerup',()=>drag=false); el.addEventListener('pointercancel',()=>drag=false);
+  draw(); return draw;
+}
+function faderHTML(){return `<div class="fader"><div class="track"></div><div class="unity" style="top:calc(10px + ${(1-0.8)*100}% - ${(1-0.8)*20}px)"></div><div class="cap"></div></div><div class="meter"><div class="bar"></div></div>`;}
+function buildDesk(){
+  const desk=$('desk'); desk.innerHTML='';
+  CH.forEach(c=>{
+    const el=document.createElement('div'); el.className='strip'; el.id='strip-'+c.id;
+    el.innerHTML=`
+      <div class="chname"><i style="background:${c.color}"></i>${c.name}</div>
+      <div class="ctl"><label>Gain</label><input class="knob" type="range" min="-20" max="12" step="0.5" data-k="gainDb"><div class="val" data-v="gainDb"></div></div>
+      <div class="clip"><span class="led"></span>CLIP</div>
+      <div class="ctl"><label>Hi EQ</label><input class="knob" type="range" min="-12" max="6" step="0.5" data-k="hi"><div class="val" data-v="hi"></div></div>
+      <button class="mute">MUTE</button>
+      <div class="fwrap">${faderHTML()}</div>
+      <div class="fdb"></div>
+      <div class="status"></div>
+      <button class="load">load recording</button><input type="file" accept="audio/*" class="hidden"><div class="fname"></div>`;
+    desk.appendChild(el);
+    const u={el,led:el.querySelector('.led'),bar:el.querySelector('.bar'),fdb:el.querySelector('.fdb'),status:el.querySelector('.status'),mute:el.querySelector('.mute'),knobs:el.querySelectorAll('.knob'),vals:el.querySelectorAll('.val')};
+    u.knobs.forEach(k=>k.addEventListener('input',()=>{S[c.id][k.dataset.k]=parseFloat(k.value); applyAudio(c.id); refresh(c.id);}));
+    u.mute.addEventListener('click',()=>{S[c.id].mute=!S[c.id].mute; applyAudio(c.id); refresh(c.id);});
+    u.drawFader=makeFader(el.querySelector('.fader'),()=>S[c.id].fader,v=>{S[c.id].fader=v; applyAudio(c.id); refresh(c.id,true);});
+    const fi=el.querySelector('input[type=file]'), fn=el.querySelector('.fname');
+    el.querySelector('.load').addEventListener('click',()=>fi.click());
+    fi.addEventListener('change',()=>{if(fi.files[0]) loadFile(c.id,fi.files[0],fn);});
+    UI[c.id]=u;
+  });
+  const m=document.createElement('div'); m.className='strip master';
+  m.innerHTML=`<div class="chname">MASTER</div><div style="flex:1"></div><div class="fwrap">${faderHTML()}</div><div class="fdb"></div><div class="status" style="color:var(--muted);font-weight:400">to speakers</div>`;
+  desk.appendChild(m);
+  UI.master={bar:m.querySelector('.bar'),fdb:m.querySelector('.fdb')};
+  UI.master.draw=makeFader(m.querySelector('.fader'),()=>master.fader,v=>{master.fader=v; applyMaster(); UI.master.fdb.textContent=fmtDb(v*FMAX)+' dB';});
+  UI.master.fdb.textContent=fmtDb(master.fader*FMAX)+' dB';
+}
+function refresh(id,skipFader){
+  const s=S[id],u=UI[id];
+  u.knobs.forEach(k=>{k.value=s[k.dataset.k];});
+  u.vals[0].textContent=(s.gainDb>0?'+':'')+s.gainDb.toFixed(1)+' dB';
+  u.vals[1].textContent=(s.hi>0?'+':'')+s.hi.toFixed(1)+' dB';
+  u.mute.classList.toggle('on',s.mute);
+  u.fdb.textContent=fmtDb(s.fader*FMAX)+' dB';
+  if(!skipFader) u.drawFader();
+}
+function refreshAll(){CH.forEach(c=>refresh(c.id)); UI.master.draw(); UI.master.fdb.textContent=fmtDb(master.fader*FMAX)+' dB';}
+function meterLevel(an){const r=rms(an); const db=20*Math.log10(r+1e-6); return clamp((db+50)/50,0,1);}
+function drawLoop(){
+  if(ctx&&mode){
+    CH.forEach(c=>{
+      const u=UI[c.id]; u.bar.style.height=(meterLevel(A[c.id].an)*100)+'%';
+      u.led.classList.toggle('on',pre(c.id)>CLIP||(c.id==='pastor'&&fb.amp>0.12));
+      const st=stat(c.id); u.status.className='status '+st; u.status.textContent=st==='ok'?'● good':st==='low'?'▼ too quiet':'▲ too loud';
+    });
+    UI.master.bar.style.height=(meterLevel(masterAn)*100)+'%';
+  }
+  requestAnimationFrame(drawLoop);
+}
+
+/* ---------------- EVENTS ---------------- */
+const EV=[
+ {id:'quiet_pastor',ch:'pastor',label:'The pastor is too quiet',
+  hint:'He stepped back from the mic. Push his fader up. If it is already near the top, turn up his GAIN too.',
+  why:'GAIN sets how strongly the mic comes in. The FADER sets how much goes to the speakers. A soft or distant voice often needs both.',
+  elig:()=>S.pastor.src>0.8, start:()=>{S.pastor.src=0.42}, fixed:()=>stat('pastor')==='ok'},
+ {id:'feedback',ch:'pastor',label:'Feedback on the pastor\'s mic',
+  hint:'That squeal is feedback. Pull the PASTOR fader down quickly, or turn his HI EQ down, until it stops.',
+  why:'Feedback is a loop: mic → speakers → back into the mic, louder each time. Turning the channel down breaks the loop, and so does cutting the high frequencies, since feedback is usually a high squeal. Mute works in an emergency, but then nobody hears the pastor, so bring him back up.',
+  elig:()=>!S.pastor.mute&&eff('pastor')>0.5,
+  start:ev=>{fb.risk=true; fb.threshold=loopVal()*0.78; fb.amp=0.004;},
+  fixed:ev=>{ev.quiet=fb.amp<0.01?(ev.quiet||0)+DT:0; return ev.quiet>1.5;},
+  end:()=>{fb.risk=false;}},
+ {id:'pastor_shout',ch:'pastor',label:'The pastor\'s mic is clipping (distorting)',
+  hint:'The red CLIP light is on. He got excited and is too loud for the input. Turn his GAIN down until the light goes off, then fix his fader.',
+  why:'Clipping is distortion caused by too much signal coming IN. The fader can\'t fix it because it comes after the problem. Only GAIN can.',
+  elig:()=>S.pastor.src<1.3, start:()=>{S.pastor.src=2.4}, fixed:()=>stat('pastor')==='ok'},
+ {id:'loud_leader',ch:'leader',label:'The worship leader is drowning out Singer 2',
+  hint:'The leader is so loud the red CLIP light is on. Turn the WORSHIP LEADER GAIN down until the light goes off, then set the fader so Singer 2 comes through again.',
+  why:'Turn down the loudest voice instead of pushing everyone else up. Otherwise the whole mix keeps getting louder.',
+  elig:()=>S.leader.src<1.5, start:()=>{S.leader.src=2.2}, fixed:()=>stat('leader')==='ok'},
+ {id:'quiet_leader',ch:'leader',label:'The worship leader is too quiet',
+  hint:'Bring the WORSHIP LEADER up. The congregation follows the lead melody to sing along.',
+  why:'In worship the leader\'s voice guides everyone, so it has to sit clearly on top of the instruments.',
+  elig:()=>S.leader.src>0.8, start:()=>{S.leader.src=0.45}, fixed:()=>stat('leader')==='ok'},
+ {id:'keys_swell',ch:'keys',label:'The keyboard is overpowering everything',
+  hint:'The keyboard player got enthusiastic and the red CLIP light is on! Turn the KEYBOARD GAIN down until the light goes off, then use the fader so the voices sit on top again.',
+  why:'Keyboard notes cover the same pitches as voices and can hide (mask) them. In church the words matter most: instruments support, voices lead.',
+  elig:()=>S.keys.src<1.5, start:()=>{S.keys.src=2.8}, fixed:()=>stat('keys')==='ok'},
+ {id:'bumped_mute',ch:'singer',label:'Singer 2 has disappeared',
+  hint:'Someone bumped the MUTE on Singer 2. Find the lit mute button and switch it off.',
+  why:'Check the simple things first. Is it muted? Is the fader down? Most "broken mic" emergencies are just a button.',
+  elig:()=>!S.singer.mute, start:()=>{S.singer.mute=true;}, fixed:()=>stat('singer')==='ok'},
+ {id:'loud_playback',ch:'playback',label:'The background music is too loud',
+  hint:'The playback is so loud its red CLIP light is on. Turn the PLAYBACK MUSIC GAIN down until the light goes off, then bring the fader down. It should be a soft carpet underneath, not the main thing.',
+  why:'Background music sets the mood. If you can clearly follow it, it\'s probably too loud.',
+  elig:()=>S.playback.src<1.5, start:()=>{S.playback.src=3}, fixed:()=>stat('playback')==='ok'},
+];
+const EM_EXTRA={id:'dead_mic',ch:'singer',label:'Singer 2\'s microphone isn\'t working',
+  why:'First check the desk: is Singer 2 muted, or is the fader down? If both are fine, quietly signal the stage team to check the mic, its battery or its cable.',
+  start:()=>{S.singer.src=0}};
+
+/* ---------------- MODES ---------------- */
+let mode=null, level='beginner', T0=0, nextEv=0, active=[], log=[], healthT=0, totalT=0, score=0, tickIv=null, DUR=180;
+let toastTimer=null, suspendTimer=null;
+
+function setAlert(main,why,cls){ $('alertMain').innerHTML=main; $('alertWhy').textContent=why||''; $('alert').className='alert'+(cls?' '+cls:''); }
+function toast(html,miss){const t=$('toast'); t.innerHTML=html; t.className='toast'+(miss?' miss':''); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.add('hidden'),7000);}
+function now(){return ctx.currentTime-T0;}
+
+async function startMode(m,lv){
+  mode=null; level=lv||'beginner'; clearTimeout(suspendTimer);
+  $('menu').classList.add('hidden'); $('session').classList.remove('hidden'); $('stopBtn').classList.remove('hidden');
+  if(!ctx){ buildGraph(); buildDesk(); requestAnimationFrame(drawLoop); }
+  await ctx.resume();
+  resetState();
+  if(!calibrated){ $('linecheck').classList.remove('hidden'); await calibrate(); $('linecheck').classList.add('hidden'); }
+  applyMaster();
+  mode=m; T0=ctx.currentTime; active=[]; log=[]; healthT=0; totalT=0; score=0; nextEv=8;
+  const desk=$('desk');
+  desk.classList.toggle('hide-status', m==='live'&&level==='advanced' || m==='emergency');
+  desk.classList.toggle('ears-only', m==='emergency');
+  desk.classList.toggle('locked', m==='emergency');
+  $('pTime').classList.toggle('hidden',m!=='live'); $('pScore').classList.toggle('hidden',m==='explore'); $('pHealth').classList.toggle('hidden',m!=='live');
+  $('learn').open = m==='explore';
+  clearInterval(tickIv);
+  if(m==='explore'){ $('modeName').textContent='Explore'; setAlert('🎧 Explore freely. Try to get every channel to <b style="color:var(--green)">● good</b>.','Try this: mute the pastor, push the keyboard way up, turn a GAIN until the CLIP light flashes. Notice what each one sounds like.'); }
+  if(m==='live'){ $('modeName').textContent=level==='beginner'?'Service · Beginner':'Service · Advanced'; DUR=180;
+    setAlert('⛪ The service has started. The mix is good right now.','Listen carefully. When something goes wrong, fix it as fast as you can.');
+    tickIv=setInterval(liveTick,DT*1000); }
+  if(m==='emergency'){ $('modeName').textContent='Emergency'; setAlert('🚨 Sound Engineer Emergency','Listen. Name the problem by ear.'); emStart(); }
+}
+function resetState(){
+  defaults(); fb.risk=false; fb.forced=false; fb.amp=0; if(fb.g) fb.g.gain.value=0;
+  if(ctx){ CH.forEach(c=>applyAudio(c.id,true)); refreshAll(); }
+}
+function stopAll(){
+  clearInterval(tickIv); clearTimeout(em.timer); clearInterval(em.cd); mode=null;
+  if(ctx){ masterGain.gain.setTargetAtTime(0,ctx.currentTime,0.05); clearTimeout(suspendTimer); suspendTimer=setTimeout(()=>ctx.suspend(),200); }
+  ['emPanel','report','toast'].forEach(i=>$(i).classList.add('hidden'));
+  $('session').classList.add('hidden'); $('menu').classList.remove('hidden'); $('stopBtn').classList.add('hidden');
+}
+function fbTick(){
+  if(fb.forced||(fb.risk&&loopVal()>fb.threshold)) fb.amp=Math.min(0.25,fb.amp*1.13+0.0015); else fb.amp*=0.75;
+  if(fb.amp<0.0005) fb.amp=0;
+  fb.g.gain.setTargetAtTime(fb.amp,ctx.currentTime,0.03);
+}
+function liveTick(){
+  if(mode!=='live') return;
+  fbTick();
+  const t=now(), timeout=level==='beginner'?30:20;
+  // events
+  for(const ev of [...active]){
+    const age=t-ev.t0;
+    if(ev.def.fixed(ev)) resolve(ev,true,age);
+    else if(age>timeout) resolve(ev,false,age);
+    else if(level==='beginner'&&!ev.hinted&&age>5){ ev.hinted=true; setAlert('🔔 <b>'+ev.def.label+'</b>',ev.def.hint,'live'); UI[ev.def.ch].el.classList.add('flash'); setTimeout(()=>UI[ev.def.ch].el.classList.remove('flash'),3200); }
+  }
+  const maxA=level==='beginner'?1:2;
+  if(t>=nextEv&&active.length<maxA&&t<DUR-14){
+    const busy=active.map(a=>a.def.ch);
+    const opts=EV.filter(e=>!busy.includes(e.ch)&&stat(e.ch)==='ok'&&e.elig()&&!(e.id==='feedback'&&active.length));
+    if(opts.length){ const def=pick(opts); const ev={def,t0:t}; def.start(ev); applyAudio(def.ch); refresh(def.ch); active.push(ev);
+      if(level==='beginner') setAlert('🔔 <b>Something just changed. Listen!</b>','What sounds different? Which channel is it?','live'); }
+    nextEv=t+(level==='beginner'?rand(14,20):rand(8,13));
+  }
+  // health
+  totalT+=DT; if(CH.every(c=>stat(c.id)==='ok')&&fb.amp<0.02) healthT+=DT;
+  $('health').textContent=Math.round(100*healthT/Math.max(totalT,0.01))+'%';
+  const left=Math.max(0,DUR-t); $('timeLeft').textContent=Math.floor(left/60)+':'+String(Math.floor(left%60)).padStart(2,'0');
+  $('score').textContent=score;
+  if(t>=DUR) finishLive();
+}
+function resolve(ev,ok,age){
+  active=active.filter(a=>a!==ev); ev.def.end&&ev.def.end();
+  const pts=ok?Math.max(10,Math.round(100-Math.max(0,age-2)*6)):0; score+=pts;
+  log.push({label:ev.def.label,ok,time:age,pts,why:ev.def.why});
+  if(ok) toast(`✅ <b>Fixed in ${age.toFixed(1)}s</b> · ${ev.def.label} · +${pts}<div class="why">${ev.def.why}</div>`);
+  else toast(`⏰ <b>Missed:</b> ${ev.def.label}<div class="why">${ev.def.hint}</div>`,true);
+  setAlert(active.length?'🔔 <b>There\'s still a problem. Keep listening.</b>':'⛪ Service running. Mix looks good.', active.length?'':'Keep your ears open.', active.length?'live':'good');
+}
+function finishLive(){
+  clearInterval(tickIv); active.forEach(ev=>{ev.def.end&&ev.def.end(); log.push({label:ev.def.label,ok:false,time:now()-ev.t0,pts:0});}); active=[];
+  const fixed=log.filter(l=>l.ok), avg=fixed.length?fixed.reduce((a,l)=>a+l.time,0)/fixed.length:0;
+  const health=Math.round(100*healthT/Math.max(totalT,0.01));
+  const tip=avg>12?'Your fixes were slow. Practise spotting which channel changed. Solo it in your head: "Is it the voices? The keyboard? The music?"':
+            health<60?'The mix was off for a lot of the service. After fixing a problem, check the rest of the desk too.':
+            fixed.length<log.length?'Look over the problems you missed and try them again in Explore mode.':
+            level==='beginner'?'Strong work! Try Advanced: no hints, no status dots, problems can overlap.':'Excellent. You\'re ready to sit beside the real sound desk on a Sunday.';
+  const rows=log.map(l=>`<tr><td>${l.ok?'✅':'⏰'}</td><td>${l.label}</td><td>${l.ok?l.time.toFixed(1)+'s':'missed'}</td><td>${l.pts}</td></tr>`).join('');
+  const text=`Church Sound Desk – Sunday Service (${level})\nDate: ${new Date().toLocaleDateString()}\nScore: ${score}\nProblems fixed: ${fixed.length}/${log.length}\nAverage fix time: ${avg.toFixed(1)}s\nMix health: ${health}%\n`+log.map(l=>`- ${l.label}: ${l.ok?l.time.toFixed(1)+'s':'missed'}`).join('\n');
+  showReport(`<div class="tag">Service over</div><h2>Your report</h2>
+    <div style="display:flex;gap:18px;flex-wrap:wrap;margin:8px 0"><div><div class="big">${score}</div><div class="sub">score</div></div><div><div class="big">${fixed.length}/${log.length}</div><div class="sub">fixed</div></div><div><div class="big">${avg.toFixed(1)}s</div><div class="sub">avg fix time</div></div><div><div class="big">${health}%</div><div class="sub">mix health</div></div></div>
+    <table class="rep"><tr><th></th><th>Problem</th><th>Time</th><th>Pts</th></tr>${rows||'<tr><td colspan=4>No problems this time.</td></tr>'}</table>
+    <div class="note">💡 ${tip}</div>`, text, ()=>startMode('live',level));
+}
+function showReport(html,text,again){
+  $('reportBody').innerHTML=html+`<p class="sub" style="margin-top:12px">Copy your results for your portfolio or Weekly Conference:</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="copyBtn">📋 Copy results</button><button class="btn primary" id="againBtn">Play again</button><button class="btn" id="menuBtn">Menu</button></div>
+    <textarea class="copy hidden" id="copyTxt" readonly></textarea>`;
+  $('report').classList.remove('hidden');
+  $('copyBtn').onclick=async()=>{try{await navigator.clipboard.writeText(text); $('copyBtn').textContent='✅ Copied';}catch(e){const ta=$('copyTxt'); ta.value=text; ta.classList.remove('hidden'); ta.select(); $('copyBtn').textContent='Select & copy below';}};
+  $('againBtn').onclick=()=>{$('report').classList.add('hidden'); startMode(mode||'live',level);};
+  $('menuBtn').onclick=stopAll;
+  mode=mode; // keep for again
+  $('againBtn').onclick=()=>{$('report').classList.add('hidden'); again();};
+}
+
+/* ---- Emergency listening game ---- */
+const em={round:0,total:8,right:0,timer:null,cd:null,results:[]};
+function emStart(){ em.round=0; em.right=0; em.results=[]; $('emPanel').classList.remove('hidden'); emRound(); }
+function emRound(){
+  em.round++; resetState(); applyMaster();
+  $('emRound').textContent=`Round ${em.round} of ${em.total}`;
+  $('emTitle').textContent='🎧 Listen to the normal mix…'; $('emSub').textContent='In a few seconds, something will go wrong.';
+  $('emChoices').innerHTML=''; $('emExplain').classList.add('hidden'); $('emNext').classList.add('hidden'); $('emCountWrap').classList.add('hidden');
+  clearInterval(tickIv); tickIv=setInterval(()=>{ if(mode==='emergency') fbTick(); },DT*1000);
+  em.timer=setTimeout(()=>{
+    const pool=[...EV.filter(e=>e.id!=='bumped_mute'),EM_EXTRA];
+    const def=pick(pool); em.def=def;
+    if(def.id==='feedback'){fb.forced=true; fb.amp=0.004;} else def.start({});
+    CH.forEach(c=>applyAudio(c.id));
+    $('emTitle').textContent='🚨 What\'s wrong?'; $('emSub').textContent='Pick the problem you hear. 10 seconds!';
+    const others=pool.filter(p=>p!==def).sort(()=>Math.random()-.5).slice(0,3);
+    const opts=[def,...others].sort(()=>Math.random()-.5);
+    const box=$('emChoices'); box.innerHTML='';
+    opts.forEach(o=>{const b=document.createElement('button'); b.textContent=o.label; b.onclick=()=>emAnswer(o,b); box.appendChild(b);});
+    $('emCountWrap').classList.remove('hidden'); const bar=$('emCount'); const t0=performance.now();
+    em.cd=setInterval(()=>{const f=1-(performance.now()-t0)/10000; bar.style.width=Math.max(0,f*100)+'%'; if(f<=0){clearInterval(em.cd); emAnswer(null,null);}},50);
+  },3500);
+}
+function emAnswer(o,btn){
+  clearInterval(em.cd); if(!em.def) return;
+  const def=em.def; em.def=null; const ok=o===def; if(ok) em.right++;
+  em.results.push({label:def.label,ok});
+  [...$('emChoices').children].forEach(b=>{b.disabled=true; if(b.textContent===def.label) b.classList.add('right'); else if(b===btn) b.classList.add('wrong');});
+  $('emTitle').textContent=ok?'✅ Correct!':(o?'❌ Not quite':'⏰ Time\'s up');
+  $('emSub').textContent=`The problem was: ${def.label}.`;
+  $('emExplain').innerHTML=`<b>What you'd do:</b> ${def.hint||''} ${def.why}`; $('emExplain').classList.remove('hidden');
+  $('score').textContent=`${em.right}/${em.round}`;
+  const last=em.round>=em.total; $('emNext').textContent=last?'See results →':'Next round →'; $('emNext').classList.remove('hidden');
+  $('emNext').onclick=()=>{ fb.forced=false; if(last) emFinish(); else emRound(); };
+}
+function emFinish(){
+  $('emPanel').classList.add('hidden'); clearInterval(tickIv); resetState();
+  const rows=em.results.map((r,i)=>`<tr><td>${i+1}</td><td>${r.ok?'✅':'❌'}</td><td>${r.label}</td></tr>`).join('');
+  const text=`Church Sound Desk – Sound Engineer Emergency\nDate: ${new Date().toLocaleDateString()}\nCorrect: ${em.right}/${em.total}\n`+em.results.map(r=>`- ${r.ok?'✓':'✗'} ${r.label}`).join('\n');
+  const tip=em.right>=7?'Great ears! Now try the Sunday Service in Advanced mode.':em.right>=4?'Good start. Replay and listen for WHICH sound changed before deciding.':'Go back to Explore mode and make each problem happen yourself, so you learn what it sounds like.';
+  showReport(`<div class="tag">Emergency over</div><h2>You got <span style="color:var(--amber)">${em.right}/${em.total}</span></h2>
+    <table class="rep"><tr><th>#</th><th></th><th>Problem</th></tr>${rows}</table><div class="note">💡 ${tip}</div>`, text, ()=>startMode('emergency'));
+}
+
+/* ---- wiring ---- */
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>startMode(b.dataset.mode,b.dataset.level)));
+$('stopBtn').addEventListener('click',stopAll);
+})();
+</script>
+</body>
+</html>
