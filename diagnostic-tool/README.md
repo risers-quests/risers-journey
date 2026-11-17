@@ -237,16 +237,22 @@ separate 8-question self-report at the end.
 
 ## Generated questions (More on Large Numbers, Operations on Large Numbers, Fractions and Division so far)
 
-**Grade 4.** The start page offers Grade 4 or Grade 5. Grade 4 uses the
-same ladders one place value smaller (G() and D() in `generate/core.ts`:
-5-column place-value chart, numbers up to about 99,999). Topics ready at
-Grade 4 are listed in `GRADE4_TOPICS` (`generate/index.ts`): Large Numbers
-and Operations so far; a Grade 4 test offers only those. Each new topic
-should be built grade-aware, with its Grade 4 version added to the stress
-test (which runs every topic at Grade 5 and the Grade 4 topics at Grade 4).
-Grade 4 needs its own topics where the content differs: the spec is the
-school's Grade 4 book, in `syllabus/grade4.md` (e.g. Grade 4
-fractions are equivalent fractions and adding like fractions, not a ÷ b).
+**Grade 4.** The start page offers Grade 4 or Grade 5. The spec for
+Grade 4 is the school's Grade 4 book, in `syllabus/grade4.md`; build each
+Grade 4 topic from its chapter's outcomes, not by shrinking Grade 5. Topics
+ready at Grade 4 are listed in `GRADE4_TOPICS` (`generate/index.ts`); a
+Grade 4 test offers only those. Large Numbers follows the book (numbers up
+to 9,99,999 on the lakhs chart; place and face value; number names;
+rounding to the nearest ten, hundred or thousand; largest/smallest number
+from given digits; Roman numerals 1–100). Operations still uses the old
+"one place value smaller" ladder (G() and D() in `generate/core.ts`) until
+it is rebuilt from book chapters 2–4. The stress test runs every topic at
+Grade 5 and the Grade 4 topics at Grade 4.
+
+**Numbers are written as the books write them:** Indian grouping
+(37,82,410), number names in lakhs and crores, and the place-value chart
+labelled TL (ten lakhs), L (lakhs), TTh, Th, H, T, O. Use `fmt()` from
+`generate/core.ts` for every number a child sees.
 
 **Words children see.** CPA and Bloom's levels (concrete, pictorial,
 abstract, remember … evaluate) are how the engine judges and how staff

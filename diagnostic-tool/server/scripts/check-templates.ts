@@ -109,10 +109,19 @@ for (const [topic, grade] of RUNS) {
         try {
           it = generateItem(topic, cpa, bloom, { grade });
           if (grade === 4) {
-            // Grade 4: numbers stay below 100,000 (pictures and activities included).
-            const nums = (JSON.stringify([it.prompt, it.choices, it.representation, it.activity]).match(/\d{1,3}(?:,\d{3})+(?!\d)|\d+/g) ?? []).map((x) => Number(x.replace(/,/g, "")));
-            if (nums.some((x) => x >= 1000000)) fail(`${topic} G4 ${cpa}/${bloom}: a number of a million or more`);
-            if (it.activity && "columns" in it.activity && it.activity.columns[0] > 10000) fail(`${topic} G4 ${cpa}/${bloom}: chart has a hundred-thousands column`);
+            // Grade 4: numbers stay below 10,00,000 (pictures and activities
+            // included). Large Numbers uses the lakhs column (the book goes
+            // to 9,99,999); Operations stays within ten thousands for now.
+            const nums: number[] = [];
+            const walk = (v: unknown): void => {
+              if (typeof v === "number") nums.push(v);
+              else if (typeof v === "string") (v.match(/\d+(?:,\d+)*/g) ?? []).forEach((x) => nums.push(Number(x.replace(/,/g, ""))));
+              else if (v && typeof v === "object") Object.entries(v).forEach(([k, x]) => k !== "id" && walk(x));
+            };
+            walk([it.prompt, it.choices, it.representation, it.activity]);
+            if (nums.some((x) => x >= 1000000)) fail(`${topic} G4 ${cpa}/${bloom}: a number of ten lakh or more`);
+            const maxCol = topic === "more-large-numbers" ? 100000 : 10000;
+            if (it.activity && "columns" in it.activity && it.activity.columns[0] > maxCol) fail(`${topic} G4 ${cpa}/${bloom}: chart has too many columns`);
           }
         } catch (e) {
           fail(`${topic} ${cpa}/${bloom}: ${e}`);

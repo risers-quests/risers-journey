@@ -34,6 +34,20 @@ export const G = () => (currentGrade === 4 ? 10 : 1);
 export const D = () => (currentGrade === 4 ? 1 : 0);
 export const gradeNow = () => currentGrade;
 
+/**
+ * Numbers are written the way the school's books write them: Indian
+ * grouping, 3 digits then 2 at a time (37,82,410 — not 3,782,410).
+ */
+export function fmt(n: number): string {
+  const neg = n < 0;
+  const s = String(Math.abs(Math.trunc(n)));
+  const frac = String(Math.abs(n)).includes(".") ? "." + String(Math.abs(n)).split(".")[1] : "";
+  const last3 = s.slice(-3);
+  const rest = s.slice(0, -3);
+  const grouped = rest ? rest.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + last3 : last3;
+  return (neg ? "-" : "") + grouped + frac;
+}
+
 /** A template for one CPA x Bloom cell of one topic. `given` re-uses earlier numbers when asked for. */
 export type Template = (rng: Rng, given?: Record<string, number>) => GeneratedItem;
 

@@ -23,8 +23,8 @@ export function NumberLine({ spec }: { spec: NumberLineSpec }) {
         {ticks.map((t, i) => (
           <div key={t} className="nl-tick" style={{ left: `${pct(t)}%` }}>
             <div className="nl-tick-mark" />
-            {/* One fixed number format (240,000), whatever the device's region. */}
-            {(i % labelEvery === 0 || i === ticks.length - 1) && <div className="nl-tick-label">{t.toLocaleString("en-US")}</div>}
+            {/* One fixed number format, Indian grouping as in the books (2,40,000), whatever the device's region. */}
+            {(i % labelEvery === 0 || i === ticks.length - 1) && <div className="nl-tick-label">{t.toLocaleString("en-IN")}</div>}
           </div>
         ))}
         {markers.map((m, i) => (

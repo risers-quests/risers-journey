@@ -1,4 +1,4 @@
-import { D, G, Rng, Template, build, buildActivity, int, pick } from "./core.js";
+import { D, G, Rng, Template, build, buildActivity, int, pick, fmt } from "./core.js";
 
 /**
  * Operations on Large Numbers, generated. One ladder: the four operations
@@ -71,9 +71,8 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   },
 };
 
-const fmt = (n: number) => n.toLocaleString("en-US");
 const SIX = [100000, 10000, 1000, 100, 10, 1];
-/** The place-value chart's columns: Grade 5 hundred thousands … ones; Grade 4 ten thousands … ones. */
+/** The place-value chart's columns: Grade 5 lakhs … ones; Grade 4 ten thousands … ones. */
 const COLS = () => (G() === 10 ? SIX.slice(1) : SIX);
 const NAMES = ["Priya", "Arjun", "Meera", "Kabir", "Ananya", "Rohan", "Zara", "Ishaan", "Diya", "Vihaan", "Sara", "Aditya"] as const;
 const digits = (n: number) => SIX.map((p) => Math.floor(n / p) % 10);
