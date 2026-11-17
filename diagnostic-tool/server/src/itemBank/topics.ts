@@ -52,6 +52,7 @@ export const TOPICS: Topic[] = [
     strand: "Number & Algebra",
     name: "Four Operations of Fractions",
     shortLabel: "4 Ops of Fractions",
+    grade4Name: "Fractions",
     dependsOn: ["fractions-division"],
   },
   {

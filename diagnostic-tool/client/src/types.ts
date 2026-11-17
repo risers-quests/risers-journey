@@ -42,6 +42,8 @@ export interface GridSpec {
   markers?: { row: number; col: number; label: string }[];
   /** Squares no bigger than about 44px (arrays with few squares), instead of filling the width. */
   compact?: boolean;
+  /** Colour exactly these squares (index = row × cols + col), for shapes that aren't filled in reading order. */
+  cells?: number[];
 }
 
 export type ShapeKind = "triangle" | "right-triangle" | "rectangle" | "square" | "circle" | "pentagon" | "parallelogram" | "right-trapezium";
@@ -111,7 +113,88 @@ export interface GroupInteraction {
   baskets: number[];
 }
 
-export type Activity = ShareActivity | PlaceValueActivity | GroupActivity;
+
+/** Figures drawn on cards (Grade 4 Shapes), lettered A, B, C… */
+export type FigureKind =
+  | "open-curve" | "closed-curve" | "open-zigzag" | "open-v"
+  | "triangle" | "square" | "rectangle" | "pentagon" | "hexagon" | "circle" | "oval"
+  | "line" | "ray" | "segment"
+  | "circle-radius" | "circle-diameter" | "circle-chord" | "circle-arc"
+  | "net-cube-cross" | "net-cube-t" | "net-cube-steps" | "net-cube-z"
+  | "net-not-row" | "net-not-square" | "net-not-l";
+
+/** Pizzas cut into equal slices, some coloured (Grade 4 Fractions). */
+export interface PieSpec {
+  kind: "pie";
+  pies: { slices: number; shaded: number; label?: string }[];
+}
+
+/** Figure cards, lettered in order (Grade 4 Shapes). */
+export interface FiguresSpec {
+  kind: "figures";
+  items: { id: string; figure: FigureKind }[];
+}
+
+/** Colour slices of a pizza: cut it (unless `slices` is set), then tap slices to colour them. */
+export interface PizzaActivity {
+  kind: "pizza";
+  pies: number;
+  /** Fixed number of slices per pizza; null: the child chooses how to cut. */
+  slices: number | null;
+  /** The fraction to colour (equivalent fractions count as right). */
+  target: { n: number; d: number };
+  /** Fractions that typical mistakes would colour, so a wrong attempt is named. */
+  wrong?: { n: number; d: number; mistake: string }[];
+}
+export interface PizzaInteraction {
+  slices: number;
+  coloured: number[];
+}
+
+/** Tap squares on a grid to colour them. */
+export interface ShadeActivity {
+  kind: "shade";
+  rows: number;
+  cols: number;
+  /** "count": colour `target` squares; "rectangle": colour a rectangle of area `target` (and perimeter `perimeter`, if set). */
+  mode: "count" | "rectangle";
+  target: number;
+  perimeter?: number;
+  /** Squares coloured to start with (e.g. a shape to measure); they can't be changed. */
+  given?: number[];
+  wrong?: { value: number; mistake: string }[];
+}
+export interface ShadeInteraction {
+  cells: number[];
+}
+
+/** Tap the figure cards that fit the question. */
+export interface PickActivity {
+  kind: "pick";
+  items: { id: string; figure: FigureKind }[];
+  correct: string[];
+  missMistake?: string;
+  extraMistake?: string;
+}
+export interface PickInteraction {
+  picked: string[];
+}
+
+/** Put weights on a scale, sticks along a line or jugs of water together to make an amount. */
+export interface MeasureActivity {
+  kind: "measure";
+  what: "mass" | "length" | "capacity" | "discs";
+  /** The smallest unit everything is counted in (g, cm or mL). */
+  unit: string;
+  pieces: { value: number; label: string }[];
+  target: number;
+  wrong?: { value: number; mistake: string }[];
+}
+export interface MeasureInteraction {
+  counts: number[];
+}
+
+export type Activity = ShareActivity | PlaceValueActivity | GroupActivity | PizzaActivity | ShadeActivity | PickActivity | MeasureActivity;
 
 /** Hands-on place-value chart: tap + / − to put discs in columns; exchange 10 for 1 next door. */
 export interface PlaceValueActivity {
@@ -153,7 +236,7 @@ export interface BarsSpec {
   brace?: { label: string };
 }
 
-export type Representation = BarModelSpec | ConcreteSpec | SharingSpec | PlaceValueChartSpec | BarsSpec | NumberLineSpec | GridSpec | ShapeSpec | null;
+export type Representation = BarModelSpec | ConcreteSpec | SharingSpec | PlaceValueChartSpec | BarsSpec | NumberLineSpec | GridSpec | ShapeSpec | PieSpec | FiguresSpec | null;
 
 export interface ClientChoice {
   id: string;

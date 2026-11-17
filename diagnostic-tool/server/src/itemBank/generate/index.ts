@@ -4,6 +4,8 @@ import { FRACTIONS_DIVISION_TEMPLATES, MISCONCEPTIONS as FD_MISCONCEPTIONS } fro
 import { MORE_ON_LARGE_NUMBERS_TEMPLATES, MISCONCEPTIONS as LN_MISCONCEPTIONS } from "./moreOnLargeNumbers.js";
 import { OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES, MISCONCEPTIONS as OP_MISCONCEPTIONS } from "./operationsOnLargeNumbers.js";
 import { FACTORS_MULTIPLES_G4_TEMPLATES, MISCONCEPTIONS as FM4_MISCONCEPTIONS } from "./factorsMultiplesG4.js";
+import { FRACTIONS_G4_TEMPLATES, MISCONCEPTIONS as FR4_MISCONCEPTIONS } from "./fractionsG4.js";
+import { DECIMALS_G4_TEMPLATES, MISCONCEPTIONS as DEC4_MISCONCEPTIONS } from "./decimalsG4.js";
 
 export type { GeneratedItem } from "./core.js";
 
@@ -20,6 +22,8 @@ const TEMPLATES: Record<string, Record<string, Template>> = {
  */
 const GRADE4_TEMPLATES: Record<string, Record<string, Template>> = {
   "factors-multiples": FACTORS_MULTIPLES_G4_TEMPLATES,
+  "four-operations-fractions": FRACTIONS_G4_TEMPLATES,
+  decimals: DECIMALS_G4_TEMPLATES,
 };
 
 /** Topics with generated questions (Grade 5; Grade 4 also uses GRADE4_TEMPLATES). */
@@ -34,6 +38,8 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...LN_MISCONCEPTIONS,
   ...OP_MISCONCEPTIONS,
   ...FM4_MISCONCEPTIONS,
+  ...FR4_MISCONCEPTIONS,
+  ...DEC4_MISCONCEPTIONS,
 };
 
 export function hasTemplate(topicId: string, cpa: CPAStage, bloom: BloomLevel, grade = 5): boolean {
@@ -93,4 +99,4 @@ export function isGenerated(item: Item): item is GeneratedItem {
 }
 
 /** Topics ready at Grade 4, in book order (offered one by one on the start page). */
-export const GRADE4_TOPICS = ["more-large-numbers", "operations-large-numbers", "factors-multiples"];
+export const GRADE4_TOPICS = ["more-large-numbers", "operations-large-numbers", "factors-multiples", "four-operations-fractions", "decimals"];

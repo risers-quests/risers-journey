@@ -1,4 +1,4 @@
-import { Activity, GroupInteraction, PlaceValueInteraction, ShareInteraction } from "../../types.js";
+import { Activity, GroupInteraction, MeasureInteraction, PickInteraction, PizzaInteraction, PlaceValueInteraction, ShadeInteraction, ShareInteraction } from "../../types.js";
 import { dropZeros } from "./moreOnLargeNumbers.js";
 
 /**
@@ -9,6 +9,10 @@ export function checkActivity(activity: Activity, interaction: unknown): { corre
   if (activity.kind === "share") return checkShare(activity, interaction as ShareInteraction);
   if (activity.kind === "place-value") return checkPlaceValue(activity, interaction as PlaceValueInteraction);
   if (activity.kind === "group") return checkGroup(activity, interaction as GroupInteraction);
+  if (activity.kind === "pizza") return checkPizza(activity, interaction as PizzaInteraction);
+  if (activity.kind === "shade") return checkShade(activity, interaction as ShadeInteraction);
+  if (activity.kind === "pick") return checkPick(activity, interaction as PickInteraction);
+  if (activity.kind === "measure") return checkMeasure(activity, interaction as MeasureInteraction);
   return { correct: false, misconception: null };
 }
 
@@ -96,4 +100,62 @@ export function checkGroup(a: Extract<Activity, { kind: "group" }>, it: GroupInt
 /** True when some apples have been moved (for "try it, then choose" questions). */
 export function groupStarted(it: GroupInteraction | undefined): boolean {
   return !!it && Array.isArray(it.baskets) && it.baskets.some((n) => n > 0);
+}
+
+const nat = (v: unknown) => Math.max(0, Math.floor(Number(v) || 0));
+
+/** Colouring a fraction of pizzas: right when coloured ÷ all slices equals the target (equivalent fractions count). */
+export function checkPizza(a: Extract<Activity, { kind: "pizza" }>, it: PizzaInteraction): { correct: boolean; misconception: string | null } {
+  if (!it || !Array.isArray(it.coloured) || it.coloured.length !== a.pies) return { correct: false, misconception: null };
+  const slices = a.slices ?? nat(it.slices);
+  if (slices < 1 || slices > 24) return { correct: false, misconception: null };
+  const col = it.coloured.map(nat);
+  if (col.some((c) => c > slices)) return { correct: false, misconception: null };
+  const total = col.reduce((x, y) => x + y, 0);
+  // total / slices (in "pizzas") compared with n / d
+  if (total * a.target.d === a.target.n * slices) return { correct: true, misconception: null };
+  const w = (a.wrong ?? []).find((m) => total * m.d === m.n * slices);
+  return { correct: false, misconception: w?.mistake ?? null };
+}
+
+/** Shading squares on a grid: a count, or a full rectangle of a given area (and perimeter). */
+export function checkShade(a: Extract<Activity, { kind: "shade" }>, it: ShadeInteraction): { correct: boolean; misconception: string | null } {
+  if (!it || !Array.isArray(it.cells)) return { correct: false, misconception: null };
+  const size = a.rows * a.cols;
+  const given = new Set(a.given ?? []);
+  const cells = [...new Set(it.cells.map(nat))].filter((c) => c < size && !given.has(c));
+  const named = (v: number) => (a.wrong ?? []).find((w) => w.value === v)?.mistake ?? null;
+  if (a.mode === "count") {
+    return cells.length === a.target ? { correct: true, misconception: null } : { correct: false, misconception: named(cells.length) };
+  }
+  // rectangle: the coloured squares fill their bounding box exactly
+  if (!cells.length) return { correct: false, misconception: null };
+  const rows = cells.map((c) => Math.floor(c / a.cols));
+  const cols = cells.map((c) => c % a.cols);
+  const h = Math.max(...rows) - Math.min(...rows) + 1;
+  const w = Math.max(...cols) - Math.min(...cols) + 1;
+  const isRect = h * w === cells.length;
+  if (!isRect) return { correct: false, misconception: "pa-not-rectangle" };
+  if (cells.length !== a.target) return { correct: false, misconception: named(cells.length) };
+  if (a.perimeter !== undefined && 2 * (h + w) !== a.perimeter) return { correct: false, misconception: "pa-area-not-perimeter" };
+  return { correct: true, misconception: null };
+}
+
+/** Tapping figure cards: exactly the right ones. */
+export function checkPick(a: Extract<Activity, { kind: "pick" }>, it: PickInteraction): { correct: boolean; misconception: string | null } {
+  if (!it || !Array.isArray(it.picked)) return { correct: false, misconception: null };
+  const picked = new Set(it.picked.filter((p) => a.items.some((i) => i.id === p)));
+  const right = new Set(a.correct);
+  const extra = [...picked].some((p) => !right.has(p));
+  const missed = [...right].some((r) => !picked.has(r));
+  if (!extra && !missed) return { correct: true, misconception: null };
+  return { correct: false, misconception: extra ? a.extraMistake ?? null : a.missMistake ?? null };
+}
+
+/** Making an amount from weights / lengths / jugs: the total must equal the target. */
+export function checkMeasure(a: Extract<Activity, { kind: "measure" }>, it: MeasureInteraction): { correct: boolean; misconception: string | null } {
+  if (!it || !Array.isArray(it.counts) || it.counts.length !== a.pieces.length) return { correct: false, misconception: null };
+  const total = it.counts.map(nat).reduce((s, c, i) => s + c * a.pieces[i].value, 0);
+  if (total === a.target) return { correct: true, misconception: null };
+  return { correct: false, misconception: (a.wrong ?? []).find((w) => w.value === total)?.mistake ?? null };
 }

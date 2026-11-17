@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { PlaceValueActivity as Spec, PlaceValueChartSpec, PlaceValueInteraction } from "../types";
 
 // One colour per column, the same in the picture and the hands-on chart.
-const DISC: Record<string, string> = { TL: "#9b5de5", L: "#e76f51", M: "#9b5de5", HTh: "#e76f51", TTh: "#f4a261", Th: "#e9c46a", H: "#2a9d8f", T: "#00b4d8", O: "#8ab17d" };
+const DISC: Record<string, string> = { t: "#b5838d", h: "#6d6875", th: "#457b9d", TL: "#9b5de5", L: "#e76f51", M: "#9b5de5", HTh: "#e76f51", TTh: "#f4a261", Th: "#e9c46a", H: "#2a9d8f", T: "#00b4d8", O: "#8ab17d" };
 // Indian place-value chart, as in the books (TL = ten lakhs, L = lakhs).
 const SHORT: Record<number, string> = { 1000000: "TL", 100000: "L", 10000: "TTh", 1000: "Th", 100: "H", 10: "T", 1: "O" };
-const LONG: Record<string, string> = { TL: "ten lakhs", L: "lakhs", M: "millions", HTh: "hundred thousands", TTh: "ten thousands", Th: "thousands", H: "hundreds", T: "tens", O: "ones" };
+const LONG: Record<string, string> = { t: "tenths", h: "hundredths", th: "thousandths", TL: "ten lakhs", L: "lakhs", M: "millions", HTh: "hundred thousands", TTh: "ten thousands", Th: "thousands", H: "hundreds", T: "tens", O: "ones" };
 
 function Discs({ label, count }: { label: string; count: number }) {
   return (

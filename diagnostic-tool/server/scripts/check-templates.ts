@@ -17,6 +17,8 @@ import { checkActivity } from "../src/itemBank/generate/activities.js";
 import { verify as verifyLargeNumbers, dropZeros } from "../src/itemBank/generate/moreOnLargeNumbers.js";
 import { verify as verifyOperations } from "../src/itemBank/generate/operationsOnLargeNumbers.js";
 import { verify as verifyFactorsG4 } from "../src/itemBank/generate/factorsMultiplesG4.js";
+import { verify as verifyFractionsG4 } from "../src/itemBank/generate/fractionsG4.js";
+import { verify as verifyDecimalsG4 } from "../src/itemBank/generate/decimalsG4.js";
 import { BLOOM_ORDER, CPA_ORDER } from "../src/types.js";
 
 const N = Number(process.env.N || 20000);
@@ -53,6 +55,8 @@ const VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
   "operations-large-numbers": (it) => verifyOperations(it),
   // Grade 4 only (Grade 5 factors are hand-written).
   "factors-multiples": (it) => verifyFactorsG4(it),
+  "four-operations-fractions": (it) => verifyFractionsG4(it),
+  decimals: (it) => verifyDecimalsG4(it),
 };
 
 // ---- activities: a perfect attempt, and typical mistakes ----
@@ -130,6 +134,66 @@ function checkActivityItem(it: GeneratedItem, where: string) {
       } else if (act.avoid) fail(`${where}: no possible answer for ${n}`);
       if (mark([n]).misconception !== "fm-trivial-grouping") fail(`${where}: one basket of everything not caught`);
     }
+  } else if (act.kind === "pizza") {
+    const slices = act.slices ?? act.target.d;
+    const total = (act.target.n * slices) / act.target.d;
+    if (!Number.isInteger(total) || total > act.pies * slices) fail(`${where}: target can't be coloured on these pizzas`);
+    const fill = (t: number) => Array.from({ length: act.pies }, (_, i) => Math.max(0, Math.min(slices, t - i * slices)));
+    if (!checkActivity(act, { slices, coloured: fill(total) }).correct) fail(`${where}: the right colouring was marked wrong`);
+    if (act.slices === null) {
+      const twice = Array.from({ length: act.pies }, (_, i) => Math.max(0, Math.min(slices * 2, total * 2 - i * slices * 2)));
+      if (!checkActivity(act, { slices: slices * 2, coloured: twice }).correct) fail(`${where}: an equivalent colouring (twice the slices) was marked wrong`);
+    }
+    for (const w of act.wrong ?? []) {
+      if (w.n * act.target.d === act.target.n * w.d) fail(`${where}: a 'mistake' ${w.n}/${w.d} equals the right answer`);
+      const t = (w.n * slices) / w.d;
+      if (!Number.isInteger(t) || t > act.pies * slices) continue;
+      const r = checkActivity(act, { slices, coloured: fill(t) });
+      if (r.correct || r.misconception !== w.mistake) fail(`${where}: ${w.n}/${w.d} not caught as ${w.mistake}`);
+    }
+  } else if (act.kind === "shade") {
+    const size = act.rows * act.cols;
+    const given = new Set(act.given ?? []);
+    const free = [...Array(size).keys()].filter((i) => !given.has(i));
+    if (act.mode === "count") {
+      if (act.target > free.length) fail(`${where}: can't colour ${act.target} squares`);
+      if (!checkActivity(act, { cells: free.slice(0, act.target) }).correct) fail(`${where}: the right colouring was marked wrong`);
+      for (const w of act.wrong ?? []) {
+        if (w.value === act.target) fail(`${where}: a 'mistake' equals the right answer`);
+        if (w.value <= free.length && checkActivity(act, { cells: free.slice(0, w.value) }).misconception !== w.mistake) fail(`${where}: ${w.value} squares not caught as ${w.mistake}`);
+      }
+    } else {
+      // find a rectangle that fits
+      let ok = false;
+      for (let h = 1; h <= act.rows && !ok; h++) {
+        const w = act.target / h;
+        if (!Number.isInteger(w) || w > act.cols) continue;
+        if (act.perimeter !== undefined && 2 * (h + w) !== act.perimeter) continue;
+        const cells = [...Array(h * w).keys()].map((i) => Math.floor(i / w) * act.cols + (i % w));
+        if (cells.some((c) => given.has(c))) continue;
+        ok = checkActivity(act, { cells }).correct;
+        if (!ok) fail(`${where}: a right ${h} by ${w} rectangle was marked wrong`);
+        ok = true;
+      }
+      if (!ok) fail(`${where}: no rectangle fits the grid`);
+    }
+  } else if (act.kind === "measure") {
+    // greedy from the biggest piece always reaches the target if the smallest piece divides it
+    let left = act.target;
+    const counts = act.pieces.map((p) => {
+      const c = Math.floor(left / p.value);
+      left -= c * p.value;
+      return c;
+    });
+    if (left !== 0) fail(`${where}: the pieces can't make ${act.target}`);
+    else if (!checkActivity(act, { counts }).correct) fail(`${where}: the right amount was marked wrong`);
+    for (const w of act.wrong ?? []) if (w.value === act.target) fail(`${where}: a 'mistake' equals the right answer`);
+  } else if (act.kind === "pick") {
+    if (!act.correct.length) fail(`${where}: nothing to pick`);
+    if (!checkActivity(act, { picked: act.correct }).correct) fail(`${where}: the right cards were marked wrong`);
+    if (act.correct.length === act.items.length) fail(`${where}: every card is right`);
+    const extra = act.items.find((i) => !act.correct.includes(i.id))!;
+    if (checkActivity(act, { picked: [...act.correct, extra.id] }).correct) fail(`${where}: an extra card was marked right`);
   } else fail(`${where}: unknown activity`);
 }
 
@@ -177,7 +241,8 @@ for (const [topic, grade] of RUNS) {
           continue;
         }
         // Whole-token match: "500" inside "2,293,500" is the skill, not a giveaway.
-        const shown = [it.prompt, JSON.stringify(it.representation ?? {})].join(" ");
+        // What the child sees: positions ("value": where a dot sits) and step sizes aren't printed on screen.
+        const shown = [it.prompt, JSON.stringify(it.representation ?? {}, (k, v) => (k === "value" || k === "step" ? undefined : v))].join(" ");
         const appears = (t: string) => t.length > 2 && new RegExp(`(?<!\\d|\\d[,.])${t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?!\\d|[,.]\\d)`).test(shown);
         const showsAnother = it.choices.some((c) => c.id !== it.correctChoiceId && appears(c.text));
         if (appears(right.text) && !showsAnother) fail(`${where}: shows its own answer "${right.text}"`);

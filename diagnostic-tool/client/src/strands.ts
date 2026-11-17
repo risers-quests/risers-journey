@@ -4,6 +4,8 @@ export const GRADE4_TOPIC_CHOICES = [
   { id: "more-large-numbers", chapter: "Chapter 1", name: "Large Numbers", about: "Number names, place and face value, comparing, rounding, Roman numerals" },
   { id: "operations-large-numbers", chapter: "Chapters 2–4", name: "Addition, Subtraction, Multiplication and Division", about: "Up to 6 digits, tables of 11–15, dividing with remainders, estimating" },
   { id: "factors-multiples", chapter: "Chapter 5", name: "Factors and Multiples", about: "Factors, multiples, common factors and multiples, prime numbers" },
+  { id: "four-operations-fractions", chapter: "Chapter 6", name: "Fractions", about: "Equivalent fractions, simplest form, comparing, adding and subtracting, mixed fractions" },
+  { id: "decimals", chapter: "Chapter 7", name: "Decimals", about: "Tenths, hundredths and thousandths, number discs, place value, decimals as fractions" },
 ];
 
 // The book's strands, as offered on the start page.

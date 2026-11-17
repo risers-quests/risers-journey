@@ -1,7 +1,8 @@
 import { GridSpec } from "../types";
 
 export function Grid({ spec }: { spec: GridSpec }) {
-  const { rows, cols, shadedCells = 0, markers = [], unitLabel, compact } = spec;
+  const { rows, cols, shadedCells = 0, markers = [], unitLabel, compact, cells: shadedList } = spec;
+  const listed = shadedList ? new Set(shadedList) : null;
   const cells = Array.from({ length: rows * cols }, (_, i) => i);
 
   function markerFor(idx: number) {
@@ -16,7 +17,7 @@ export function Grid({ spec }: { spec: GridSpec }) {
       <div className="grid-diagram-grid" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)`, ...(compact ? { maxWidth: cols * 46 } : {}) }}>
         {cells.map((idx) => {
           const marker = markerFor(idx);
-          const shaded = idx < shadedCells;
+          const shaded = listed ? listed.has(idx) : idx < shadedCells;
           return (
             <div key={idx} className={`grid-diagram-cell ${shaded ? "shaded" : ""} ${marker ? "marked" : ""}`}>
               {marker && <span className="grid-diagram-marker">{marker.label}</span>}

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { GroupActivity } from "../components/GroupActivity";
+import { FigureCards, MeasureActivity, PickActivity, PiePicture, PizzaActivity, ShadeActivity } from "../components/G4Visuals";
 import { abstractClass } from "../promptStyle";
 import { getNextQuestion, submitAnswer } from "../api";
 import { NextQuestionResponse } from "../types";
@@ -150,14 +151,22 @@ export function Assessment({
         {item.representation?.kind === "number-line" && <NumberLine spec={item.representation} />}
         {item.representation?.kind === "grid" && <Grid spec={item.representation} />}
         {item.representation?.kind === "shape" && <Shape spec={item.representation} />}
+        {item.representation?.kind === "pie" && <PiePicture spec={item.representation} />}
+        {item.representation?.kind === "figures" && <FigureCards spec={item.representation} />}
 
         {item.activity?.kind === "share" && <ShareActivity key={item.id} spec={item.activity} onChange={onActivity} />}
         {item.activity?.kind === "place-value" && <PlaceValueActivity key={item.id} spec={item.activity} onChange={onActivity} />}
         {item.activity?.kind === "group" && <GroupActivity key={item.id} spec={item.activity} onChange={onActivity} />}
+        {item.activity?.kind === "pizza" && <PizzaActivity key={item.id} spec={item.activity} onChange={onActivity} />}
+        {item.activity?.kind === "shade" && <ShadeActivity key={item.id} spec={item.activity} onChange={onActivity} />}
+        {item.activity?.kind === "pick" && <PickActivity key={item.id} spec={item.activity} onChange={onActivity} />}
+        {item.activity?.kind === "measure" && <MeasureActivity key={item.id} spec={item.activity} onChange={onActivity} />}
 
         {!byActivity && (
           <div className={`choices ${item.activity && !acted ? "choices-locked" : ""}`}>
-            {item.activity && !acted && <div className="choices-hint">{item.activity.kind === "share" ? "Share them out first, then choose." : item.activity.kind === "group" ? "Try it with the apples first, then choose." : "Try it on the chart first, then choose."}</div>}
+            {item.activity && !acted && <div className="choices-hint">{
+                  { share: "Share them out first, then choose.", group: "Try it with the apples first, then choose.", pizza: "Try it on the pizza first, then choose.", shade: "Try it on the grid first, then choose.", pick: "Tap the cards first, then choose.", measure: "Try it first, then choose.", "place-value": "Try it on the chart first, then choose." }[item.activity.kind]
+                }</div>}
             {item.choices.map((choice) => (
               <button
                 key={choice.id}

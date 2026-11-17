@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { FigureCards, MeasureActivity, PickActivity, PiePicture, PizzaActivity, ShadeActivity } from "../components/G4Visuals";
+import { GroupActivity } from "../components/GroupActivity";
 import { abstractClass } from "../promptStyle";
 import { BarModel } from "../components/BarModel";
 import { ConcreteObjects } from "../components/ConcreteObjects";
@@ -59,6 +61,13 @@ export function Preview() {
           {it.activity?.kind === "place-value" && <PlaceValueActivity spec={it.activity} onChange={() => undefined} />}
           {it.representation?.kind === "place-value-chart" && <PlaceValueChart spec={it.representation} />}
           {it.representation?.kind === "bars" && <Bars spec={it.representation} />}
+          {it.representation?.kind === "pie" && <PiePicture spec={it.representation} />}
+          {it.representation?.kind === "figures" && <FigureCards spec={it.representation} />}
+          {it.activity?.kind === "group" && <GroupActivity spec={it.activity} onChange={() => undefined} />}
+          {it.activity?.kind === "pizza" && <PizzaActivity spec={it.activity} onChange={() => undefined} />}
+          {it.activity?.kind === "shade" && <ShadeActivity spec={it.activity} onChange={() => undefined} />}
+          {it.activity?.kind === "pick" && <PickActivity spec={it.activity} onChange={() => undefined} />}
+          {it.activity?.kind === "measure" && <MeasureActivity spec={it.activity} onChange={() => undefined} />}
           {it.answerBy === "activity" && <p className="preview-note">Answered by doing the activity: marked from what the child actually does, not by choosing an option.</p>}
           <ul className="preview-choices">
             {it.choices.map((c) => (
