@@ -127,8 +127,8 @@ export const TOPICS: Topic[] = [
 ];
 
 /**
- * Grade 8 (Selina Concise Mathematics 8), Themes 1–3 (Number System;
- * Ratio and Proportion; Algebra), in the
+ * Grade 8 (Selina Concise Mathematics 8), Themes 1–4 (Number System;
+ * Ratio and Proportion; Algebra; Geometry), in the
  * book's order. Grade 8 tests are chosen chapter by chapter (GRADE8_TOPICS).
  */
 TOPICS.push(
@@ -147,7 +147,14 @@ TOPICS.push(
   { id: "g8-identities", strand: "Number & Algebra", name: "Identities", shortLabel: "Identities", dependsOn: ["g8-expressions"], grade: 8 },
   { id: "g8-factorisation", strand: "Number & Algebra", name: "Factorisation", shortLabel: "Factorisation", dependsOn: ["g8-expressions"], grade: 8 },
   { id: "g8-linear-equations", strand: "Number & Algebra", name: "Linear Equations in One Variable", shortLabel: "Linear Equations", dependsOn: [], grade: 8 },
-  { id: "g8-inequations", strand: "Number & Algebra", name: "Linear Inequations", shortLabel: "Inequations", dependsOn: [], grade: 8 }
+  { id: "g8-inequations", strand: "Number & Algebra", name: "Linear Inequations", shortLabel: "Inequations", dependsOn: [], grade: 8 },
+  // Theme 4: Geometry.
+  { id: "g8-shapes", strand: "Measurement & Geometry", name: "Understanding Shapes", shortLabel: "Shapes & Polygons", dependsOn: [], grade: 8 },
+  { id: "g8-quadrilaterals", strand: "Measurement & Geometry", name: "Special Types of Quadrilaterals", shortLabel: "Quadrilaterals", dependsOn: [], grade: 8 },
+  { id: "g8-constructions", strand: "Measurement & Geometry", name: "Constructions", shortLabel: "Constructions", dependsOn: [], grade: 8 },
+  { id: "g8-solids", strand: "Measurement & Geometry", name: "Representing 3-D in 2-D", shortLabel: "3-D in 2-D", dependsOn: [], grade: 8 },
+  { id: "g8-symmetry", strand: "Measurement & Geometry", name: "Symmetry", shortLabel: "Symmetry", dependsOn: [], grade: 8 },
+  { id: "g8-circles", strand: "Measurement & Geometry", name: "Circles", shortLabel: "Circles", dependsOn: [], grade: 8 }
 );
 
 /** The book's strands, in order. A test covers one or more of them. */

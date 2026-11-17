@@ -151,6 +151,21 @@ export interface ShadeActivity {
   unit?: string;
   /** Number the squares 1, 2, 3 … (e.g. the natural numbers in an inequation). */
   numbered?: boolean;
+  /**
+   * "fill" (default): tap a square to shade every square up to it; the
+   * answer is how many. "free": tap any square on or off; the answer is
+   * exactly which squares (targetCells, as indices in reading order).
+   */
+  mode?: "fill" | "free";
+  /** free: squares already shaded at the start, which can't be changed. */
+  given?: number[];
+  targetCells?: number[];
+  /** free: patterns that typical mistakes would give. */
+  wrongSets?: { cells: number[]; mistake: string }[];
+  /** free: a mirror line drawn on the grid (through the middle; "diagonal" is top-left to bottom-right). */
+  mirror?: "vertical" | "horizontal" | "diagonal";
+  /** free: a dot at the centre of the grid (turning). */
+  centre?: boolean;
   /** Results of known mistakes, so a wrong amount is named. */
   wrong?: { value: number; mistake: string }[];
 }
@@ -158,6 +173,8 @@ export interface ShadeActivity {
 /** What the child shaded: how many squares. */
 export interface ShadeInteraction {
   shaded: number;
+  /** free mode: the squares shaded (given ones included). */
+  cells?: number[];
 }
 
 export type Activity = ShareActivity | PlaceValueActivity | GroupActivity | ShadeActivity;
@@ -202,7 +219,38 @@ export interface BarsSpec {
   brace?: { label: string };
 }
 
-export type Representation = BarModelSpec | ConcreteSpec | SharingSpec | PlaceValueChartSpec | BarsSpec | NumberLineSpec | GridSpec | ShapeSpec | null;
+/**
+ * Geometry pictures (Grade 8): a polygon (regular or not, optionally the
+ * triangles from one corner), a special quadrilateral (optionally with its
+ * diagonals), a 3-D solid drawn in 2-D with hidden edges dashed, or a circle
+ * with one part highlighted.
+ */
+export interface FigureSpec {
+  kind: "figure";
+  figure: "polygon" | "quad" | "solid" | "circle";
+  /** polygon */
+  sides?: number;
+  regular?: boolean;
+  fan?: boolean;
+  /** quad */
+  quad?: "parallelogram" | "rectangle" | "rhombus" | "square" | "kite" | "trapezium" | "general";
+  diagonals?: boolean;
+  /** Halves of the diagonals from the corners to where they cross: [A, B, C, D] to O. */
+  diagonalLabels?: string[];
+  /** polygon / quad: labels at each corner (inside) and on each side (outside), in order. */
+  angleLabels?: string[];
+  sideLabels?: string[];
+  vertexLabels?: string[];
+  /** solid */
+  solid?: "cube" | "cuboid" | "triangular-prism" | "pentagonal-prism" | "hexagonal-prism" | "square-pyramid" | "tetrahedron" | "pentagonal-pyramid";
+  /** circle: the part drawn and highlighted. */
+  part?: "radius" | "diameter" | "chord" | "arc" | "sector" | "segment" | "two-chords";
+  /** circle: a length written on the highlighted part. */
+  partLabel?: string;
+  note?: string;
+}
+
+export type Representation = BarModelSpec | ConcreteSpec | SharingSpec | PlaceValueChartSpec | BarsSpec | NumberLineSpec | GridSpec | ShapeSpec | FigureSpec | null;
 
 export interface Choice {
   id: string;

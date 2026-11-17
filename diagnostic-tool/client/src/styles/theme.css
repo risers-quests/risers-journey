@@ -746,7 +746,8 @@ a { color: var(--deep-teal); }
 
 /* ---- Shade squares (Grade 8 percent, profit, interest) ---- */
 .shade-activity { background: #fffaf0; border: 1.5px solid #f0dfbf; border-radius: 12px; padding: 14px; margin: 8px 0 18px; }
-.shade-grid { display: grid; gap: 2px; max-width: 420px; margin: 0 auto; border: 1.5px solid var(--deep-teal); border-radius: 6px; padding: 4px; background: #e3f0d2; }
+.shade-wrap { position: relative; margin: 0 auto; }
+.shade-grid { display: grid; gap: 2px; margin: 0 auto; border: 1.5px solid var(--deep-teal); border-radius: 6px; padding: 4px; background: #e3f0d2; }
 .shade-cell { aspect-ratio: 1; min-width: 0; padding: 0; border: 0; border-radius: 2px; background: #fff; cursor: pointer; }
 .shade-cell.on { background: var(--deep-teal); color: #fff; }
 .shade-cell { font-size: 0.8rem; font-weight: 600; color: var(--ink-soft); }
@@ -773,3 +774,22 @@ a { color: var(--deep-teal); }
   .rp-tests a .rp-open { display: none; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* ---- Geometry figures (Grade 8) ---- */
+.fig-svg { max-width: 300px; }
+.fig-fill { fill: #eef5e6; stroke: var(--deep-teal); stroke-width: 2.2; stroke-linejoin: round; }
+.fig-thin { stroke: var(--deep-teal); stroke-width: 1.2; stroke-dasharray: 4 3; }
+.fig-edge { stroke: var(--deep-teal); stroke-width: 2.2; stroke-linecap: round; }
+.fig-hidden { stroke: var(--deep-teal); stroke-width: 1.4; stroke-dasharray: 5 4; opacity: 0.7; }
+.fig-circle { fill: #f6faf1; stroke: var(--deep-teal); stroke-width: 2; }
+.fig-dot { fill: var(--ink); }
+.fig-hi { stroke: var(--soft-clay); stroke-width: 4; stroke-linecap: round; }
+.fig-nofill { fill: none; }
+.fig-region { fill: rgba(178, 71, 94, 0.28); stroke: var(--soft-clay); stroke-width: 2.5; }
+.fig-label { font-size: 12px; font-weight: 700; fill: var(--ink); }
+.fig-small { font-size: 10.5px; font-weight: 700; fill: var(--ink-soft); }
+.fig-accent { fill: var(--soft-clay); }
+.shade-cell.given { background: #22430d; }
+.shade-overlay { position: absolute; inset: 4px; width: calc(100% - 8px); height: calc(100% - 8px); pointer-events: none; }
+.shade-overlay line { stroke: var(--soft-clay); stroke-width: 1.6; stroke-dasharray: 4 3; vector-effect: non-scaling-stroke; }
+.shade-centre { position: absolute; left: 50%; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--soft-clay); border: 2px solid #fff; pointer-events: none; }

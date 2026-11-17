@@ -17,6 +17,7 @@ import { Sharing } from "../components/Sharing";
 import { ShareActivity } from "../components/ShareActivity";
 import { PlaceValueActivity, PlaceValueChart } from "../components/PlaceValue";
 import { Bars } from "../components/Bars";
+import { Figure } from "../components/Figure";
 
 export function Assessment({
   sessionId,
@@ -151,6 +152,7 @@ export function Assessment({
         {item.representation?.kind === "number-line" && <NumberLine spec={item.representation} />}
         {item.representation?.kind === "grid" && <Grid spec={item.representation} />}
         {item.representation?.kind === "shape" && <Shape spec={item.representation} />}
+        {item.representation?.kind === "figure" && <Figure spec={item.representation} />}
 
         {item.activity?.kind === "share" && <ShareActivity key={item.id} spec={item.activity} onChange={onActivity} />}
         {item.activity?.kind === "place-value" && <PlaceValueActivity key={item.id} spec={item.activity} onChange={onActivity} />}

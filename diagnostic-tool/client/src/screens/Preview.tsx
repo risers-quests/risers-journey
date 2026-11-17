@@ -12,6 +12,7 @@ import { PlaceValueActivity, PlaceValueChart } from "../components/PlaceValue";
 import { Bars } from "../components/Bars";
 import { GroupActivity } from "../components/GroupActivity";
 import { ShadeActivity } from "../components/ShadeActivity";
+import { Figure } from "../components/Figure";
 
 interface PreviewItem {
   id: string;
@@ -47,7 +48,7 @@ export function Preview() {
         <br />
         Grade 4: <a href="?preview=more-large-numbers&grade=4">Large Numbers</a> · <a href="?preview=operations-large-numbers&grade=4">Operations</a> · <a href="?preview=factors-multiples&grade=4">Factors and Multiples</a>
         <br />
-        Grade 8: <a href="?preview=g8-rational-numbers&grade=8">Rational Numbers</a> · <a href="?preview=g8-exponents&grade=8">Exponents</a> · <a href="?preview=g8-squares&grade=8">Squares</a> · <a href="?preview=g8-cubes&grade=8">Cubes</a> · <a href="?preview=g8-playing-numbers&grade=8">Playing with Numbers</a> · <a href="?preview=g8-percent&grade=8">Percent</a> · <a href="?preview=g8-profit-loss&grade=8">Profit and Loss</a> · <a href="?preview=g8-interest&grade=8">Interest</a> · <a href="?preview=g8-variation&grade=8">Variation</a> · <a href="?preview=g8-expressions&grade=8">Expressions</a> · <a href="?preview=g8-identities&grade=8">Identities</a> · <a href="?preview=g8-factorisation&grade=8">Factorisation</a> · <a href="?preview=g8-linear-equations&grade=8">Equations</a> · <a href="?preview=g8-inequations&grade=8">Inequations</a>
+        Grade 8: <a href="?preview=g8-rational-numbers&grade=8">Rational Numbers</a> · <a href="?preview=g8-exponents&grade=8">Exponents</a> · <a href="?preview=g8-squares&grade=8">Squares</a> · <a href="?preview=g8-cubes&grade=8">Cubes</a> · <a href="?preview=g8-playing-numbers&grade=8">Playing with Numbers</a> · <a href="?preview=g8-percent&grade=8">Percent</a> · <a href="?preview=g8-profit-loss&grade=8">Profit and Loss</a> · <a href="?preview=g8-interest&grade=8">Interest</a> · <a href="?preview=g8-variation&grade=8">Variation</a> · <a href="?preview=g8-expressions&grade=8">Expressions</a> · <a href="?preview=g8-identities&grade=8">Identities</a> · <a href="?preview=g8-factorisation&grade=8">Factorisation</a> · <a href="?preview=g8-linear-equations&grade=8">Equations</a> · <a href="?preview=g8-inequations&grade=8">Inequations</a> · <a href="?preview=g8-shapes&grade=8">Shapes</a> · <a href="?preview=g8-quadrilaterals&grade=8">Quadrilaterals</a> · <a href="?preview=g8-constructions&grade=8">Constructions</a> · <a href="?preview=g8-solids&grade=8">3-D in 2-D</a> · <a href="?preview=g8-symmetry&grade=8">Symmetry</a> · <a href="?preview=g8-circles&grade=8">Circles</a>
       </p>
       <p className="lede">One fresh question per level. Reload the page for new numbers and contexts. ✓ marks the right answer; each wrong option shows the mistake it stands for.</p>
       {data.items.map((it) => (
@@ -60,6 +61,7 @@ export function Preview() {
           {it.representation?.kind === "number-line" && <NumberLine spec={it.representation} />}
           {it.representation?.kind === "grid" && <Grid spec={it.representation} />}
           {it.representation?.kind === "shape" && <Shape spec={it.representation} />}
+          {it.representation?.kind === "figure" && <Figure spec={it.representation} />}
           {it.activity?.kind === "share" && <ShareActivity spec={it.activity} onChange={() => undefined} />}
           {it.activity?.kind === "place-value" && <PlaceValueActivity spec={it.activity} onChange={() => undefined} />}
           {it.activity?.kind === "group" && <GroupActivity spec={it.activity} onChange={() => undefined} />}

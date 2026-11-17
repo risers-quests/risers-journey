@@ -22,7 +22,7 @@ import { BLOOM_ORDER, CPA_ORDER } from "../src/types.js";
 const N = Number(process.env.N || 20000);
 let failures = 0;
 const fail = (msg: string) => {
-  if (failures++ < 25) console.log("FAIL", msg);
+  if (failures++ < Number(process.env.MAXFAIL || 25)) console.log("FAIL", msg);
 };
 
 // ---- per-topic independent answer checks ----
@@ -114,6 +114,26 @@ function verifyG8(it: GeneratedItem): string | null {
     "g8-linear-equations|pictorial|evaluate": () => p.x,
     "g8-linear-equations|abstract|evaluate": () => p.small,
     "g8-inequations|abstract|evaluate": () => p.k,
+    "g8-shapes|abstract|remember": () => (p.n - 2) * 180,
+    "g8-shapes|abstract|apply": () => 180 - 360 / p.n,
+    "g8-shapes|abstract|analyze": () => p.n,
+    "g8-shapes|abstract|evaluate": () => (p.n * (p.n - 3)) / 2,
+    "g8-shapes|pictorial|apply": () => 180 - 360 / p.n,
+    "g8-shapes|pictorial|evaluate": () => (p.n - 2) * 180,
+    "g8-quadrilaterals|pictorial|remember": () => 180 - p.a,
+    "g8-quadrilaterals|abstract|remember": () => p.a,
+    "g8-quadrilaterals|pictorial|understand": () => 2 * p.k,
+    "g8-solids|abstract|understand": () => p.F + p.V - 2,
+    "g8-solids|abstract|apply": () => p.n + 2,
+    "g8-solids|abstract|analyze": () => 2 * p.n,
+    "g8-solids|pictorial|analyze": () => 3 * p.m,
+    "g8-symmetry|pictorial|remember": () => p.n,
+    "g8-symmetry|pictorial|apply": () => p.n,
+    "g8-symmetry|pictorial|evaluate": () => 360 / p.n,
+    "g8-symmetry|abstract|apply": () => 360 / p.k,
+    "g8-circles|abstract|understand": () => p.d / 2,
+    "g8-circles|abstract|remember": () => p.r,
+    "g8-circles|pictorial|apply": () => p.r,
   };
   if (want[cell]) {
     const w = want[cell](), got = fracVal(right);
@@ -233,6 +253,13 @@ function checkActivityItem(it: GeneratedItem, where: string) {
       } else if (act.avoid) fail(`${where}: no possible answer for ${n}`);
       if (mark([n]).misconception !== "fm-trivial-grouping") fail(`${where}: one basket of everything not caught`);
     }
+  } else if (act.kind === "shade" && act.mode === "free") {
+    const t = act.targetCells ?? [];
+    if (!t.length || t.some((c) => c < 0 || c >= act.rows * act.cols)) fail(`${where}: target squares off the grid`);
+    if ((act.given ?? []).some((g) => !t.includes(g))) fail(`${where}: a given square isn't in the answer`);
+    if (!checkActivity(act, { shaded: t.length, cells: t }).correct) fail(`${where}: the right pattern was marked wrong`);
+    if (checkActivity(act, { shaded: 0, cells: act.given ?? [] }).correct) fail(`${where}: doing nothing is marked right`);
+    for (const w of act.wrongSets ?? []) if (checkActivity(act, { shaded: w.cells.length, cells: w.cells }).misconception !== w.mistake) fail(`${where}: a wrong pattern not caught as ${w.mistake}`);
   } else if (act.kind === "shade") {
     if (!Number.isInteger(act.target) || act.target < 0 || act.target > act.rows * act.cols) fail(`${where}: can't shade ${act.target} of ${act.rows * act.cols}`);
     if (!checkActivity(act, { shaded: act.target }).correct) fail(`${where}: the right shading was marked wrong`);
@@ -284,7 +311,9 @@ for (const [topic, grade] of RUNS) {
           continue;
         }
         // Whole-token match: "500" inside "2,293,500" is the skill, not a giveaway.
-        const shown = [it.prompt, JSON.stringify(it.representation ?? {})].join(" ");
+        // What the child sees: the prompt and the picture's labels (a figure's kind fields only choose how it's drawn).
+        const { figure: _f, part: _p, solid: _s, quad: _q, ...visible } = (it.representation ?? {}) as Record<string, unknown>;
+        const shown = [it.prompt, JSON.stringify(visible)].join(" ");
         const appears = (t: string) => t.length > 2 && new RegExp(`(?<!\\d|\\d[,.])${t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?!\\d|[,.]\\d)`).test(shown);
         const showsAnother = it.choices.some((c) => c.id !== it.correctChoiceId && appears(c.text));
         if (appears(right.text) && !showsAnother) fail(`${where}: shows its own answer "${right.text}"`);

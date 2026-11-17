@@ -50,10 +50,17 @@ start page like Grade 4. In so far (`itemBank/generate/*G8.ts`):
   sharing into bags (equations), sharing each term's tiles (factorising),
   shading the area model (identities), shading numbered squares
   (inequations). `generate/algebra.ts` writes expressions as the book does.
+- Theme 4, Geometry: Understanding Shapes, Special Quadrilaterals,
+  Constructions, Representing 3-D in 2-D, Symmetry, Circles. Pictures are
+  drawn by `Figure` (polygons, quadrilaterals with diagonals, solids with
+  hidden edges dashed, circle parts). Hands-on: shading angles (10° a
+  square) and lengths, and the free grid (`mode: "free"`: tap any square)
+  for symmetry and drawing to size. Constructions can't use compasses on
+  screen, so they test what a construction depends on.
 All questions are generated, with a named mistake behind every wrong
 option, and are covered by the stress test (algebra answers are checked by
 substituting numbers). Not yet: Sets (needs a "sort into circles"
-activity) and Themes 4–6.
+activity) and Themes 5–6.
 
 ## Stack
 

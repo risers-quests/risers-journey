@@ -18,6 +18,12 @@ import { IDENTITIES_G8_TEMPLATES, MISCONCEPTIONS as ID8_MISCONCEPTIONS } from ".
 import { FACTORISATION_G8_TEMPLATES, MISCONCEPTIONS as FAC8_MISCONCEPTIONS } from "./factorisationG8.js";
 import { EQUATIONS_G8_TEMPLATES, MISCONCEPTIONS as EQ8_MISCONCEPTIONS } from "./equationsG8.js";
 import { INEQUATIONS_G8_TEMPLATES, MISCONCEPTIONS as INEQ8_MISCONCEPTIONS } from "./inequationsG8.js";
+import { SHAPES_G8_TEMPLATES, MISCONCEPTIONS as SHP8_MISCONCEPTIONS } from "./shapesG8.js";
+import { QUADRILATERALS_G8_TEMPLATES, MISCONCEPTIONS as QD8_MISCONCEPTIONS } from "./quadrilateralsG8.js";
+import { CONSTRUCTIONS_G8_TEMPLATES, MISCONCEPTIONS as CON8_MISCONCEPTIONS } from "./constructionsG8.js";
+import { SOLIDS_G8_TEMPLATES, MISCONCEPTIONS as D38_MISCONCEPTIONS } from "./solidsG8.js";
+import { SYMMETRY_G8_TEMPLATES, MISCONCEPTIONS as SYM8_MISCONCEPTIONS } from "./symmetryG8.js";
+import { CIRCLES_G8_TEMPLATES, MISCONCEPTIONS as CIR8_MISCONCEPTIONS } from "./circlesG8.js";
 
 export type { GeneratedItem } from "./core.js";
 
@@ -52,6 +58,12 @@ const GRADE8_TEMPLATES: Record<string, Record<string, Template>> = {
   "g8-factorisation": FACTORISATION_G8_TEMPLATES,
   "g8-linear-equations": EQUATIONS_G8_TEMPLATES,
   "g8-inequations": INEQUATIONS_G8_TEMPLATES,
+  "g8-shapes": SHAPES_G8_TEMPLATES,
+  "g8-quadrilaterals": QUADRILATERALS_G8_TEMPLATES,
+  "g8-constructions": CONSTRUCTIONS_G8_TEMPLATES,
+  "g8-solids": SOLIDS_G8_TEMPLATES,
+  "g8-symmetry": SYMMETRY_G8_TEMPLATES,
+  "g8-circles": CIRCLES_G8_TEMPLATES,
 };
 
 /** Topics with generated questions (Grade 5; Grade 4 also uses GRADE4_TEMPLATES). */
@@ -81,6 +93,12 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...FAC8_MISCONCEPTIONS,
   ...EQ8_MISCONCEPTIONS,
   ...INEQ8_MISCONCEPTIONS,
+  ...SHP8_MISCONCEPTIONS,
+  ...QD8_MISCONCEPTIONS,
+  ...CON8_MISCONCEPTIONS,
+  ...D38_MISCONCEPTIONS,
+  ...SYM8_MISCONCEPTIONS,
+  ...CIR8_MISCONCEPTIONS,
 };
 
 export function hasTemplate(topicId: string, cpa: CPAStage, bloom: BloomLevel, grade = 5): boolean {

@@ -23,6 +23,12 @@ export const GRADE8_TOPIC_CHOICES = [
   { id: "g8-factorisation", chapter: "Chapter 13", name: "Factorisation", about: "Common factor, perfect squares, a² − b², x² + px + q" },
   { id: "g8-linear-equations", chapter: "Chapter 14", name: "Linear Equations", about: "Solving, brackets, x on both sides, word problems" },
   { id: "g8-inequations", chapter: "Chapter 15", name: "Linear Inequations", about: "On the number line, solving, when the sign flips, solution sets" },
+  { id: "g8-shapes", chapter: "Chapter 16", name: "Understanding Shapes", about: "Angle sums of quadrilaterals and polygons, exterior angles, regular polygons" },
+  { id: "g8-quadrilaterals", chapter: "Chapter 17", name: "Special Types of Quadrilaterals", about: "Parallelogram, rectangle, rhombus, square: angles and diagonals" },
+  { id: "g8-constructions", chapter: "Chapter 18", name: "Constructions", about: "What's needed to construct a quadrilateral, and when it's impossible" },
+  { id: "g8-solids", chapter: "Chapter 19", name: "Representing 3-D in 2-D", about: "Faces, vertices, edges, prisms and pyramids, Euler's relation" },
+  { id: "g8-symmetry", chapter: "Chapter 20", name: "Symmetry", about: "Lines of symmetry, reflection, rotational symmetry and its order" },
+  { id: "g8-circles", chapter: "Chapter 21", name: "Circles", about: "Radius, diameter, chord, arc, sector, segment" },
 ];
 
 // The book's strands, as offered on the start page.
