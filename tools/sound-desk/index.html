@@ -193,7 +193,7 @@
       <p class="sub" id="syncNote"></p>
     </div>
     <div class="note"><b>The target mix for this service:</b> the <b>pastor</b> is always clearest → <b>worship leader</b> next → <b>Singer 2</b> just underneath → <b>keyboard</b> supporting the voices → <b>playback music</b> soft in the background → <b>audience mic</b> barely there.<br><br>
-    The sounds are built-in stand-ins. To practise with real voices, record each part separately on a phone (a 2-minute sermon clip, the keyboard, each singer) and tap <i>load recording</i> under a channel.</div>
+    The walk-in and walk-out songs in "Follow the service order" are real recordings; the voices and band are built-in stand-ins. To practise with real voices, record each part separately on a phone (a 2-minute sermon clip, the keyboard, each singer) and tap <i>load recording</i> under a channel.</div>
   </section>
 
   <section id="session" class="hidden">
@@ -676,7 +676,7 @@ function resetState(){
   if(ctx){ CH.forEach(c=>applyAudio(c.id,true)); refreshAll(); }
 }
 function stopAll(){
-  clearInterval(tickIv); clearTimeout(em.timer); clearInterval(em.cd); clearTimeout(tr.timer); mode=null;
+  clearInterval(tickIv); clearTimeout(em.timer); clearInterval(em.cd); clearTimeout(tr.timer); musicOff(); mode=null;
   if(ctx){ masterGain.gain.setTargetAtTime(0,ctx.currentTime,0.05); clearTimeout(suspendTimer); suspendTimer=setTimeout(()=>ctx.suspend(),200); }
   ['emPanel','report','toast'].forEach(i=>$(i).classList.add('hidden'));
   $('session').classList.add('hidden'); $('menu').classList.remove('hidden'); $('stopBtn').classList.add('hidden');
@@ -801,14 +801,14 @@ function emFinish(){
    (muted or fader down): an open mic nobody is using only adds noise and feedback risk.
    Marked per part: how fast the desk was right after the part began, and how long it stayed right. */
 const SCENES={
-  walkin:  {name:'Walk-in music', who:'Playback music only, louder than usual. Every mic off.', r:{playback:[0.45,0.9]}},
+  walkin:  {name:'Walk-in music', who:'A real song on playback, louder than usual. Every mic off.', r:{playback:[0.45,0.9]}, music:true},
   welcome: {name:'Welcome',       who:'Pastor only. Music off.', r:{pastor:[0.7,1.4]}},
   worship: {name:'Worship songs', who:'Worship leader, Singer 2, keyboard, playback soft underneath. Pastor off.', r:{leader:[0.5,1.0],singer:[0.3,0.75],keys:[0.18,0.55],playback:[0.08,0.38]}},
   prayer:  {name:'Prayer',        who:'Pastor, with the keyboard very soft underneath.', r:{pastor:[0.7,1.4],keys:[0.05,0.25]}},
   sermon:  {name:'Sermon',        who:'Pastor only. Everything else off.', r:{pastor:[0.7,1.4]}},
   offering:{name:'Offering',      who:'Keyboard alone, louder than in the songs.', r:{keys:[0.45,0.9]}},
   response:{name:'Response song', who:'Worship leader and keyboard only.', r:{leader:[0.5,1.0],keys:[0.18,0.55]}},
-  walkout: {name:'Walk-out music',who:'Playback music only. Every mic off.', r:{playback:[0.45,0.9]}},
+  walkout: {name:'Walk-out music',who:'A real song on playback. Every mic off.', r:{playback:[0.45,0.9]}, music:true},
 };
 const ORDERS=[
   ['walkin','welcome','worship','prayer','sermon','response','walkout'],
@@ -816,12 +816,42 @@ const ORDERS=[
   ['walkin','welcome','prayer','worship','sermon','offering','walkout'],
 ];
 const OFF=[0,0.02];
+/* Real walk-in / walk-out songs on the PLAYBACK channel. They're finished stereo mixes, so playback is the
+   only channel they can honestly be; during the rest of the service playback goes back to the built-in band. */
+const TRACKS=[['fly-high','Fly High'],['cyber-mower','Cyber Mower'],['downtempo','Downtempo'],['state-of-mind','State of Mind']];
+const trk={buf:{},src:null,on:false,i:Math.floor(Math.random()*4),trim:null};
+function getTrack(f){
+  if(!trk.buf[f]) trk.buf[f]=fetch('sets/music/'+f+'.mp3').then(r=>{ if(!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+    .then(b=>ctx.decodeAudioData(b)).catch(()=>{ delete trk.buf[f]; return null; });
+  return trk.buf[f];
+}
+async function musicOn(){
+  if(trk.on||!ctx||A.playback.player) return;     // her own recording on playback wins
+  trk.on=true;
+  const [f,name]=TRACKS[trk.i%TRACKS.length], buf=await getTrack(f);
+  if(!trk.on||!buf) { trk.on=false; return; }      // turned off meanwhile, or couldn't load: keep the built-in sound
+  const d=buf.getChannelData(0); let q=0,k=0; for(let i=0;i<d.length;i+=16){q+=d[i]*d[i];k++;}
+  const n=A.playback, t=ctx.currentTime, src=ctx.createBufferSource();
+  src.buffer=buf; src.loop=true; src.loopEnd=Math.max(5,buf.duration-1.2); src.connect(n.file); src.start();
+  trk.src=src; trk.trim=n.trim.gain.value;
+  n.file.gain.setTargetAtTime(clamp(0.1/(Math.sqrt(q/k)||0.01),0.05,40),t,0.05); n.trim.gain.setTargetAtTime(0,t,0.05);
+  UI.playback.el.querySelector('.fname').textContent='▶ '+name;
+}
+function musicOff(){
+  if(!trk.on) return; trk.on=false; trk.i++;      // walk-out gets a different song from walk-in
+  if(trk.src&&ctx){ const s=trk.src, t=ctx.currentTime; trk.src=null;
+    A.playback.file.gain.setTargetAtTime(0,t,0.05); if(trk.trim!=null) A.playback.trim.gain.setTargetAtTime(trk.trim,t,0.05);
+    setTimeout(()=>{ try{s.stop();}catch(e){} },400); }
+  if(UI.playback) UI.playback.el.querySelector('.fname').textContent='';
+}
 function rangesFor(key){ const r=SCENES[key].r; return Object.fromEntries(CH.map(c=>[c.id,c.id==='audience'?c.range:(r[c.id]||OFF)])); }
 const cue={order:[],idx:-1,len:24,pre:10,cur:null,lastOrder:-1};
 function cueStart(){
   let o; do{ o=Math.floor(Math.random()*ORDERS.length); }while(o===cue.lastOrder&&ORDERS.length>1); cue.lastOrder=o;
   cue.order=ORDERS[o]; cue.idx=-1; cue.cur=null; cue.len=level==='beginner'?24:16; cue.pre=10; log=[]; score=0;
   ROV=rangesFor(cue.order[0]);
+  TRACKS.forEach(([f])=>getTrack(f));             // decode ahead so walk-out starts on time
+  if(SCENES[cue.order[0]].music) musicOn();
   renderCues();
   tickIv=setInterval(cueTick,DT*1000);
 }
@@ -856,6 +886,7 @@ function cueTick(){
   if(idx>=n){ closePart(); return finishCue(); }
   if(idx!==cue.idx){
     closePart(); cue.idx=idx; const key=cue.order[idx];
+    if(SCENES[key].music) musicOn(); else musicOff();
     ROV=rangesFor(key); cue.cur={key,t0:cue.pre+idx*L,okT:0,tot:0,readyAt:null};
     renderCues();
   }
@@ -869,7 +900,7 @@ function cueTick(){
   setAlert(main,why,allOk?'good':'live');
 }
 function finishCue(){
-  clearInterval(tickIv); ROV=null;
+  clearInterval(tickIv); ROV=null; musicOff();
   const avg=log.length?Math.round(log.reduce((a,l)=>a+l.pts,0)/log.length):0;
   const ready=log.filter(l=>l.ready!=null);
   const avgReady=ready.length?ready.reduce((a,l)=>a+l.ready,0)/ready.length:0;
