@@ -172,6 +172,7 @@ TOPICS.push(
  * client's ENGLISH8_TOPIC_CHOICES.
  */
 TOPICS.push(
+  { id: "e8-clauses", strand: "Grammar", name: "Dependent and Independent Clauses", shortLabel: "Clauses", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-purpose", strand: "Grammar", name: "Words as Nouns and Verbs; Clauses of Purpose", shortLabel: "Nouns/Verbs & Purpose", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-participles", strand: "Grammar", name: "Participles and Gerunds", shortLabel: "Participles & Gerunds", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-infinitives", strand: "Grammar", name: "Forms of Have; Infinitives", shortLabel: "Have & Infinitives", dependsOn: [], grade: 8, subject: "English" },

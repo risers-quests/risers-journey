@@ -42,6 +42,7 @@ export const GRADE8_TOPIC_CHOICES = [
 // match the server's ENGLISH8_TOPICS). "chapter" is the reader chapter the
 // grammar comes with (Scope and Sequence). Add a line as each is ready.
 export const ENGLISH8_TOPIC_CHOICES = [
+  { id: "e8-clauses", chapter: "Grammar · Ch 1", name: "Dependent and Independent Clauses", about: "Which clause stands alone; noun, adjective and adverb clauses; who, which, whose, where" },
   { id: "e8-purpose", chapter: "Grammar · Ch 3", name: "Words as Nouns and Verbs; Adverb Clauses of Purpose", about: "a watch / we watch; so that, in order that, lest; purpose or result" },
   { id: "e8-participles", chapter: "Grammar · Ch 5", name: "Participles and Gerunds", about: "-ing words as nouns and adjectives, -ing after prepositions, joining with a participle, -ing / -ed feelings" },
   { id: "e8-infinitives", chapter: "Grammar · Ch 7", name: "Forms of Have; Infinitive and Bare Infinitive", about: "What have means (own, has done, have to, had it done), to + verb or the verb alone" },
