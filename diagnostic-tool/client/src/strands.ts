@@ -31,6 +31,8 @@ export const GRADE8_TOPIC_CHOICES = [
   { id: "g8-circles", chapter: "Chapter 21", name: "Circles", about: "Radius, diameter, chord, arc, sector, segment" },
   { id: "g8-area", chapter: "Chapter 22", name: "Area of a Trapezium and a Polygon", about: "Trapeziums, shapes split into parts, semicircles" },
   { id: "g8-volume", chapter: "Chapter 23", name: "Surface Area, Volume and Capacity", about: "Cube, cuboid and cylinder; litres" },
+  { id: "g8-data", chapter: "Chapter 24", name: "Data Handling", about: "Grouping data into classes, bar graphs, pie charts" },
+  { id: "g8-probability", chapter: "Chapter 25", name: "Probability", about: "Coins, dice, cards and spinners; experiments; 'not'" },
 ];
 
 // The book's strands, as offered on the start page.

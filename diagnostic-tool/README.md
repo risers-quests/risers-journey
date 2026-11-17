@@ -61,10 +61,13 @@ start page like Grade 4. In so far (`itemBank/generate/*G8.ts`):
   semicircles), Surface Area, Volume and Capacity (cube, cuboid, cylinder;
   π = 22/7). Hands-on: shading area (1 cm² a square), surface area and
   litres; packing unit cubes in layers for volume.
+- Theme 6, Data Handling: Data Handling (grouping into classes, bar
+  graphs, pie charts) and Probability (coins, dice, cards, spinners,
+  experiments). Hands-on: shading counts and pie angles; shading the
+  outcomes on numbered cards.
 All questions are generated, with a named mistake behind every wrong
 option, and are covered by the stress test (algebra answers are checked by
-substituting numbers). Not yet: Sets (needs a "sort into circles"
-activity) and Theme 6.
+substituting numbers). Not yet: Sets.
 
 ## Stack
 

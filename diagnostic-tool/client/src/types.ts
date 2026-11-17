@@ -204,7 +204,9 @@ export interface BarsSpec {
  */
 export interface FigureSpec {
   kind: "figure";
-  figure: "polygon" | "quad" | "solid" | "circle";
+  figure: "polygon" | "quad" | "solid" | "circle" | "pie";
+  /** pie (a pie chart or a spinner): slices in order, sizes by value; label written in each. */
+  slices?: { value: number; label: string }[];
   /** polygon */
   sides?: number;
   regular?: boolean;

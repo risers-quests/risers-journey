@@ -149,6 +149,13 @@ function verifyG8(it: GeneratedItem): string | null {
     "g8-volume|abstract|apply": () => (22 / 7) * (p.d / 2) ** 2 * p.h,
     "g8-volume|abstract|analyze": () => p.h,
     "g8-volume|pictorial|evaluate": () => (p.l * p.b * p.h) / 1000,
+    "g8-data|abstract|remember": () => p.w,
+    "g8-data|abstract|apply": () => (p.p / p.T) * 360,
+    "g8-data|abstract|analyze": () => (p.T * p.a) / 360,
+    "g8-probability|abstract|understand": () => p.r / (p.r + p.b),
+    "g8-probability|abstract|apply": () => (p.d - p.a) / p.d,
+    "g8-probability|abstract|analyze": () => (6 - Math.abs(7 - p.s)) / 36,
+    "g8-probability|pictorial|apply": () => p.h / p.N,
     "g8-volume|abstract|evaluate": () => ((p.l / 10) * (p.b / 10) * (p.h / 10)) * 1000,
   };
   if (want[cell]) {

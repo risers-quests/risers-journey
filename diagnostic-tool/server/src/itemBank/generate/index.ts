@@ -26,6 +26,8 @@ import { SYMMETRY_G8_TEMPLATES, MISCONCEPTIONS as SYM8_MISCONCEPTIONS } from "./
 import { CIRCLES_G8_TEMPLATES, MISCONCEPTIONS as CIR8_MISCONCEPTIONS } from "./circlesG8.js";
 import { AREA_G8_TEMPLATES, MISCONCEPTIONS as AR8_MISCONCEPTIONS } from "./areaG8.js";
 import { VOLUME_G8_TEMPLATES, MISCONCEPTIONS as VOL8_MISCONCEPTIONS } from "./volumeG8.js";
+import { DATA_G8_TEMPLATES, MISCONCEPTIONS as DH8_MISCONCEPTIONS } from "./dataG8.js";
+import { PROBABILITY_G8_TEMPLATES, MISCONCEPTIONS as PR8_MISCONCEPTIONS } from "./probabilityG8.js";
 
 export type { GeneratedItem } from "./core.js";
 
@@ -68,6 +70,8 @@ const GRADE8_TEMPLATES: Record<string, Record<string, Template>> = {
   "g8-circles": CIRCLES_G8_TEMPLATES,
   "g8-area": AREA_G8_TEMPLATES,
   "g8-volume": VOLUME_G8_TEMPLATES,
+  "g8-data": DATA_G8_TEMPLATES,
+  "g8-probability": PROBABILITY_G8_TEMPLATES,
 };
 
 /** Topics with generated questions (Grade 5; Grade 4 also uses GRADE4_TEMPLATES). */
@@ -105,6 +109,8 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...CIR8_MISCONCEPTIONS,
   ...AR8_MISCONCEPTIONS,
   ...VOL8_MISCONCEPTIONS,
+  ...DH8_MISCONCEPTIONS,
+  ...PR8_MISCONCEPTIONS,
 };
 
 export function hasTemplate(topicId: string, cpa: CPAStage, bloom: BloomLevel, grade = 5): boolean {

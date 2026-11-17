@@ -176,11 +176,39 @@ function Circle({ spec }: { spec: FigureSpec }) {
   );
 }
 
+const PIE = ["#cfe6b4", "#f6d9a6", "#c9dff2", "#f3c4cf", "#ddd2f2", "#e9e4c3"];
+function Pie({ slices }: { slices: { value: number; label: string }[] }) {
+  const total = slices.reduce((s, x) => s + x.value, 0) || 1;
+  const r = 78;
+  let a0 = -Math.PI / 2;
+  return (
+    <>
+      {slices.map((s, i) => {
+        const a1 = a0 + (2 * Math.PI * s.value) / total;
+        const [x0, y0] = [CX + r * Math.cos(a0), CY + r * Math.sin(a0)];
+        const [x1, y1] = [CX + r * Math.cos(a1), CY + r * Math.sin(a1)];
+        const mid = (a0 + a1) / 2;
+        const big = a1 - a0 > Math.PI ? 1 : 0;
+        const lx = CX + r * 0.6 * Math.cos(mid), ly = CY + r * 0.6 * Math.sin(mid);
+        const d = slices.length === 1 ? undefined : `M ${CX} ${CY} L ${x0} ${y0} A ${r} ${r} 0 ${big} 1 ${x1} ${y1} Z`;
+        a0 = a1;
+        return (
+          <g key={i}>
+            {d ? <path d={d} fill={PIE[i % PIE.length]} className="fig-slice" /> : <circle cx={CX} cy={CY} r={r} fill={PIE[0]} className="fig-slice" />}
+            <text x={lx} y={ly + 4} className="fig-small fig-pie-label" textAnchor="middle">{s.label}</text>
+          </g>
+        );
+      })}
+    </>
+  );
+}
+
 export function Figure({ spec }: { spec: FigureSpec }) {
   let body;
   if (spec.figure === "polygon") body = <Shape2D ps={polygonPoints(spec.sides ?? 5, !!spec.regular)} spec={spec} />;
   else if (spec.figure === "quad") body = <Shape2D ps={quadPoints(spec.quad ?? "parallelogram")} spec={spec} />;
   else if (spec.figure === "solid") body = <Solid solid={spec.solid ?? "cube"} />;
+  else if (spec.figure === "pie") body = <Pie slices={spec.slices ?? []} />;
   else body = <Circle spec={spec} />;
   return (
     <div className="shape-diagram">
