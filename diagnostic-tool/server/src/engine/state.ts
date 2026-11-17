@@ -85,8 +85,11 @@ export interface SessionState {
   emailStatus?: { at: string; child: boolean; staff: boolean; note?: string };
 }
 
-export function createInitialState(strands: string[] = STRANDS, grade = 5): SessionState {
-  const topicOrder = TOPICS.filter((t) => strands.includes(t.strand) && (grade !== 4 || GRADE4_TOPICS.includes(t.id))).map((t) => t.id);
+/** `topics`: Grade 4 tests are chosen topic by topic (any of GRADE4_TOPICS); otherwise by strand. */
+export function createInitialState(strands: string[] = STRANDS, grade = 5, chosenTopics?: string[]): SessionState {
+  const topicOrder = TOPICS.filter((t) =>
+    grade === 4 ? GRADE4_TOPICS.includes(t.id) && (!chosenTopics || chosenTopics.includes(t.id)) : strands.includes(t.strand)
+  ).map((t) => t.id);
   const topics: Record<string, TopicEngineState> = {};
   topicOrder.forEach((id, idx) => {
     topics[id] = {

@@ -22,6 +22,7 @@ export const TOPICS: Topic[] = [
     strand: "Number & Algebra",
     name: "More on Large Numbers",
     shortLabel: "Large Numbers",
+    grade4Name: "Large Numbers",
     dependsOn: [],
   },
   {
@@ -29,6 +30,7 @@ export const TOPICS: Topic[] = [
     strand: "Number & Algebra",
     name: "Operations on Large Numbers",
     shortLabel: "Ops on Large Numbers",
+    grade4Name: "Addition, Subtraction, Multiplication and Division",
     dependsOn: ["more-large-numbers"],
   },
   {

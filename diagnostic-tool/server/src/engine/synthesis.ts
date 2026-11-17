@@ -1,6 +1,6 @@
 import { SessionState } from "./state.js";
 import { ResponseRecord } from "../sessionStore.js";
-import { TOPICS, getTopic } from "../itemBank/index.js";
+import { TOPICS, getTopic, topicName } from "../itemBank/index.js";
 import { MISCONCEPTIONS } from "../itemBank/generate/index.js";
 import { ANXIETY_QUESTIONS, AnxietyFactor } from "../itemBank/anxietyQuestionnaire.js";
 import { BLOOM_ORDER, BloomLevel, CPAStage, DiagnosisTag } from "../types.js";
@@ -169,7 +169,7 @@ function buildTopicDiagnosis(topicId: string, state: SessionState, responses: Re
 
   return {
     topicId,
-    name: topic.name,
+    name: topicName(topic.id, state.grade),
     strand: topic.strand,
     bloomCeiling,
     tag,

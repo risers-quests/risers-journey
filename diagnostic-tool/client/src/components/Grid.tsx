@@ -1,7 +1,7 @@
 import { GridSpec } from "../types";
 
 export function Grid({ spec }: { spec: GridSpec }) {
-  const { rows, cols, shadedCells = 0, markers = [], unitLabel } = spec;
+  const { rows, cols, shadedCells = 0, markers = [], unitLabel, compact } = spec;
   const cells = Array.from({ length: rows * cols }, (_, i) => i);
 
   function markerFor(idx: number) {
@@ -13,7 +13,7 @@ export function Grid({ spec }: { spec: GridSpec }) {
   return (
     <div className="grid-diagram">
       {unitLabel && <div className="grid-diagram-label">{unitLabel}</div>}
-      <div className="grid-diagram-grid" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+      <div className="grid-diagram-grid" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)`, ...(compact ? { maxWidth: cols * 46 } : {}) }}>
         {cells.map((idx) => {
           const marker = markerFor(idx);
           const shaded = idx < shadedCells;

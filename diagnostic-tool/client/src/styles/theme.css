@@ -710,3 +710,22 @@ a { color: var(--deep-teal); }
   .cpa-grid { font-size: 0.7rem; min-width: 330px; }
   .cpa-grid tbody th { white-space: normal; }
 }
+
+/* ---- Apples into baskets (Grade 4 factors and multiples) ---- */
+.group-activity { background: #fffaf0; border: 1.5px solid #f0dfbf; border-radius: 12px; padding: 14px; margin: 8px 0 18px; user-select: none; -webkit-user-select: none; }
+.ga-pile { border: 2px dashed #e2c995; border-radius: 12px; padding: 10px 12px; background: #fff; }
+.ga-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 4px; }
+.ga-items { display: flex; flex-wrap: wrap; gap: 4px; min-height: 40px; align-content: flex-start; }
+.ga-apple { font-size: 1.9rem; line-height: 1; cursor: grab; touch-action: none; padding: 2px; border-radius: 8px; }
+.ga-apple:active { cursor: grabbing; transform: scale(1.12); }
+.ga-empty { color: var(--ink-soft); font-size: 0.9rem; align-self: center; }
+.ga-hint { margin: 10px 0; font-size: 0.85rem; color: var(--ink-soft); text-align: center; }
+.ga-baskets { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+.ga-basket { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-height: 128px; padding: 8px 6px 4px; border-radius: 14px; background: #f6efe2; border: 2px solid #e6d5b5; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.ga-basket .ga-items { justify-content: center; min-height: 0; flex: 1; align-items: flex-end; }
+.ga-basket .ga-apple { font-size: 1.45rem; }
+.ga-basket-art { font-size: 2.4rem; line-height: 1; }
+.ga-target { border-color: var(--brand-green); background: #eef7e2; }
+.ga-ghost { position: fixed; z-index: 50; font-size: 2.2rem; transform: translate(-50%, -60%); pointer-events: none; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.25)); }
+@media (max-width: 520px) { .ga-baskets { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); } .ga-apple { font-size: 1.6rem; } }
+.topic-chapter { font-weight: 500; font-size: 0.75rem; color: var(--ink-soft); margin-left: 4px; }

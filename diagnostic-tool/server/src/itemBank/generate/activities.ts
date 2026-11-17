@@ -1,4 +1,4 @@
-import { Activity, PlaceValueInteraction, ShareInteraction } from "../../types.js";
+import { Activity, GroupInteraction, PlaceValueInteraction, ShareInteraction } from "../../types.js";
 import { dropZeros } from "./moreOnLargeNumbers.js";
 
 /**
@@ -8,6 +8,7 @@ import { dropZeros } from "./moreOnLargeNumbers.js";
 export function checkActivity(activity: Activity, interaction: unknown): { correct: boolean; misconception: string | null } {
   if (activity.kind === "share") return checkShare(activity, interaction as ShareInteraction);
   if (activity.kind === "place-value") return checkPlaceValue(activity, interaction as PlaceValueInteraction);
+  if (activity.kind === "group") return checkGroup(activity, interaction as GroupInteraction);
   return { correct: false, misconception: null };
 }
 
@@ -61,4 +62,38 @@ function checkPlaceValue(a: Extract<Activity, { kind: "place-value" }>, it: Plac
   if (v === from + p * 10 || v * 10 === from * 10 + p) return { correct: false, misconception: "lnum-wrong-column" };
   if (v === t - 10 * p) return { correct: false, misconception: "lnum-forgets-carry" };
   return { correct: false, misconception: null };
+}
+
+/** Grouping apples into baskets (Grade 4 Factors and Multiples). */
+export function checkGroup(a: Extract<Activity, { kind: "group" }>, it: GroupInteraction): { correct: boolean; misconception: string | null } {
+  if (!it || !Array.isArray(it.baskets)) return { correct: false, misconception: null };
+  const b = it.baskets.map((n) => Math.max(0, Math.floor(Number(n) || 0)));
+  const placed = b.reduce((s, n) => s + n, 0);
+  if (placed > a.items) return { correct: false, misconception: null };
+  const left = a.items - placed;
+  if (a.mode === "equal") {
+    const k = a.baskets ?? b.length;
+    if (b.length !== k) return { correct: false, misconception: null };
+    if (!b.every((n) => n === b[0])) return { correct: false, misconception: "fm-unequal-groups" };
+    if (left >= k) return { correct: false, misconception: "fm-stops-early" };
+    return { correct: true, misconception: null };
+  }
+  if (a.mode === "size") {
+    const size = a.size ?? 1;
+    const used = b.filter((n) => n > 0);
+    if (used.some((n) => n !== size)) return { correct: false, misconception: "fm-unequal-groups" };
+    if (left >= size) return { correct: false, misconception: "fm-stops-early" };
+    return { correct: true, misconception: null };
+  }
+  // find: all shared equally, none left, a real new grouping
+  const used = b.filter((n) => n > 0);
+  if (left > 0) return { correct: false, misconception: used.length && used.every((n) => n === used[0]) ? "fm-not-a-factor" : "fm-stops-early" };
+  if (!used.every((n) => n === used[0])) return { correct: false, misconception: "fm-unequal-groups" };
+  if (used.length <= 1 || used[0] === 1 || (a.avoid ?? []).includes(used.length)) return { correct: false, misconception: "fm-trivial-grouping" };
+  return { correct: true, misconception: null };
+}
+
+/** True when some apples have been moved (for "try it, then choose" questions). */
+export function groupStarted(it: GroupInteraction | undefined): boolean {
+  return !!it && Array.isArray(it.baskets) && it.baskets.some((n) => n > 0);
 }

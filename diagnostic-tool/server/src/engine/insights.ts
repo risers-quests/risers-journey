@@ -1,7 +1,7 @@
 import { SessionState } from "./state.js";
 import { ResponseRecord } from "../sessionStore.js";
 import { synthesizeReport, ReportData } from "./synthesis.js";
-import { getTopic } from "../itemBank/index.js";
+import { getTopic, topicName } from "../itemBank/index.js";
 import { MISCONCEPTIONS } from "../itemBank/generate/index.js";
 import { BLOOM_ORDER, CPA_ORDER, BloomLevel, CPAStage } from "../types.js";
 
@@ -158,7 +158,7 @@ export function buildInsights(state: SessionState, responses: ResponseRecord[], 
       grid,
       mistakes: mistakeList,
       startAt,
-      blockedBy: status === "notReached" ? getTopic(t.topicId).dependsOn.filter((d) => state.topics[d]).map((d) => getTopic(d).name) : [],
+      blockedBy: status === "notReached" ? getTopic(t.topicId).dependsOn.filter((d) => state.topics[d]).map((d) => topicName(d, state.grade)) : [],
     };
   });
 

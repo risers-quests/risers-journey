@@ -16,6 +16,7 @@ import { GENERATED_TOPICS, GRADE4_TOPICS, MISCONCEPTIONS, generateItem, Generate
 import { checkActivity } from "../src/itemBank/generate/activities.js";
 import { verify as verifyLargeNumbers, dropZeros } from "../src/itemBank/generate/moreOnLargeNumbers.js";
 import { verify as verifyOperations } from "../src/itemBank/generate/operationsOnLargeNumbers.js";
+import { verify as verifyFactorsG4 } from "../src/itemBank/generate/factorsMultiplesG4.js";
 import { BLOOM_ORDER, CPA_ORDER } from "../src/types.js";
 
 const N = Number(process.env.N || 20000);
@@ -50,6 +51,8 @@ const VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
   "fractions-division": verifyFractions,
   "more-large-numbers": (it) => verifyLargeNumbers(it),
   "operations-large-numbers": (it) => verifyOperations(it),
+  // Grade 4 only (Grade 5 factors are hand-written).
+  "factors-multiples": (it) => verifyFactorsG4(it),
 };
 
 // ---- activities: a perfect attempt, and typical mistakes ----
@@ -95,6 +98,37 @@ function checkActivityItem(it: GeneratedItem, where: string) {
       const p = act.target - from;
       if (from + p * 10 < 1000000 && checkActivity(act, { counts: asCounts(from + p * 10) }).misconception !== "lnum-wrong-column") fail(`${where}: adding in the wrong column not caught`);
       if (checkActivity(act, { counts: asCounts(act.target - 10 * p) }).misconception !== "lnum-forgets-carry") fail(`${where}: a dropped carry not caught`);
+    }
+  } else if (act.kind === "group") {
+    const n = act.items;
+    const mark = (baskets: number[]) => checkActivity(act, { baskets });
+    if (act.mode === "equal") {
+      const k = act.baskets!;
+      const per = Math.floor(n / k);
+      if (!mark(Array(k).fill(per)).correct) fail(`${where}: a fair share was marked wrong`);
+      if (per >= 1) {
+        const uneven = Array(k).fill(per);
+        uneven[0] += 1;
+        uneven[1] -= 1;
+        if (mark(uneven).misconception !== "fm-unequal-groups") fail(`${where}: unequal baskets not caught`);
+      }
+      if (per >= 2 && mark(Array(k).fill(per - 1)).misconception !== "fm-stops-early") fail(`${where}: stopping early not caught`);
+    } else if (act.mode === "size") {
+      const size = act.size!;
+      const m = Math.floor(n / size);
+      if (m > (act.maxBaskets ?? m)) fail(`${where}: not enough baskets to pack them`);
+      if (!mark([...Array(m).fill(size), 0, 0]).correct) fail(`${where}: right packing marked wrong`);
+      const off = Array(m).fill(size);
+      off[0] += 1;
+      off[m - 1] -= 1;
+      if (mark(off).misconception !== "fm-unequal-groups") fail(`${where}: a wrong-size basket not caught`);
+    } else {
+      const d = [...Array(n).keys()].map((i) => i + 1).find((k) => n % k === 0 && k > 2 && n / k > 1 && !(act.avoid ?? []).includes(k));
+      if (d) {
+        if (d > (act.maxBaskets ?? 12)) fail(`${where}: answer needs more baskets than shown`);
+        if (!mark(Array(d).fill(n / d)).correct) fail(`${where}: a right sharing (${d} baskets) was marked wrong`);
+      } else if (act.avoid) fail(`${where}: no possible answer for ${n}`);
+      if (mark([n]).misconception !== "fm-trivial-grouping") fail(`${where}: one basket of everything not caught`);
     }
   } else fail(`${where}: unknown activity`);
 }

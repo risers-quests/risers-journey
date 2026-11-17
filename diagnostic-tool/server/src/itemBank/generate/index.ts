@@ -3,6 +3,7 @@ import { GeneratedItem, Rng, Template, setGrade } from "./core.js";
 import { FRACTIONS_DIVISION_TEMPLATES, MISCONCEPTIONS as FD_MISCONCEPTIONS } from "./fractionsDivision.js";
 import { MORE_ON_LARGE_NUMBERS_TEMPLATES, MISCONCEPTIONS as LN_MISCONCEPTIONS } from "./moreOnLargeNumbers.js";
 import { OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES, MISCONCEPTIONS as OP_MISCONCEPTIONS } from "./operationsOnLargeNumbers.js";
+import { FACTORS_MULTIPLES_G4_TEMPLATES, MISCONCEPTIONS as FM4_MISCONCEPTIONS } from "./factorsMultiplesG4.js";
 
 export type { GeneratedItem } from "./core.js";
 
@@ -13,17 +14,30 @@ const TEMPLATES: Record<string, Record<string, Template>> = {
   "operations-large-numbers": OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES,
 };
 
-/** Topics with generated questions. */
+/**
+ * Grade 4 only: topics whose Grade 4 questions are generated from their own
+ * templates (the book's Grade 4 chapter), while Grade 5 keeps its own bank.
+ */
+const GRADE4_TEMPLATES: Record<string, Record<string, Template>> = {
+  "factors-multiples": FACTORS_MULTIPLES_G4_TEMPLATES,
+};
+
+/** Topics with generated questions (Grade 5; Grade 4 also uses GRADE4_TEMPLATES). */
 export const GENERATED_TOPICS = Object.keys(TEMPLATES);
+
+function templatesFor(topicId: string, grade: number): Record<string, Template> | undefined {
+  return (grade === 4 ? GRADE4_TEMPLATES[topicId] : undefined) ?? TEMPLATES[topicId];
+}
 
 export const MISCONCEPTIONS: Record<string, { label: string; detail: string; childTip: string }> = {
   ...FD_MISCONCEPTIONS,
   ...LN_MISCONCEPTIONS,
   ...OP_MISCONCEPTIONS,
+  ...FM4_MISCONCEPTIONS,
 };
 
-export function hasTemplate(topicId: string, cpa: CPAStage, bloom: BloomLevel): boolean {
-  return !!TEMPLATES[topicId]?.[`${cpa}|${bloom}`];
+export function hasTemplate(topicId: string, cpa: CPAStage, bloom: BloomLevel, grade = 5): boolean {
+  return !!templatesFor(topicId, grade)?.[`${cpa}|${bloom}`];
 }
 
 /**
@@ -39,7 +53,7 @@ export function generateItem(
   opts: { avoid?: string[]; given?: Record<string, number>; rng?: Rng; grade?: number } = {}
 ): GeneratedItem {
   setGrade(opts.grade ?? 5);
-  const make = TEMPLATES[topicId][`${cpa}|${bloom}`];
+  const make = templatesFor(topicId, opts.grade ?? 5)![`${cpa}|${bloom}`];
   // Each question records its grade (so the same numbers at another grade count as different).
   const template: Template = (r, g) => {
     const it = make(r, g);
@@ -78,5 +92,5 @@ export function isGenerated(item: Item): item is GeneratedItem {
   return (item as GeneratedItem).generated === true;
 }
 
-/** Topics with generated questions for Grade 4 (the same ladders, one place value smaller). */
-export const GRADE4_TOPICS = ["more-large-numbers", "operations-large-numbers"];
+/** Topics ready at Grade 4, in book order (offered one by one on the start page). */
+export const GRADE4_TOPICS = ["more-large-numbers", "operations-large-numbers", "factors-multiples"];

@@ -36,6 +36,12 @@ export const ALL_ITEMS: Item[] = [
 
 export { TOPICS };
 
+/** A topic's name as the child's book calls it (Grade 4 uses its own chapter names). */
+export function topicName(topicId: string, grade = 5): string {
+  const t = getTopic(topicId);
+  return grade === 4 && t.grade4Name ? t.grade4Name : t.name;
+}
+
 export function getTopic(topicId: string) {
   const topic = TOPICS.find((t) => t.id === topicId);
   if (!topic) throw new Error(`Unknown topic ${topicId}`);

@@ -40,6 +40,8 @@ export interface GridSpec {
   unitLabel?: string;
   shadedCells?: number;
   markers?: { row: number; col: number; label: string }[];
+  /** Squares no bigger than about 44px (arrays with few squares), instead of filling the width. */
+  compact?: boolean;
 }
 
 export type ShapeKind = "triangle" | "right-triangle" | "rectangle" | "square" | "circle" | "pentagon" | "parallelogram" | "right-trapezium";
@@ -78,7 +80,38 @@ export interface ShareActivity {
   personOne: string;
   peopleLabel: string;
 }
-export type Activity = ShareActivity | PlaceValueActivity;
+/**
+ * Hands-on grouping (Grade 4 Factors and Multiples): drag things (apples)
+ * from a pile into baskets, or tap a basket to drop one in. No numbers on
+ * screen: the child sees groups, not counters.
+ *   "equal": share all `items` into `baskets` baskets as equally as possible
+ *            (what can't be shared stays in the pile);
+ *   "size":  put `size` in each basket, using as many baskets as needed;
+ *   "find":  choose how many baskets so all `items` share out equally with
+ *            none left, but not 1 basket, not 1 in each, and not `avoid`.
+ */
+export interface GroupActivity {
+  kind: "group";
+  mode: "equal" | "size" | "find";
+  items: number;
+  icon: string;
+  itemMany: string;
+  basketOne: string;
+  /** "equal": how many baskets. */
+  baskets?: number;
+  /** "size": how many go in each basket; "size" shows this many empty baskets to fill. */
+  size?: number;
+  maxBaskets?: number;
+  /** "find": basket counts that don't count as a new answer (e.g. one already shown). */
+  avoid?: number[];
+}
+
+/** What the child did with the apples: how many in each basket (the rest stayed in the pile). */
+export interface GroupInteraction {
+  baskets: number[];
+}
+
+export type Activity = ShareActivity | PlaceValueActivity | GroupActivity;
 
 /** Hands-on place-value chart: tap + / − to put discs in columns; exchange 10 for 1 next door. */
 export interface PlaceValueActivity {

@@ -15,9 +15,9 @@ import {
 import { reportEntry, combine } from "./report/history.js";
 import { selectNextQuestion, applyOutcome } from "./engine/skillEngine.js";
 import { readSignal } from "./engine/signalEngine.js";
-import { sanitizeItemForClient, getItemById, getTopic } from "./itemBank/index.js";
+import { sanitizeItemForClient, getItemById, getTopic, topicName } from "./itemBank/index.js";
 import { STRANDS } from "./itemBank/topics.js";
-import { isGenerated, generateItem, hasTemplate, signature, MISCONCEPTIONS } from "./itemBank/generate/index.js";
+import { isGenerated, generateItem, hasTemplate, signature, MISCONCEPTIONS, GRADE4_TOPICS } from "./itemBank/generate/index.js";
 import { BLOOM_ORDER, CPA_ORDER } from "./types.js";
 import { checkActivity } from "./itemBank/generate/activities.js";
 import { buildInsights } from "./engine/insights.js";
@@ -55,7 +55,7 @@ import { synthesizeReport } from "./engine/synthesis.js";
 export const router = Router();
 
 router.post("/sessions", async (req, res) => {
-  const { childName, grade, strands } = req.body ?? {};
+  const { childName, grade, strands, topics } = req.body ?? {};
   if (!childName || typeof childName !== "string" || !childName.trim()) {
     return res.status(400).json({ error: "childName is required" });
   }
@@ -63,7 +63,11 @@ router.post("/sessions", async (req, res) => {
   const chosen = Array.isArray(strands) ? STRANDS.filter((s) => strands.includes(s)) : STRANDS;
   if (!chosen.length) return res.status(400).json({ error: "choose at least one strand" });
   const name = childName.trim().slice(0, 80);
-  const { id, state } = await createSession(name, grade === "Grade 4" ? "Grade 4" : "Grade 5", chosen);
+  // Grade 4: the topics chosen one by one (none given means every topic ready at Grade 4).
+  const g4 = grade === "Grade 4";
+  const chosenTopics = g4 && Array.isArray(topics) ? GRADE4_TOPICS.filter((t) => topics.includes(t)) : undefined;
+  if (g4 && chosenTopics && !chosenTopics.length) return res.status(400).json({ error: "choose at least one topic" });
+  const { id, state } = await createSession(name, g4 ? "Grade 4" : "Grade 5", chosen, chosenTopics);
   if (!state.topicOrder.length) return res.status(400).json({ error: "no topics ready for that grade and strand yet" });
   // Numbers this child has had before (in earlier tests) are off limits.
   const history = await loadHistory(name);
@@ -80,12 +84,12 @@ router.get("/preview/:topic", (req, res) => {
   const topic = req.params.topic;
   const out = [];
   for (const cpa of CPA_ORDER) for (const bloom of BLOOM_ORDER) {
-    if (!hasTemplate(topic, cpa, bloom)) continue;
+    if (!hasTemplate(topic, cpa, bloom, req.query.grade === "4" ? 4 : 5)) continue;
     const it = generateItem(topic, cpa, bloom, { grade: req.query.grade === "4" ? 4 : 5 });
     out.push({ ...it, mistakeLabels: Object.fromEntries(Object.entries(it.mistakes).map(([k, v]) => [k, v ? MISCONCEPTIONS[v]?.label ?? v : null])) });
   }
   if (!out.length) return res.status(404).json({ error: "no generated questions for this topic" });
-  res.json({ topic: getTopic(topic).name, items: out });
+  res.json({ topic: topicName(topic, req.query.grade === "4" ? 4 : 5), items: out });
 });
 
 // Where a session is up to, for continuing it later (on the same device or
@@ -173,7 +177,7 @@ router.get("/sessions/:id/next-question", async (req, res) => {
     topicCount: state.topicOrder.length,
     isProceduralCheck: pq.isProceduralCheck,
     breadcrumb: buildBreadcrumb(topicIdForView, state),
-    topicName: topicIdForView ? getTopic(topicIdForView).name : "Warm-up",
+    topicName: topicIdForView ? topicName(topicIdForView, state.grade) : "Warm-up",
     item: pq.clientItem,
     grid: topicIdForView ? buildGrid(topicIdForView, state) : [],
     sessionMap: buildSessionMap(state),

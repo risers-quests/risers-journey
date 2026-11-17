@@ -248,7 +248,20 @@ from given digits; Roman numerals 1–100). Operations follows chapters
 2–4: add and subtract up to 6 digits, ×/÷ 10, 100, 1000, the 11–15 times
 tables, 4-digit ÷ 1-digit bar models, 3-digit ÷ 2-digit with a remainder,
 and estimating 3-digit × 2-digit. At Grade 4, `build()` drops any wrong
-option with a number of 10 lakh or more. The stress test runs every topic at
+option with a number of 10 lakh or more.
+
+Grade 4 tests are chosen **topic by topic** on the start page
+(`GRADE4_TOPIC_CHOICES` in `client/src/strands.ts`, matching
+`GRADE4_TOPICS` on the server), and reports use the book's chapter names
+(`grade4Name` in `itemBank/topics.ts`). **Factors and Multiples** (chapter
+5) has its own Grade 4 questions (`generate/factorsMultiplesG4.ts`, wired
+through `GRADE4_TEMPLATES`); Grade 5 keeps its hand-written ones. Its
+hands-on level uses the **apples-into-baskets** activity
+(`GroupActivity`): drag apples between the pile and baskets, or tap a
+basket to drop one in and tap an apple to put it back. No numbers are
+shown, and the server marks what the child did (unequal baskets,
+stopping too early, a number that doesn't divide, only the obvious
+grouping). The stress test runs every topic at
 Grade 5 and the Grade 4 topics at Grade 4.
 
 **Numbers are written as the books write them:** Indian grouping

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createSession, getSessionStatus } from "../api";
 import { SessionStatus } from "../types";
 import { forgetTest, rememberTest, savedTests } from "../saved";
-import { STRAND_CHOICES } from "../strands";
+import { GRADE4_TOPIC_CHOICES, STRAND_CHOICES } from "../strands";
 
 // The 12 Risers. Their report email addresses are kept only in the email
 // script (diagnostic-tool/email), never on the site; it matches by name.
@@ -18,6 +18,11 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
   // One strand per sitting by default, so a test stays well under an hour.
   const [strands, setStrands] = useState<string[]>(["Number & Algebra"]);
   const [grade, setGrade] = useState("Grade 5");
+  // Grade 4: one topic per sitting by default; tick more to test them together.
+  const [g4Topics, setG4Topics] = useState<string[]>([GRADE4_TOPIC_CHOICES[0].id]);
+  function toggleTopic(id: string) {
+    setG4Topics((list) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id]));
+  }
   const topicCount = STRAND_CHOICES.filter((c) => strands.includes(c.name)).reduce((n, c) => n + c.topics.length, 0);
   function toggleStrand(name: string) {
     setStrands((list) => (list.includes(name) ? list.filter((x) => x !== name) : [...list, name]));
@@ -43,7 +48,7 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
     setError(null);
     try {
       const name = childName.trim();
-      const sessionId = await createSession(name, grade, grade === "Grade 4" ? ["Number & Algebra"] : strands);
+      const sessionId = await createSession(name, grade, grade === "Grade 4" ? ["Number & Algebra"] : strands, grade === "Grade 4" ? g4Topics : undefined);
       rememberTest({ id: sessionId, childName: name, startedAt: new Date().toISOString() });
       const status = await getSessionStatus(sessionId);
       if (!status) throw new Error("Couldn't start the test");
@@ -59,7 +64,7 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
     <div className="setup-wrap">
       <h1>Maths Diagnostic</h1>
       <p className="lede">
-        Grade 5 maths questions that work through the whole book, topic by topic. It shows which topics are
+        Maths questions that work through the book, topic by topic. It shows which topics are
         mastered, where there's a real skill gap, and where a method is memorised but not understood. A short,
         separate questionnaire at the end asks how maths feels.
       </p>
@@ -104,10 +109,28 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
             <option>Grade 5</option>
             <option>Grade 4</option>
           </select>
-          {grade === "Grade 4" && (
-            <small className="grade-note">Grade 4 so far: Large Numbers and Operations on Large Numbers. More topics are being added.</small>
-          )}
+
         </div>
+        {grade === "Grade 4" && (
+          <fieldset className="strand-pick">
+            <legend>Which topics? (from the Grade 4 book)</legend>
+            {GRADE4_TOPIC_CHOICES.map((t) => (
+              <label key={t.id} className={"strand-option" + (g4Topics.includes(t.id) ? " on" : "")}>
+                <input type="checkbox" checked={g4Topics.includes(t.id)} onChange={() => toggleTopic(t.id)} />
+                <span>
+                  <b>
+                    {t.name} <span className="topic-chapter">{t.chapter}</span>
+                  </b>
+                  <small>{t.about}</small>
+                </span>
+              </label>
+            ))}
+            <div className="strand-total">
+              {g4Topics.length ? `${g4Topics.length} topic${g4Topics.length > 1 ? "s" : ""}` : "Choose at least one topic"}
+            </div>
+            <small className="grade-note">More Grade 4 chapters are being added.</small>
+          </fieldset>
+        )}
         {grade === "Grade 5" && <fieldset className="strand-pick">
           <legend>What to test</legend>
           {STRAND_CHOICES.map((c) => (
@@ -126,7 +149,7 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
           </div>
         </fieldset>}
         {error && <div style={{ color: "var(--soft-clay)", fontSize: "0.85rem" }}>{error}</div>}
-        <button className="btn btn-primary" type="submit" disabled={loading || !childName.trim() || (grade === "Grade 5" && !strands.length)}>
+        <button className="btn btn-primary" type="submit" disabled={loading || !childName.trim() || (grade === "Grade 5" ? !strands.length : !g4Topics.length)}>
           {loading ? "Starting…" : "Start the test"}
         </button>
       </form>

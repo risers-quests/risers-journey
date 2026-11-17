@@ -37,7 +37,7 @@ function stepCpaForward(cpa: CPAStage): CPAStage | null {
  */
 function findBestItem(topicId: string, cpa: CPAStage, bloom: BloomLevel, state?: SessionState, given?: Record<string, number>): Item | null {
   // Generated topics: a fresh question with numbers this child hasn't had.
-  if (hasTemplate(topicId, cpa, bloom)) {
+  if (hasTemplate(topicId, cpa, bloom, state?.grade ?? 5)) {
     const asked = state?.topics[topicId]?.askedItemIds;
     const item = generateItem(topicId, cpa, bloom, { avoid: asked, given, grade: state?.grade ?? 5 });
     if (asked) asked.push(signature(item));

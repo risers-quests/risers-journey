@@ -42,7 +42,7 @@ export function Preview() {
       <p className="lede">
         Grade 5: <a href="?preview=more-large-numbers">Large Numbers</a> · <a href="?preview=operations-large-numbers">Operations</a> · <a href="?preview=fractions-division">Fractions and Division</a>
         <br />
-        Grade 4: <a href="?preview=more-large-numbers&grade=4">Large Numbers</a> · <a href="?preview=operations-large-numbers&grade=4">Operations</a>
+        Grade 4: <a href="?preview=more-large-numbers&grade=4">Large Numbers</a> · <a href="?preview=operations-large-numbers&grade=4">Operations</a> · <a href="?preview=factors-multiples&grade=4">Factors and Multiples</a>
       </p>
       <p className="lede">One fresh question per level. Reload the page for new numbers and contexts. ✓ marks the right answer; each wrong option shows the mistake it stands for.</p>
       {data.items.map((it) => (

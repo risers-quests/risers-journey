@@ -15,11 +15,11 @@ async function asJson<T>(res: Response): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export async function createSession(childName: string, grade: string, strands: string[]): Promise<string> {
+export async function createSession(childName: string, grade: string, strands: string[], topics?: string[]): Promise<string> {
   const res = await fetch(`${BASE}/sessions`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ childName, grade, strands }),
+    body: JSON.stringify({ childName, grade, strands, topics }),
   });
   const data = await asJson<{ sessionId: string }>(res);
   return data.sessionId;

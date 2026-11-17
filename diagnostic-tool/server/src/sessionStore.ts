@@ -94,9 +94,9 @@ async function save(sessionId: string, session: StoredSession): Promise<void> {
   requestCache.getStore()?.set(sessionId, session);
 }
 
-export async function createSession(childName: string, grade: string, strands?: string[]): Promise<{ id: string; state: SessionState }> {
+export async function createSession(childName: string, grade: string, strands?: string[], topics?: string[]): Promise<{ id: string; state: SessionState }> {
   const id = newId();
-  const state = createInitialState(strands, grade === "Grade 4" ? 4 : 5);
+  const state = createInitialState(strands, grade === "Grade 4" ? 4 : 5, topics);
   await save(id, { child_name: childName, grade, created_at: new Date().toISOString(), status: "in_progress", state, responses: [] });
   return { id, state };
 }
