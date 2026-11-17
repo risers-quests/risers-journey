@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { staffSignedIn } from "../staff";
 import { createSession, getSessionStatus } from "../api";
 import { SessionStatus } from "../types";
 import { forgetTest, rememberTest, savedTests } from "../saved";
@@ -12,13 +13,6 @@ const RISER_GRADE: Record<string, string> = { Eva: "Grade 4" };
 const gradeFor = (name: string) => RISER_GRADE[name] ?? "Grade 5";
 // Subjects a Skill Check can cover. Only Maths so far; add more here as they're built.
 const SUBJECTS = ["Maths"];
-function staffSignedIn(): boolean {
-  try {
-    return !!localStorage.getItem("rj-staff-name");
-  } catch {
-    return false;
-  }
-}
 
 export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) => void; signedIn?: string | null }) {
   // A Riser signed in on this device is chosen already.

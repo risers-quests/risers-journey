@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { ReportTopic, TopicStatus } from "../reportTypes";
+import { staffSignedIn } from "../staff";
 
 /*
  * The report has two parts:
@@ -120,9 +121,11 @@ export function startWords(startAt: string | null): string {
  * For staff, below the child's part and folded away: every topic's result,
  * its CPA stages and the CPA × Bloom's grid, why, the main mistake and where
  * to start. `notes` adds lines per topic (e.g. how it changed); `children`
- * adds sections at the end.
+ * adds sections at the end. Shown only when staff are signed in on this
+ * device, so children never see it.
  */
 export function StaffSection({ topics, notes, summary, children }: { topics: ReportTopic[]; notes?: (t: ReportTopic) => string[]; summary?: ReactNode; children?: ReactNode }) {
+  if (!staffSignedIn()) return null;
   return (
     <details className="rp-staff">
       <summary>

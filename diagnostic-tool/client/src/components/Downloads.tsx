@@ -1,10 +1,11 @@
 import { ReportEntry } from "../reportTypes";
 import { STAFF_WORD, stageWord } from "./ReportParts";
+import { staffSignedIn } from "../staff";
 
 /**
  * Download a report: as a PDF (the browser's print sheet, "Save as PDF";
  * on an iPad, Share → Save to Files) and as a spreadsheet (CSV, one row per
- * topic per test) for staff.
+ * topic per test) for staff, offered only when staff are signed in.
  */
 export function Downloads({ childName, reports, fileName }: { childName: string; reports: ReportEntry[]; fileName: string }) {
   function pdf() {
@@ -60,9 +61,11 @@ export function Downloads({ childName, reports, fileName }: { childName: string;
       <button type="button" className="btn btn-secondary" onClick={pdf}>
         PDF
       </button>
-      <button type="button" className="btn btn-secondary" onClick={csv}>
-        Spreadsheet (CSV)
-      </button>
+      {staffSignedIn() && (
+        <button type="button" className="btn btn-secondary" onClick={csv}>
+          Spreadsheet (CSV)
+        </button>
+      )}
     </div>
   );
 }
