@@ -96,7 +96,7 @@ async function save(sessionId: string, session: StoredSession): Promise<void> {
 
 export async function createSession(childName: string, grade: string, strands?: string[], topics?: string[]): Promise<{ id: string; state: SessionState }> {
   const id = newId();
-  const state = createInitialState(strands, grade === "Grade 4" ? 4 : 5, topics);
+  const state = createInitialState(strands, gradeNumber(grade), topics);
   await save(id, { child_name: childName, grade, created_at: new Date().toISOString(), status: "in_progress", state, responses: [] });
   return { id, state };
 }
@@ -243,4 +243,10 @@ export async function replaceReports(kid: string, updated: ReportEntry[]): Promi
     body: JSON.stringify({ group: "diagnostic-history", kid, week: "reports", state: { childName: h.childName, reports } }),
   });
   if (!res.ok) throw new Error(`store write failed (${res.status})`);
+}
+
+/** "Grade 8" -> 8. Grades without their own questions use Grade 5's. */
+export function gradeNumber(grade: string | undefined): number {
+  const n = Number(String(grade ?? "").replace(/\D/g, ""));
+  return n === 4 || n === 8 ? n : 5;
 }

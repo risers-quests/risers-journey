@@ -35,6 +35,41 @@ Early Mathematics Anxiety, SEMA** — validated for grades 3–6), reported
 side by side rather than combined into one live signal. See *Two separate
 instruments* below for the full reasoning and sourcing.
 
+## Grade 8 (Benjamin)
+
+Grade 8 follows its own book (Selina Concise Mathematics 8) with its own
+topics (`g8-…` in `itemBank/topics.ts`), chosen chapter by chapter on the
+start page like Grade 4. In so far (`itemBank/generate/*G8.ts`):
+- Theme 1, Number System: Rational Numbers, Exponents, Squares and Square
+  Roots, Cubes and Cube Roots, Playing with Numbers, Sets (number cards
+  1–12 on the free grid; Venn diagrams).
+- Theme 2, Ratio and Proportion: Percent, Profit Loss and Discount,
+  Interest, Direct and Inverse Variations. Their hands-on level uses the
+  shading activity (`ShadeActivity`): tap a square to shade up to it.
+- Theme 3, Algebra: Algebraic Expressions, Identities, Factorisation,
+  Linear Equations, Linear Inequations. Hands-on: bags of x marbles,
+  sharing into bags (equations), sharing each term's tiles (factorising),
+  shading the area model (identities), shading numbered squares
+  (inequations). `generate/algebra.ts` writes expressions as the book does.
+- Theme 4, Geometry: Understanding Shapes, Special Quadrilaterals,
+  Constructions, Representing 3-D in 2-D, Symmetry, Circles. Pictures are
+  drawn by `Figure` (polygons, quadrilaterals with diagonals, solids with
+  hidden edges dashed, circle parts). Hands-on: shading angles (10° a
+  square) and lengths, and the free grid (`mode: "free"`: tap any square)
+  for symmetry and drawing to size. Constructions can't use compasses on
+  screen, so they test what a construction depends on.
+- Theme 5, Mensuration: Area of a Trapezium and a Polygon (and
+  semicircles), Surface Area, Volume and Capacity (cube, cuboid, cylinder;
+  π = 22/7). Hands-on: shading area (1 cm² a square), surface area and
+  litres; packing unit cubes in layers for volume.
+- Theme 6, Data Handling: Data Handling (grouping into classes, bar
+  graphs, pie charts) and Probability (coins, dice, cards, spinners,
+  experiments). Hands-on: shading counts and pie angles; shading the
+  outcomes on numbered cards.
+All questions are generated, with a named mistake behind every wrong
+option, and are covered by the stress test (algebra answers are checked by
+substituting numbers). All 25 chapters of the book are in.
+
 ## Stack
 
 - **Server**: Node.js + TypeScript + Express. Each session is saved as one

@@ -6,6 +6,31 @@ import { OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES, MISCONCEPTIONS as OP_MISCONCEPTI
 import { FACTORS_MULTIPLES_G4_TEMPLATES, MISCONCEPTIONS as FM4_MISCONCEPTIONS } from "./factorsMultiplesG4.js";
 import { FRACTIONS_G4_TEMPLATES, MISCONCEPTIONS as FR4_MISCONCEPTIONS } from "./fractionsG4.js";
 import { DECIMALS_G4_TEMPLATES, MISCONCEPTIONS as DEC4_MISCONCEPTIONS } from "./decimalsG4.js";
+import { RATIONAL_G8_TEMPLATES, MISCONCEPTIONS as RAT8_MISCONCEPTIONS } from "./rationalG8.js";
+import { EXPONENTS_G8_TEMPLATES, MISCONCEPTIONS as EXP8_MISCONCEPTIONS } from "./exponentsG8.js";
+import { SQUARES_G8_TEMPLATES, MISCONCEPTIONS as SQ8_MISCONCEPTIONS } from "./squaresG8.js";
+import { CUBES_G8_TEMPLATES, MISCONCEPTIONS as CUBE8_MISCONCEPTIONS } from "./cubesG8.js";
+import { PLAYING_G8_TEMPLATES, MISCONCEPTIONS as PLAY8_MISCONCEPTIONS } from "./playingNumbersG8.js";
+import { SETS_G8_TEMPLATES, MISCONCEPTIONS as SET8_MISCONCEPTIONS } from "./setsG8.js";
+import { PERCENT_G8_TEMPLATES, MISCONCEPTIONS as PCT8_MISCONCEPTIONS } from "./percentG8.js";
+import { PROFIT_LOSS_G8_TEMPLATES, MISCONCEPTIONS as PL8_MISCONCEPTIONS } from "./profitLossG8.js";
+import { INTEREST_G8_TEMPLATES, MISCONCEPTIONS as INT8_MISCONCEPTIONS } from "./interestG8.js";
+import { VARIATION_G8_TEMPLATES, MISCONCEPTIONS as VAR8_MISCONCEPTIONS } from "./variationG8.js";
+import { EXPRESSIONS_G8_TEMPLATES, MISCONCEPTIONS as EX8_MISCONCEPTIONS } from "./expressionsG8.js";
+import { IDENTITIES_G8_TEMPLATES, MISCONCEPTIONS as ID8_MISCONCEPTIONS } from "./identitiesG8.js";
+import { FACTORISATION_G8_TEMPLATES, MISCONCEPTIONS as FAC8_MISCONCEPTIONS } from "./factorisationG8.js";
+import { EQUATIONS_G8_TEMPLATES, MISCONCEPTIONS as EQ8_MISCONCEPTIONS } from "./equationsG8.js";
+import { INEQUATIONS_G8_TEMPLATES, MISCONCEPTIONS as INEQ8_MISCONCEPTIONS } from "./inequationsG8.js";
+import { SHAPES_G8_TEMPLATES, MISCONCEPTIONS as SHP8_MISCONCEPTIONS } from "./shapesG8.js";
+import { QUADRILATERALS_G8_TEMPLATES, MISCONCEPTIONS as QD8_MISCONCEPTIONS } from "./quadrilateralsG8.js";
+import { CONSTRUCTIONS_G8_TEMPLATES, MISCONCEPTIONS as CON8_MISCONCEPTIONS } from "./constructionsG8.js";
+import { SOLIDS_G8_TEMPLATES, MISCONCEPTIONS as D38_MISCONCEPTIONS } from "./solidsG8.js";
+import { SYMMETRY_G8_TEMPLATES, MISCONCEPTIONS as SYM8_MISCONCEPTIONS } from "./symmetryG8.js";
+import { CIRCLES_G8_TEMPLATES, MISCONCEPTIONS as CIR8_MISCONCEPTIONS } from "./circlesG8.js";
+import { AREA_G8_TEMPLATES, MISCONCEPTIONS as AR8_MISCONCEPTIONS } from "./areaG8.js";
+import { VOLUME_G8_TEMPLATES, MISCONCEPTIONS as VOL8_MISCONCEPTIONS } from "./volumeG8.js";
+import { DATA_G8_TEMPLATES, MISCONCEPTIONS as DH8_MISCONCEPTIONS } from "./dataG8.js";
+import { PROBABILITY_G8_TEMPLATES, MISCONCEPTIONS as PR8_MISCONCEPTIONS } from "./probabilityG8.js";
 
 export type { GeneratedItem } from "./core.js";
 
@@ -26,10 +51,40 @@ const GRADE4_TEMPLATES: Record<string, Record<string, Template>> = {
   decimals: DECIMALS_G4_TEMPLATES,
 };
 
+/** Grade 8 (its own book and topics): every topic's questions are generated. */
+const GRADE8_TEMPLATES: Record<string, Record<string, Template>> = {
+  "g8-rational-numbers": RATIONAL_G8_TEMPLATES,
+  "g8-exponents": EXPONENTS_G8_TEMPLATES,
+  "g8-squares": SQUARES_G8_TEMPLATES,
+  "g8-cubes": CUBES_G8_TEMPLATES,
+  "g8-playing-numbers": PLAYING_G8_TEMPLATES,
+  "g8-sets": SETS_G8_TEMPLATES,
+  "g8-percent": PERCENT_G8_TEMPLATES,
+  "g8-profit-loss": PROFIT_LOSS_G8_TEMPLATES,
+  "g8-interest": INTEREST_G8_TEMPLATES,
+  "g8-variation": VARIATION_G8_TEMPLATES,
+  "g8-expressions": EXPRESSIONS_G8_TEMPLATES,
+  "g8-identities": IDENTITIES_G8_TEMPLATES,
+  "g8-factorisation": FACTORISATION_G8_TEMPLATES,
+  "g8-linear-equations": EQUATIONS_G8_TEMPLATES,
+  "g8-inequations": INEQUATIONS_G8_TEMPLATES,
+  "g8-shapes": SHAPES_G8_TEMPLATES,
+  "g8-quadrilaterals": QUADRILATERALS_G8_TEMPLATES,
+  "g8-constructions": CONSTRUCTIONS_G8_TEMPLATES,
+  "g8-solids": SOLIDS_G8_TEMPLATES,
+  "g8-symmetry": SYMMETRY_G8_TEMPLATES,
+  "g8-circles": CIRCLES_G8_TEMPLATES,
+  "g8-area": AREA_G8_TEMPLATES,
+  "g8-volume": VOLUME_G8_TEMPLATES,
+  "g8-data": DATA_G8_TEMPLATES,
+  "g8-probability": PROBABILITY_G8_TEMPLATES,
+};
+
 /** Topics with generated questions (Grade 5; Grade 4 also uses GRADE4_TEMPLATES). */
 export const GENERATED_TOPICS = Object.keys(TEMPLATES);
 
 function templatesFor(topicId: string, grade: number): Record<string, Template> | undefined {
+  if (grade === 8) return GRADE8_TEMPLATES[topicId];
   return (grade === 4 ? GRADE4_TEMPLATES[topicId] : undefined) ?? TEMPLATES[topicId];
 }
 
@@ -40,6 +95,31 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...FM4_MISCONCEPTIONS,
   ...FR4_MISCONCEPTIONS,
   ...DEC4_MISCONCEPTIONS,
+  ...RAT8_MISCONCEPTIONS,
+  ...EXP8_MISCONCEPTIONS,
+  ...SQ8_MISCONCEPTIONS,
+  ...CUBE8_MISCONCEPTIONS,
+  ...PLAY8_MISCONCEPTIONS,
+  ...SET8_MISCONCEPTIONS,
+  ...PCT8_MISCONCEPTIONS,
+  ...PL8_MISCONCEPTIONS,
+  ...INT8_MISCONCEPTIONS,
+  ...VAR8_MISCONCEPTIONS,
+  ...EX8_MISCONCEPTIONS,
+  ...ID8_MISCONCEPTIONS,
+  ...FAC8_MISCONCEPTIONS,
+  ...EQ8_MISCONCEPTIONS,
+  ...INEQ8_MISCONCEPTIONS,
+  ...SHP8_MISCONCEPTIONS,
+  ...QD8_MISCONCEPTIONS,
+  ...CON8_MISCONCEPTIONS,
+  ...D38_MISCONCEPTIONS,
+  ...SYM8_MISCONCEPTIONS,
+  ...CIR8_MISCONCEPTIONS,
+  ...AR8_MISCONCEPTIONS,
+  ...VOL8_MISCONCEPTIONS,
+  ...DH8_MISCONCEPTIONS,
+  ...PR8_MISCONCEPTIONS,
 };
 
 export function hasTemplate(topicId: string, cpa: CPAStage, bloom: BloomLevel, grade = 5): boolean {
@@ -100,3 +180,6 @@ export function isGenerated(item: Item): item is GeneratedItem {
 
 /** Topics ready at Grade 4, in book order (offered one by one on the start page). */
 export const GRADE4_TOPICS = ["more-large-numbers", "operations-large-numbers", "factors-multiples", "four-operations-fractions", "decimals"];
+
+/** Grade 8 chapters ready, in book order (offered one by one on the start page). */
+export const GRADE8_TOPICS = Object.keys(GRADE8_TEMPLATES);

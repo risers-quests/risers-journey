@@ -127,5 +127,43 @@ export const TOPICS: Topic[] = [
   },
 ];
 
+/**
+ * Grade 8 (Selina Concise Mathematics 8), Themes 1–6 (Number System;
+ * Ratio and Proportion; Algebra; Geometry; Mensuration; Data Handling), in the
+ * book's order. Grade 8 tests are chosen chapter by chapter (GRADE8_TOPICS).
+ */
+TOPICS.push(
+  { id: "g8-rational-numbers", strand: "Number & Algebra", name: "Rational Numbers", shortLabel: "Rational Numbers", dependsOn: [], grade: 8 },
+  { id: "g8-exponents", strand: "Number & Algebra", name: "Exponents (Powers)", shortLabel: "Exponents", dependsOn: [], grade: 8 },
+  { id: "g8-squares", strand: "Number & Algebra", name: "Squares and Square Roots", shortLabel: "Squares & Roots", dependsOn: [], grade: 8 },
+  { id: "g8-cubes", strand: "Number & Algebra", name: "Cubes and Cube Roots", shortLabel: "Cubes & Roots", dependsOn: ["g8-squares"], grade: 8 },
+  { id: "g8-playing-numbers", strand: "Number & Algebra", name: "Playing with Numbers", shortLabel: "Playing with Numbers", dependsOn: [], grade: 8 },
+  { id: "g8-sets", strand: "Number & Algebra", name: "Sets", shortLabel: "Sets", dependsOn: [], grade: 8 },
+  // Theme 2: Ratio and Proportion.
+  { id: "g8-percent", strand: "Ratio & Proportion", name: "Percent and Percentage", shortLabel: "Percent", dependsOn: [], grade: 8 },
+  { id: "g8-profit-loss", strand: "Ratio & Proportion", name: "Profit, Loss and Discount", shortLabel: "Profit & Loss", dependsOn: ["g8-percent"], grade: 8 },
+  { id: "g8-interest", strand: "Ratio & Proportion", name: "Interest (Simple and Compound)", shortLabel: "Interest", dependsOn: ["g8-percent"], grade: 8 },
+  { id: "g8-variation", strand: "Ratio & Proportion", name: "Direct and Inverse Variations", shortLabel: "Variation", dependsOn: [], grade: 8 },
+  // Theme 3: Algebra.
+  { id: "g8-expressions", strand: "Number & Algebra", name: "Algebraic Expressions", shortLabel: "Expressions", dependsOn: [], grade: 8 },
+  { id: "g8-identities", strand: "Number & Algebra", name: "Identities", shortLabel: "Identities", dependsOn: ["g8-expressions"], grade: 8 },
+  { id: "g8-factorisation", strand: "Number & Algebra", name: "Factorisation", shortLabel: "Factorisation", dependsOn: ["g8-expressions"], grade: 8 },
+  { id: "g8-linear-equations", strand: "Number & Algebra", name: "Linear Equations in One Variable", shortLabel: "Linear Equations", dependsOn: [], grade: 8 },
+  { id: "g8-inequations", strand: "Number & Algebra", name: "Linear Inequations", shortLabel: "Inequations", dependsOn: [], grade: 8 },
+  // Theme 4: Geometry.
+  { id: "g8-shapes", strand: "Measurement & Geometry", name: "Understanding Shapes", shortLabel: "Shapes & Polygons", dependsOn: [], grade: 8 },
+  { id: "g8-quadrilaterals", strand: "Measurement & Geometry", name: "Special Types of Quadrilaterals", shortLabel: "Quadrilaterals", dependsOn: [], grade: 8 },
+  { id: "g8-constructions", strand: "Measurement & Geometry", name: "Constructions", shortLabel: "Constructions", dependsOn: [], grade: 8 },
+  { id: "g8-solids", strand: "Measurement & Geometry", name: "Representing 3-D in 2-D", shortLabel: "3-D in 2-D", dependsOn: [], grade: 8 },
+  { id: "g8-symmetry", strand: "Measurement & Geometry", name: "Symmetry", shortLabel: "Symmetry", dependsOn: [], grade: 8 },
+  { id: "g8-circles", strand: "Measurement & Geometry", name: "Circles", shortLabel: "Circles", dependsOn: [], grade: 8 },
+  // Theme 5: Mensuration.
+  { id: "g8-area", strand: "Measurement & Geometry", name: "Area of a Trapezium and a Polygon", shortLabel: "Area", dependsOn: [], grade: 8 },
+  { id: "g8-volume", strand: "Measurement & Geometry", name: "Surface Area, Volume and Capacity", shortLabel: "Volume & Surface", dependsOn: [], grade: 8 },
+  // Theme 6: Data Handling.
+  { id: "g8-data", strand: "Data Handling", name: "Data Handling", shortLabel: "Data Handling", dependsOn: [], grade: 8 },
+  { id: "g8-probability", strand: "Data Handling", name: "Probability", shortLabel: "Probability", dependsOn: [], grade: 8 }
+);
+
 /** The book's strands, in order. A test covers one or more of them. */
 export const STRANDS = ["Number & Algebra", "Measurement & Geometry", "Ratio & Proportion", "Data Handling"];

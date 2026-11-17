@@ -1,10 +1,11 @@
-import { LOOK, ReportEntry } from "../reportTypes";
-import { stageWord } from "./ReportParts";
+import { ReportEntry } from "../reportTypes";
+import { STAFF_WORD, stageWord } from "./ReportParts";
+import { staffSignedIn } from "../staff";
 
 /**
  * Download a report: as a PDF (the browser's print sheet, "Save as PDF";
  * on an iPad, Share → Save to Files) and as a spreadsheet (CSV, one row per
- * topic per test) for staff.
+ * topic per test) for staff, offered only when staff are signed in.
  */
 export function Downloads({ childName, reports, fileName }: { childName: string; reports: ReportEntry[]; fileName: string }) {
   function pdf() {
@@ -23,7 +24,7 @@ export function Downloads({ childName, reports, fileName }: { childName: string;
   }
 
   function csv() {
-    const head = ["Child", "Date", "Time", "Grade", "Topic", "Result", "Why", "With objects", "With pictures", "With numbers", "Main mistake", "Tip", "Questions right", "Questions asked"];
+    const head = ["Child", "Date", "Time", "Grade", "Topic", "Result", "Why", "Concrete", "Pictorial", "Abstract", "Main mistake", "Child tip", "Questions right", "Questions asked"];
     const rows = reports.flatMap((r) => {
       const d = new Date(r.date);
       return r.topics.map((t) => [
@@ -32,7 +33,7 @@ export function Downloads({ childName, reports, fileName }: { childName: string;
         d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }),
         r.grade,
         t.name,
-        LOOK[t.status].word,
+        STAFF_WORD[t.status].word,
         t.why,
         ...t.grid.map((row) => stageWord(row).word),
         t.mistakes[0]?.label ?? "",
@@ -58,11 +59,13 @@ export function Downloads({ childName, reports, fileName }: { childName: string;
     <div className="rp-downloads">
       <span>Download:</span>
       <button type="button" className="btn btn-secondary" onClick={pdf}>
-        📄 PDF
+        PDF
       </button>
-      <button type="button" className="btn btn-secondary" onClick={csv}>
-        📊 Spreadsheet (CSV)
-      </button>
+      {staffSignedIn() && (
+        <button type="button" className="btn btn-secondary" onClick={csv}>
+          Spreadsheet (CSV)
+        </button>
+      )}
     </div>
   );
 }

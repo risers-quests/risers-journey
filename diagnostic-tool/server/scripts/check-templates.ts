@@ -12,7 +12,7 @@
  *     caught as the right misconception
  * Run: npx tsx scripts/check-templates.ts   (N=2000 for a quicker run)
  */
-import { GENERATED_TOPICS, GRADE4_TOPICS, MISCONCEPTIONS, generateItem, GeneratedItem } from "../src/itemBank/generate/index.js";
+import { GENERATED_TOPICS, GRADE4_TOPICS, GRADE8_TOPICS, MISCONCEPTIONS, generateItem, GeneratedItem } from "../src/itemBank/generate/index.js";
 import { checkActivity } from "../src/itemBank/generate/activities.js";
 import { verify as verifyLargeNumbers, dropZeros } from "../src/itemBank/generate/moreOnLargeNumbers.js";
 import { verify as verifyOperations } from "../src/itemBank/generate/operationsOnLargeNumbers.js";
@@ -24,7 +24,7 @@ import { BLOOM_ORDER, CPA_ORDER } from "../src/types.js";
 const N = Number(process.env.N || 20000);
 let failures = 0;
 const fail = (msg: string) => {
-  if (failures++ < 25) console.log("FAIL", msg);
+  if (failures++ < Number(process.env.MAXFAIL || 25)) console.log("FAIL", msg);
 };
 
 // ---- per-topic independent answer checks ----
@@ -58,6 +58,154 @@ const VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
   "four-operations-fractions": (it) => verifyFractionsG4(it),
   decimals: (it) => verifyDecimalsG4(it),
 };
+
+// ---- Grade 8: the right answer recomputed from the numbers, independently ----
+const num = (t: string) => Number((t.replace(/₹/g, "").replace(/−/g, "-").replace(/,/g, "").match(/^-?\d+(\.\d+)?/) ?? ["NaN"])[0]);
+const fracVal = (t: string) => {
+  const m = t.replace(/−/g, "-").match(/^(-?\d+)\/(\d+)$/);
+  return m ? Number(m[1]) / Number(m[2]) : num(t);
+};
+function verifyG8(it: GeneratedItem): string | null {
+  const p = it.params;
+  const right = it.choices.find((c) => c.id === it.correctChoiceId)!.text;
+  const cell = `${it.topicId}|${it.cpa}|${it.bloom}`;
+  const want: Record<string, () => number> = {
+    "g8-rational-numbers|abstract|understand": () => p.a / p.b + (p.s * p.c) / p.d,
+    "g8-rational-numbers|abstract|apply": () => (-p.a / p.b) / (p.c / p.d),
+    "g8-rational-numbers|pictorial|evaluate": () => (p.a - p.b) / p.d,
+    "g8-rational-numbers|pictorial|apply": () => (p.a + 1) / p.d,
+    "g8-exponents|abstract|apply": () => (-p.a) ** p.n,
+    "g8-squares|abstract|remember": () => p.n,
+    "g8-squares|abstract|apply": () => 2 ** p.i * 3 ** p.j * 5 ** p.k,
+    "g8-squares|pictorial|analyze": () => 2 * p.n + 1,
+    "g8-squares|pictorial|remember": () => p.n * p.n,
+    "g8-cubes|abstract|remember": () => p.n ** 3,
+    "g8-cubes|abstract|understand": () => p.n,
+    "g8-cubes|abstract|evaluate": () => p.a * p.b,
+    "g8-cubes|pictorial|apply": () => 8 * p.n ** 3,
+    "g8-playing-numbers|abstract|apply": () => 9 * (p.a - p.b),
+    "g8-playing-numbers|abstract|analyze": () => p.t,
+    "g8-playing-numbers|pictorial|analyze": () => (p.a + p.b + p.c) % 9,
+    "g8-percent|abstract|understand": () => (p.p * p.N) / 100,
+    "g8-percent|abstract|apply": () => p.whole,
+    "g8-percent|abstract|analyze": () => p.p,
+    "g8-percent|abstract|evaluate": () => ((1 + p.p / 100) * (1 + p.q / 100) - 1) * 100,
+    "g8-percent|pictorial|understand": () => 2 * p.s,
+    "g8-percent|pictorial|apply": () => 5 * p.s,
+    "g8-profit-loss|abstract|understand": () => (p.C * (100 - p.L)) / 100,
+    "g8-profit-loss|abstract|apply": () => (p.M * (100 - p.d) * (100 + p.t)) / 10000,
+    "g8-profit-loss|abstract|analyze": () => p.C,
+    "g8-profit-loss|abstract|evaluate": () => p.M,
+    "g8-profit-loss|pictorial|understand": () => p.M - (p.M * p.d) / 100,
+    "g8-profit-loss|pictorial|apply": () => p.C * (1 + p.p / 100),
+    "g8-interest|abstract|remember": () => (p.P * p.R * p.T) / 100,
+    "g8-interest|abstract|apply": () => p.P * ((1 + p.R / 100) ** 2 - 1),
+    "g8-interest|abstract|analyze": () => p.P * (1 + p.R / 100) ** 3,
+    "g8-interest|abstract|evaluate": () => p.P * (1 + p.R / 200) ** 3,
+    "g8-interest|pictorial|understand": () => (3 * p.P * p.R) / 100,
+    "g8-variation|abstract|understand": () => (p.W * p.D) / p.W2,
+    "g8-variation|abstract|evaluate": () => (p.a * p.b) / p.c,
+    "g8-variation|pictorial|understand": () => (p.W * p.D) / p.W2,
+    "g8-variation|pictorial|remember": () => p.m * p.u,
+    "g8-variation|abstract|remember": () => p.m * p.u,
+    "g8-expressions|abstract|remember": () => p.a * p.k + p.b,
+    "g8-expressions|concrete|apply": () => p.a * p.k + p.r,
+    "g8-identities|abstract|apply": () => 10000 - p.c * p.c,
+    "g8-identities|abstract|evaluate": () => p.s * p.s - 2 * p.p,
+    "g8-identities|pictorial|evaluate": () => (p.big + p.c) ** 2,
+    "g8-linear-equations|pictorial|remember": () => p.x,
+    "g8-linear-equations|pictorial|analyze": () => p.k,
+    "g8-linear-equations|pictorial|evaluate": () => p.x,
+    "g8-linear-equations|abstract|evaluate": () => p.small,
+    "g8-inequations|abstract|evaluate": () => p.k,
+    "g8-shapes|abstract|remember": () => (p.n - 2) * 180,
+    "g8-shapes|abstract|apply": () => 180 - 360 / p.n,
+    "g8-shapes|abstract|analyze": () => p.n,
+    "g8-shapes|abstract|evaluate": () => (p.n * (p.n - 3)) / 2,
+    "g8-shapes|pictorial|apply": () => 180 - 360 / p.n,
+    "g8-shapes|pictorial|evaluate": () => (p.n - 2) * 180,
+    "g8-quadrilaterals|pictorial|remember": () => 180 - p.a,
+    "g8-quadrilaterals|abstract|remember": () => p.a,
+    "g8-quadrilaterals|pictorial|understand": () => 2 * p.k,
+    "g8-solids|abstract|understand": () => p.F + p.V - 2,
+    "g8-solids|abstract|apply": () => p.n + 2,
+    "g8-solids|abstract|analyze": () => 2 * p.n,
+    "g8-solids|pictorial|analyze": () => 3 * p.m,
+    "g8-symmetry|pictorial|remember": () => p.n,
+    "g8-symmetry|pictorial|apply": () => p.n,
+    "g8-symmetry|pictorial|evaluate": () => 360 / p.n,
+    "g8-symmetry|abstract|apply": () => 360 / p.k,
+    "g8-circles|abstract|understand": () => p.d / 2,
+    "g8-circles|abstract|remember": () => p.r,
+    "g8-circles|pictorial|apply": () => p.r,
+    "g8-area|abstract|remember": () => ((p.a + p.b) / 2) * p.h,
+    "g8-area|pictorial|remember": () => ((p.a + p.b) / 2) * p.h,
+    "g8-area|pictorial|understand": () => p.h,
+    "g8-area|pictorial|apply": () => p.w * p.h + (p.w * p.t) / 2,
+    "g8-area|abstract|apply": () => (p.d * (p.h1 + p.h2)) / 2,
+    "g8-area|abstract|analyze": () => p.b,
+    "g8-area|abstract|understand": () => ((22 / 7) * (p.r / 2) ** 2) / 2,
+    "g8-area|abstract|evaluate": () => 14 * p.k,
+    "g8-volume|pictorial|remember": () => p.l * p.b * p.h,
+    "g8-volume|pictorial|understand": () => 6 * p.a * p.a,
+    "g8-volume|abstract|remember": () => p.a ** 3,
+    "g8-volume|abstract|understand": () => 2 * (p.l * p.b + p.b * p.h + p.h * p.l),
+    "g8-volume|abstract|apply": () => (22 / 7) * (p.d / 2) ** 2 * p.h,
+    "g8-volume|abstract|analyze": () => p.h,
+    "g8-volume|pictorial|evaluate": () => (p.l * p.b * p.h) / 1000,
+    "g8-data|abstract|remember": () => p.w,
+    "g8-data|abstract|apply": () => (p.p / p.T) * 360,
+    "g8-data|abstract|analyze": () => (p.T * p.a) / 360,
+    "g8-probability|abstract|understand": () => p.r / (p.r + p.b),
+    "g8-probability|abstract|apply": () => (p.d - p.a) / p.d,
+    "g8-probability|abstract|analyze": () => (6 - Math.abs(7 - p.s)) / 36,
+    "g8-probability|pictorial|apply": () => p.h / p.N,
+    "g8-sets|abstract|analyze": () => p.nA + p.nB - p.both,
+    "g8-sets|pictorial|evaluate": () => p.onlyA + p.both + p.onlyB,
+    "g8-volume|abstract|evaluate": () => ((p.l / 10) * (p.b / 10) * (p.h / 10)) * 1000,
+  };
+  if (want[cell]) {
+    const w = want[cell](), got = fracVal(right);
+    if (Math.abs(w - got) > 0.051) return `right answer "${right}" is ${got}, should be ${w}`;
+  }
+  if (cell === "g8-playing-numbers|pictorial|evaluate" && (p.a + num(right) + p.c) % 9 !== 0) return `${p.a}${right}${p.c} isn't divisible by 9`;
+  if (cell === "g8-cubes|abstract|analyze") {
+    const n = p.s ** 3 * (p.t ? p.p * p.p : p.p);
+    const k = Math.round(Math.cbrt(n * num(right)));
+    if (k ** 3 !== n * num(right)) return `${n} × ${right} isn't a cube`;
+  }
+  if (cell === "g8-squares|abstract|analyze") {
+    const n = p.s * p.s * p.p;
+    const k = Math.round(Math.sqrt(n * num(right)));
+    if (k * k !== n * num(right)) return `${n} × ${right} isn't a square`;
+  }
+  // Algebra: the right answer must equal the question's expression at several values of x.
+  const evalAt = (s: string, x: number, y = 2) => {
+    const js = s.replace(/−/g, "-").replace(/x³/g, "(x*x*x)").replace(/x²/g, "(x*x)").replace(/y²/g, "(y*y)")
+      .replace(/(\d)\s*([xy(])/g, "$1*$2").replace(/\)\s*\(/g, ")*(").replace(/\)\s*([xy\d])/g, ")*$1").replace(/([xy])\s*\(/g, "$1*(").replace(/xy/g, "x*y");
+    return Function("x", "y", `return ${js};`)(x, y) as number;
+  };
+  const ALG: Record<string, () => string> = {
+    "g8-expressions|abstract|understand": () => `(${p.a}x + ${p.b}) - (${p.c}x - ${p.d})`,
+    "g8-expressions|abstract|apply": () => `${p.a}x(${p.b}x + ${p.s * p.c})`,
+    "g8-expressions|abstract|analyze": () => `(${p.a}x + ${p.b})(${p.c}x + ${p.d})`,
+    "g8-expressions|pictorial|analyze": () => `(x + ${p.a})(x + ${p.b})`,
+    "g8-identities|abstract|analyze": () => `(${p.a}x + ${p.b}y)(${p.a}x + ${p.b}y)`,
+  };
+  if (ALG[cell]) {
+    const q = ALG[cell]();
+    for (const xv of [2, 3, -1]) if (Math.abs(evalAt(q, xv) - evalAt(right, xv)) > 1e-9) return `right answer "${right}" doesn't equal ${q} at x = ${xv}`;
+  }
+  if (cell === "g8-factorisation|abstract|apply" || cell === "g8-factorisation|abstract|analyze") {
+    const q = cell.endsWith("apply") ? `x² + ${p.m + p.nn}x + ${p.m * p.nn}` : `x² - ${p.m - p.nn}x - ${p.m * p.nn}`;
+    for (const xv of [2, 3, -1]) if (Math.abs(evalAt(q, xv) - evalAt(right, xv)) > 1e-9) return `"${right}" doesn't multiply out to ${q}`;
+  }
+  // No wrong option may have the same value as the right one (for plain numbers and fractions).
+  if (/^−?\d+(\/\d+)?$/.test(right))
+    for (const c of it.choices) if (c.id !== it.correctChoiceId && /^−?\d+(\/\d+)?$/.test(c.text) && Math.abs(fracVal(c.text) - fracVal(right)) < 1e-9) return `wrong option "${c.text}" equals the right one`;
+  return null;
+}
+for (const t of GRADE8_TOPICS) VERIFY[t] = verifyG8;
 
 // ---- activities: a perfect attempt, and typical mistakes ----
 function checkActivityItem(it: GeneratedItem, where: string) {
@@ -194,10 +342,21 @@ function checkActivityItem(it: GeneratedItem, where: string) {
     if (act.correct.length === act.items.length) fail(`${where}: every card is right`);
     const extra = act.items.find((i) => !act.correct.includes(i.id))!;
     if (checkActivity(act, { picked: [...act.correct, extra.id] }).correct) fail(`${where}: an extra card was marked right`);
+  } else if (act.kind === "shade" && act.mode === "free") {
+    const t = act.targetCells ?? [];
+    if (!t.length || t.some((c) => c < 0 || c >= act.rows * act.cols)) fail(`${where}: target squares off the grid`);
+    if ((act.given ?? []).some((g) => !t.includes(g))) fail(`${where}: a given square isn't in the answer`);
+    if (!checkActivity(act, { shaded: t.length, cells: t }).correct) fail(`${where}: the right pattern was marked wrong`);
+    if (checkActivity(act, { shaded: 0, cells: act.given ?? [] }).correct) fail(`${where}: doing nothing is marked right`);
+    for (const w of act.wrongSets ?? []) if (checkActivity(act, { shaded: w.cells.length, cells: w.cells }).misconception !== w.mistake) fail(`${where}: a wrong pattern not caught as ${w.mistake}`);
+  } else if (act.kind === "shade") {
+    if (!Number.isInteger(act.target) || act.target < 0 || act.target > act.rows * act.cols) fail(`${where}: can't shade ${act.target} of ${act.rows * act.cols}`);
+    if (!checkActivity(act, { shaded: act.target }).correct) fail(`${where}: the right shading was marked wrong`);
+    for (const w of act.wrong ?? []) if (checkActivity(act, { shaded: w.value }).misconception !== w.mistake) fail(`${where}: shading ${w.value} not caught as ${w.mistake}`);
   } else fail(`${where}: unknown activity`);
 }
 
-const RUNS: [string, number][] = [...GENERATED_TOPICS.map((t) => [t, 5] as [string, number]), ...GRADE4_TOPICS.map((t) => [t, 4] as [string, number])];
+const RUNS: [string, number][] = [...GENERATED_TOPICS.map((t) => [t, 5] as [string, number]), ...GRADE4_TOPICS.map((t) => [t, 4] as [string, number]), ...GRADE8_TOPICS.map((t) => [t, 8] as [string, number])];
 for (const [topic, grade] of RUNS) {
   for (const cpa of CPA_ORDER)
     for (const bloom of BLOOM_ORDER) {
@@ -241,8 +400,10 @@ for (const [topic, grade] of RUNS) {
           continue;
         }
         // Whole-token match: "500" inside "2,293,500" is the skill, not a giveaway.
-        // What the child sees: positions ("value": where a dot sits) and step sizes aren't printed on screen.
-        const shown = [it.prompt, JSON.stringify(it.representation ?? {}, (k, v) => (k === "value" || k === "step" ? undefined : v))].join(" ");
+        // What the child sees: the prompt and the picture's labels. A figure's kind fields only choose how it's drawn;
+        // positions ("value": where a dot sits) and step sizes aren't printed on screen.
+        const { figure: _f, part: _p, solid: _s, quad: _q, ...visible } = (it.representation ?? {}) as Record<string, unknown>;
+        const shown = [it.prompt, JSON.stringify(visible, (k, v) => (k === "value" || k === "step" ? undefined : v))].join(" ");
         const appears = (t: string) => t.length > 2 && new RegExp(`(?<!\\d|\\d[,.])${t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?!\\d|[,.]\\d)`).test(shown);
         const showsAnother = it.choices.some((c) => c.id !== it.correctChoiceId && appears(c.text));
         if (appears(right.text) && !showsAnother) fail(`${where}: shows its own answer "${right.text}"`);
@@ -252,5 +413,5 @@ for (const [topic, grade] of RUNS) {
       console.log(`G${grade} ${topic.padEnd(20)} ${cpa.padEnd(9)} ${bloom.padEnd(10)} ${String(seen.size).padStart(6)} different`);
     }
 }
-console.log(failures ? `\n${failures} FAILURES` : `\nAll ${RUNS.length * 15 * N} generated questions passed (Grade 5 and Grade 4).`);
+console.log(failures ? `\n${failures} FAILURES` : `\nAll ${RUNS.length * 15 * N} generated questions passed (Grades 4, 5 and 8).`);
 process.exit(failures ? 1 : 0);

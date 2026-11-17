@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { GroupActivity } from "../components/GroupActivity";
 import { FigureCards, MeasureActivity, PickActivity, PiePicture, PizzaActivity, TilesActivity } from "../components/G4Visuals";
+import { ShadeActivity } from "../components/ShadeActivity";
 import { abstractClass } from "../promptStyle";
 import { getNextQuestion, submitAnswer } from "../api";
 import { NextQuestionResponse } from "../types";
@@ -17,6 +18,7 @@ import { Sharing } from "../components/Sharing";
 import { ShareActivity } from "../components/ShareActivity";
 import { PlaceValueActivity, PlaceValueChart } from "../components/PlaceValue";
 import { Bars } from "../components/Bars";
+import { Figure } from "../components/Figure";
 
 export function Assessment({
   sessionId,
@@ -153,6 +155,7 @@ export function Assessment({
         {item.representation?.kind === "shape" && <Shape spec={item.representation} />}
         {item.representation?.kind === "pie" && <PiePicture spec={item.representation} />}
         {item.representation?.kind === "figures" && <FigureCards spec={item.representation} />}
+        {item.representation?.kind === "figure" && <Figure spec={item.representation} />}
 
         {item.activity?.kind === "share" && <ShareActivity key={item.id} spec={item.activity} onChange={onActivity} />}
         {item.activity?.kind === "place-value" && <PlaceValueActivity key={item.id} spec={item.activity} onChange={onActivity} />}
@@ -161,12 +164,20 @@ export function Assessment({
         {item.activity?.kind === "tiles" && <TilesActivity key={item.id} spec={item.activity} onChange={onActivity} />}
         {item.activity?.kind === "pick" && <PickActivity key={item.id} spec={item.activity} onChange={onActivity} />}
         {item.activity?.kind === "measure" && <MeasureActivity key={item.id} spec={item.activity} onChange={onActivity} />}
+        {item.activity?.kind === "shade" && <ShadeActivity key={item.id} spec={item.activity} onChange={onActivity} />}
 
         {!byActivity && (
           <div className={`choices ${item.activity && !acted ? "choices-locked" : ""}`}>
             {item.activity && !acted && <div className="choices-hint">{
-                  { share: "Share them out first, then choose.", group: "Try it with the apples first, then choose.", pizza: "Try it on the pizza first, then choose.", tiles: "Try it on the grid first, then choose.", pick: "Tap the cards first, then choose.", measure: "Try it first, then choose.", "place-value": "Try it on the chart first, then choose." }[item.activity.kind]
-                }</div>}
+              item.activity.kind === "share" ? "Share them out first, then choose."
+              : item.activity.kind === "group" ? `Try it with the ${item.activity.itemMany} first, then choose.`
+              : item.activity.kind === "shade" ? "Shade it first, then choose."
+              : item.activity.kind === "pizza" ? "Try it on the pizza first, then choose."
+              : item.activity.kind === "tiles" ? "Try it on the grid first, then choose."
+              : item.activity.kind === "pick" ? "Tap the cards first, then choose."
+              : item.activity.kind === "measure" ? "Try it first, then choose."
+              : "Try it on the chart first, then choose."
+            }</div>}
             {item.choices.map((choice) => (
               <button
                 key={choice.id}

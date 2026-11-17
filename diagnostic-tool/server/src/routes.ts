@@ -12,13 +12,14 @@ import {
   saveReport,
   replaceReports,
   childKey,
+  gradeNumber,
 } from "./sessionStore.js";
 import { reportEntry, combine } from "./report/history.js";
 import { selectNextQuestion, applyOutcome } from "./engine/skillEngine.js";
 import { readSignal } from "./engine/signalEngine.js";
 import { sanitizeItemForClient, getItemById, getTopic, topicName } from "./itemBank/index.js";
 import { STRANDS } from "./itemBank/topics.js";
-import { isGenerated, generateItem, hasTemplate, signature, MISCONCEPTIONS, GRADE4_TOPICS } from "./itemBank/generate/index.js";
+import { isGenerated, generateItem, hasTemplate, signature, MISCONCEPTIONS, GRADE4_TOPICS, GRADE8_TOPICS } from "./itemBank/generate/index.js";
 import { BLOOM_ORDER, CPA_ORDER } from "./types.js";
 import { checkActivity } from "./itemBank/generate/activities.js";
 import { buildInsights } from "./engine/insights.js";
@@ -64,11 +65,12 @@ router.post("/sessions", async (req, res) => {
   const chosen = Array.isArray(strands) ? STRANDS.filter((s) => strands.includes(s)) : STRANDS;
   if (!chosen.length) return res.status(400).json({ error: "choose at least one strand" });
   const name = childName.trim().slice(0, 80);
-  // Grade 4: the topics chosen one by one (none given means every topic ready at Grade 4).
-  const g4 = grade === "Grade 4";
-  const chosenTopics = g4 && Array.isArray(topics) ? GRADE4_TOPICS.filter((t) => topics.includes(t)) : undefined;
-  if (g4 && chosenTopics && !chosenTopics.length) return res.status(400).json({ error: "choose at least one topic" });
-  const { id, state } = await createSession(name, g4 ? "Grade 4" : "Grade 5", chosen, chosenTopics);
+  // Grade 4 and Grade 8: the topics chosen one by one (none given means every topic ready at that grade).
+  const g = gradeNumber(grade);
+  const ready = g === 4 ? GRADE4_TOPICS : g === 8 ? GRADE8_TOPICS : null;
+  const chosenTopics = ready && Array.isArray(topics) ? ready.filter((t) => topics.includes(t)) : undefined;
+  if (ready && chosenTopics && !chosenTopics.length) return res.status(400).json({ error: "choose at least one topic" });
+  const { id, state } = await createSession(name, `Grade ${g}`, chosen, chosenTopics);
   if (!state.topicOrder.length) return res.status(400).json({ error: "no topics ready for that grade and strand yet" });
   // Numbers this child has had before (in earlier tests) are off limits.
   const history = await loadHistory(name);
@@ -83,14 +85,15 @@ router.post("/sessions", async (req, res) => {
 // cell of a topic, with the right answer and each wrong option's mistake.
 router.get("/preview/:topic", (req, res) => {
   const topic = req.params.topic;
+  const g = topic.startsWith("g8-") ? 8 : gradeNumber(String(req.query.grade ?? ""));
   const out = [];
   for (const cpa of CPA_ORDER) for (const bloom of BLOOM_ORDER) {
-    if (!hasTemplate(topic, cpa, bloom, req.query.grade === "4" ? 4 : 5)) continue;
-    const it = generateItem(topic, cpa, bloom, { grade: req.query.grade === "4" ? 4 : 5 });
+    if (!hasTemplate(topic, cpa, bloom, g)) continue;
+    const it = generateItem(topic, cpa, bloom, { grade: g });
     out.push({ ...it, mistakeLabels: Object.fromEntries(Object.entries(it.mistakes).map(([k, v]) => [k, v ? MISCONCEPTIONS[v]?.label ?? v : null])) });
   }
   if (!out.length) return res.status(404).json({ error: "no generated questions for this topic" });
-  res.json({ topic: topicName(topic, req.query.grade === "4" ? 4 : 5), items: out });
+  res.json({ topic: topicName(topic, g), items: out });
 });
 
 // Where a session is up to, for continuing it later (on the same device or

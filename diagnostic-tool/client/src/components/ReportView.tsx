@@ -1,82 +1,64 @@
 import { ReportEntry, fmtDate } from "../reportTypes";
-import { CpaTable, Ring, StatusGroup, nearlyWhy, startWords } from "./ReportParts";
+import { ScoreRing, StaffSection, TopicList, splitTopics, sureWords } from "./ReportParts";
 
-/** One test's report: what the child has got, what's nearly there, what to learn next, and how each topic was learned. */
-export function ReportView({ childName, report }: { childName: string; report: ReportEntry }) {
-  const tested = report.topics.filter((t) => t.status !== "notReached");
-  const by = (s: string) => report.topics.filter((t) => t.status === s);
+/**
+ * One test's report. For the child and parents: how many right, strengths
+ * and areas to grow. For staff, folded away below: the detail.
+ */
+export function ReportView({ childName, report, title }: { childName: string; report: ReportEntry; title?: string }) {
+  const { strong, grow } = splitTopics(report.topics);
+  const observation = sureWords(report.sureRight, report.sureTotal, report.right);
   return (
     <div className="rp">
       <header className="rp-head">
-        <div>
-          <p className="rp-eyebrow">Skill Check report · Maths</p>
-          <h1>{childName}</h1>
-          <p>
-            {report.grade} · {fmtDate(report.date)}
-            {report.minutes ? ` · ${report.minutes} min` : ""}
-          </p>
-        </div>
+        <p className="rp-eyebrow">Maths Skill Check</p>
+        <h1>{title ?? childName}</h1>
+        <p>
+          {report.grade} · {fmtDate(report.date)}
+        </p>
       </header>
 
       <section className="rp-card rp-top">
-        <Ring got={by("secure").length} nearly={by("fragile").length} total={tested.length} />
+        <ScoreRing value={report.right} total={report.questions} label="questions right" />
         <div className="rp-top-text">
-          <p>
-            <b>{report.right}</b> of {report.questions} questions right.
-          </p>
-          {report.sureTotal > 0 && (
-            <p>
-              🎯 When {childName} was sure, they were right <b>{report.sureRight} of {report.sureTotal}</b> times.
-            </p>
-          )}
-          <p className="rp-note">The questions got harder after each right answer, so this is about finding the edge, not getting everything right.</p>
+          {observation && <p className="rp-observe">{observation}</p>}
+          <p className="rp-note">The questions got harder as you went.</p>
         </div>
       </section>
 
-      <div className="rp-groups">
-        <StatusGroup status="secure" title="Strengths" topics={by("secure").map((t) => ({ name: t.name }))} />
-        <StatusGroup
-          status="fragile"
-          title="Nearly there"
-          topics={by("fragile").map((t) => ({ name: t.name, note: nearlyWhy(t.why) }))}
-        />
-        <StatusGroup
-          status="gap"
-          title="Next to learn"
-          topics={by("gap").map((t) => ({
-            name: t.name,
-            note: [t.mistakes[0] ? `Main mistake: ${t.mistakes[0].label.toLowerCase()}.` : "", startWords(t.startAt) ? `Best to ${startWords(t.startAt)}.` : ""].filter(Boolean).join(" "),
-          }))}
-        />
-        <StatusGroup
-          status="notReached"
-          title="Coming later"
-          topics={by("notReached").map((t) => ({ name: t.name, note: t.blockedBy.length ? `After ${t.blockedBy.join(" and ")}.` : undefined }))}
-        />
+      <div className="rp-lists">
+        <TopicList kind="strong" items={strong} empty="Keep going: your strengths will show here." />
+        <TopicList kind="grow" items={grow} empty="Nothing to work on from this check." />
       </div>
 
-      <CpaTable topics={report.topics} />
-
-      {report.next && (
-        <section className="rp-card rp-next">
-          <h2>🚀 What's next: {report.next.topic}</h2>
-          <p>💡 {report.next.tip}</p>
-          <p>🏠 At home: {report.next.atHome}</p>
-        </section>
-      )}
-
-      {report.actions.length > 0 && (
-        <details className="rp-card rp-adults">
-          <summary>For teachers and parents</summary>
-          <ol>
-            {report.actions.map((a) => (
-              <li key={a.topic}>
-                <b>{a.topic}:</b> {a.what} <span>{a.how}</span>
-              </li>
-            ))}
-          </ol>
-        </details>
-      )}
+      <StaffSection
+        topics={report.topics}
+        summary={
+          <p className="rp-staff-stats">
+            {report.right}/{report.questions} right · sure on {report.sureTotal}, right on {report.sureRight} of those
+            {report.minutes ? ` · ${report.minutes} min` : ""}
+          </p>
+        }
+      >
+        {report.actions.length > 0 && (
+          <div className="rp-staff-block">
+            <h3>Do next</h3>
+            <ol>
+              {report.actions.map((a) => (
+                <li key={a.topic}>
+                  <b>{a.topic}:</b> {a.what} <span>{a.how}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+        {report.next && (
+          <div className="rp-staff-block">
+            <h3>Teach next: {report.next.topic}</h3>
+            <p>{report.next.tip}</p>
+          </div>
+        )}
+      </StaffSection>
     </div>
   );
 }

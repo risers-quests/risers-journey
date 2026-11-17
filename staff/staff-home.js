@@ -5,6 +5,10 @@
    on that category's own page. */
 (function () {
   var STAFF_KEY = 'rj-staff-name';
+  // Jeran's Admin console (a Google Apps Script web app that only the
+  // LifeHub admin Google account can open; see admin-tool/SETUP.md). Paste
+  // its /exec address here once it's deployed. No data lives on this site.
+  var ADMIN_CONSOLE_URL = '';
   var app = document.getElementById('app');
   var STAFF_NAMES = window.EOT2_STAFF_RATERS.filter(function (r) { return r.id !== 'consolidated'; });
 
@@ -46,7 +50,9 @@
       { title: 'Term 2', desc: 'The Term 2 conference and quests.', href: 'term-2/index.html', icon: 'term', tone: 'slate' },
       { title: 'Term 1', desc: 'The Term 1 conference.', href: 'term-1/index.html', icon: 'conf', tone: 'violet' },
       { title: 'Maths Diagnostic', desc: 'Grade 5 maths gaps and the SEMA maths-anxiety check.', href: '../diagnostic/', icon: 'check', tone: 'green' }
-    ])));
+    ].concat(staffInfo.id === 'jeran' ? [
+      { title: 'Admin', desc: 'Fees, payments, reminders and emails waiting for a reply.', href: ADMIN_CONSOLE_URL, icon: 'paper', tone: 'slate', soon: !ADMIN_CONSOLE_URL }
+    ] : []))));
   }
 
   function init() {

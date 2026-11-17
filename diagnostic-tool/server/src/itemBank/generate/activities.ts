@@ -1,4 +1,4 @@
-import { Activity, GroupInteraction, MeasureInteraction, PickInteraction, PizzaInteraction, PlaceValueInteraction, ShareInteraction, TilesInteraction } from "../../types.js";
+import { Activity, GroupInteraction, MeasureInteraction, PickInteraction, PizzaInteraction, PlaceValueInteraction, ShadeInteraction, ShareInteraction, TilesInteraction } from "../../types.js";
 import { dropZeros } from "./moreOnLargeNumbers.js";
 
 /**
@@ -9,6 +9,20 @@ export function checkActivity(activity: Activity, interaction: unknown): { corre
   if (activity.kind === "share") return checkShare(activity, interaction as ShareInteraction);
   if (activity.kind === "place-value") return checkPlaceValue(activity, interaction as PlaceValueInteraction);
   if (activity.kind === "group") return checkGroup(activity, interaction as GroupInteraction);
+  if (activity.kind === "shade" && activity.mode === "free") {
+    const raw = (interaction as ShadeInteraction)?.cells;
+    if (!Array.isArray(raw)) return { correct: false, misconception: null };
+    const key = (cells: number[]) => [...new Set([...cells.map((c) => Math.floor(Number(c))), ...(activity.given ?? [])])].sort((a, b) => a - b).join(",");
+    const got = key(raw);
+    if (got === key(activity.targetCells ?? [])) return { correct: true, misconception: null };
+    return { correct: false, misconception: activity.wrongSets?.find((w) => key(w.cells) === got)?.mistake ?? null };
+  }
+  if (activity.kind === "shade") {
+    const v = Math.floor(Number((interaction as ShadeInteraction)?.shaded));
+    if (!Number.isFinite(v)) return { correct: false, misconception: null };
+    if (v === activity.target) return { correct: true, misconception: null };
+    return { correct: false, misconception: activity.wrong?.find((w) => w.value === v)?.mistake ?? null };
+  }
   if (activity.kind === "pizza") return checkPizza(activity, interaction as PizzaInteraction);
   if (activity.kind === "tiles") return checkTiles(activity, interaction as TilesInteraction);
   if (activity.kind === "pick") return checkPick(activity, interaction as PickInteraction);

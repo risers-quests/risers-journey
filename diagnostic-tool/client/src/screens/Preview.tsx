@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { FigureCards, MeasureActivity, PickActivity, PiePicture, PizzaActivity, TilesActivity } from "../components/G4Visuals";
-import { GroupActivity } from "../components/GroupActivity";
 import { abstractClass } from "../promptStyle";
 import { BarModel } from "../components/BarModel";
 import { ConcreteObjects } from "../components/ConcreteObjects";
@@ -12,6 +11,9 @@ import { Activity, Representation } from "../types";
 import { ShareActivity } from "../components/ShareActivity";
 import { PlaceValueActivity, PlaceValueChart } from "../components/PlaceValue";
 import { Bars } from "../components/Bars";
+import { GroupActivity } from "../components/GroupActivity";
+import { ShadeActivity } from "../components/ShadeActivity";
+import { Figure } from "../components/Figure";
 
 interface PreviewItem {
   id: string;
@@ -34,7 +36,8 @@ export function Preview() {
   useEffect(() => {
     // ?preview=<topic id>, e.g. ?preview=more-large-numbers (default: fractions-division)
     const topic = new URLSearchParams(location.search).get("preview") || "fractions-division";
-    const g = new URLSearchParams(location.search).get("grade") === "4" ? "?grade=4" : "";
+    const gr = new URLSearchParams(location.search).get("grade");
+    const g = gr === "4" || gr === "8" ? `?grade=${gr}` : "";
     fetch(`${BASE}/preview/${topic}${g}`).then((r) => r.json()).then(setData);
   }, []);
   if (!data) return <div>Loading…</div>;
@@ -45,6 +48,8 @@ export function Preview() {
         Grade 5: <a href="?preview=more-large-numbers">Large Numbers</a> · <a href="?preview=operations-large-numbers">Operations</a> · <a href="?preview=fractions-division">Fractions and Division</a>
         <br />
         Grade 4: <a href="?preview=more-large-numbers&grade=4">Large Numbers</a> · <a href="?preview=operations-large-numbers&grade=4">Operations</a> · <a href="?preview=factors-multiples&grade=4">Factors and Multiples</a>
+        <br />
+        Grade 8: <a href="?preview=g8-rational-numbers&grade=8">Rational Numbers</a> · <a href="?preview=g8-exponents&grade=8">Exponents</a> · <a href="?preview=g8-squares&grade=8">Squares</a> · <a href="?preview=g8-cubes&grade=8">Cubes</a> · <a href="?preview=g8-playing-numbers&grade=8">Playing with Numbers</a> · <a href="?preview=g8-sets&grade=8">Sets</a> · <a href="?preview=g8-percent&grade=8">Percent</a> · <a href="?preview=g8-profit-loss&grade=8">Profit and Loss</a> · <a href="?preview=g8-interest&grade=8">Interest</a> · <a href="?preview=g8-variation&grade=8">Variation</a> · <a href="?preview=g8-expressions&grade=8">Expressions</a> · <a href="?preview=g8-identities&grade=8">Identities</a> · <a href="?preview=g8-factorisation&grade=8">Factorisation</a> · <a href="?preview=g8-linear-equations&grade=8">Equations</a> · <a href="?preview=g8-inequations&grade=8">Inequations</a> · <a href="?preview=g8-shapes&grade=8">Shapes</a> · <a href="?preview=g8-quadrilaterals&grade=8">Quadrilaterals</a> · <a href="?preview=g8-constructions&grade=8">Constructions</a> · <a href="?preview=g8-solids&grade=8">3-D in 2-D</a> · <a href="?preview=g8-symmetry&grade=8">Symmetry</a> · <a href="?preview=g8-circles&grade=8">Circles</a> · <a href="?preview=g8-area&grade=8">Area</a> · <a href="?preview=g8-volume&grade=8">Volume</a> · <a href="?preview=g8-data&grade=8">Data</a> · <a href="?preview=g8-probability&grade=8">Probability</a>
       </p>
       <p className="lede">One fresh question per level. Reload the page for new numbers and contexts. ✓ marks the right answer; each wrong option shows the mistake it stands for.</p>
       {data.items.map((it) => (
@@ -57,8 +62,10 @@ export function Preview() {
           {it.representation?.kind === "number-line" && <NumberLine spec={it.representation} />}
           {it.representation?.kind === "grid" && <Grid spec={it.representation} />}
           {it.representation?.kind === "shape" && <Shape spec={it.representation} />}
+          {it.representation?.kind === "figure" && <Figure spec={it.representation} />}
           {it.activity?.kind === "share" && <ShareActivity spec={it.activity} onChange={() => undefined} />}
           {it.activity?.kind === "place-value" && <PlaceValueActivity spec={it.activity} onChange={() => undefined} />}
+          {it.activity?.kind === "shade" && <ShadeActivity spec={it.activity} onChange={() => undefined} />}
           {it.representation?.kind === "place-value-chart" && <PlaceValueChart spec={it.representation} />}
           {it.representation?.kind === "bars" && <Bars spec={it.representation} />}
           {it.representation?.kind === "pie" && <PiePicture spec={it.representation} />}
