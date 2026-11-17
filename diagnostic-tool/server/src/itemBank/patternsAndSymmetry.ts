@@ -97,7 +97,7 @@ export const PATTERNS_AND_SYMMETRY_ITEMS: Item[] = [
     cpa: "concrete",
     bloom: "analyze",
     subskill: "number-patterns",
-    prompt: "The growing dot pattern shows 1, 3, 6, then 10 dots (each row adds one more dot than the last gap). What is the next number in the pattern?",
+    prompt: "The dot pattern grows: 1, 3, 6, then 10 dots. How many dots come next?",
     representation: {
       kind: "concrete",
       icon: "⚫",
@@ -143,10 +143,10 @@ export const PATTERNS_AND_SYMMETRY_ITEMS: Item[] = [
       ],
     },
     choices: [
-      { id: "a", text: "No — the repeating unit is 3 shapes long (triangle, circle, circle), not 2" },
-      { id: "b", text: "Yes, that's correct" },
-      { id: "c", text: "No, it repeats every 4 shapes" },
-      { id: "d", text: "No, there is no repeating pattern here" },
+      { id: "a", text: "No — it repeats every 3 shapes" },
+      { id: "b", text: "Yes, he is right" },
+      { id: "c", text: "No — it repeats every 4 shapes" },
+      { id: "d", text: "No — it doesn't repeat at all" },
     ],
     correctChoiceId: "a",
   },
@@ -190,7 +190,7 @@ export const PATTERNS_AND_SYMMETRY_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "apply",
     subskill: "rotational-symmetry",
-    prompt: "Through how many degrees must the triangle shown be rotated about its centre to look the same again for the first time?",
+    prompt: "How far must you turn this triangle for it to look the same again for the first time?",
     representation: { kind: "shape", shape: "triangle", angleLabels: ["60°", "60°", "60°"] },
     choices: [
       { id: "a", text: "120°" },
@@ -206,7 +206,7 @@ export const PATTERNS_AND_SYMMETRY_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "analyze",
     subskill: "number-patterns",
-    prompt: "What operation generates each next term, and what comes next?",
+    prompt: "What is the rule, and what comes next?",
     representation: {
       kind: "concrete",
       icon: "🔢",
@@ -300,7 +300,7 @@ export const PATTERNS_AND_SYMMETRY_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "rotational-symmetry",
-    prompt: "Rotational symmetry of order 4 repeats every ? degrees.",
+    prompt: "A shape looks the same 4 times in one full turn. How many degrees apart are those turns?",
     representation: null,
     choices: [
       { id: "a", text: "90°" },

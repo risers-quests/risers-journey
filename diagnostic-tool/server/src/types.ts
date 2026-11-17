@@ -65,7 +65,7 @@ export interface GridSpec {
   markers?: { row: number; col: number; label: string }[];
 }
 
-export type ShapeKind = "triangle" | "right-triangle" | "rectangle" | "square" | "circle" | "pentagon" | "parallelogram";
+export type ShapeKind = "triangle" | "right-triangle" | "rectangle" | "square" | "circle" | "pentagon" | "parallelogram" | "right-trapezium";
 
 export interface ShapeSpec {
   kind: "shape";

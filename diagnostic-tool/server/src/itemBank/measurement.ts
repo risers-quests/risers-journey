@@ -216,7 +216,7 @@ export const MEASUREMENT_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "unit-conversion-volume",
-    prompt: "6 L ÷ 750 ml = ? bottles",
+    prompt: "How many 750 ml bottles can you fill from 6 L?",
     representation: null,
     choices: [
       { id: "a", text: "8" },
@@ -232,7 +232,7 @@ export const MEASUREMENT_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "mixed-units-arithmetic",
-    prompt: "3 m 25 cm ÷ 5 = ? (in cm)",
+    prompt: "A ribbon 3 m 25 cm long is cut into 5 equal pieces. How long is each piece, in cm?",
     representation: null,
     choices: [
       { id: "a", text: "65 cm" },

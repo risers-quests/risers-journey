@@ -24,6 +24,9 @@ function shapeGeometry(shape: ShapeKind): { points: string; isCircle: boolean; l
         isCircle: false,
         labelPos: [[120, 20], [178, 80], [80, 145], [22, 80]],
       };
+    case "right-trapezium":
+      // Two right angles on the left; the right side slopes (top-right obtuse, bottom-right acute).
+      return { points: "20,20 140,20 180,140 20,140", isCircle: false, labelPos: [[42, 42], [128, 42], [156, 128], [42, 128]] };
     case "pentagon":
       return {
         points: "100,10 190,70 155,150 45,150 10,70",

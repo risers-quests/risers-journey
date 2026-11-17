@@ -10,7 +10,7 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     cpa: "concrete",
     bloom: "remember",
     subskill: "compass-directions",
-    prompt: "The compass shown has 4 arrow icons pointing North, East, South, and West in order. Which one points opposite to North?",
+    prompt: "The compass shows North, East, South and West. Which direction is opposite North?",
     representation: { kind: "concrete", icon: "🧭", itemCount: 4, groups: 1, groupLabel: "compass points (N, E, S, W)" },
     choices: [
       { id: "a", text: "South" },
@@ -92,7 +92,7 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "remember",
     subskill: "compass-directions",
-    prompt: "Which direction is 'N' from 'You'?",
+    prompt: "On the grid, which direction is N from You?",
     representation: {
       kind: "grid",
       rows: 5,
@@ -103,7 +103,7 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
       ],
     },
     choices: [
-      { id: "a", text: "North (up the grid)" },
+      { id: "a", text: "North" },
       { id: "b", text: "South" },
       { id: "c", text: "East" },
       { id: "d", text: "West" },
@@ -167,7 +167,7 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "analyze",
     subskill: "bearings",
-    prompt: "Which compass direction best describes Camp's position relative to You?",
+    prompt: "Which direction is Camp from You?",
     representation: {
       kind: "grid",
       rows: 5,
@@ -250,7 +250,7 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "bearings",
-    prompt: "Bearing 090° = which compass direction?",
+    prompt: "Which direction is a bearing of 090°?",
     representation: null,
     choices: [
       { id: "a", text: "East" },
