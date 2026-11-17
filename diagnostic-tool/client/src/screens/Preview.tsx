@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { abstractClass } from "../promptStyle";
 import { BarModel } from "../components/BarModel";
 import { ConcreteObjects } from "../components/ConcreteObjects";
 import { Sharing } from "../components/Sharing";
@@ -47,7 +48,7 @@ export function Preview() {
       {data.items.map((it) => (
         <div className="card preview-item" key={it.id}>
           <div className="preview-cell">{it.cpa} · {it.bloom}</div>
-          {it.cpa === "abstract" && !it.representation ? <div className="prompt-abstract">{it.prompt}</div> : <div className="prompt-text">{it.prompt}</div>}
+          {it.cpa === "abstract" && !it.representation ? <div className={abstractClass(it.prompt)}>{it.prompt}</div> : <div className="prompt-text">{it.prompt}</div>}
           {it.representation?.kind === "bar-model" && <BarModel spec={it.representation} />}
           {it.representation?.kind === "concrete" && <ConcreteObjects spec={it.representation} />}
           {it.representation?.kind === "sharing" && <Sharing spec={it.representation} />}

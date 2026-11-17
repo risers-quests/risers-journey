@@ -2,24 +2,42 @@ import { ConcreteSpec } from "../types";
 
 export function ConcreteObjects({ spec }: { spec: ConcreteSpec }) {
   if (spec.segments?.length) {
-    // A mixed collection (e.g. "3/8 red, 2/8 blue" marbles in one bag) —
-    // each subset gets its own icon so the proportions are actually visible,
-    // instead of repeating a single icon that can't show the difference.
+    const segs = spec.segments;
+    // A sequence of single shapes (a repeating pattern): show it left to
+    // right, in order, each one numbered underneath.
+    if (segs.every((s) => s.count === 1)) {
+      return (
+        <div className="concrete-wrap">
+          <div className="picto-seq">
+            {segs.map((seg, i) => (
+              <div className="picto-seq-cell" key={i}>
+                <span className="picto-seq-icon">{seg.icon}</span>
+                <span className="picto-seq-label">{seg.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+    // Otherwise a pictograph: one labelled row per category, so each
+    // child, day or town has its own line and can be compared at a glance.
+    // Icons come in groups of 5 so they are quick to count.
     return (
       <div className="concrete-wrap">
-        <div className="concrete-mixed">
-          {spec.segments.map((seg, i) => (
-            <span key={i} className="mixed-icons">
-              {seg.icon.repeat(seg.count)}
-            </span>
+        <div className="picto">
+          {segs.map((seg, i) => (
+            <div className="picto-row" key={i}>
+              <div className="picto-label">{seg.label}</div>
+              <div className="picto-icons">
+                {Array.from({ length: Math.ceil(seg.count / 5) }, (_, g) => (
+                  <span className="picto-five" key={g}>
+                    {seg.icon.repeat(Math.min(5, seg.count - g * 5))}
+                  </span>
+                ))}
+              </div>
+            </div>
           ))}
-        </div>
-        <div className="concrete-mixed-legend">
-          {spec.segments.map((seg, i) => (
-            <span key={i} className="mixed-legend-item">
-              {seg.icon} {seg.label} ({seg.count})
-            </span>
-          ))}
+          {spec.key && <div className="picto-key">Key: {spec.key}</div>}
         </div>
       </div>
     );

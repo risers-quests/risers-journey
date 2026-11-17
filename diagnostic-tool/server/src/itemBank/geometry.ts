@@ -165,7 +165,7 @@ export const GEOMETRY_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "evaluate",
     subskill: "quadrilateral-properties",
-    prompt: "Evaluate x.",
+    prompt: "The four angles of this shape add up to 360°. What is angle x?",
     representation: { kind: "shape", shape: "parallelogram", angleLabels: ["90°", "90°", "100°", "x"] },
     choices: [
       { id: "a", text: "80°" },
@@ -183,7 +183,7 @@ export const GEOMETRY_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "remember",
     subskill: "angle-types",
-    prompt: "Term for an angle greater than 90° but less than 180° = ?",
+    prompt: "What do we call an angle that is more than 90° but less than 180°?",
     representation: null,
     choices: [
       { id: "a", text: "Obtuse" },
@@ -199,7 +199,7 @@ export const GEOMETRY_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "triangle-properties",
-    prompt: "Sum of the interior angles of any triangle = ?",
+    prompt: "The three angles inside any triangle add up to how many degrees?",
     representation: null,
     choices: [
       { id: "a", text: "180°" },
@@ -215,7 +215,7 @@ export const GEOMETRY_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "angles-on-a-line-at-a-point",
-    prompt: "Two angles on a straight line: one is 110°. Other angle = ?",
+    prompt: "Two angles sit together on a straight line. One is 110°. What is the other angle?",
     representation: null,
     choices: [
       { id: "a", text: "70°" },
@@ -231,7 +231,7 @@ export const GEOMETRY_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "angles-on-a-line-at-a-point",
-    prompt: "Angles at a point: x, x, and 160° sum to 360°. x = ?",
+    prompt: "Three angles meet at a point: x, x and 160°. Together they make 360°. What is x?",
     representation: null,
     choices: [
       { id: "a", text: "100°" },

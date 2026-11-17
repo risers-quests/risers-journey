@@ -38,6 +38,8 @@ export interface ConcreteSpec {
    * present.
    */
   segments?: { icon: string; count: number; label: string }[];
+  /** Pictograph key shown under the rows, e.g. "Each 💧 = 10 mm of rain". */
+  key?: string;
 }
 
 export interface NumberLineSpec {

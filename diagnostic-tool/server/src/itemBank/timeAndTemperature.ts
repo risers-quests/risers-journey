@@ -193,7 +193,7 @@ export const TIME_AND_TEMPERATURE_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "remember",
     subskill: "24-hour-time",
-    prompt: "15:45 in 12-hour (am/pm) format = ?",
+    prompt: "What is 15:45 in 12-hour time (am or pm)?",
     representation: null,
     choices: [
       { id: "a", text: "3:45 pm" },
@@ -257,7 +257,7 @@ export const TIME_AND_TEMPERATURE_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "temperature-comparison",
-    prompt: "Coldest to warmest: -8°C, 4°C, -2°C = ?",
+    prompt: "Put these temperatures in order from coldest to warmest: -8°C, 4°C, -2°C",
     representation: null,
     choices: [
       { id: "a", text: "-8°C, -2°C, 4°C" },

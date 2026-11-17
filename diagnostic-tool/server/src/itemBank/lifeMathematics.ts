@@ -74,7 +74,7 @@ export const LIFE_MATHEMATICS_ITEMS: Item[] = [
     cpa: "concrete",
     bloom: "evaluate",
     subskill: "rate",
-    prompt: "A car's 240 km journey is shown as a bar in 4 equal segments, each taking the same time. If the whole trip takes 2 hours, evaluate the car's speed.",
+    prompt: "A car travels 240 km. The bar shows the trip in 4 equal parts. The whole trip takes 2 hours. How fast does the car go?",
     representation: { kind: "bar-model", totalLabel: "240 km", parts: 4, highlightParts: 4 },
     choices: [
       { id: "a", text: "120 km/h" },
@@ -174,7 +174,7 @@ export const LIFE_MATHEMATICS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "remember",
     subskill: "percentage-basics",
-    prompt: "25% of 200 = ?",
+    prompt: "What is 25% of 200?",
     representation: null,
     choices: [
       { id: "a", text: "50" },
@@ -190,7 +190,7 @@ export const LIFE_MATHEMATICS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "discount-percentage",
-    prompt: "15% discount on ₹600 = ?",
+    prompt: "A bag costs ₹600. The shop takes 15% off. How much money is taken off?",
     representation: null,
     choices: [
       { id: "a", text: "₹90" },
@@ -206,7 +206,7 @@ export const LIFE_MATHEMATICS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "profit-loss",
-    prompt: "CP ₹3,000, SP ₹3,450. Profit % = ?",
+    prompt: "A shopkeeper buys a bike for ₹3,000 and sells it for ₹3,450. What is the profit as a percentage of the cost price?",
     representation: null,
     choices: [
       { id: "a", text: "15%" },
@@ -222,7 +222,7 @@ export const LIFE_MATHEMATICS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "rate",
-    prompt: "180 km in 3 h. Time for 300 km at the same speed = ?",
+    prompt: "A bus goes 180 km in 3 hours. At the same speed, how long will it take to go 300 km?",
     representation: null,
     choices: [
       { id: "a", text: "5 hours" },
@@ -238,7 +238,7 @@ export const LIFE_MATHEMATICS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "profit-loss",
-    prompt: "CP: 10 items for ₹200 total. SP: ₹25 each. Profit or loss = ?",
+    prompt: "A shopkeeper buys 10 pens for ₹200 altogether. She sells each pen for ₹25. Does she make a profit or a loss, and how much?",
     representation: null,
     choices: [
       { id: "a", text: "A profit of ₹50" },

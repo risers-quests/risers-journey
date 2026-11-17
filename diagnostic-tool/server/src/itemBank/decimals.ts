@@ -193,7 +193,7 @@ export const DECIMALS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "remember",
     subskill: "place-value-decimals",
-    prompt: "Value of the digit 5 in 3.258 = ?",
+    prompt: "What is the value of the digit 5 in 3.258?",
     representation: null,
     choices: [
       { id: "a", text: "5 hundredths (0.05)" },
@@ -209,7 +209,7 @@ export const DECIMALS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "fraction-decimal-conversion",
-    prompt: "0.125 as a fraction = ?",
+    prompt: "Write 0.125 as a fraction.",
     representation: null,
     choices: [
       { id: "a", text: "1/8" },
@@ -257,7 +257,7 @@ export const DECIMALS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "comparing-ordering-decimals",
-    prompt: "Descending order of 0.8, 0.08, 0.88, 0.008 = ?",
+    prompt: "Put these in order from greatest to smallest: 0.8, 0.08, 0.88, 0.008",
     representation: null,
     choices: [
       { id: "a", text: "0.88, 0.8, 0.08, 0.008" },

@@ -183,7 +183,7 @@ export const VOLUME_AND_NETS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "remember",
     subskill: "volume-cuboid",
-    prompt: "Formula for the volume of a cuboid = ?",
+    prompt: "How do you work out the volume of a cuboid?",
     representation: null,
     choices: [
       { id: "a", text: "length × width × height" },
@@ -199,7 +199,7 @@ export const VOLUME_AND_NETS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "volume-cuboid",
-    prompt: "Volume of a 5 cm × 4 cm × 3 cm cuboid = ?",
+    prompt: "A cuboid is 5 cm long, 4 cm wide and 3 cm high. What is its volume?",
     representation: null,
     choices: [
       { id: "a", text: "60 cubic cm" },
@@ -215,7 +215,7 @@ export const VOLUME_AND_NETS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "volume-cuboid",
-    prompt: "Volume of a cube with side 6 cm = ?",
+    prompt: "Each side of a cube is 6 cm. What is its volume?",
     representation: null,
     choices: [
       { id: "a", text: "216 cubic cm" },
@@ -231,7 +231,7 @@ export const VOLUME_AND_NETS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "nets-of-solids",
-    prompt: "A net of 4 rectangles + 2 squares folds into a solid with 6 flat faces, 2 of them square. Solid = ?",
+    prompt: "A net has 4 rectangles and 2 squares. What solid does it fold into?",
     representation: null,
     choices: [
       { id: "a", text: "A cuboid (a rectangular box with two square ends)" },
@@ -247,7 +247,7 @@ export const VOLUME_AND_NETS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "volume-cuboid",
-    prompt: "Tank: 40 cm × 25 cm × 20 cm, filled to a depth of 15 cm. Volume of water = ?",
+    prompt: "A fish tank is 40 cm long, 25 cm wide and 20 cm high. Water fills it to a height of 15 cm. What is the volume of the water?",
     representation: null,
     choices: [
       { id: "a", text: "15,000 cubic cm" },

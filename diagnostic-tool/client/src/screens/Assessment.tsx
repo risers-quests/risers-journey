@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { abstractClass } from "../promptStyle";
 import { getNextQuestion, submitAnswer } from "../api";
 import { NextQuestionResponse } from "../types";
 import { BarModel } from "../components/BarModel";
@@ -135,7 +136,7 @@ export function Assessment({
         )}
 
         {item.cpa === "abstract" && !item.representation ? (
-          <div className="prompt-abstract">{item.prompt}</div>
+          <div className={abstractClass(item.prompt)}>{item.prompt}</div>
         ) : (
           <div className="prompt-text">{item.prompt}</div>
         )}

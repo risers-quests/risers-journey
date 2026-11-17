@@ -190,7 +190,7 @@ export const FRACTIONS_DIVISION_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "fraction-notation",
-    prompt: "5/8 in terms of division = ?",
+    prompt: "Which division is the same as the fraction 5/8?",
     representation: null,
     choices: [
       { id: "a", text: "5 divided by 8" },

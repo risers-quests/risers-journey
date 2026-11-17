@@ -184,7 +184,7 @@ export const MEASUREMENT_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "remember",
     subskill: "unit-conversion-length",
-    prompt: "4.5 km in metres = ?",
+    prompt: "How many metres are there in 4.5 km?",
     representation: null,
     choices: [
       { id: "a", text: "4,500 m" },
@@ -200,7 +200,7 @@ export const MEASUREMENT_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "unit-conversion-mass",
-    prompt: "3,200 g in kg and g = ?",
+    prompt: "Write 3,200 g in kg and g.",
     representation: null,
     choices: [
       { id: "a", text: "3 kg 200 g" },

@@ -243,7 +243,7 @@ export const MORE_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "remember",
     subskill: "place-value",
-    prompt: "Value of the digit 7 in 3,782,410 = ?",
+    prompt: "What is the value of the digit 7 in 3,782,410?",
     representation: null,
     choices: [
       { id: "a", text: "700,000" },
@@ -259,7 +259,7 @@ export const MORE_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "reading-writing-numbers",
-    prompt: "4,050,900 in words = ?",
+    prompt: "How do you write 4,050,900 in words?",
     representation: null,
     choices: [
       { id: "a", text: "Four million, fifty thousand, nine hundred" },
@@ -275,7 +275,7 @@ export const MORE_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "rounding",
-    prompt: "6,842,900 rounded to the nearest hundred thousand = ?",
+    prompt: "Round 6,842,900 to the nearest hundred thousand.",
     representation: null,
     choices: [
       { id: "a", text: "6,800,000" },
@@ -291,7 +291,7 @@ export const MORE_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "comparing-ordering",
-    prompt: "Greatest of 2,905,610 / 2,950,160 / 2,509,610 = ?",
+    prompt: "Which is the greatest: 2,905,610, 2,950,160 or 2,509,610?",
     representation: null,
     choices: [
       { id: "a", text: "2,950,160" },
@@ -307,7 +307,7 @@ export const MORE_ON_LARGE_NUMBERS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "place-value",
-    prompt: "6-digit number — hundred-thousands digit: 5. All other digits: 0, except ones digit: 3. Number = ?",
+    prompt: "A 6-digit number has 5 in the hundred-thousands place and 3 in the ones place. All the other digits are 0. What is the number?",
     representation: null,
     choices: [
       { id: "a", text: "500,003" },

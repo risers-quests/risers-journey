@@ -156,13 +156,13 @@ export const FACTORS_AND_MULTIPLES_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "evaluate",
     subskill: "common-factors-multiples",
-    prompt: "The array shows 12 as 2 rows of 6. A student claims 3 and 4 are also factors of 12, just from this one array. Evaluate the claim.",
+    prompt: "The picture shows 12 dots in 2 rows of 6. Riya says this picture proves that 3 and 4 are also factors of 12. Is she right?",
     representation: { kind: "grid", rows: 2, cols: 6, shadedCells: 12, unitLabel: "squares" },
     choices: [
-      { id: "a", text: "True — 12 ÷ 3 = 4 and 12 ÷ 4 = 3 divide evenly too, so both are factors, even though only this one array is drawn" },
-      { id: "b", text: "False — only 2 and 6 are factors of 12" },
-      { id: "c", text: "False — 12 has no factors besides 1 and 12" },
-      { id: "d", text: "True, but only 4 counts, not 3" },
+      { id: "a", text: "Yes — 3 and 4 are factors of 12, but this picture does not show it" },
+      { id: "b", text: "No — only 2 and 6 are factors of 12" },
+      { id: "c", text: "No — 12 has no factors except 1 and 12" },
+      { id: "d", text: "Yes — 4 is a factor of 12, but 3 is not" },
     ],
     correctChoiceId: "a",
   },
@@ -174,7 +174,7 @@ export const FACTORS_AND_MULTIPLES_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "remember",
     subskill: "factors",
-    prompt: "Factor of 36 = ?",
+    prompt: "Which of these is a factor of 36?",
     representation: null,
     choices: [
       { id: "a", text: "9" },
@@ -190,7 +190,7 @@ export const FACTORS_AND_MULTIPLES_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "multiples",
-    prompt: "Multiple of 7 = ?",
+    prompt: "Which of these is a multiple of 7?",
     representation: null,
     choices: [
       { id: "a", text: "63" },
@@ -206,7 +206,7 @@ export const FACTORS_AND_MULTIPLES_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "prime-numbers",
-    prompt: "Prime number, from: 29, 27, 33, 35 = ?",
+    prompt: "Which of these numbers is a prime number: 29, 27, 33 or 35?",
     representation: null,
     choices: [
       { id: "a", text: "29" },
@@ -222,7 +222,7 @@ export const FACTORS_AND_MULTIPLES_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "common-factors-multiples",
-    prompt: "HCF(18, 24) = ?",
+    prompt: "What is the highest common factor (HCF) of 18 and 24?",
     representation: null,
     choices: [
       { id: "a", text: "6" },
@@ -238,7 +238,7 @@ export const FACTORS_AND_MULTIPLES_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "common-factors-multiples",
-    prompt: "LCM(4, 6) = ?",
+    prompt: "What is the lowest common multiple (LCM) of 4 and 6?",
     representation: null,
     choices: [
       { id: "a", text: "12" },

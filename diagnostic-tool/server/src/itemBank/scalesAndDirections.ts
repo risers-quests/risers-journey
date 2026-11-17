@@ -74,13 +74,13 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     cpa: "concrete",
     bloom: "evaluate",
     subskill: "bearings",
-    prompt: "A hiker walks the 4 equal-length legs shown, in order: North, then East, then South, then West. Evaluate whether this path returns to the starting point.",
+    prompt: "A hiker walks the same distance 4 times: first North, then East, then South, then West. Does she end up back where she started?",
     representation: { kind: "concrete", icon: "➡️", itemCount: 4, groups: 1, groupLabel: "N, E, S, W legs (equal length)" },
     choices: [
-      { id: "a", text: "Yes — the four equal legs form a closed square loop back to the start" },
-      { id: "b", text: "No, it ends up further East" },
-      { id: "c", text: "No, it ends up further North" },
-      { id: "d", text: "Cannot be determined" },
+      { id: "a", text: "Yes — she walks round a square" },
+      { id: "b", text: "No — she ends up further East" },
+      { id: "c", text: "No — she ends up further North" },
+      { id: "d", text: "There is no way to tell" },
     ],
     correctChoiceId: "a",
   },
@@ -191,7 +191,7 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "evaluate",
     subskill: "map-scale",
-    prompt: "Walking along the grid lines from A to B, evaluate the real distance covered.",
+    prompt: "You walk along the grid lines from A to B. How far do you really walk?",
     representation: {
       kind: "grid",
       rows: 3,
@@ -218,7 +218,7 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "remember",
     subskill: "compass-directions",
-    prompt: "Direction directly opposite to South-West = ?",
+    prompt: "Which direction is exactly opposite South-West?",
     representation: null,
     choices: [
       { id: "a", text: "North-East" },
@@ -234,7 +234,7 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "map-scale",
-    prompt: "Scale 1 cm : 5 km. Map distance 6 cm. Real distance = ?",
+    prompt: "On a map, 1 cm stands for 5 km. Two towns are 6 cm apart on the map. How far apart are they really?",
     representation: null,
     choices: [
       { id: "a", text: "30 km" },
@@ -266,7 +266,7 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "distance-calculation",
-    prompt: "8 km North, then 6 km East (right angle). Straight-line distance back to start = ?",
+    prompt: "A boat sails 8 km North, then turns and sails 6 km East. How far is it from the start in a straight line?",
     representation: null,
     choices: [
       { id: "a", text: "10 km" },
@@ -282,7 +282,7 @@ export const SCALES_AND_DIRECTIONS_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "map-scale",
-    prompt: "Room 8 m × 6 m. Plan scale 1 cm : 2 m. Plan dimensions = ?",
+    prompt: "A room is 8 m long and 6 m wide. On a plan, 1 cm stands for 2 m. How big is the room on the plan?",
     representation: null,
     choices: [
       { id: "a", text: "4 cm by 3 cm" },

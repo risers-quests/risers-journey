@@ -3,15 +3,15 @@ import { Item } from "../types.js";
 const TOPIC = "data-handling";
 
 /**
- * Concrete and Pictorial both use the same mixed-icon pictograph rendering
- * (ConcreteSpec.segments) — a pictograph genuinely is the standard
- * pictorial representation of a small dataset in Singapore Math, and a
- * literal physical sorted collection is the concrete version of the same
- * idea, so reusing the component across both stages (differentiated by
- * question complexity, not a different diagram) is intentional. Line
- * graphs have no dedicated diagram in this build, so that subskill lives
- * only in Abstract — every Pictorial item here has a real pictograph.
- * See README.
+ * Concrete and Pictorial both use the pictograph rendering
+ * (ConcreteSpec.segments): one labelled row per category, with a key. A
+ * pictograph genuinely is the standard pictorial representation of a small
+ * dataset in Singapore Math. Line graphs have no dedicated diagram in this
+ * build, so that subskill lives only in Abstract. See README.
+ *
+ * Wording rule: plain Grade 5 English. Never put the Bloom level in the
+ * question ("Evaluate…", "Analyze…") and never write shorthand like
+ * "Total = ?" — ask the question a teacher would ask out loud.
  */
 export const DATA_HANDLING_ITEMS: Item[] = [
   // --- CONCRETE (a real, physically counted collection) ---
@@ -21,7 +21,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "concrete",
     bloom: "remember",
     subskill: "reading-tables-graphs",
-    prompt: "A basket has the fruits shown: 4 apples, 3 bananas, 2 mangoes. How many pieces of fruit are there in total?",
+    prompt: "The picture shows the fruit in a basket. How many pieces of fruit are there altogether?",
     representation: {
       kind: "concrete",
       icon: "🍎",
@@ -75,7 +75,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "concrete",
     bloom: "apply",
     subskill: "average-mean",
-    prompt: "3 friends collected shells, shown below. If they combine all the shells and share them equally, how many does each friend get?",
+    prompt: "Three friends collected these shells. They put all the shells together and share them equally. How many shells does each friend get?",
     representation: {
       kind: "concrete",
       icon: "🐚",
@@ -83,9 +83,9 @@ export const DATA_HANDLING_ITEMS: Item[] = [
       groups: 1,
       groupLabel: "shells",
       segments: [
-        { icon: "🐚", count: 2, label: "Friend 1" },
-        { icon: "🐚", count: 4, label: "Friend 2" },
-        { icon: "🐚", count: 6, label: "Friend 3" },
+        { icon: "🐚", count: 2, label: "Zoya" },
+        { icon: "🐚", count: 4, label: "Kabir" },
+        { icon: "🐚", count: 6, label: "Lena" },
       ],
     },
     choices: [
@@ -102,7 +102,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "concrete",
     bloom: "analyze",
     subskill: "reading-tables-graphs",
-    prompt: "The picture shows ice creams sold each day. Which day sold the fewest?",
+    prompt: "The picture shows how many ice creams a shop sold each day. On which day did it sell the fewest?",
     representation: {
       kind: "concrete",
       icon: "🍦",
@@ -129,7 +129,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "concrete",
     bloom: "evaluate",
     subskill: "average-mean",
-    prompt: "Test scores for 4 students are shown. Evaluate the average of these 4 scores.",
+    prompt: "The picture shows the test scores of 4 children. What is their average (mean) score?",
     representation: {
       kind: "concrete",
       icon: "⭐",
@@ -137,11 +137,12 @@ export const DATA_HANDLING_ITEMS: Item[] = [
       groups: 1,
       groupLabel: "points",
       segments: [
-        { icon: "⭐", count: 5, label: "Student 1" },
-        { icon: "⭐", count: 7, label: "Student 2" },
-        { icon: "⭐", count: 9, label: "Student 3" },
-        { icon: "⭐", count: 15, label: "Student 4" },
+        { icon: "⭐", count: 5, label: "Ali" },
+        { icon: "⭐", count: 7, label: "Bea" },
+        { icon: "⭐", count: 9, label: "Cara" },
+        { icon: "⭐", count: 15, label: "Dev" },
       ],
+      key: "Each ⭐ = 1 point",
     },
     choices: [
       { id: "a", text: "9" },
@@ -159,7 +160,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "remember",
     subskill: "bar-graphs",
-    prompt: "Who read the most books?",
+    prompt: "The picture shows how many books three children read. Who read the most books?",
     representation: {
       kind: "concrete",
       icon: "📕",
@@ -186,7 +187,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "understand",
     subskill: "reading-tables-graphs",
-    prompt: "How many more votes did Mango get than Grape?",
+    prompt: "A class voted for their favourite fruit. How many more votes did mango get than grape?",
     representation: {
       kind: "concrete",
       icon: "🥭",
@@ -198,6 +199,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
         { icon: "🍎", count: 5, label: "Apple" },
         { icon: "🍇", count: 3, label: "Grape" },
       ],
+      key: "Each picture = 1 vote",
     },
     choices: [
       { id: "a", text: "5" },
@@ -213,7 +215,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "apply",
     subskill: "average-mean",
-    prompt: "What is the average daily rainfall shown?",
+    prompt: "The picture shows how much rain fell on each of 5 days. What was the average rainfall per day?",
     representation: {
       kind: "concrete",
       icon: "💧",
@@ -227,6 +229,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
         { icon: "💧", count: 4, label: "Day 4" },
         { icon: "💧", count: 4, label: "Day 5" },
       ],
+      key: "Each 💧 = 1 mm of rain",
     },
     choices: [
       { id: "a", text: "4 mm" },
@@ -242,7 +245,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "analyze",
     subskill: "reading-tables-graphs",
-    prompt: "Analyze the pattern across the four grades shown. Which best describes it?",
+    prompt: "The picture shows how many books four classes borrowed from the library. Which sentence is true?",
     representation: {
       kind: "concrete",
       icon: "📚",
@@ -250,17 +253,18 @@ export const DATA_HANDLING_ITEMS: Item[] = [
       groups: 1,
       groupLabel: "books borrowed",
       segments: [
-        { icon: "📚", count: 3, label: "Grade A" },
-        { icon: "📚", count: 6, label: "Grade B" },
-        { icon: "📚", count: 9, label: "Grade C" },
-        { icon: "📚", count: 12, label: "Grade D" },
+        { icon: "📚", count: 3, label: "Class A" },
+        { icon: "📚", count: 6, label: "Class B" },
+        { icon: "📚", count: 9, label: "Class C" },
+        { icon: "📚", count: 12, label: "Class D" },
       ],
+      key: "Each 📚 = 1 book",
     },
     choices: [
-      { id: "a", text: "Each grade has 3 more than the one before — a steady increase" },
-      { id: "b", text: "The values decrease from Grade A to Grade D" },
-      { id: "c", text: "All four grades are equal" },
-      { id: "d", text: "No pattern is visible" },
+      { id: "a", text: "Each class borrowed 3 more books than the class before" },
+      { id: "b", text: "Each class borrowed fewer books than the class before" },
+      { id: "c", text: "All four classes borrowed the same number of books" },
+      { id: "d", text: "There is no pattern" },
     ],
     correctChoiceId: "a",
   },
@@ -270,23 +274,24 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "pictorial",
     bloom: "evaluate",
     subskill: "bar-graphs",
-    prompt: "Each drop = 10 mm of rainfall over 5 days. Evaluate which city had the higher average daily rainfall, and by how much.",
+    prompt: "The picture shows how much rain fell in two towns over the same 5 days. Which town got more rain per day on average, and how much more?",
     representation: {
       kind: "concrete",
       icon: "💧",
       itemCount: 0,
       groups: 1,
-      groupLabel: "× 10 mm over 5 days",
+      groupLabel: "rain over 5 days",
       segments: [
-        { icon: "💧", count: 6, label: "City X" },
-        { icon: "💧", count: 9, label: "City Y" },
+        { icon: "💧", count: 6, label: "Hilltown" },
+        { icon: "💧", count: 9, label: "Riverside" },
       ],
+      key: "Each 💧 = 10 mm of rain",
     },
     choices: [
-      { id: "a", text: "City Y, by 6 mm/day on average" },
-      { id: "b", text: "City X, by 6 mm/day on average" },
-      { id: "c", text: "They are equal" },
-      { id: "d", text: "City Y, by 30 mm/day on average" },
+      { id: "a", text: "Riverside, by 6 mm a day" },
+      { id: "b", text: "Hilltown, by 6 mm a day" },
+      { id: "c", text: "They got the same amount" },
+      { id: "d", text: "Riverside, by 30 mm a day" },
     ],
     correctChoiceId: "a",
   },
@@ -298,7 +303,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "remember",
     subskill: "average-mean",
-    prompt: "Average (mean) of 4, 8, 12 = ?",
+    prompt: "What is the average (mean) of 4, 8 and 12?",
     representation: null,
     choices: [
       { id: "a", text: "8" },
@@ -314,7 +319,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "understand",
     subskill: "reading-tables-graphs",
-    prompt: "Monthly sales: 120, 150, 180. Total = ?",
+    prompt: "A shop sold 120 toys in January, 150 in February and 180 in March. How many toys did it sell altogether?",
     representation: null,
     choices: [
       { id: "a", text: "450" },
@@ -330,7 +335,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "apply",
     subskill: "bar-graphs",
-    prompt: "4 category values: 10, 15, 20, 25. Largest as a fraction of the total = ?",
+    prompt: "In a survey, 10 children chose red, 15 chose blue, 20 chose green and 25 chose yellow. What fraction of all the children chose yellow?",
     representation: null,
     choices: [
       { id: "a", text: "5/14" },
@@ -346,7 +351,7 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "analyze",
     subskill: "average-mean",
-    prompt: "Average of 5 numbers = 20. Four of them: 18, 22, 19, 21. Fifth number = ?",
+    prompt: "The average of 5 numbers is 20. Four of the numbers are 18, 22, 19 and 21. What is the fifth number?",
     representation: null,
     choices: [
       { id: "a", text: "20" },
@@ -362,13 +367,13 @@ export const DATA_HANDLING_ITEMS: Item[] = [
     cpa: "abstract",
     bloom: "evaluate",
     subskill: "line-graphs",
-    prompt: "A day's temperature line rises (morning → afternoon), then falls (afternoon → evening). Which real-world pattern does this match?",
+    prompt: "A line graph shows the temperature during one day. The line goes up from morning to afternoon, then goes down in the evening. What does this tell you?",
     representation: null,
     choices: [
-      { id: "a", text: "A typical day — warming through the morning, peaking in early afternoon, then cooling in the evening" },
-      { id: "b", text: "A typical night — coldest at noon" },
-      { id: "c", text: "Temperature that never changes" },
-      { id: "d", text: "A graph that must contain an error" },
+      { id: "a", text: "It got warmer until the afternoon, then cooler in the evening" },
+      { id: "b", text: "It was coldest at noon" },
+      { id: "c", text: "The temperature stayed the same all day" },
+      { id: "d", text: "The graph must be wrong" },
     ],
     correctChoiceId: "a",
   },
