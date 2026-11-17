@@ -46,38 +46,43 @@ const chip = (t: string, s: TopicStatus) =>
 
 export function childEmail(ins: Insights): { subject: string; html: string } {
   const by = (s: TopicStatus) => ins.topics.filter((t) => t.status === s);
-  const sure = ins.overall.sureRight + ins.overall.sureWrong;
-  const total = sure + ins.overall.unsureRight + ins.overall.unsureWrong;
+  const o = ins.overall;
+  const right = o.sureRight + o.unsureRight;
+  const asked = right + o.sureWrong + o.unsureWrong;
+  const list = (title: string, s: TopicStatus[], mark: string, colour: string) => {
+    const ts = s.flatMap(by);
+    return ts.length
+      ? section(h2(title) + ts.map((t) => `<div style="font-size:15px;padding:7px 0;border-top:1px solid ${C.line};"><span style="color:${colour};font-weight:700;margin-right:8px;">${mark}</span>${esc(t.name)}</div>`).join(""))
+      : "";
+  };
   let body = section(
-    `<div style="font-size:24px;font-weight:700;margin-bottom:4px;">Hi ${esc(ins.childName)}! 🎉</div>
-     <div style="font-size:15px;color:${C.soft};">Here's what your maths check at LifeHub on ${esc(ins.date)} showed. Read it with your family!</div>`,
+    `<div style="font-size:24px;font-weight:700;margin-bottom:4px;">Well done, ${esc(ins.childName)}!</div>
+     <div style="font-size:15px;color:${C.soft};">Your maths Skill Check at LifeHub on ${esc(ins.date)}.</div>`,
     "22px 24px 8px"
   );
-  if (by("secure").length) body += section(h2("⭐ You've got these") + by("secure").map((t) => chip(t.name, "secure")).join(""));
-  if (by("fragile").length) body += section(h2("🌱 Almost there: a bit more practice") + by("fragile").map((t) => chip(t.name, "fragile")).join(""));
-  if (ins.nextForChild) {
+  if (asked > 0) {
+    const obs = sureWords(o.sureRight, o.sureRight + o.sureWrong, right);
     body += section(
-      h2(`🚀 Next we'll learn: ${esc(ins.nextForChild.topic)}`) +
-        `<div style="background:#fffaf0;border:1px solid #f0dfbf;border-radius:10px;padding:12px 14px;font-size:15px;line-height:1.5;">💡 ${esc(ins.nextForChild.tip)}</div>`
-    );
-    body += section(
-      h2("🏠 For parents: try this at home") +
-        `<div style="font-size:15px;line-height:1.5;">${esc(ins.nextForChild.atHome)}</div>
-         <div style="font-size:13px;color:${C.soft};margin-top:6px;">Ten minutes, a few times a week, helps more than one long session.</div>`
+      `<div style="font-size:15px;"><span style="font-size:34px;font-weight:700;color:#3f7718;">${right}</span> out of ${asked} questions right</div>
+       ${bar([[right, "#8fc63f"], [asked - right, "#e9eee5"]], asked)}
+       ${obs ? `<div style="font-size:15px;font-weight:600;margin-top:10px;">${esc(obs)}</div>` : ""}
+       <div style="font-size:13px;color:${C.soft};margin-top:4px;">The questions got harder as you went.</div>`
     );
   }
-  if (sure > 0) {
-    const pct = Math.round((ins.overall.sureRight / sure) * 100);
-    body += section(
-      h2("🎯 When you were sure…") +
-        `<div style="font-size:15px;line-height:1.5;">you were right <b>${ins.overall.sureRight} out of ${sure}</b> times.${pct >= 80 ? " You know what you know!" : " Sometimes it's worth checking again, even when you feel sure."}</div>
-         ${bar([[ins.overall.sureRight, "#8fc63f"], [ins.overall.sureWrong, "#f2a7b5"]], sure)}`
-    );
-  } else if (total > 0) {
-    body += section(h2("🎯 Be brave!") + `<div style="font-size:15px;">You weren't sure about any answer, but you got <b>${ins.overall.unsureRight}</b> right. You know more than you think!</div>`);
-  }
-  body += section(`<div style="font-size:15px;">Keep going! 🌟<br><span style="color:${C.soft};">Your teachers at LifeHub</span></div>`, "8px 24px 22px");
-  return { subject: `${ins.childName}, your maths check results ⭐`, html: shell("Your maths check", body) };
+  body += list("Strengths", ["secure"], "✓", "#3f8a1c");
+  body += list("Areas to grow", ["fragile", "gap"], "↑", "#c4851d");
+  body += section(`<div style="font-size:15px;">Keep going!<br><span style="color:${C.soft};">Your teachers at LifeHub</span></div>`, "8px 24px 22px");
+  return { subject: `${ins.childName}, your maths Skill Check results`, html: shell("Your maths Skill Check", body) };
+}
+
+/** What being sure said about the child, in plain words (no numbers). Same as the report page. */
+function sureWords(sureRight: number, sureTotal: number, right: number): string {
+  if (!sureTotal) return right ? "You got answers right even when you weren't sure. You know more than you think!" : "";
+  const p = sureRight / sureTotal;
+  if (p === 1) return "Every time you felt sure, you were right. You know what you know!";
+  if (p >= 0.75) return "When you felt sure, you were nearly always right.";
+  if (p >= 0.5) return "Sometimes you felt sure but the answer needed another look. It's good to check again.";
+  return "Take a second look before you answer, even when you feel sure.";
 }
 
 // ---------------------------------------------------------------- staff

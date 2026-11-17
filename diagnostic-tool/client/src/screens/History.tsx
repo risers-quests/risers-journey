@@ -1,16 +1,10 @@
 import { useEffect, useState } from "react";
 import { getHistory } from "../api";
-import { History as HistoryData, LOOK, TopicStatus, fmtDate } from "../reportTypes";
+import { CombinedTopic, History as HistoryData, TopicStatus, fmtDate } from "../reportTypes";
 import { Downloads } from "../components/Downloads";
-import { CpaTable, Ring, StatusGroup, nearlyWhy, startWords } from "../components/ReportParts";
+import { STAFF_WORD, ScoreRing, StaffSection, TopicList, splitTopics } from "../components/ReportParts";
 
 const RANK: Record<TopicStatus, number> = { gap: 0, notReached: 0, fragile: 1, secure: 2 };
-
-/** "was Next to learn" → better / slipped, when a topic was tested more than once. */
-function change(now: TopicStatus, before: TopicStatus | undefined): string | undefined {
-  if (!before || before === "notReached" || before === now) return undefined;
-  return RANK[now] > RANK[before] ? `↑ up from "${LOOK[before].word}"` : `↓ was "${LOOK[before].word}"`;
-}
 
 /**
  * A child's maths reports (?child=<name>): every test they've taken, newest
@@ -37,18 +31,18 @@ export function History({ kid }: { kid: string }) {
     );
 
   const tested = c.topics.filter((t) => t.status !== "notReached");
-  const topicsWith = (s: TopicStatus) => c.topics.filter((t) => t.status === s);
+  const { strong, grow } = splitTopics(c.topics);
+  const improved = (t: CombinedTopic) => !!t.before && t.before.status !== "notReached" && RANK[t.status] > RANK[t.before.status];
+  const tag = (t: CombinedTopic) => (improved(t) ? "improved" : undefined);
   return (
     <div className="rp">
       <header className="rp-head">
-        <div>
-          <p className="rp-eyebrow">Skill Check reports</p>
-          <h1>{childName}</h1>
-          <p>
-            {c.tests} test{c.tests === 1 ? "" : "s"}
-            {c.tests > 1 ? ` · ${fmtDate(c.firstDate)} – ${fmtDate(c.lastDate)}` : ` · ${fmtDate(c.lastDate)}`}
-          </p>
-        </div>
+        <p className="rp-eyebrow">Maths Skill Checks</p>
+        <h1>{childName}</h1>
+        <p>
+          {c.tests} check{c.tests === 1 ? "" : "s"}
+          {c.tests > 1 ? ` · ${fmtDate(c.firstDate)} – ${fmtDate(c.lastDate)}` : ` · ${fmtDate(c.lastDate)}`}
+        </p>
       </header>
 
       <div className="rp-actions">
@@ -59,61 +53,30 @@ export function History({ kid }: { kid: string }) {
       </div>
 
       <section className="rp-card rp-top">
-        <Ring got={c.strengths.length} nearly={c.nearly.length} total={tested.length} />
+        <ScoreRing value={strong.length} total={tested.length} label={`topic${tested.length === 1 ? "" : "s"} are strengths`} />
         <div className="rp-top-text">
-          <h2>All tests together</h2>
-          <p>Each topic shows its latest result. Where a topic was tested more than once, you can see how it changed.</p>
+          <p className="rp-observe">All your checks together.</p>
+          {c.topics.some(improved) && <p className="rp-note">Topics marked “improved” got better since an earlier check.</p>}
         </div>
       </section>
 
-      <div className="rp-groups">
-        <StatusGroup status="secure" title="Strengths" topics={topicsWith("secure").map((t) => ({ name: t.name, note: change(t.status, t.before?.status) }))} />
-        <StatusGroup status="fragile" title="Nearly there" topics={topicsWith("fragile").map((t) => ({ name: t.name, note: [nearlyWhy(t.why), change(t.status, t.before?.status)].filter(Boolean).join(" ") }))} />
-        <StatusGroup
-          status="gap"
-          title="Next to learn"
-          topics={topicsWith("gap").map((t) => ({
-            name: t.name,
-            note: [change(t.status, t.before?.status), startWords(t.startAt) ? `Best to ${startWords(t.startAt)}.` : ""].filter(Boolean).join(" "),
-          }))}
-        />
-        <StatusGroup status="notReached" title="Not tested yet" topics={topicsWith("notReached").map((t) => ({ name: t.name }))} />
+      <div className="rp-lists">
+        <TopicList kind="strong" items={strong.map((t) => ({ name: t.name, tag: tag(t) }))} empty="Keep going: your strengths will show here." />
+        <TopicList kind="grow" items={grow.map((t) => ({ name: t.name, tag: tag(t) }))} empty="Nothing to work on right now." />
       </div>
 
-      {c.mistakes.length > 0 && (
-        <section className="rp-card">
-          <h2>Mistakes to work on</h2>
-          <ul className="rp-mistakes">
-            {c.mistakes.map((m) => (
-              <li key={m.topic + m.label}>
-                <b>{m.label}</b> <small>({m.topic})</small>
-                <span>💡 {m.childTip}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      <CpaTable topics={c.topics} />
-
       <section className="rp-card">
-        <h2>Every test</h2>
+        <h2>Every check</h2>
         <ul className="rp-tests">
           {reports.map((r) => (
             <li key={r.id}>
               <a href={`?report=${r.id}`}>
                 <span className="rp-test-date">
                   <b>{fmtDate(r.date)}</b>
-                  <small>
-                    {new Date(r.date).toLocaleTimeString("en-GB", { hour: "numeric", minute: "2-digit" })} · {r.grade}
-                  </small>
+                  <small>{r.grade}</small>
                 </span>
-                <span className="rp-chips">
-                  {r.topics.map((t) => (
-                    <span key={t.topicId} className={`rp-chip ${LOOK[t.status].cls}`} title={LOOK[t.status].word}>
-                      {LOOK[t.status].icon} {t.name}
-                    </span>
-                  ))}
+                <span className="rp-test-score">
+                  <b>{r.right}</b>/{r.questions} right
                 </span>
                 <span className="rp-open">Open →</span>
               </a>
@@ -121,6 +84,30 @@ export function History({ kid }: { kid: string }) {
           ))}
         </ul>
       </section>
+
+      <StaffSection
+        topics={c.topics}
+        notes={(t) => {
+          const ct = t as CombinedTopic;
+          return [
+            ct.before && ct.before.status !== "notReached" && ct.before.status !== ct.status ? `Was ${STAFF_WORD[ct.before.status].word.toLowerCase()} on ${fmtDate(ct.before.date)}.` : "",
+            ct.timesTested > 1 ? `Tested ${ct.timesTested} times; latest ${fmtDate(ct.date)}.` : "",
+          ];
+        }}
+      >
+        {c.mistakes.length > 0 && (
+          <div className="rp-staff-block">
+            <h3>Mistakes to work on</h3>
+            <ul>
+              {c.mistakes.map((m) => (
+                <li key={m.topic + m.label}>
+                  <b>{m.label}</b> ({m.topic}{m.sureCount ? `, ${m.sureCount}× while sure` : ""}). <span>{m.childTip}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </StaffSection>
     </div>
   );
 }

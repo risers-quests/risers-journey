@@ -63,12 +63,5 @@ export interface History {
   combined: Combined;
 }
 
-export const LOOK: Record<TopicStatus, { icon: string; word: string; cls: string }> = {
-  secure: { icon: "⭐", word: "Got it", cls: "st-secure" },
-  fragile: { icon: "🌱", word: "Nearly there", cls: "st-fragile" },
-  gap: { icon: "🔧", word: "Next to learn", cls: "st-gap" },
-  notReached: { icon: "⏸", word: "Coming later", cls: "st-later" },
-};
-
 export const fmtDate = (iso: string | null) =>
   iso ? new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "";

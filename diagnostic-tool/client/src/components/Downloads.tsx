@@ -1,5 +1,5 @@
-import { LOOK, ReportEntry } from "../reportTypes";
-import { stageWord } from "./ReportParts";
+import { ReportEntry } from "../reportTypes";
+import { STAFF_WORD, stageWord } from "./ReportParts";
 
 /**
  * Download a report: as a PDF (the browser's print sheet, "Save as PDF";
@@ -23,7 +23,7 @@ export function Downloads({ childName, reports, fileName }: { childName: string;
   }
 
   function csv() {
-    const head = ["Child", "Date", "Time", "Grade", "Topic", "Result", "Why", "With objects", "With pictures", "With numbers", "Main mistake", "Tip", "Questions right", "Questions asked"];
+    const head = ["Child", "Date", "Time", "Grade", "Topic", "Result", "Why", "Concrete", "Pictorial", "Abstract", "Main mistake", "Child tip", "Questions right", "Questions asked"];
     const rows = reports.flatMap((r) => {
       const d = new Date(r.date);
       return r.topics.map((t) => [
@@ -32,7 +32,7 @@ export function Downloads({ childName, reports, fileName }: { childName: string;
         d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }),
         r.grade,
         t.name,
-        LOOK[t.status].word,
+        STAFF_WORD[t.status].word,
         t.why,
         ...t.grid.map((row) => stageWord(row).word),
         t.mistakes[0]?.label ?? "",
@@ -58,10 +58,10 @@ export function Downloads({ childName, reports, fileName }: { childName: string;
     <div className="rp-downloads">
       <span>Download:</span>
       <button type="button" className="btn btn-secondary" onClick={pdf}>
-        📄 PDF
+        PDF
       </button>
       <button type="button" className="btn btn-secondary" onClick={csv}>
-        📊 Spreadsheet (CSV)
+        Spreadsheet (CSV)
       </button>
     </div>
   );
