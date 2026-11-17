@@ -53,6 +53,7 @@ export const ENGLISH8_TOPIC_CHOICES = [
   { id: "e8-words", chapter: "Vocabulary", name: "Word Study", about: "Homophones, homonyms, synonyms and antonyms, prefixes and suffixes, confused words, loanwords" },
   { id: "e8-figures", chapter: "Appreciating the poem", name: "Figures of Speech", about: "Simile, metaphor, personification, alliteration, onomatopoeia, hyperbole, irony, synecdoche" },
   { id: "e8-punctuation", chapter: "Punctuation", name: "Punctuation", about: "Capitals, end marks, commas, apostrophes, inverted commas, colon, hyphen" },
+  { id: "e8-spelling", chapter: "Spelling · Pronunciation", name: "Spelling and Pronunciation", about: "ie / ei, doubling, -tion / -sion, -ance / -ence, dis-, British spelling, syllables and stress, -ed sounds" },
 ];
 
 // The book's strands, as offered on the start page.
