@@ -61,7 +61,7 @@ const STAGES = ["With objects", "With pictures", "With numbers"];
 const LEVELS = ["Remember", "Understand", "Apply", "Analyse", "Evaluate"];
 
 /** One stage (row of the grid) in a word: all cleared, partly, not yet, or not tried. */
-function stageWord(row: string[]): { word: string; cls: string } {
+export function stageWord(row: string[]): { word: string; cls: string } {
   const cleared = row.filter((c) => c === "cleared").length;
   const struggled = row.filter((c) => c === "struggled").length;
   if (!cleared && !struggled) return { word: "Not tried", cls: "cpa-none" };
@@ -82,7 +82,7 @@ export function CpaTable({ topics }: { topics: ReportTopic[] }) {
     <section className="rp-card">
       <h2>How each topic was learned</h2>
       <p className="rp-sub">
-        Each topic was tried with real objects, then pictures, then numbers only, at five levels of thinking. Tap a topic to see every step.
+        Each topic was tried with real objects, then pictures, then numbers only, at five levels of thinking. <span className="no-print">Tap a topic to see every step.</span>
       </p>
       <div className="cpa-list">
         {shown.map((t) => (

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getFullReport, resendEmail } from "../api";
 import { FullReport } from "../reportTypes";
 import { ReportView } from "../components/ReportView";
+import { Downloads } from "../components/Downloads";
+import { fmtDate } from "../reportTypes";
 
 /**
  * A finished test's report: shown at the end of the test, and opened from
@@ -30,6 +32,7 @@ export function Summary({ sessionId, fromHistory = false }: { sessionId: string;
       {!fromHistory && <h1 className="rp-welldone">Well done, {data.childName}! 🎉</h1>}
       <ReportView childName={data.childName} report={data.report} />
       <div className="rp-foot">
+        <Downloads childName={data.childName} reports={[data.report]} fileName={`${data.childName} - Skill Check report - ${fmtDate(data.report.date)}`} />
         <a className="btn btn-secondary" href={`?child=${encodeURIComponent(data.kid)}`}>
           All of {data.childName}'s reports →
         </a>

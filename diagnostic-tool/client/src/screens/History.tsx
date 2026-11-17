@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getHistory } from "../api";
 import { History as HistoryData, LOOK, TopicStatus, fmtDate } from "../reportTypes";
+import { Downloads } from "../components/Downloads";
 import { CpaTable, Ring, StatusGroup, nearlyWhy, startWords } from "../components/ReportParts";
 
 const RANK: Record<TopicStatus, number> = { gap: 0, notReached: 0, fragile: 1, secure: 2 };
@@ -50,9 +51,12 @@ export function History({ kid }: { kid: string }) {
         </div>
       </header>
 
-      <a className="btn btn-primary rp-start" href={`./?for=${encodeURIComponent(data.kid)}`}>
-        Start a new Skill Check →
-      </a>
+      <div className="rp-actions">
+        <a className="btn btn-primary rp-start" href={`./?for=${encodeURIComponent(data.kid)}`}>
+          Start a new Skill Check →
+        </a>
+        <Downloads childName={childName} reports={reports} fileName={`${childName} - Skill Check reports - ${fmtDate(c.lastDate)}`} />
+      </div>
 
       <section className="rp-card rp-top">
         <Ring got={c.strengths.length} nearly={c.nearly.length} total={tested.length} />

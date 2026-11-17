@@ -736,3 +736,21 @@ a { color: var(--deep-teal); }
 .rp-ring-nearly b { font-family: var(--font-serif); font-size: 1.35rem; color: #b07a17; }
 .rp-ring-text small { margin-top: 2px; }
 .rp-ring-fill { stroke-linecap: butt; }
+
+/* ---- Report downloads ---- */
+.rp-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.rp-downloads { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-soft); }
+.rp-downloads .btn { padding: 8px 12px; font-size: 0.85rem; }
+
+/* PDF (print): just the report, in colour, no buttons or site header. */
+@media print {
+  @page { margin: 12mm; }
+  body { background: #fff !important; }
+  .brand-row, .rp-actions, .rp-foot, .rp-downloads, .rp-welldone, .no-print, button { display: none !important; }
+  .app-shell { padding: 0 !important; max-width: none !important; }
+  .rp { max-width: none; gap: 10px; }
+  .rp-card, .rp-group, .cpa-topic, .rp-tests li { break-inside: avoid; }
+  .cpa-scroll { overflow: visible; }
+  .rp-tests a .rp-open { display: none; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
