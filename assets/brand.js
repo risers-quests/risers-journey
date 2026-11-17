@@ -103,12 +103,15 @@
       ['Beyond the Classroom', 'staff/term-3/opportunities.html'], ['Passions', 'staff/term-3/passions.html'],
       ['Try-out data', 'staff/term-3/try-out.html']],
     'Term 2': [['Term 2 Conference', 'end-of-term-2/staff/index.html'], ['Term 2 Quests', 'staff/quests/index.html']],
-    'Term 1': [['Term 1 Conference', 'term-1-conference/index.html?view=staff']]
+    'Term 1': [['Term 1 Conference', 'term-1-conference/index.html?view=staff']],
+    'Maths Diagnostic': [['Start a test', 'diagnostic/index.html'], ['Grade 4 questions', 'diagnostic/index.html?preview=more-large-numbers&grade=4'],
+      ['Grade 5 questions', 'diagnostic/index.html?preview=more-large-numbers']]
   } : {
     'Term 3': [['Term 3 Quest', 'term-3/quest/index.html'],
       ['Weekly Check-in', 'term-3/check-in/index.html'], ['My Schedule', 'term-3/schedule/index.html'], ['Assessments', 'term-3/assessments/index.html']],
     'Term 2': [['Term 2 Conference', 'end-of-term-2/index.html'], ['Term 2 Quests', 'dashboard/index.html']],
-    'Term 1': [['Term 1 Conference', 'term-1-conference/index.html']]
+    'Term 1': [['Term 1 Conference', 'term-1-conference/index.html']],
+    'Maths': [['Take a maths test', 'diagnostic/index.html'], ['My maths reports', 'diagnostic/index.html?child=' + encodeURIComponent((function () { try { return localStorage.getItem(KID_KEY) || ''; } catch (e) { return ''; } })())]]
   };
 
   var NAV = isStaff ? [
@@ -117,12 +120,14 @@
     { label: 'Term 3', href: root + 'staff/term-3/index.html', icon: 'skills', short: 'Term 3', match: /\/term-3\// },
     { label: 'Term 2', href: root + 'staff/term-2/index.html', icon: 'term', short: 'Term 2', match: /\/(staff\/term-2|end-of-term-2|staff\/quests)\// },
     { label: 'Term 1', href: root + 'staff/term-1/index.html', icon: 'conf', short: 'Term 1', match: /\/(staff\/term-1|term-1-conference)\// },
+    { label: 'Maths Diagnostic', href: root + 'diagnostic/index.html', icon: 'paper', short: 'Maths', match: /\/diagnostic\// },
     { label: 'Risers’ links', href: root + 'staff/links/index.html', icon: 'link', short: 'Links', match: /\/staff\/links\// }
   ] : [
     { label: 'Home', href: root + 'index.html', icon: 'home', match: /\/(index\.html)?$/, exact: true },
     { label: 'Term 3', href: root + 'term-3/index.html', icon: 'skills', short: 'Term 3', match: /\/term-3\// },
     { label: 'Term 2', href: root + 'term-2/index.html', icon: 'term', short: 'Term 2', match: /\/(term-2|end-of-term-2|dashboard)\// },
-    { label: 'Term 1', href: root + 'term-1/index.html', icon: 'conf', short: 'Term 1', match: /\/(term-1|term-1-conference)\// }
+    { label: 'Term 1', href: root + 'term-1/index.html', icon: 'conf', short: 'Term 1', match: /\/(term-1|term-1-conference)\// },
+    { label: 'Maths', href: root + 'diagnostic/index.html', icon: 'paper', short: 'Maths', match: /\/diagnostic\// }
   ];
 
 

@@ -31,7 +31,7 @@ export function History({ kid }: { kid: string }) {
       <div className="setup-wrap">
         <h1>{childName}'s maths reports</h1>
         <p className="lede">No finished tests yet. Reports appear here after each test.</p>
-        <a className="btn" href="./">Start a test</a>
+        <a className="btn btn-primary" href={`./?for=${encodeURIComponent(data.kid)}`}>Start a maths test</a>
       </div>
     );
 
@@ -49,6 +49,10 @@ export function History({ kid }: { kid: string }) {
           </p>
         </div>
       </header>
+
+      <a className="btn btn-primary rp-start" href={`./?for=${encodeURIComponent(data.kid)}`}>
+        Start a new maths test →
+      </a>
 
       <section className="rp-card rp-top">
         <Ring value={c.strengths.length} total={tested.length} label="topics got" />

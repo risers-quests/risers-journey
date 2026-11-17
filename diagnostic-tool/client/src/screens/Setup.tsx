@@ -7,17 +7,26 @@ import { GRADE4_TOPIC_CHOICES, STRAND_CHOICES } from "../strands";
 // The 12 Risers. Their report email addresses are kept only in the email
 // script (diagnostic-tool/email), never on the site; it matches by name.
 const RISERS = ["Benjamin", "Chris", "Elyon", "Eva", "Gabby", "Karis", "Michael", "Owen", "Pranavi", "Shalom", "Yokesh", "Zach"];
+// Risers working from the Grade 4 book; everyone else starts at Grade 5 (staff can still change it).
+const RISER_GRADE: Record<string, string> = { Eva: "Grade 4" };
+const gradeFor = (name: string) => RISER_GRADE[name] ?? "Grade 5";
 
 export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) => void; signedIn?: string | null }) {
   // A Riser signed in on this device is chosen already.
   const me = RISERS.find((n) => n.toLowerCase() === (signedIn || "").toLowerCase()) ?? "";
-  const [childName, setChildName] = useState(me);
+  // ?for=<name> (from a child's reports page) chooses that Riser too.
+  const forName = RISERS.find((n) => n.toLowerCase() === (new URLSearchParams(location.search).get("for") || "").toLowerCase()) ?? "";
+  const [childName, setChildNameRaw] = useState(me || forName);
+  function setChildName(name: string) {
+    setChildNameRaw(name);
+    if (name) setGrade(gradeFor(name));
+  }
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [unfinished, setUnfinished] = useState<SessionStatus[]>([]);
   // One strand per sitting by default, so a test stays well under an hour.
   const [strands, setStrands] = useState<string[]>(["Number & Algebra"]);
-  const [grade, setGrade] = useState("Grade 5");
+  const [grade, setGrade] = useState(gradeFor(me || forName));
   // Grade 4: one topic per sitting by default; tick more to test them together.
   const [g4Topics, setG4Topics] = useState<string[]>([GRADE4_TOPIC_CHOICES[0].id]);
   function toggleTopic(id: string) {
