@@ -28,6 +28,13 @@
       '<p class="gate-msg">Don’t have it? Ask your facilitator.</p>'));
   }
 
+  // Tools added for one Riser only, keyed by their sign-in name.
+  var OWN_TILES = {
+    karis: [
+      { title: 'Sound Desk', desc: 'Practise live church sound: fix problems by ear, fast.', href: 'tools/sound-desk/index.html', icon: 'sound', tone: 'violet' }
+    ]
+  };
+
   function renderHome(kidEntry, kidKey) {
     var app = document.getElementById('app');
     var h = new Date().getHours();
@@ -41,7 +48,7 @@
       { title: 'Term 3', desc: 'Your weekly check-in and everything else for this term.', href: 'term-3/index.html', icon: 'skills', tone: 'amber' },
       { title: 'Skill Check', desc: 'Show what you know in a subject, one topic at a time.', href: 'diagnostic/', icon: 'check', tone: 'green' },
       { title: 'My Reports', desc: 'Your Skill Check results: what you’ve got and what to learn next.', href: 'diagnostic/?child=' + encodeURIComponent(kidKey), icon: 'paper', tone: 'rose' }
-    ].concat([
+    ].concat(OWN_TILES[kidKey] || []).concat([
       { title: 'Term 2', desc: 'Your Term 2 conference and quests.', href: 'term-2/index.html', icon: 'term', tone: 'slate' },
       { title: 'Term 1', desc: 'Your Term 1 conference.', href: 'term-1/index.html', icon: 'conf', tone: 'violet' }
     ]))));
