@@ -766,11 +766,11 @@ a { color: var(--deep-teal); }
 .fig-card svg { width: 100%; max-width: 120px; height: auto; }
 .fig-pick { cursor: pointer; }
 .fig-pick.on { border-color: var(--deep-teal); background: #eef7e2; }
-.shade-grid { display: grid; gap: 2px; margin: 4px auto 8px; padding: 4px; background: #cfdcc0; border-radius: 6px; }
-.shade-cell { aspect-ratio: 1; border: none; border-radius: 2px; background: #fff; padding: 0; cursor: pointer; min-width: 0; }
-.shade-cell.on { background: var(--deep-teal); }
-.shade-cell.given { background: #9ec97a; cursor: default; }
-.shade-clear { padding: 6px 10px; font-size: 0.8rem; }
+.tile-grid { display: grid; gap: 2px; margin: 4px auto 8px; padding: 4px; background: #cfdcc0; border-radius: 6px; }
+.tile-cell { aspect-ratio: 1; border: none; border-radius: 2px; background: #fff; padding: 0; cursor: pointer; min-width: 0; }
+.tile-cell.on { background: var(--deep-teal); }
+.tile-cell.given { background: #9ec97a; cursor: default; }
+.tile-clear { padding: 6px 10px; font-size: 0.8rem; }
 .ms-shelf { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
 .ms-piece { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 14px; border-radius: 12px; border: 2px solid #d9c49a; background: #fff; font: inherit; font-weight: 700; color: var(--ink); cursor: pointer; }
 .ms-piece small { font-weight: 500; font-size: 0.72rem; color: var(--ink-soft); }

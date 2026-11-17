@@ -9,8 +9,8 @@ import {
   PieSpec,
   PizzaActivity as PizzaSpec,
   PizzaInteraction,
-  ShadeActivity as ShadeSpec,
-  ShadeInteraction,
+  TilesActivity as TilesSpec,
+  TilesInteraction,
 } from "../types";
 
 /*
@@ -206,7 +206,7 @@ export function PickActivity({ spec, onChange }: { spec: PickSpec; onChange: (it
 // ---------------- grid shading ----------------
 
 /** Hands-on: tap squares to colour them. */
-export function ShadeActivity({ spec, onChange }: { spec: ShadeSpec; onChange: (it: ShadeInteraction, acted: boolean) => void }) {
+export function TilesActivity({ spec, onChange }: { spec: TilesSpec; onChange: (it: TilesInteraction, acted: boolean) => void }) {
   const [cells, setCells] = useState<number[]>([]);
   const given = new Set(spec.given ?? []);
   useEffect(() => {
@@ -216,7 +216,7 @@ export function ShadeActivity({ spec, onChange }: { spec: ShadeSpec; onChange: (
   const size = spec.rows * spec.cols;
   return (
     <div className="g4-activity">
-      <div className="shade-grid" style={{ gridTemplateColumns: `repeat(${spec.cols}, 1fr)`, maxWidth: Math.min(560, spec.cols * (spec.cols > 10 ? 34 : 44)) }}>
+      <div className="tile-grid" style={{ gridTemplateColumns: `repeat(${spec.cols}, 1fr)`, maxWidth: Math.min(560, spec.cols * (spec.cols > 10 ? 34 : 44)) }}>
         {Array.from({ length: size }, (_, i) => {
           const isGiven = given.has(i);
           const on = cells.includes(i);
@@ -224,7 +224,7 @@ export function ShadeActivity({ spec, onChange }: { spec: ShadeSpec; onChange: (
             <button
               type="button"
               key={i}
-              className={`shade-cell${on ? " on" : ""}${isGiven ? " given" : ""}`}
+              className={`tile-cell${on ? " on" : ""}${isGiven ? " given" : ""}`}
               disabled={isGiven}
               aria-label={`square ${i + 1}${on ? ", coloured" : ""}`}
               onClick={() => setCells((cs) => (cs.includes(i) ? cs.filter((x) => x !== i) : [...cs, i]))}
@@ -235,7 +235,7 @@ export function ShadeActivity({ spec, onChange }: { spec: ShadeSpec; onChange: (
       <div className="sa-controls">
         <p className="ga-hint">Tap a square to colour it. Tap it again to clear it.</p>
         {cells.length > 0 && (
-          <button type="button" className="btn btn-secondary shade-clear" onClick={() => setCells([])}>
+          <button type="button" className="btn btn-secondary tile-clear" onClick={() => setCells([])}>
             Clear all
           </button>
         )}

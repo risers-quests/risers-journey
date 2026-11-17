@@ -80,7 +80,7 @@ export const DECIMALS_G4_TEMPLATES: Record<string, Template> = {
     return buildActivity(
       { ...base("c-remember", "concrete", "remember", "tenths", k, rng), prompt: `The strip is 1 whole, cut into 10 equal parts. Colour ${dec(k * 100, 1)} of it.`, representation: null },
       { k },
-      { kind: "shade", rows: 1, cols: 10, mode: "count", target: k, wrong: [{ value: 10 - k, mistake: "dec4-rest" }] }
+      { kind: "tiles", rows: 1, cols: 10, mode: "count", target: k, wrong: [{ value: 10 - k, mistake: "dec4-rest" }] }
     );
   },
 
@@ -99,7 +99,7 @@ export const DECIMALS_G4_TEMPLATES: Record<string, Template> = {
       return buildActivity(
         { ...base("c-understand", "concrete", "understand", "hundredths", n, rng), prompt: `The square is 1 whole, cut into 100 equal parts. Colour ${dec(n * 10, 2)} of it.`, representation: null },
         { n },
-        { kind: "shade", rows: 10, cols: 10, mode: "count", target: n, wrong }
+        { kind: "tiles", rows: 10, cols: 10, mode: "count", target: n, wrong }
       );
     }
   },
@@ -152,7 +152,7 @@ export const DECIMALS_G4_TEMPLATES: Record<string, Template> = {
           { text: "You can't compare tenths with hundredths", mistake: null },
         ]
       ),
-      activity: { kind: "shade", rows: 10, cols: 10, mode: "count", target: a * 10 },
+      activity: { kind: "tiles", rows: 10, cols: 10, mode: "count", target: a * 10 },
     };
   },
 
@@ -186,7 +186,7 @@ export const DECIMALS_G4_TEMPLATES: Record<string, Template> = {
               { text: `No — ${a} is more, because it is shorter`, mistake: null },
             ]
       ),
-      activity: { kind: "shade", rows: 10, cols: 10, mode: "count", target: k * 10 },
+      activity: { kind: "tiles", rows: 10, cols: 10, mode: "count", target: k * 10 },
     };
   },
 

@@ -1,4 +1,4 @@
-import { Activity, GroupInteraction, MeasureInteraction, PickInteraction, PizzaInteraction, PlaceValueInteraction, ShadeInteraction, ShareInteraction } from "../../types.js";
+import { Activity, GroupInteraction, MeasureInteraction, PickInteraction, PizzaInteraction, PlaceValueInteraction, ShareInteraction, TilesInteraction } from "../../types.js";
 import { dropZeros } from "./moreOnLargeNumbers.js";
 
 /**
@@ -10,7 +10,7 @@ export function checkActivity(activity: Activity, interaction: unknown): { corre
   if (activity.kind === "place-value") return checkPlaceValue(activity, interaction as PlaceValueInteraction);
   if (activity.kind === "group") return checkGroup(activity, interaction as GroupInteraction);
   if (activity.kind === "pizza") return checkPizza(activity, interaction as PizzaInteraction);
-  if (activity.kind === "shade") return checkShade(activity, interaction as ShadeInteraction);
+  if (activity.kind === "tiles") return checkTiles(activity, interaction as TilesInteraction);
   if (activity.kind === "pick") return checkPick(activity, interaction as PickInteraction);
   if (activity.kind === "measure") return checkMeasure(activity, interaction as MeasureInteraction);
   return { correct: false, misconception: null };
@@ -119,7 +119,7 @@ export function checkPizza(a: Extract<Activity, { kind: "pizza" }>, it: PizzaInt
 }
 
 /** Shading squares on a grid: a count, or a full rectangle of a given area (and perimeter). */
-export function checkShade(a: Extract<Activity, { kind: "shade" }>, it: ShadeInteraction): { correct: boolean; misconception: string | null } {
+export function checkTiles(a: Extract<Activity, { kind: "tiles" }>, it: TilesInteraction): { correct: boolean; misconception: string | null } {
   if (!it || !Array.isArray(it.cells)) return { correct: false, misconception: null };
   const size = a.rows * a.cols;
   const given = new Set(a.given ?? []);

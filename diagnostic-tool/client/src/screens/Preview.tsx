@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FigureCards, MeasureActivity, PickActivity, PiePicture, PizzaActivity, ShadeActivity } from "../components/G4Visuals";
+import { FigureCards, MeasureActivity, PickActivity, PiePicture, PizzaActivity, TilesActivity } from "../components/G4Visuals";
 import { GroupActivity } from "../components/GroupActivity";
 import { abstractClass } from "../promptStyle";
 import { BarModel } from "../components/BarModel";
@@ -65,7 +65,7 @@ export function Preview() {
           {it.representation?.kind === "figures" && <FigureCards spec={it.representation} />}
           {it.activity?.kind === "group" && <GroupActivity spec={it.activity} onChange={() => undefined} />}
           {it.activity?.kind === "pizza" && <PizzaActivity spec={it.activity} onChange={() => undefined} />}
-          {it.activity?.kind === "shade" && <ShadeActivity spec={it.activity} onChange={() => undefined} />}
+          {it.activity?.kind === "tiles" && <TilesActivity spec={it.activity} onChange={() => undefined} />}
           {it.activity?.kind === "pick" && <PickActivity spec={it.activity} onChange={() => undefined} />}
           {it.activity?.kind === "measure" && <MeasureActivity spec={it.activity} onChange={() => undefined} />}
           {it.answerBy === "activity" && <p className="preview-note">Answered by doing the activity: marked from what the child actually does, not by choosing an option.</p>}

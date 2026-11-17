@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { GroupActivity } from "../components/GroupActivity";
-import { FigureCards, MeasureActivity, PickActivity, PiePicture, PizzaActivity, ShadeActivity } from "../components/G4Visuals";
+import { FigureCards, MeasureActivity, PickActivity, PiePicture, PizzaActivity, TilesActivity } from "../components/G4Visuals";
 import { abstractClass } from "../promptStyle";
 import { getNextQuestion, submitAnswer } from "../api";
 import { NextQuestionResponse } from "../types";
@@ -158,14 +158,14 @@ export function Assessment({
         {item.activity?.kind === "place-value" && <PlaceValueActivity key={item.id} spec={item.activity} onChange={onActivity} />}
         {item.activity?.kind === "group" && <GroupActivity key={item.id} spec={item.activity} onChange={onActivity} />}
         {item.activity?.kind === "pizza" && <PizzaActivity key={item.id} spec={item.activity} onChange={onActivity} />}
-        {item.activity?.kind === "shade" && <ShadeActivity key={item.id} spec={item.activity} onChange={onActivity} />}
+        {item.activity?.kind === "tiles" && <TilesActivity key={item.id} spec={item.activity} onChange={onActivity} />}
         {item.activity?.kind === "pick" && <PickActivity key={item.id} spec={item.activity} onChange={onActivity} />}
         {item.activity?.kind === "measure" && <MeasureActivity key={item.id} spec={item.activity} onChange={onActivity} />}
 
         {!byActivity && (
           <div className={`choices ${item.activity && !acted ? "choices-locked" : ""}`}>
             {item.activity && !acted && <div className="choices-hint">{
-                  { share: "Share them out first, then choose.", group: "Try it with the apples first, then choose.", pizza: "Try it on the pizza first, then choose.", shade: "Try it on the grid first, then choose.", pick: "Tap the cards first, then choose.", measure: "Try it first, then choose.", "place-value": "Try it on the chart first, then choose." }[item.activity.kind]
+                  { share: "Share them out first, then choose.", group: "Try it with the apples first, then choose.", pizza: "Try it on the pizza first, then choose.", tiles: "Try it on the grid first, then choose.", pick: "Tap the cards first, then choose.", measure: "Try it first, then choose.", "place-value": "Try it on the chart first, then choose." }[item.activity.kind]
                 }</div>}
             {item.choices.map((choice) => (
               <button

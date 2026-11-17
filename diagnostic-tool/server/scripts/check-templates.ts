@@ -151,7 +151,7 @@ function checkActivityItem(it: GeneratedItem, where: string) {
       const r = checkActivity(act, { slices, coloured: fill(t) });
       if (r.correct || r.misconception !== w.mistake) fail(`${where}: ${w.n}/${w.d} not caught as ${w.mistake}`);
     }
-  } else if (act.kind === "shade") {
+  } else if (act.kind === "tiles") {
     const size = act.rows * act.cols;
     const given = new Set(act.given ?? []);
     const free = [...Array(size).keys()].filter((i) => !given.has(i));

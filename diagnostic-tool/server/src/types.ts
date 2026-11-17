@@ -174,9 +174,9 @@ export interface PizzaInteraction {
   coloured: number[];
 }
 
-/** Tap squares on a grid to colour them. */
-export interface ShadeActivity {
-  kind: "shade";
+/** Tap squares on a grid to colour them (Grade 4). */
+export interface TilesActivity {
+  kind: "tiles";
   rows: number;
   cols: number;
   /** "count": colour `target` squares; "rectangle": colour a rectangle of area `target` (and perimeter `perimeter`, if set). */
@@ -187,7 +187,7 @@ export interface ShadeActivity {
   given?: number[];
   wrong?: { value: number; mistake: string }[];
 }
-export interface ShadeInteraction {
+export interface TilesInteraction {
   cells: number[];
 }
 
@@ -217,7 +217,7 @@ export interface MeasureInteraction {
   counts: number[];
 }
 
-export type Activity = ShareActivity | PlaceValueActivity | GroupActivity | PizzaActivity | ShadeActivity | PickActivity | MeasureActivity;
+export type Activity = ShareActivity | PlaceValueActivity | GroupActivity | PizzaActivity | TilesActivity | PickActivity | MeasureActivity;
 
 /** Hands-on place-value chart: tap + / − to put discs in columns; exchange 10 for 1 next door. */
 export interface PlaceValueActivity {
