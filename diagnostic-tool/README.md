@@ -57,10 +57,14 @@ start page like Grade 4. In so far (`itemBank/generate/*G8.ts`):
   square) and lengths, and the free grid (`mode: "free"`: tap any square)
   for symmetry and drawing to size. Constructions can't use compasses on
   screen, so they test what a construction depends on.
+- Theme 5, Mensuration: Area of a Trapezium and a Polygon (and
+  semicircles), Surface Area, Volume and Capacity (cube, cuboid, cylinder;
+  π = 22/7). Hands-on: shading area (1 cm² a square), surface area and
+  litres; packing unit cubes in layers for volume.
 All questions are generated, with a named mistake behind every wrong
 option, and are covered by the stress test (algebra answers are checked by
 substituting numbers). Not yet: Sets (needs a "sort into circles"
-activity) and Themes 5–6.
+activity) and Theme 6.
 
 ## Stack
 

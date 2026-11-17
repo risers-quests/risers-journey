@@ -127,8 +127,8 @@ export const TOPICS: Topic[] = [
 ];
 
 /**
- * Grade 8 (Selina Concise Mathematics 8), Themes 1–4 (Number System;
- * Ratio and Proportion; Algebra; Geometry), in the
+ * Grade 8 (Selina Concise Mathematics 8), Themes 1–5 (Number System;
+ * Ratio and Proportion; Algebra; Geometry; Mensuration), in the
  * book's order. Grade 8 tests are chosen chapter by chapter (GRADE8_TOPICS).
  */
 TOPICS.push(
@@ -154,7 +154,10 @@ TOPICS.push(
   { id: "g8-constructions", strand: "Measurement & Geometry", name: "Constructions", shortLabel: "Constructions", dependsOn: [], grade: 8 },
   { id: "g8-solids", strand: "Measurement & Geometry", name: "Representing 3-D in 2-D", shortLabel: "3-D in 2-D", dependsOn: [], grade: 8 },
   { id: "g8-symmetry", strand: "Measurement & Geometry", name: "Symmetry", shortLabel: "Symmetry", dependsOn: [], grade: 8 },
-  { id: "g8-circles", strand: "Measurement & Geometry", name: "Circles", shortLabel: "Circles", dependsOn: [], grade: 8 }
+  { id: "g8-circles", strand: "Measurement & Geometry", name: "Circles", shortLabel: "Circles", dependsOn: [], grade: 8 },
+  // Theme 5: Mensuration.
+  { id: "g8-area", strand: "Measurement & Geometry", name: "Area of a Trapezium and a Polygon", shortLabel: "Area", dependsOn: [], grade: 8 },
+  { id: "g8-volume", strand: "Measurement & Geometry", name: "Surface Area, Volume and Capacity", shortLabel: "Volume & Surface", dependsOn: [], grade: 8 }
 );
 
 /** The book's strands, in order. A test covers one or more of them. */

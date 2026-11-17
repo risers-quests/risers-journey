@@ -26,6 +26,7 @@ function quadPoints(q: NonNullable<FigureSpec["quad"]>): P[] {
     case "kite": return [[110, 20], [170, 70], [110, 166], [50, 70]];
     case "trapezium": return [[70, 40], [160, 40], [200, 140], [20, 140]];
     case "general": return [[45, 35], [180, 55], [195, 145], [25, 130]];
+    case "house": return [[30, 150], [30, 80], [110, 22], [190, 80], [190, 150]];
     case "parallelogram":
     default: return [[60, 40], [200, 40], [160, 140], [20, 140]];
   }
@@ -35,12 +36,14 @@ const toward = (p: P, c: P, t: number): P => [p[0] + (c[0] - p[0]) * t, p[1] + (
 const mid = (a: P, b: P): P => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
 const centroid = (ps: P[]): P => [ps.reduce((s, p) => s + p[0], 0) / ps.length, ps.reduce((s, p) => s + p[1], 0) / ps.length];
 const pts = (ps: P[]) => ps.map((p) => p.join(",")).join(" ");
-/** Side label just outside the middle of edge a-b. */
-function outside(a: P, b: P, c: P): P {
+/** Side label just outside the middle of edge a-b, anchored so it never covers the edge. */
+function outside(a: P, b: P, c: P): { at: P; anchor: "start" | "middle" | "end" } {
   const m = mid(a, b);
   const dx = m[0] - c[0], dy = m[1] - c[1];
   const d = Math.hypot(dx, dy) || 1;
-  return [m[0] + (dx / d) * 14, m[1] + (dy / d) * 14 + 4];
+  const ux = dx / d, uy = dy / d;
+  const anchor = Math.abs(ux) < 0.35 ? "middle" : ux < 0 ? "end" : "start";
+  return { at: [m[0] + ux * 8, m[1] + uy * 12 + 4], anchor };
 }
 
 function Shape2D({ ps, spec }: { ps: P[]; spec: FigureSpec }) {
@@ -62,13 +65,23 @@ function Shape2D({ ps, spec }: { ps: P[]; spec: FigureSpec }) {
         const m = mid(ps[i], o);
         return l ? <text key={`d${i}`} x={m[0] + 4} y={m[1] - 4} className="fig-small fig-accent">{l}</text> : null;
       })}
+      {spec.heightLabel && (() => {
+        const bottom = Math.max(...ps.map((p) => p[1]));
+        const top = spec.quad === "house" ? ps[2] : ps[0];
+        return (
+          <>
+            <line x1={top[0]} y1={top[1]} x2={top[0]} y2={bottom} className="fig-thin" />
+            <text x={top[0] + 6} y={(top[1] + bottom) / 2 + 4} className="fig-label fig-accent">{spec.heightLabel}</text>
+          </>
+        );
+      })()}
       {spec.angleLabels?.map((l, i) => {
         const p = toward(ps[i], c, ps.length > 4 ? 0.34 : 0.26);
         return l ? <text key={`a${i}`} x={p[0]} y={p[1] + 4} className="fig-label" textAnchor="middle">{l}</text> : null;
       })}
       {spec.sideLabels?.map((l, i) => {
-        const p = outside(ps[i], ps[(i + 1) % ps.length], c);
-        return l ? <text key={`s${i}`} x={p[0]} y={p[1]} className="fig-label fig-accent" textAnchor="middle">{l}</text> : null;
+        const { at, anchor } = outside(ps[i], ps[(i + 1) % ps.length], c);
+        return l ? <text key={`s${i}`} x={at[0]} y={at[1]} className="fig-label fig-accent" textAnchor={anchor}>{l}</text> : null;
       })}
       {spec.vertexLabels?.map((l, i) => {
         const p = toward(ps[i], c, -0.12);
@@ -110,6 +123,18 @@ function Solid({ solid }: { solid: NonNullable<FigureSpec["solid"]> }) {
     case "square-pyramid": pyramid([[40, 140], [140, 140], [180, 110], [80, 110]], [110, 25], [3]); break;
     case "tetrahedron": pyramid([[35, 145], [175, 145], [125, 112]], [100, 25], [2]); break;
     case "pentagonal-pyramid": pyramid(ngon(5, 110, 135, 70, 0.32), [110, 20], [3]); break;
+    case "cylinder":
+      return (
+        <>
+          <ellipse cx={110} cy={40} rx={60} ry={16} className="fig-edge fig-nofill" />
+          <path d="M 50 145 A 60 16 0 0 0 170 145" className="fig-edge fig-nofill" />
+          <path d="M 50 145 A 60 16 0 0 1 170 145" className="fig-hidden fig-nofill" />
+          <line x1={50} y1={40} x2={50} y2={145} className="fig-edge" />
+          <line x1={170} y1={40} x2={170} y2={145} className="fig-edge" />
+          <line x1={110} y1={40} x2={170} y2={40} className="fig-thin" />
+          <circle cx={110} cy={40} r={2.5} className="fig-dot" />
+        </>
+      );
   }
   return (
     <>
@@ -138,6 +163,7 @@ function Circle({ spec }: { spec: FigureSpec }) {
       {part === "arc" && <><path d={arc(A, B)} className="fig-hi fig-nofill" />{label(A, "A", -10, 0)}{label(B, "B", 10, 0)}</>}
       {part === "sector" && <><path d={`M ${CX} ${CY} L ${A[0]} ${A[1]} ${arc(A, B).replace(/^M [^A]+/, "")} Z`} className="fig-region" />{label(A, "A", -10, 0)}{label(B, "B", 10, 0)}</>}
       {part === "segment" && <><path d={`${arc(A, B)} Z`} className="fig-region" />{label(A, "A", -10, 0)}{label(B, "B", 10, 0)}</>}
+      {part === "semicircle" && <><path d={`M ${CX - r} ${CY} A ${r} ${r} 0 0 1 ${CX + r} ${CY} Z`} className="fig-region" />{label([CX - r, CY], "A", -10, 4)}{label([CX + r, CY], "B", 10, 4)}</>}
       {part === "two-chords" && (() => {
         const C = at(140), D = at(60), E = at(-30), F = at(150);
         return <>
@@ -158,7 +184,7 @@ export function Figure({ spec }: { spec: FigureSpec }) {
   else body = <Circle spec={spec} />;
   return (
     <div className="shape-diagram">
-      <svg viewBox="-10 0 240 185" className="shape-svg fig-svg">{body}</svg>
+      <svg viewBox="-34 -4 288 196" className="shape-svg fig-svg">{body}</svg>
       {spec.note && <div className="shape-note">{spec.note}</div>}
     </div>
   );

@@ -134,6 +134,22 @@ function verifyG8(it: GeneratedItem): string | null {
     "g8-circles|abstract|understand": () => p.d / 2,
     "g8-circles|abstract|remember": () => p.r,
     "g8-circles|pictorial|apply": () => p.r,
+    "g8-area|abstract|remember": () => ((p.a + p.b) / 2) * p.h,
+    "g8-area|pictorial|remember": () => ((p.a + p.b) / 2) * p.h,
+    "g8-area|pictorial|understand": () => p.h,
+    "g8-area|pictorial|apply": () => p.w * p.h + (p.w * p.t) / 2,
+    "g8-area|abstract|apply": () => (p.d * (p.h1 + p.h2)) / 2,
+    "g8-area|abstract|analyze": () => p.b,
+    "g8-area|abstract|understand": () => ((22 / 7) * (p.r / 2) ** 2) / 2,
+    "g8-area|abstract|evaluate": () => 14 * p.k,
+    "g8-volume|pictorial|remember": () => p.l * p.b * p.h,
+    "g8-volume|pictorial|understand": () => 6 * p.a * p.a,
+    "g8-volume|abstract|remember": () => p.a ** 3,
+    "g8-volume|abstract|understand": () => 2 * (p.l * p.b + p.b * p.h + p.h * p.l),
+    "g8-volume|abstract|apply": () => (22 / 7) * (p.d / 2) ** 2 * p.h,
+    "g8-volume|abstract|analyze": () => p.h,
+    "g8-volume|pictorial|evaluate": () => (p.l * p.b * p.h) / 1000,
+    "g8-volume|abstract|evaluate": () => ((p.l / 10) * (p.b / 10) * (p.h / 10)) * 1000,
   };
   if (want[cell]) {
     const w = want[cell](), got = fracVal(right);

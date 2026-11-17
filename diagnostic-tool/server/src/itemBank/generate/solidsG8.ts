@@ -44,7 +44,7 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   },
 };
 
-type Solid = NonNullable<FigureSpec["solid"]>;
+type Solid = Exclude<NonNullable<FigureSpec["solid"]>, "cylinder">; // Euler is for solids with flat faces
 const SOLIDS: Record<Solid, { name: string; F: number; V: number; E: number; hidden: number; other: string }> = {
   cube: { name: "cube", F: 6, V: 8, E: 12, hidden: 3, other: "square pyramid" },
   cuboid: { name: "cuboid", F: 6, V: 8, E: 12, hidden: 3, other: "square pyramid" },

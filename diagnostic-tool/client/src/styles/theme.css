@@ -776,7 +776,7 @@ a { color: var(--deep-teal); }
 }
 
 /* ---- Geometry figures (Grade 8) ---- */
-.fig-svg { max-width: 300px; }
+.fig-svg { max-width: 340px; overflow: visible; }
 .fig-fill { fill: #eef5e6; stroke: var(--deep-teal); stroke-width: 2.2; stroke-linejoin: round; }
 .fig-thin { stroke: var(--deep-teal); stroke-width: 1.2; stroke-dasharray: 4 3; }
 .fig-edge { stroke: var(--deep-teal); stroke-width: 2.2; stroke-linecap: round; }

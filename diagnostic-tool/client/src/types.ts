@@ -210,7 +210,9 @@ export interface FigureSpec {
   regular?: boolean;
   fan?: boolean;
   /** quad */
-  quad?: "parallelogram" | "rectangle" | "rhombus" | "square" | "kite" | "trapezium" | "general";
+  quad?: "parallelogram" | "rectangle" | "rhombus" | "square" | "kite" | "trapezium" | "general" | "house";
+  /** quad: a dashed height from the first corner down to the base, with this label. */
+  heightLabel?: string;
   diagonals?: boolean;
   /** Halves of the diagonals from the corners to where they cross: [A, B, C, D] to O. */
   diagonalLabels?: string[];
@@ -219,9 +221,9 @@ export interface FigureSpec {
   sideLabels?: string[];
   vertexLabels?: string[];
   /** solid */
-  solid?: "cube" | "cuboid" | "triangular-prism" | "pentagonal-prism" | "hexagonal-prism" | "square-pyramid" | "tetrahedron" | "pentagonal-pyramid";
+  solid?: "cube" | "cuboid" | "triangular-prism" | "pentagonal-prism" | "hexagonal-prism" | "square-pyramid" | "tetrahedron" | "pentagonal-pyramid" | "cylinder";
   /** circle: the part drawn and highlighted. */
-  part?: "radius" | "diameter" | "chord" | "arc" | "sector" | "segment" | "two-chords";
+  part?: "radius" | "diameter" | "chord" | "arc" | "sector" | "segment" | "two-chords" | "semicircle";
   /** circle: a length written on the highlighted part. */
   partLabel?: string;
   note?: string;
