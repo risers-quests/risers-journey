@@ -27,6 +27,7 @@ import { verify as verifySentencesE8 } from "../src/itemBank/generate/sentencesE
 import { verify as verifyConditionalsE8 } from "../src/itemBank/generate/conditionalsE8.js";
 import { verify as verifyParticiplesE8 } from "../src/itemBank/generate/participlesE8.js";
 import { verify as verifyInfinitivesE8 } from "../src/itemBank/generate/infinitivesE8.js";
+import { verify as verifyPurposeE8 } from "../src/itemBank/generate/purposeE8.js";
 
 const N = Number(process.env.N || 20000);
 let failures = 0;
@@ -221,6 +222,7 @@ const ENGLISH_VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
   "e8-conditionals": verifyConditionalsE8,
   "e8-participles": verifyParticiplesE8,
   "e8-infinitives": verifyInfinitivesE8,
+  "e8-purpose": verifyPurposeE8,
 };
 for (const t of ENGLISH8_TOPICS) VERIFY[t] = ENGLISH_VERIFY[t] ?? (() => null);
 
@@ -379,19 +381,20 @@ function checkActivityItem(it: GeneratedItem, where: string) {
     if (checkActivity(act, { picked: [] }).correct) fail(`${where}: tapping nothing is marked right`);
     for (const w of act.wrongSets ?? []) if (checkActivity(act, { picked: w.cells }).misconception !== w.mistake) fail(`${where}: a wrong tap not caught as ${w.mistake}`);
   } else if (act.kind === "order") {
-    // the right sentence must be buildable from the tiles, each tile once
+    // the right sentence must be buildable from the tiles, each tile once (search, with backtracking)
     const want = act.answers[0];
-    const used: number[] = [];
-    const left = act.tiles.map((t, i) => ({ t, i }));
-    let rest = want;
-    while (rest.length) {
-      const k = left.findIndex((x) => rest.startsWith(x.t) && (rest.length === x.t.length || rest[x.t.length] === " " || /^[.,?!’']/.test(rest.slice(x.t.length))));
-      if (k < 0) break;
-      used.push(left[k].i);
-      rest = rest.slice(left[k].t.length).trimStart();
-      left.splice(k, 1);
-    }
-    if (rest.length) fail(`${where}: "${want}" can't be built from the tiles ${JSON.stringify(act.tiles)}`);
+    const build = (rest: string, left: number[]): number[] | null => {
+      if (!rest.length) return [];
+      for (const i of left) {
+        const t = act.tiles[i];
+        if (!rest.startsWith(t) || !(rest.length === t.length || rest[t.length] === " " || /^[.,?!’']/.test(rest.slice(t.length)))) continue;
+        const more = build(rest.slice(t.length).trimStart(), left.filter((x) => x !== i));
+        if (more) return [i, ...more];
+      }
+      return null;
+    };
+    const used = build(want, act.tiles.map((_, i) => i));
+    if (!used) fail(`${where}: "${want}" can't be built from the tiles ${JSON.stringify(act.tiles)}`);
     else if (!checkActivity(act, { order: used }).correct) fail(`${where}: the right sentence was marked wrong`);
     if (tidySentence(act.tiles.join(" ")) === tidySentence(want)) fail(`${where}: tiles start in the right order`);
     for (const w of act.wrong ?? []) if (act.answers.some((a) => tidySentence(a) === tidySentence(w.text))) fail(`${where}: a 'mistake' equals the right answer`);
