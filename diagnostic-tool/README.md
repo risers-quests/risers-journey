@@ -244,7 +244,8 @@ Grade 4 are listed in `GRADE4_TOPICS` (`generate/index.ts`): Large Numbers
 and Operations so far; a Grade 4 test offers only those. Each new topic
 should be built grade-aware, with its Grade 4 version added to the stress
 test (which runs every topic at Grade 5 and the Grade 4 topics at Grade 4).
-Grade 4 needs its own topics where the content differs (e.g. Grade 4
+Grade 4 needs its own topics where the content differs: the spec is the
+school's Grade 4 book, in `syllabus/grade4.md` (e.g. Grade 4
 fractions are equivalent fractions and adding like fractions, not a ÷ b).
 
 **Words children see.** CPA and Bloom's levels (concrete, pictorial,
