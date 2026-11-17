@@ -173,6 +173,7 @@ TOPICS.push(
  */
 TOPICS.push(
   { id: "e8-participles", strand: "Grammar", name: "Participles and Gerunds", shortLabel: "Participles & Gerunds", dependsOn: [], grade: 8, subject: "English" },
+  { id: "e8-infinitives", strand: "Grammar", name: "Forms of Have; Infinitives", shortLabel: "Have & Infinitives", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-sentences", strand: "Grammar", name: "Simple, Compound and Complex Sentences", shortLabel: "Kinds of Sentences", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-voice", strand: "Grammar", name: "Active and Passive Voice", shortLabel: "Active & Passive", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-speech", strand: "Grammar", name: "Direct and Indirect Speech", shortLabel: "Reported Speech", dependsOn: [], grade: 8, subject: "English" },

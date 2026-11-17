@@ -43,6 +43,7 @@ export const GRADE8_TOPIC_CHOICES = [
 // grammar comes with (Scope and Sequence). Add a line as each is ready.
 export const ENGLISH8_TOPIC_CHOICES = [
   { id: "e8-participles", chapter: "Grammar · Ch 5", name: "Participles and Gerunds", about: "-ing words as nouns and adjectives, -ing after prepositions, joining with a participle, -ing / -ed feelings" },
+  { id: "e8-infinitives", chapter: "Grammar · Ch 7", name: "Forms of Have; Infinitive and Bare Infinitive", about: "What have means (own, has done, have to, had it done), to + verb or the verb alone" },
   { id: "e8-sentences", chapter: "Grammar · Ch 11–12", name: "Simple, Compound and Complex Sentences", about: "Clauses, joining words, and changing one kind of sentence into another" },
   { id: "e8-voice", chapter: "Grammar · Ch 14", name: "Active and Passive Voice", about: "Doer and receiver, be + past participle in every tense, active ↔ passive" },
   { id: "e8-speech", chapter: "Grammar · Ch 15", name: "Direct and Indirect Speech", about: "Statements, questions and commands; tense, pronoun and time-word changes, both ways" },

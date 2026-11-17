@@ -26,6 +26,7 @@ import { verify as verifySpeechE8 } from "../src/itemBank/generate/speechE8.js";
 import { verify as verifySentencesE8 } from "../src/itemBank/generate/sentencesE8.js";
 import { verify as verifyConditionalsE8 } from "../src/itemBank/generate/conditionalsE8.js";
 import { verify as verifyParticiplesE8 } from "../src/itemBank/generate/participlesE8.js";
+import { verify as verifyInfinitivesE8 } from "../src/itemBank/generate/infinitivesE8.js";
 
 const N = Number(process.env.N || 20000);
 let failures = 0;
@@ -219,6 +220,7 @@ const ENGLISH_VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
   "e8-sentences": verifySentencesE8,
   "e8-conditionals": verifyConditionalsE8,
   "e8-participles": verifyParticiplesE8,
+  "e8-infinitives": verifyInfinitivesE8,
 };
 for (const t of ENGLISH8_TOPICS) VERIFY[t] = ENGLISH_VERIFY[t] ?? (() => null);
 
@@ -447,7 +449,9 @@ for (const [topic, grade] of RUNS) {
         const shown = [it.prompt, JSON.stringify(visible, (k, v) => (k === "value" || k === "step" ? undefined : v))].join(" ");
         const appears = (t: string) => t.length > 2 && new RegExp(`(?<!\\d|\\d[,.])${t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?!\\d|[,.]\\d)`).test(shown);
         const showsAnother = it.choices.some((c) => c.id !== it.correctChoiceId && appears(c.text));
-        if (appears(right.text) && !showsAnother) fail(`${where}: shows its own answer "${right.text}"`);
+        // English gap-fills give the verb, as the book does: "(verb: stay)". Answering with it unchanged is the skill.
+        const hinted = /\(verb: ([^)]+)\)/.exec(shown)?.[1];
+        if (appears(right.text) && !showsAnother && hinted !== right.text) fail(`${where}: shows its own answer "${right.text}"`);
         const problem = VERIFY[topic]?.(it);
         if (problem) fail(`${where}: ${problem}`);
       }
