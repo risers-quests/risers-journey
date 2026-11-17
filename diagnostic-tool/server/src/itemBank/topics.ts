@@ -179,7 +179,8 @@ TOPICS.push(
   { id: "e8-sentences", strand: "Grammar", name: "Simple, Compound and Complex Sentences", shortLabel: "Kinds of Sentences", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-voice", strand: "Grammar", name: "Active and Passive Voice", shortLabel: "Active & Passive", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-speech", strand: "Grammar", name: "Direct and Indirect Speech", shortLabel: "Reported Speech", dependsOn: [], grade: 8, subject: "English" },
-  { id: "e8-conditionals", strand: "Grammar", name: "Conditionals (First, Second and Third)", shortLabel: "Conditionals", dependsOn: [], grade: 8, subject: "English" }
+  { id: "e8-conditionals", strand: "Grammar", name: "Conditionals (First, Second and Third)", shortLabel: "Conditionals", dependsOn: [], grade: 8, subject: "English" },
+  { id: "e8-words", strand: "Vocabulary", name: "Word Study", shortLabel: "Word Study", dependsOn: [], grade: 8, subject: "English" }
 );
 
 /** English strands (Grade 8). */

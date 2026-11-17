@@ -29,6 +29,7 @@ import { verify as verifyParticiplesE8 } from "../src/itemBank/generate/particip
 import { verify as verifyInfinitivesE8 } from "../src/itemBank/generate/infinitivesE8.js";
 import { verify as verifyPurposeE8 } from "../src/itemBank/generate/purposeE8.js";
 import { verify as verifyClausesE8 } from "../src/itemBank/generate/clausesE8.js";
+import { verify as verifyWordsE8 } from "../src/itemBank/generate/wordsE8.js";
 
 const N = Number(process.env.N || 20000);
 let failures = 0;
@@ -225,6 +226,7 @@ const ENGLISH_VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
   "e8-infinitives": verifyInfinitivesE8,
   "e8-purpose": verifyPurposeE8,
   "e8-clauses": verifyClausesE8,
+  "e8-words": verifyWordsE8,
 };
 for (const t of ENGLISH8_TOPICS) VERIFY[t] = ENGLISH_VERIFY[t] ?? (() => null);
 
