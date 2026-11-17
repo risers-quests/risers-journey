@@ -118,9 +118,15 @@
     <div class="menu">
       <div class="card">
         <span class="tag">Start here</span>
-        <h3>1 · Explore the desk</h3>
-        <p>A service is playing. Move every control and listen to what changes. The dots under each channel tell you if it's too quiet ▼, too loud ▲, or just right ●.</p>
-        <div class="row"><button class="btn primary" data-mode="explore">Open the desk</button></div>
+        <h3>1 · Sound check: build the mix</h3>
+        <p>Before the service, the desk is a mess: every fader down, the GAINs set wrong, a channel muted. Bring each channel up until the whole mix is right. You're timed.</p>
+        <div class="row"><button class="btn primary" data-mode="build">Start the sound check</button></div>
+      </div>
+      <div class="card">
+        <span class="tag">Free play</span>
+        <h3>Explore the desk</h3>
+        <p>The desk starts from zero. Move every control and listen to what changes. The dots under each channel tell you if it's too quiet ▼, too loud ▲, clipping ⚠, or just right ●.</p>
+        <div class="row"><button class="btn" data-mode="explore">Open the desk</button></div>
       </div>
       <div class="card">
         <span class="tag">Live practice</span>
@@ -549,19 +555,61 @@ async function startMode(m,lv){
   resetState();
   if(!calibrated){ $('linecheck').classList.remove('hidden'); await calibrate(); $('linecheck').classList.add('hidden'); }
   applyMaster();
-  mode=m; T0=ctx.currentTime; active=[]; log=[]; healthT=0; totalT=0; score=0; nextEv=8;
+  mode=m; T0=ctx.currentTime; active=[]; log=[]; healthT=0; totalT=0; score=0; nextEv=m==='live'?(level==='beginner'?30:20):8;
+  if(m==='build'||m==='explore') scramble('zero'); else if(m==='live') scramble('mild');
   const desk=$('desk');
   desk.classList.toggle('hide-status', m==='live'&&level==='advanced' || m==='emergency');
   desk.classList.toggle('ears-only', m==='emergency');
   desk.classList.toggle('locked', m==='emergency');
-  $('pTime').classList.toggle('hidden',m!=='live'); $('pScore').classList.toggle('hidden',m==='explore'); $('pHealth').classList.toggle('hidden',m!=='live');
+  $('pTime').classList.toggle('hidden',m!=='live'&&m!=='build'); $('pTime').firstChild.textContent=m==='build'?'Time':'Time left'; $('pScore').classList.toggle('hidden',m==='explore'||m==='build'); $('pHealth').classList.toggle('hidden',m!=='live');
   $('learn').open = m==='explore';
   clearInterval(tickIv);
-  if(m==='explore'){ $('modeName').textContent='Explore'; setAlert('🎧 Explore freely. Try to get every channel to <b style="color:var(--green)">● good</b>.','Try this: mute the pastor, push the keyboard way up, turn a GAIN until the CLIP light flashes. Notice what each one sounds like.'); }
+  if(m==='explore'){ $('modeName').textContent='Explore'; setAlert('🎧 The desk starts from zero. Build the mix, then play with it.','Try this: bring the pastor up first, then push the keyboard way up and hear it cover him; turn a GAIN until the CLIP light flashes. Notice what each one sounds like.'); }
+  if(m==='build'){ $('modeName').textContent='Sound check'; build={clipTicks:0};
+    setAlert('🎚️ <b>Sound check.</b> Get every channel to ● good.','Unmute, set GAIN so the CLIP light stays off, then bring the fader up.','live');
+    tickIv=setInterval(buildTick,DT*1000); }
   if(m==='live'){ $('modeName').textContent=level==='beginner'?'Service · Beginner':'Service · Advanced'; DUR=180;
-    setAlert('⛪ The service has started. The mix is good right now.','Listen carefully. When something goes wrong, fix it as fast as you can.');
+    setAlert('⛪ The service has started, but the desk was left in a mess.','Fix every channel to ● good first. Then listen: more problems will come, and you can\'t pause the service.','live');
     tickIv=setInterval(liveTick,DT*1000); }
   if(m==='emergency'){ $('modeName').textContent='Emergency'; setAlert('🚨 Sound Engineer Emergency','Listen. Name the problem by ear.'); emStart(); }
+}
+/* Start from a desk that needs work.
+   "zero": every fader down, GAINs set wrong (one clipping, one far too low), one or two channels muted.
+   "mild": the last person left it a bit wrong: a fader or two off, one channel muted, one GAIN too hot. */
+function scramble(kind){
+  const ids=CH.map(c=>c.id).filter(id=>id!=='audience').sort(()=>Math.random()-.5);   // audience mic is fine either way, so never the one that's wrong
+  if(kind==='zero'){
+    CH.forEach(c=>{ S[c.id].fader=0; S[c.id].gainDb=pick([-10,-8,-6,4,6]); S[c.id].mute=false; });
+    S[ids[0]].gainDb=pick([9,10,11]);             // clipping once it's turned up
+    S[ids[1]].gainDb=pick([-18,-16]);             // far too low: needs GAIN, not just fader
+    S[ids[2]].mute=true; if(Math.random()<.5) S[ids[3]].mute=true;
+  } else {
+    S[ids[0]].fader=clamp(S[ids[0]].fader*0.35,0,1);  // far too quiet
+    S[ids[1]].fader=clamp(S[ids[1]].fader*1.9,0,1);   // too loud
+    S[ids[2]].mute=true;
+    S[ids[3]].gainDb=10;                               // too hot: CLIP light
+  }
+  CH.forEach(c=>applyAudio(c.id,true)); refreshAll();
+}
+let build={clipTicks:0};
+function buildTick(){
+  if(mode!=='build') return;
+  const t=now();
+  if(CH.some(c=>pre(c.id)>CLIP && !S[c.id].mute && S[c.id].fader>0.05)) build.clipTicks++;   // only clipping you can hear
+  const off=offChannels();
+  $('timeLeft').textContent=Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0');
+  if(off.length) setAlert('🎚️ <b>Still to set:</b> '+off.join(' · '),'Order that works: unmute, set GAIN so the CLIP light stays off, then bring the fader up. Pastor first, then worship leader, then the rest.','live');
+  else {
+    clearInterval(tickIv);
+    const clipped=(build.clipTicks*DT).toFixed(1);
+    const tip=t>120?'Speed comes with practice: go channel by channel, top to bottom, instead of jumping around.':
+              build.clipTicks*DT>5?'Watch the CLIP light: set GAIN first, before you push the fader, so the sound never distorts.':
+              'Clean and quick. Now try the Sunday Service: keeping a mix right is harder than building it.';
+    const text=`Church Sound Desk – Sound check\nDate: ${new Date().toLocaleDateString()}\nTime to build the mix: ${t.toFixed(0)}s\nTime spent clipping: ${clipped}s`;
+    showReport(`<div class="tag">Sound check done</div><h2>The mix is ready ✅</h2>
+      <div style="display:flex;gap:18px;flex-wrap:wrap;margin:8px 0"><div><div class="big">${t.toFixed(0)}s</div><div class="sub">to build the mix</div></div><div><div class="big">${clipped}s</div><div class="sub">spent clipping</div></div></div>
+      <div class="note">💡 ${tip}</div>`, text, ()=>startMode('build'));
+  }
 }
 function resetState(){
   defaults(); fb.risk=false; fb.forced=false; fb.amp=0; if(fb.g) fb.g.gain.value=0;
