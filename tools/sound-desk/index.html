@@ -67,7 +67,8 @@
   .meter .bar{position:absolute;left:0;right:0;bottom:0;height:0;background:linear-gradient(to top,var(--green) 0%,var(--green) 65%,var(--amber) 82%,var(--red) 100%);background-size:100% 190px;background-position:bottom}
   .fdb{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
   .status{font-size:11px;font-weight:700;height:16px}
-  .status.ok{color:var(--green)} .status.low{color:var(--blue)} .status.high{color:var(--amber)}
+  .status.ok{color:var(--green)} .status.low{color:var(--blue)} .status.high{color:var(--amber)} .status.clip{color:var(--red)}
+  .toast .fixit{margin-top:8px}
   .hide-status .status{visibility:hidden}
   .ears-only .meter .bar{opacity:0} .ears-only .led{visibility:hidden}
   .locked .strip{pointer-events:none;opacity:.55}
@@ -217,7 +218,7 @@ const pre=id=>S[id].src*gainLin(id);
 const eff=id=>S[id].mute?0:pre(id)*S[id].fader*FMAX;
 function stat(id){
   const e=eff(id),[lo,hi]=BY[id].range;
-  if(pre(id)>CLIP) return 'high';
+  if(pre(id)>CLIP) return 'clip';
   if(e<lo-1e-9) return 'low';
   if(e>hi) return 'high';
   return 'ok';
@@ -455,7 +456,7 @@ function drawLoop(){
     CH.forEach(c=>{
       const u=UI[c.id]; u.bar.style.height=(meterLevel(A[c.id].an)*100)+'%';
       u.led.classList.toggle('on',pre(c.id)>CLIP||(c.id==='pastor'&&fb.amp>0.12));
-      const st=stat(c.id); u.status.className='status '+st; u.status.textContent=st==='ok'?'● good':st==='low'?'▼ too quiet':'▲ too loud';
+      const st=stat(c.id); u.status.className='status '+st; u.status.textContent=st==='ok'?'● good':st==='low'?'▼ too quiet':st==='clip'?'⚠ clipping: GAIN ↓':'▲ too loud';
     });
     UI.master.bar.style.height=(meterLevel(masterAn)*100)+'%';
   }
@@ -509,8 +510,22 @@ let mode=null, level='beginner', T0=0, nextEv=0, active=[], log=[], healthT=0, t
 let toastTimer=null, suspendTimer=null;
 
 function setAlert(main,why,cls){ $('alertMain').innerHTML=main; $('alertWhy').textContent=why||''; $('alert').className='alert'+(cls?' '+cls:''); }
-function toast(html,miss){const t=$('toast'); t.innerHTML=html; t.className='toast'+(miss?' miss':''); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.add('hidden'),7000);}
+function toast(html,miss,ms){const t=$('toast'); t.innerHTML=html; t.className='toast'+(miss?' miss':''); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.add('hidden'),ms||7000);}
 function now(){return ctx.currentTime-T0;}
+const STATE_WORD={low:'too quiet',high:'too loud',clip:'clipping, turn GAIN down'};
+function offChannels(){ return CH.filter(c=>stat(c.id)!=='ok').map(c=>`${c.name.charAt(0)+c.name.slice(1).toLowerCase()} (${STATE_WORD[stat(c.id)]})`); }
+function idleAlert(){
+  const off=offChannels();
+  if(off.length) setAlert('🔧 <b>Still not right:</b> '+off.join(' · '),'The problem is over, but the mix isn\'t fixed yet. Get every channel back to ● good.','live');
+  else setAlert('⛪ Service running. Mix sounds good.','Keep your ears open.','good');
+}
+/* "Fix it for me" after a missed problem: that channel goes back to its starting settings and the cause stops. */
+function fixFor(id){
+  const c=BY[id], mid=(c.range[0]+c.range[1])/2||0.15;
+  Object.assign(S[id],{src:1,gainDb:0,hi:0,mute:false,fader:clamp((id==='audience'?0.14:mid)/FMAX,0,1)});
+  if(id==='pastor'){fb.risk=false; fb.amp=0;}
+  applyAudio(id); refresh(id);
+}
 
 /* iPhone / iPad: web audio is muted by the Silent Mode switch unless the page
    plays like a music player. Ask for that (Safari 16.4+), and on older iPads
@@ -583,6 +598,7 @@ function liveTick(){
     nextEv=t+(level==='beginner'?rand(14,20):rand(8,13));
   }
   // health
+  if(!active.length&&Math.round(t/DT)%10===0) idleAlert();
   totalT+=DT; if(CH.every(c=>stat(c.id)==='ok')&&fb.amp<0.02) healthT+=DT;
   $('health').textContent=Math.round(100*healthT/Math.max(totalT,0.01))+'%';
   const left=Math.max(0,DUR-t); $('timeLeft').textContent=Math.floor(left/60)+':'+String(Math.floor(left%60)).padStart(2,'0');
@@ -594,8 +610,11 @@ function resolve(ev,ok,age){
   const pts=ok?Math.max(10,Math.round(100-Math.max(0,age-2)*6)):0; score+=pts;
   log.push({label:ev.def.label,ok,time:age,pts,why:ev.def.why});
   if(ok) toast(`✅ <b>Fixed in ${age.toFixed(1)}s</b> · ${ev.def.label} · +${pts}<div class="why">${ev.def.why}</div>`);
-  else toast(`⏰ <b>Missed:</b> ${ev.def.label}<div class="why">${ev.def.hint}</div>`,true);
-  setAlert(active.length?'🔔 <b>There\'s still a problem. Keep listening.</b>':'⛪ Service running. Mix looks good.', active.length?'':'Keep your ears open.', active.length?'live':'good');
+  else{
+    toast(`⏰ <b>Missed:</b> ${ev.def.label}<div class="why">${ev.def.hint}</div><button class="btn small fixit">🔧 Fix it for me</button>`,true,15000);
+    const b=document.querySelector('#toast .fixit'); if(b) b.onclick=()=>{fixFor(ev.def.ch); $('toast').classList.add('hidden'); if(!active.length) idleAlert();};
+  }
+  if(active.length) setAlert('🔔 <b>There\'s still a problem. Keep listening.</b>','','live'); else idleAlert();
 }
 function finishLive(){
   clearInterval(tickIv); active.forEach(ev=>{ev.def.end&&ev.def.end(); log.push({label:ev.def.label,ok:false,time:now()-ev.t0,pts:0});}); active=[];
