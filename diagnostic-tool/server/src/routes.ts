@@ -10,6 +10,7 @@ import {
   saveHistory,
   loadReports,
   saveReport,
+  replaceReports,
   childKey,
 } from "./sessionStore.js";
 import { reportEntry, combine } from "./report/history.js";
@@ -375,7 +376,9 @@ router.get("/sessions/:id/full", async (req, res) => {
   const kid = childKey(row.child_name);
   try {
     const h = await loadReports(kid);
-    if (!h.reports.some((r) => r.id === entry.id)) await saveReport(row.child_name, entry);
+    // Save it if it's missing, or refresh it if how reports are read has changed since.
+    const saved = h.reports.find((r) => r.id === entry.id);
+    if (!saved || JSON.stringify(saved) !== JSON.stringify(entry)) await saveReport(row.child_name, entry);
   } catch {
     /* the report still shows; it is saved next time */
   }
@@ -387,7 +390,23 @@ router.get("/children/:kid/reports", async (req, res) => {
   const kid = childKey(req.params.kid);
   try {
     const h = await loadReports(kid);
-    res.json({ kid, childName: h.childName || kid.charAt(0).toUpperCase() + kid.slice(1), reports: h.reports, combined: combine(h.reports) });
+    // Rebuild each saved report from its test, so reports saved before a
+    // change in how they're read (e.g. the grid) show the same as new ones.
+    const changed: typeof h.reports = [];
+    const reports = await Promise.all(
+      h.reports.map(async (r) => {
+        try {
+          const { row, insights } = await insightsFor(r.id);
+          const fresh = reportEntry(r.id, row.grade, row.created_at, insights, await getResponses(r.id));
+          if (JSON.stringify(fresh) !== JSON.stringify(r)) changed.push(fresh);
+          return fresh;
+        } catch {
+          return r;
+        }
+      })
+    );
+    if (changed.length) await replaceReports(kid, changed).catch(() => undefined);
+    res.json({ kid, childName: h.childName || kid.charAt(0).toUpperCase() + kid.slice(1), reports, combined: combine(reports) });
   } catch {
     res.status(502).json({ error: "couldn't read the report history" });
   }

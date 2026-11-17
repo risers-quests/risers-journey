@@ -1,23 +1,39 @@
 import { LOOK, ReportTopic, TopicStatus } from "../reportTypes";
 
-/** A ring: `value` of `total`, with a label under the number. */
-export function Ring({ value, total, label }: { value: number; total: number; label: string }) {
+/**
+ * A ring of the topics tested: green for "Got it", amber for "Nearly
+ * there", grey for the rest, with both counts in the middle.
+ */
+export function Ring({ got, nearly, total }: { got: number; nearly: number; total: number }) {
   const r = 52;
   const c = 2 * Math.PI * r;
-  const share = total ? value / total : 0;
+  const g = total ? got / total : 0;
+  const n = total ? nearly / total : 0;
   return (
-    <div className="rp-ring" role="img" aria-label={`${value} of ${total} ${label}`}>
+    <div className="rp-ring" role="img" aria-label={`${got} of ${total} topics got it, ${nearly} nearly there`}>
       <svg viewBox="0 0 120 120" width="132" height="132">
         <circle cx="60" cy="60" r={r} className="rp-ring-track" />
-        {share > 0 && <circle cx="60" cy="60" r={r} className="rp-ring-fill" strokeDasharray={`${c * share} ${c}`} transform="rotate(-90 60 60)" />}
+        {n > 0 && (
+          <circle cx="60" cy="60" r={r} className="rp-ring-amber" strokeDasharray={`${c * n} ${c}`} strokeDashoffset={-c * g} transform="rotate(-90 60 60)" />
+        )}
+        {g > 0 && <circle cx="60" cy="60" r={r} className="rp-ring-fill" strokeDasharray={`${c * g} ${c}`} transform="rotate(-90 60 60)" />}
       </svg>
       <div className="rp-ring-text">
-        <b>{value}</b>
-        <span>of {total}</span>
-        <small>{label}</small>
+        <span className="rp-ring-got">
+          <b>{got}</b> got it
+        </span>
+        <span className="rp-ring-nearly">
+          <b>{nearly}</b> nearly there
+        </span>
+        <small>of {total} topic{total === 1 ? "" : "s"}</small>
       </div>
     </div>
   );
+}
+
+/** Why a topic is "Nearly there", in a child's words. */
+export function nearlyWhy(why: string): string {
+  return why.startsWith("Right in numbers") ? "Can do the steps; the picture behind them is still growing." : "Got it right, but wasn't sure yet.";
 }
 
 /** A group of topics with one status (strengths, nearly there, next to learn). */

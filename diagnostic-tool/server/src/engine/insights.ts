@@ -123,6 +123,15 @@ export function buildInsights(state: SessionState, responses: ResponseRecord[], 
 
     const engine = state.topics[t.topicId];
     const grid = CPA_ORDER.map((cpa) => BLOOM_ORDER.map((bloom) => engine?.cellStatus[`${cpa}:${bloom}`] ?? ""));
+    // The "knows the steps, not the idea" check is a numbers-only question
+    // asked off the ladder: show it in the grid too, so the grid agrees
+    // with the result it led to.
+    for (const r of responses) {
+      if (r.topic_id !== t.topicId || !r.is_procedural_check) continue;
+      const row = CPA_ORDER.indexOf(r.cpa as CPAStage);
+      const col = BLOOM_ORDER.indexOf(r.bloom as BloomLevel);
+      if (row >= 0 && col >= 0 && !grid[row][col]) grid[row][col] = r.correct ? "cleared" : "struggled";
+    }
     const lag = engine?.lagPoints[0];
     const startAt: CPAStage | null =
       t.tag === "skill_gap" ? (lag ? (CPA_ORDER[Math.max(0, CPA_ORDER.indexOf(lag.cpa) - 1)] as CPAStage) : "concrete") :

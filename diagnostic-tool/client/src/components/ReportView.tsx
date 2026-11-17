@@ -1,5 +1,5 @@
 import { ReportEntry, fmtDate } from "../reportTypes";
-import { CpaTable, Ring, StatusGroup, startWords } from "./ReportParts";
+import { CpaTable, Ring, StatusGroup, nearlyWhy, startWords } from "./ReportParts";
 
 /** One test's report: what the child has got, what's nearly there, what to learn next, and how each topic was learned. */
 export function ReportView({ childName, report }: { childName: string; report: ReportEntry }) {
@@ -19,7 +19,7 @@ export function ReportView({ childName, report }: { childName: string; report: R
       </header>
 
       <section className="rp-card rp-top">
-        <Ring value={by("secure").length} total={tested.length} label="topics got" />
+        <Ring got={by("secure").length} nearly={by("fragile").length} total={tested.length} />
         <div className="rp-top-text">
           <p>
             <b>{report.right}</b> of {report.questions} questions right.
@@ -38,7 +38,7 @@ export function ReportView({ childName, report }: { childName: string; report: R
         <StatusGroup
           status="fragile"
           title="Nearly there"
-          topics={by("fragile").map((t) => ({ name: t.name, note: t.why.startsWith("Right in numbers") ? "Can do the steps; the picture behind them is still growing." : "Got it right, but wasn't sure yet." }))}
+          topics={by("fragile").map((t) => ({ name: t.name, note: nearlyWhy(t.why) }))}
         />
         <StatusGroup
           status="gap"

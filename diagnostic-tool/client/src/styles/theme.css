@@ -730,3 +730,9 @@ a { color: var(--deep-teal); }
 @media (max-width: 520px) { .ga-baskets { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); } .ga-apple { font-size: 1.6rem; } }
 .topic-chapter { font-weight: 500; font-size: 0.75rem; color: var(--ink-soft); margin-left: 4px; }
 .rp-start { align-self: flex-start; text-decoration: none; }
+.rp-ring-amber { fill: none; stroke: #e0a53a; stroke-width: 11; stroke-linecap: butt; }
+.rp-ring-text .rp-ring-got, .rp-ring-text .rp-ring-nearly { font-size: 0.72rem; color: var(--ink-soft); line-height: 1.25; }
+.rp-ring-got b { font-family: var(--font-serif); font-size: 1.35rem; color: var(--deep-teal); }
+.rp-ring-nearly b { font-family: var(--font-serif); font-size: 1.35rem; color: #b07a17; }
+.rp-ring-text small { margin-top: 2px; }
+.rp-ring-fill { stroke-linecap: butt; }

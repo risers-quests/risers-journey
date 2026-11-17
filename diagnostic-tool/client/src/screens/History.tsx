@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getHistory } from "../api";
 import { History as HistoryData, LOOK, TopicStatus, fmtDate } from "../reportTypes";
-import { CpaTable, Ring, StatusGroup, startWords } from "../components/ReportParts";
+import { CpaTable, Ring, StatusGroup, nearlyWhy, startWords } from "../components/ReportParts";
 
 const RANK: Record<TopicStatus, number> = { gap: 0, notReached: 0, fragile: 1, secure: 2 };
 
@@ -55,7 +55,7 @@ export function History({ kid }: { kid: string }) {
       </a>
 
       <section className="rp-card rp-top">
-        <Ring value={c.strengths.length} total={tested.length} label="topics got" />
+        <Ring got={c.strengths.length} nearly={c.nearly.length} total={tested.length} />
         <div className="rp-top-text">
           <h2>All tests together</h2>
           <p>Each topic shows its latest result. Where a topic was tested more than once, you can see how it changed.</p>
@@ -64,7 +64,7 @@ export function History({ kid }: { kid: string }) {
 
       <div className="rp-groups">
         <StatusGroup status="secure" title="Strengths" topics={topicsWith("secure").map((t) => ({ name: t.name, note: change(t.status, t.before?.status) }))} />
-        <StatusGroup status="fragile" title="Nearly there" topics={topicsWith("fragile").map((t) => ({ name: t.name, note: change(t.status, t.before?.status) }))} />
+        <StatusGroup status="fragile" title="Nearly there" topics={topicsWith("fragile").map((t) => ({ name: t.name, note: [nearlyWhy(t.why), change(t.status, t.before?.status)].filter(Boolean).join(" ") }))} />
         <StatusGroup
           status="gap"
           title="Next to learn"

@@ -227,3 +227,20 @@ export async function saveReport(childName: string, entry: ReportEntry): Promise
   });
   if (!res.ok) throw new Error(`store write failed (${res.status})`);
 }
+
+/**
+ * Replaces saved reports with rebuilt ones (same ids). Re-reads the history
+ * just before writing, so a test that finished in the meantime is kept.
+ */
+export async function replaceReports(kid: string, updated: ReportEntry[]): Promise<void> {
+  if (!updated.length) return;
+  const h = await loadReports(kid);
+  const byId = new Map(updated.map((r) => [r.id, r]));
+  const reports = h.reports.map((r) => byId.get(r.id) ?? r);
+  const res = await fetch(`${STORE_URL}/sync`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Site-Key": STORE_KEY },
+    body: JSON.stringify({ group: "diagnostic-history", kid, week: "reports", state: { childName: h.childName, reports } }),
+  });
+  if (!res.ok) throw new Error(`store write failed (${res.status})`);
+}
