@@ -10,6 +10,8 @@ import { Activity, Representation } from "../types";
 import { ShareActivity } from "../components/ShareActivity";
 import { PlaceValueActivity, PlaceValueChart } from "../components/PlaceValue";
 import { Bars } from "../components/Bars";
+import { GroupActivity } from "../components/GroupActivity";
+import { ShadeActivity } from "../components/ShadeActivity";
 
 interface PreviewItem {
   id: string;
@@ -45,7 +47,7 @@ export function Preview() {
         <br />
         Grade 4: <a href="?preview=more-large-numbers&grade=4">Large Numbers</a> · <a href="?preview=operations-large-numbers&grade=4">Operations</a> · <a href="?preview=factors-multiples&grade=4">Factors and Multiples</a>
         <br />
-        Grade 8: <a href="?preview=g8-rational-numbers&grade=8">Rational Numbers</a> · <a href="?preview=g8-exponents&grade=8">Exponents</a> · <a href="?preview=g8-squares&grade=8">Squares</a> · <a href="?preview=g8-cubes&grade=8">Cubes</a> · <a href="?preview=g8-playing-numbers&grade=8">Playing with Numbers</a>
+        Grade 8: <a href="?preview=g8-rational-numbers&grade=8">Rational Numbers</a> · <a href="?preview=g8-exponents&grade=8">Exponents</a> · <a href="?preview=g8-squares&grade=8">Squares</a> · <a href="?preview=g8-cubes&grade=8">Cubes</a> · <a href="?preview=g8-playing-numbers&grade=8">Playing with Numbers</a> · <a href="?preview=g8-percent&grade=8">Percent</a> · <a href="?preview=g8-profit-loss&grade=8">Profit and Loss</a> · <a href="?preview=g8-interest&grade=8">Interest</a> · <a href="?preview=g8-variation&grade=8">Variation</a>
       </p>
       <p className="lede">One fresh question per level. Reload the page for new numbers and contexts. ✓ marks the right answer; each wrong option shows the mistake it stands for.</p>
       {data.items.map((it) => (
@@ -60,6 +62,8 @@ export function Preview() {
           {it.representation?.kind === "shape" && <Shape spec={it.representation} />}
           {it.activity?.kind === "share" && <ShareActivity spec={it.activity} onChange={() => undefined} />}
           {it.activity?.kind === "place-value" && <PlaceValueActivity spec={it.activity} onChange={() => undefined} />}
+          {it.activity?.kind === "group" && <GroupActivity spec={it.activity} onChange={() => undefined} />}
+          {it.activity?.kind === "shade" && <ShadeActivity spec={it.activity} onChange={() => undefined} />}
           {it.representation?.kind === "place-value-chart" && <PlaceValueChart spec={it.representation} />}
           {it.representation?.kind === "bars" && <Bars spec={it.representation} />}
           {it.answerBy === "activity" && <p className="preview-note">Answered by doing the activity: marked from what the child actually does, not by choosing an option.</p>}

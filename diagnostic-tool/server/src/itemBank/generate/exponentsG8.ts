@@ -171,7 +171,7 @@ export const EXPONENTS_G8_TEMPLATES: Record<string, Template> = {
     );
   },
   "pictorial|apply": (rng) => {
-    const [m, n] = pick(rng, [[1, 2], [2, 1], [1, 3], [3, 1], [2, 3], [3, 2]] as const);
+    const [m, n] = pick(rng, [[2, 3], [3, 2], [3, 3]] as const);
     return build(
       {
         ...base("p-apply", "pictorial", "apply", "multiply powers", rng),

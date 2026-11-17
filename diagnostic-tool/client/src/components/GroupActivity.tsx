@@ -12,6 +12,7 @@ export function GroupActivity({ spec, onChange }: { spec: Spec; onChange: (it: G
   const fixed = spec.mode === "equal" ? spec.baskets ?? 2 : spec.mode === "size" ? spec.maxBaskets ?? 6 : null;
   const [count, setCount] = useState<number>(fixed ?? 2);
   const [baskets, setBaskets] = useState<number[]>(() => Array(fixed ?? 2).fill(0));
+  const many = spec.basketMany ?? `${spec.basketOne}s`;
   const placed = baskets.reduce((s, n) => s + n, 0);
   const pile = spec.items - placed;
 
@@ -87,16 +88,16 @@ export function GroupActivity({ spec, onChange }: { spec: Spec; onChange: (it: G
       {spec.mode === "find" && (
         <div className="sa-controls">
           <div className="sa-stepper">
-            <span>{spec.basketOne}s</span>
-            <button type="button" onClick={() => setBasketCount(Math.max(1, count - 1))} disabled={count <= 1} aria-label={`fewer ${spec.basketOne}s`}>
+            <span>{many}</span>
+            <button type="button" onClick={() => setBasketCount(Math.max(1, count - 1))} disabled={count <= 1} aria-label={`fewer ${many}`}>
               −
             </button>
             <b>{count}</b>
-            <button type="button" onClick={() => setBasketCount(Math.min(spec.maxBaskets ?? 12, count + 1))} disabled={count >= (spec.maxBaskets ?? 12)} aria-label={`more ${spec.basketOne}s`}>
+            <button type="button" onClick={() => setBasketCount(Math.min(spec.maxBaskets ?? 12, count + 1))} disabled={count >= (spec.maxBaskets ?? 12)} aria-label={`more ${many}`}>
               +
             </button>
           </div>
-          <span className="sa-note">Changing the {spec.basketOne}s puts the {spec.itemMany} back in the pile.</span>
+          <span className="sa-note">Changing the {many} puts the {spec.itemMany} back in the pile.</span>
         </div>
       )}
 
@@ -108,11 +109,11 @@ export function GroupActivity({ spec, onChange }: { spec: Spec; onChange: (it: G
               {spec.icon}
             </span>
           ))}
-          {pile === 0 && <span className="ga-empty">All {spec.itemMany} are in {spec.basketOne}s</span>}
+          {pile === 0 && <span className="ga-empty">All {spec.itemMany} are in {many}</span>}
         </div>
       </div>
 
-      <p className="ga-hint">Drag {spec.itemMany} into the {spec.basketOne}s, or tap a {spec.basketOne} to drop one in. Tap {/^[aeiou]/i.test(spec.itemMany) ? "an" : "a"} {spec.itemMany.replace(/s$/, "")} in a {spec.basketOne} to put it back.</p>
+      <p className="ga-hint">Drag {spec.itemMany} into the {many}, or tap a {spec.basketOne} to drop one in. Tap {/^[aeiou]/i.test(spec.itemMany) ? "an" : "a"} {spec.itemMany.replace(/s$/, "")} in a {spec.basketOne} to put it back.</p>
 
       <div className="ga-baskets">
         {baskets.map((n, i) => (

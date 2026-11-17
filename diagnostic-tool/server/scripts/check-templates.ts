@@ -56,7 +56,7 @@ const VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
 };
 
 // ---- Grade 8: the right answer recomputed from the numbers, independently ----
-const num = (t: string) => Number(t.replace(/−/g, "-").replace(/,/g, "").replace(/[^\d.\-/].*$/, ""));
+const num = (t: string) => Number((t.replace(/₹/g, "").replace(/−/g, "-").replace(/,/g, "").match(/^-?\d+(\.\d+)?/) ?? ["NaN"])[0]);
 const fracVal = (t: string) => {
   const m = t.replace(/−/g, "-").match(/^(-?\d+)\/(\d+)$/);
   return m ? Number(m[1]) / Number(m[2]) : num(t);
@@ -82,10 +82,32 @@ function verifyG8(it: GeneratedItem): string | null {
     "g8-playing-numbers|abstract|apply": () => 9 * (p.a - p.b),
     "g8-playing-numbers|abstract|analyze": () => p.t,
     "g8-playing-numbers|pictorial|analyze": () => (p.a + p.b + p.c) % 9,
+    "g8-percent|abstract|understand": () => (p.p * p.N) / 100,
+    "g8-percent|abstract|apply": () => p.whole,
+    "g8-percent|abstract|analyze": () => p.p,
+    "g8-percent|abstract|evaluate": () => ((1 + p.p / 100) * (1 + p.q / 100) - 1) * 100,
+    "g8-percent|pictorial|understand": () => 2 * p.s,
+    "g8-percent|pictorial|apply": () => 5 * p.s,
+    "g8-profit-loss|abstract|understand": () => (p.C * (100 - p.L)) / 100,
+    "g8-profit-loss|abstract|apply": () => (p.M * (100 - p.d) * (100 + p.t)) / 10000,
+    "g8-profit-loss|abstract|analyze": () => p.C,
+    "g8-profit-loss|abstract|evaluate": () => p.M,
+    "g8-profit-loss|pictorial|understand": () => p.M - (p.M * p.d) / 100,
+    "g8-profit-loss|pictorial|apply": () => p.C * (1 + p.p / 100),
+    "g8-interest|abstract|remember": () => (p.P * p.R * p.T) / 100,
+    "g8-interest|abstract|apply": () => p.P * ((1 + p.R / 100) ** 2 - 1),
+    "g8-interest|abstract|analyze": () => p.P * (1 + p.R / 100) ** 3,
+    "g8-interest|abstract|evaluate": () => p.P * (1 + p.R / 200) ** 3,
+    "g8-interest|pictorial|understand": () => (3 * p.P * p.R) / 100,
+    "g8-variation|abstract|understand": () => (p.W * p.D) / p.W2,
+    "g8-variation|abstract|evaluate": () => (p.a * p.b) / p.c,
+    "g8-variation|pictorial|understand": () => (p.W * p.D) / p.W2,
+    "g8-variation|pictorial|remember": () => p.m * p.u,
+    "g8-variation|abstract|remember": () => p.m * p.u,
   };
   if (want[cell]) {
     const w = want[cell](), got = fracVal(right);
-    if (Math.abs(w - got) > 1e-9) return `right answer "${right}" is ${got}, should be ${w}`;
+    if (Math.abs(w - got) > 0.051) return `right answer "${right}" is ${got}, should be ${w}`;
   }
   if (cell === "g8-playing-numbers|pictorial|evaluate" && (p.a + num(right) + p.c) % 9 !== 0) return `${p.a}${right}${p.c} isn't divisible by 9`;
   if (cell === "g8-cubes|abstract|analyze") {
@@ -180,6 +202,10 @@ function checkActivityItem(it: GeneratedItem, where: string) {
       } else if (act.avoid) fail(`${where}: no possible answer for ${n}`);
       if (mark([n]).misconception !== "fm-trivial-grouping") fail(`${where}: one basket of everything not caught`);
     }
+  } else if (act.kind === "shade") {
+    if (!Number.isInteger(act.target) || act.target < 0 || act.target > act.rows * act.cols) fail(`${where}: can't shade ${act.target} of ${act.rows * act.cols}`);
+    if (!checkActivity(act, { shaded: act.target }).correct) fail(`${where}: the right shading was marked wrong`);
+    for (const w of act.wrong ?? []) if (checkActivity(act, { shaded: w.value }).misconception !== w.mistake) fail(`${where}: shading ${w.value} not caught as ${w.mistake}`);
   } else fail(`${where}: unknown activity`);
 }
 

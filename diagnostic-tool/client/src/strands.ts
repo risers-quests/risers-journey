@@ -14,6 +14,10 @@ export const GRADE8_TOPIC_CHOICES = [
   { id: "g8-squares", chapter: "Chapter 3", name: "Squares and Square Roots", about: "Square numbers, roots by prime factors, decimals, smallest multiplier" },
   { id: "g8-cubes", chapter: "Chapter 4", name: "Cubes and Cube Roots", about: "Cube numbers, cube roots, negative cubes, smallest multiplier" },
   { id: "g8-playing-numbers", chapter: "Chapter 5", name: "Playing with Numbers", about: "Numbers in general form, swapped digits, tests for 3 and 9, puzzles" },
+  { id: "g8-percent", chapter: "Chapter 7", name: "Percent and Percentage", about: "Percent of any whole, finding the whole, percentage change, one change after another" },
+  { id: "g8-profit-loss", chapter: "Chapter 8", name: "Profit, Loss and Discount", about: "Profit and loss %, overheads, discount, GST after discount" },
+  { id: "g8-interest", chapter: "Chapter 9", name: "Interest", about: "Simple and compound interest, yearly and half-yearly" },
+  { id: "g8-variation", chapter: "Chapter 10", name: "Direct and Inverse Variations", about: "Unit method, workers and days, speed and time, time and work" },
 ];
 
 // The book's strands, as offered on the start page.

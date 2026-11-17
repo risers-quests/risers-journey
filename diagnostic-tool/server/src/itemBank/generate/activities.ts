@@ -1,4 +1,4 @@
-import { Activity, GroupInteraction, PlaceValueInteraction, ShareInteraction } from "../../types.js";
+import { Activity, GroupInteraction, PlaceValueInteraction, ShadeInteraction, ShareInteraction } from "../../types.js";
 import { dropZeros } from "./moreOnLargeNumbers.js";
 
 /**
@@ -9,6 +9,12 @@ export function checkActivity(activity: Activity, interaction: unknown): { corre
   if (activity.kind === "share") return checkShare(activity, interaction as ShareInteraction);
   if (activity.kind === "place-value") return checkPlaceValue(activity, interaction as PlaceValueInteraction);
   if (activity.kind === "group") return checkGroup(activity, interaction as GroupInteraction);
+  if (activity.kind === "shade") {
+    const v = Math.floor(Number((interaction as ShadeInteraction)?.shaded));
+    if (!Number.isFinite(v)) return { correct: false, misconception: null };
+    if (v === activity.target) return { correct: true, misconception: null };
+    return { correct: false, misconception: activity.wrong?.find((w) => w.value === v)?.mistake ?? null };
+  }
   return { correct: false, misconception: null };
 }
 

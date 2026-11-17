@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { GroupActivity } from "../components/GroupActivity";
+import { ShadeActivity } from "../components/ShadeActivity";
 import { abstractClass } from "../promptStyle";
 import { getNextQuestion, submitAnswer } from "../api";
 import { NextQuestionResponse } from "../types";
@@ -154,10 +155,11 @@ export function Assessment({
         {item.activity?.kind === "share" && <ShareActivity key={item.id} spec={item.activity} onChange={onActivity} />}
         {item.activity?.kind === "place-value" && <PlaceValueActivity key={item.id} spec={item.activity} onChange={onActivity} />}
         {item.activity?.kind === "group" && <GroupActivity key={item.id} spec={item.activity} onChange={onActivity} />}
+        {item.activity?.kind === "shade" && <ShadeActivity key={item.id} spec={item.activity} onChange={onActivity} />}
 
         {!byActivity && (
           <div className={`choices ${item.activity && !acted ? "choices-locked" : ""}`}>
-            {item.activity && !acted && <div className="choices-hint">{item.activity.kind === "share" ? "Share them out first, then choose." : item.activity.kind === "group" ? `Try it with the ${item.activity.itemMany} first, then choose.` : "Try it on the chart first, then choose."}</div>}
+            {item.activity && !acted && <div className="choices-hint">{item.activity.kind === "share" ? "Share them out first, then choose." : item.activity.kind === "group" ? `Try it with the ${item.activity.itemMany} first, then choose.` : item.activity.kind === "shade" ? "Shade it first, then choose." : "Try it on the chart first, then choose."}</div>}
             {item.choices.map((choice) => (
               <button
                 key={choice.id}

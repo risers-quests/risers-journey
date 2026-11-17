@@ -9,6 +9,10 @@ import { EXPONENTS_G8_TEMPLATES, MISCONCEPTIONS as EXP8_MISCONCEPTIONS } from ".
 import { SQUARES_G8_TEMPLATES, MISCONCEPTIONS as SQ8_MISCONCEPTIONS } from "./squaresG8.js";
 import { CUBES_G8_TEMPLATES, MISCONCEPTIONS as CUBE8_MISCONCEPTIONS } from "./cubesG8.js";
 import { PLAYING_G8_TEMPLATES, MISCONCEPTIONS as PLAY8_MISCONCEPTIONS } from "./playingNumbersG8.js";
+import { PERCENT_G8_TEMPLATES, MISCONCEPTIONS as PCT8_MISCONCEPTIONS } from "./percentG8.js";
+import { PROFIT_LOSS_G8_TEMPLATES, MISCONCEPTIONS as PL8_MISCONCEPTIONS } from "./profitLossG8.js";
+import { INTEREST_G8_TEMPLATES, MISCONCEPTIONS as INT8_MISCONCEPTIONS } from "./interestG8.js";
+import { VARIATION_G8_TEMPLATES, MISCONCEPTIONS as VAR8_MISCONCEPTIONS } from "./variationG8.js";
 
 export type { GeneratedItem } from "./core.js";
 
@@ -34,6 +38,10 @@ const GRADE8_TEMPLATES: Record<string, Record<string, Template>> = {
   "g8-squares": SQUARES_G8_TEMPLATES,
   "g8-cubes": CUBES_G8_TEMPLATES,
   "g8-playing-numbers": PLAYING_G8_TEMPLATES,
+  "g8-percent": PERCENT_G8_TEMPLATES,
+  "g8-profit-loss": PROFIT_LOSS_G8_TEMPLATES,
+  "g8-interest": INTEREST_G8_TEMPLATES,
+  "g8-variation": VARIATION_G8_TEMPLATES,
 };
 
 /** Topics with generated questions (Grade 5; Grade 4 also uses GRADE4_TEMPLATES). */
@@ -54,6 +62,10 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...SQ8_MISCONCEPTIONS,
   ...CUBE8_MISCONCEPTIONS,
   ...PLAY8_MISCONCEPTIONS,
+  ...PCT8_MISCONCEPTIONS,
+  ...PL8_MISCONCEPTIONS,
+  ...INT8_MISCONCEPTIONS,
+  ...VAR8_MISCONCEPTIONS,
 };
 
 export function hasTemplate(topicId: string, cpa: CPAStage, bloom: BloomLevel, grade = 5): boolean {

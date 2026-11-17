@@ -120,6 +120,8 @@ export interface GroupActivity {
   icon: string;
   itemMany: string;
   basketOne: string;
+  /** Plural of basketOne, when it isn't just + "s" (e.g. "children"). */
+  basketMany?: string;
   /** The container's picture (default a basket); "" for none (e.g. rows of tiles). */
   basketIcon?: string;
   /** "equal": how many baskets. */
@@ -136,7 +138,27 @@ export interface GroupInteraction {
   baskets: number[];
 }
 
-export type Activity = ShareActivity | PlaceValueActivity | GroupActivity;
+/**
+ * Hands-on shading (Grade 8 percent, profit, interest): tap a square to
+ * shade every square up to it, or use − / + one at a time. What is shaded
+ * is the answer: `target` squares. `unit` says what one square is worth.
+ */
+export interface ShadeActivity {
+  kind: "shade";
+  rows: number;
+  cols: number;
+  target: number;
+  unit?: string;
+  /** Results of known mistakes, so a wrong amount is named. */
+  wrong?: { value: number; mistake: string }[];
+}
+
+/** What the child shaded: how many squares. */
+export interface ShadeInteraction {
+  shaded: number;
+}
+
+export type Activity = ShareActivity | PlaceValueActivity | GroupActivity | ShadeActivity;
 
 /** Hands-on place-value chart: tap + / − to put discs in columns; exchange 10 for 1 next door. */
 export interface PlaceValueActivity {
