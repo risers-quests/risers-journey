@@ -840,3 +840,7 @@ a { color: var(--deep-teal); }
 .en-tiles { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 12px; }
 .en-tile { font: inherit; font-size: 1rem; padding: 8px 12px; border: 1.5px solid var(--brand-slate); border-radius: 8px; background: #fff; color: var(--ink); cursor: pointer; min-height: 42px; }
 .en-tile.built { border-color: #3f8a1c; background: #eef7e2; }
+.en-built.glue { gap: 0; }
+.en-built.glue .en-tile.built { border-radius: 0; margin-right: -1.5px; }
+.en-built.glue .en-tile.built:first-of-type { border-radius: 8px 0 0 8px; }
+.en-built.glue .en-tile.built:last-of-type { border-radius: 0 8px 8px 0; }

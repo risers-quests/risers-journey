@@ -30,6 +30,7 @@ import { verify as verifyInfinitivesE8 } from "../src/itemBank/generate/infiniti
 import { verify as verifyPurposeE8 } from "../src/itemBank/generate/purposeE8.js";
 import { verify as verifyClausesE8 } from "../src/itemBank/generate/clausesE8.js";
 import { verify as verifyWordsE8 } from "../src/itemBank/generate/wordsE8.js";
+import { verify as verifyFiguresE8 } from "../src/itemBank/generate/figuresE8.js";
 
 const N = Number(process.env.N || 20000);
 let failures = 0;
@@ -227,6 +228,7 @@ const ENGLISH_VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
   "e8-purpose": verifyPurposeE8,
   "e8-clauses": verifyClausesE8,
   "e8-words": verifyWordsE8,
+  "e8-figures": verifyFiguresE8,
 };
 for (const t of ENGLISH8_TOPICS) VERIFY[t] = ENGLISH_VERIFY[t] ?? (() => null);
 
@@ -401,6 +403,7 @@ function checkActivityItem(it: GeneratedItem, where: string) {
     if (!used) fail(`${where}: "${want}" can't be built from the tiles ${JSON.stringify(act.tiles)}`);
     else if (!checkActivity(act, { order: used }).correct) fail(`${where}: the right sentence was marked wrong`);
     if (tidySentence(act.tiles.join(" ")) === tidySentence(want)) fail(`${where}: tiles start in the right order`);
+    if (act.glue && used && !checkActivity(act, { order: used }).correct) fail(`${where}: the glued word was marked wrong`);
     for (const w of act.wrong ?? []) if (act.answers.some((a) => tidySentence(a) === tidySentence(w.text))) fail(`${where}: a 'mistake' equals the right answer`);
   } else fail(`${where}: unknown activity`);
 }

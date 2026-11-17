@@ -256,7 +256,7 @@ export const WORDS_E8_TEMPLATES: Record<string, Template> = {
       base("c-apply", "concrete", "apply", "build a word", rng),
       `Build one word that means '${x.meaning}'. (Not every tile is needed.)`,
       p(i, 3),
-      tiles(rng, x.parts.join(" | "), x.spares, x.wrong)
+      { ...tiles(rng, x.parts.join(" | "), x.spares, x.wrong), glue: true }
     );
   },
   "concrete|analyze": (rng, g) => {

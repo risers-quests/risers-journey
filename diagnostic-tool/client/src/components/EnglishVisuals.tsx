@@ -77,8 +77,8 @@ export function OrderActivity({ spec, onChange }: { spec: OrderSpec; onChange: (
   }, [order]);
   return (
     <div className="en-activity">
-      <div className="en-built" aria-label="Your sentence">
-        {order.length === 0 && <span className="en-built-empty">Tap the tiles below to build the sentence here.</span>}
+      <div className={`en-built${spec.glue ? " glue" : ""}`} aria-label={spec.glue ? "Your word" : "Your sentence"}>
+        {order.length === 0 && <span className="en-built-empty">Tap the tiles below to build the {spec.glue ? "word" : "sentence"} here.</span>}
         {order.map((i) => (
           <button type="button" key={i} className="en-tile built" onClick={() => setOrder((o) => o.filter((x) => x !== i))}>
             {spec.tiles[i]}

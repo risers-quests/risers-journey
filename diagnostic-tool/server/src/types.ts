@@ -301,6 +301,8 @@ export interface OrderActivity {
   tiles: string[];
   answers: string[];
   wrong?: { text: string; mistake: string }[];
+  /** Word parts (re + write): the tiles join with no space, into one word. */
+  glue?: boolean;
 }
 export interface OrderInteraction {
   order: number[];

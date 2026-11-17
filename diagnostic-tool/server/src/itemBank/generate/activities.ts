@@ -195,7 +195,9 @@ export function checkOrder(a: Extract<Activity, { kind: "order" }>, it: OrderInt
   if (!it || !Array.isArray(it.order)) return { correct: false, misconception: null };
   const idx = it.order.map((x) => Math.floor(Number(x)));
   if (idx.some((x) => !(x >= 0 && x < a.tiles.length)) || new Set(idx).size !== idx.length) return { correct: false, misconception: null };
-  const built = tidySentence(idx.map((i) => a.tiles[i]).join(" "));
-  if (a.answers.some((ans) => tidySentence(ans) === built)) return { correct: true, misconception: null };
-  return { correct: false, misconception: a.wrong?.find((w) => tidySentence(w.text) === built)?.mistake ?? null };
+  // glued word parts compare with the spaces taken out (re + write = rewrite)
+  const norm = (s: string) => (a.glue ? s.replace(/\s+/g, "") : tidySentence(s));
+  const built = norm(idx.map((i) => a.tiles[i]).join(" "));
+  if (a.answers.some((ans) => norm(ans) === built)) return { correct: true, misconception: null };
+  return { correct: false, misconception: a.wrong?.find((w) => norm(w.text) === built)?.mistake ?? null };
 }
