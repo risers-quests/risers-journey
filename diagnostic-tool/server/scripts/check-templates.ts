@@ -25,6 +25,7 @@ import { verify as verifyVoiceE8 } from "../src/itemBank/generate/voiceE8.js";
 import { verify as verifySpeechE8 } from "../src/itemBank/generate/speechE8.js";
 import { verify as verifySentencesE8 } from "../src/itemBank/generate/sentencesE8.js";
 import { verify as verifyConditionalsE8 } from "../src/itemBank/generate/conditionalsE8.js";
+import { verify as verifyParticiplesE8 } from "../src/itemBank/generate/participlesE8.js";
 
 const N = Number(process.env.N || 20000);
 let failures = 0;
@@ -217,6 +218,7 @@ const ENGLISH_VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
   "e8-speech": verifySpeechE8,
   "e8-sentences": verifySentencesE8,
   "e8-conditionals": verifyConditionalsE8,
+  "e8-participles": verifyParticiplesE8,
 };
 for (const t of ENGLISH8_TOPICS) VERIFY[t] = ENGLISH_VERIFY[t] ?? (() => null);
 
