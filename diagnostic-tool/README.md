@@ -41,7 +41,8 @@ Grade 8 follows its own book (Selina Concise Mathematics 8) with its own
 topics (`g8-…` in `itemBank/topics.ts`), chosen chapter by chapter on the
 start page like Grade 4. In so far (`itemBank/generate/*G8.ts`):
 - Theme 1, Number System: Rational Numbers, Exponents, Squares and Square
-  Roots, Cubes and Cube Roots, Playing with Numbers.
+  Roots, Cubes and Cube Roots, Playing with Numbers, Sets (number cards
+  1–12 on the free grid; Venn diagrams).
 - Theme 2, Ratio and Proportion: Percent, Profit Loss and Discount,
   Interest, Direct and Inverse Variations. Their hands-on level uses the
   shading activity (`ShadeActivity`): tap a square to shade up to it.
@@ -67,7 +68,7 @@ start page like Grade 4. In so far (`itemBank/generate/*G8.ts`):
   outcomes on numbered cards.
 All questions are generated, with a named mistake behind every wrong
 option, and are covered by the stress test (algebra answers are checked by
-substituting numbers). Not yet: Sets.
+substituting numbers). All 25 chapters of the book are in.
 
 ## Stack
 

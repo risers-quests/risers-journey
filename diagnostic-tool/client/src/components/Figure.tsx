@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { FigureSpec } from "../types";
 
 /**
@@ -203,12 +204,55 @@ function Pie({ slices }: { slices: { value: number; label: string }[] }) {
   );
 }
 
+/** Two overlapping sets A and B inside the universal set U, with what's in each region. */
+function Venn({ v }: { v: NonNullable<FigureSpec["venn"]> }) {
+  const A = { cx: 82, cy: 96, r: 62 }, B = { cx: 142, cy: 96, r: 62 };
+  // Unique per diagram: several can be on one page.
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const maskId = `venn-shade-${uid}`, clipId = `venn-a-${uid}`;
+  const col = (items: string[], x: number) =>
+    items.map((t, i) => (
+      <text key={t + i} x={x} y={96 - ((items.length - 1) * 15) / 2 + i * 15 + 4} className="fig-label" textAnchor="middle">{t}</text>
+    ));
+  const ring = (c: typeof A, fill: string) => <circle cx={c.cx} cy={c.cy} r={c.r} fill={fill} />;
+  const s = v.shade;
+  return (
+    <>
+      <defs>
+        <mask id={maskId}>
+          {/* white = shaded, black = not */}
+          {s === "A" && ring(A, "white")}
+          {s === "B" && ring(B, "white")}
+          {s === "either" && <>{ring(A, "white")}{ring(B, "white")}</>}
+          {s === "onlyA" && <>{ring(A, "white")}{ring(B, "black")}</>}
+          {s === "notA" && <><rect x={-6} y={8} width={236} height={176} fill="white" />{ring(A, "black")}</>}
+          {s === "neither" && <><rect x={-6} y={8} width={236} height={176} fill="white" />{ring(A, "black")}{ring(B, "black")}</>}
+          {s === "both" && <circle cx={B.cx} cy={B.cy} r={B.r} fill="white" clipPath={`url(#${clipId})`} />}
+        </mask>
+        <clipPath id={clipId}><circle cx={A.cx} cy={A.cy} r={A.r} /></clipPath>
+      </defs>
+      <rect x={-6} y={8} width={236} height={176} rx={6} className="fig-circle" />
+      {s && <rect x={-6} y={8} width={236} height={176} mask={`url(#${maskId})`} className="fig-venn-shade" />}
+      <circle cx={A.cx} cy={A.cy} r={A.r} className="fig-venn-ring" />
+      <circle cx={B.cx} cy={B.cy} r={B.r} className="fig-venn-ring" />
+      <text x={0} y={26} className="fig-label">U</text>
+      <text x={A.cx - 52} y={44} className="fig-label fig-accent">A</text>
+      <text x={B.cx + 46} y={44} className="fig-label fig-accent">B</text>
+      {col(v.onlyA, A.cx - 26)}
+      {col(v.both, (A.cx + B.cx) / 2)}
+      {col(v.onlyB, B.cx + 26)}
+      {v.outside.map((t, i) => <text key={t + i} x={4 + i * 22} y={176} className="fig-label">{t}</text>)}
+    </>
+  );
+}
+
 export function Figure({ spec }: { spec: FigureSpec }) {
   let body;
   if (spec.figure === "polygon") body = <Shape2D ps={polygonPoints(spec.sides ?? 5, !!spec.regular)} spec={spec} />;
   else if (spec.figure === "quad") body = <Shape2D ps={quadPoints(spec.quad ?? "parallelogram")} spec={spec} />;
   else if (spec.figure === "solid") body = <Solid solid={spec.solid ?? "cube"} />;
   else if (spec.figure === "pie") body = <Pie slices={spec.slices ?? []} />;
+  else if (spec.figure === "venn" && spec.venn) body = <Venn v={spec.venn} />;
   else body = <Circle spec={spec} />;
   return (
     <div className="shape-diagram">

@@ -156,6 +156,8 @@ function verifyG8(it: GeneratedItem): string | null {
     "g8-probability|abstract|apply": () => (p.d - p.a) / p.d,
     "g8-probability|abstract|analyze": () => (6 - Math.abs(7 - p.s)) / 36,
     "g8-probability|pictorial|apply": () => p.h / p.N,
+    "g8-sets|abstract|analyze": () => p.nA + p.nB - p.both,
+    "g8-sets|pictorial|evaluate": () => p.onlyA + p.both + p.onlyB,
     "g8-volume|abstract|evaluate": () => ((p.l / 10) * (p.b / 10) * (p.h / 10)) * 1000,
   };
   if (want[cell]) {

@@ -137,6 +137,7 @@ TOPICS.push(
   { id: "g8-squares", strand: "Number & Algebra", name: "Squares and Square Roots", shortLabel: "Squares & Roots", dependsOn: [], grade: 8 },
   { id: "g8-cubes", strand: "Number & Algebra", name: "Cubes and Cube Roots", shortLabel: "Cubes & Roots", dependsOn: ["g8-squares"], grade: 8 },
   { id: "g8-playing-numbers", strand: "Number & Algebra", name: "Playing with Numbers", shortLabel: "Playing with Numbers", dependsOn: [], grade: 8 },
+  { id: "g8-sets", strand: "Number & Algebra", name: "Sets", shortLabel: "Sets", dependsOn: [], grade: 8 },
   // Theme 2: Ratio and Proportion.
   { id: "g8-percent", strand: "Ratio & Proportion", name: "Percent and Percentage", shortLabel: "Percent", dependsOn: [], grade: 8 },
   { id: "g8-profit-loss", strand: "Ratio & Proportion", name: "Profit, Loss and Discount", shortLabel: "Profit & Loss", dependsOn: ["g8-percent"], grade: 8 },

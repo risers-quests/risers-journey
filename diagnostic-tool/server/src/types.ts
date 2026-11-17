@@ -227,7 +227,9 @@ export interface BarsSpec {
  */
 export interface FigureSpec {
   kind: "figure";
-  figure: "polygon" | "quad" | "solid" | "circle" | "pie";
+  figure: "polygon" | "quad" | "solid" | "circle" | "pie" | "venn";
+  /** venn: what is written in each region (elements, or a count), and which region is shaded. */
+  venn?: { onlyA: string[]; both: string[]; onlyB: string[]; outside: string[]; shade?: "A" | "B" | "both" | "either" | "notA" | "onlyA" | "neither" };
   /** pie (a pie chart or a spinner): slices in order, sizes by value; label written in each. */
   slices?: { value: number; label: string }[];
   /** polygon */

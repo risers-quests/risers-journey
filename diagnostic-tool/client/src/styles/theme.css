@@ -795,3 +795,5 @@ a { color: var(--deep-teal); }
 .shade-centre { position: absolute; left: 50%; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--soft-clay); border: 2px solid #fff; pointer-events: none; }
 .fig-slice { stroke: var(--deep-teal); stroke-width: 1.6; }
 .fig-pie-label { fill: var(--ink); font-size: 10px; }
+.fig-venn-ring { fill: none; stroke: var(--deep-teal); stroke-width: 2; }
+.fig-venn-shade { fill: rgba(178, 71, 94, 0.28); }
