@@ -136,6 +136,11 @@
   </header>
 
   <section id="menu">
+    <div class="card" style="margin:8px 0 4px;flex-direction:row;align-items:center;flex-wrap:wrap;gap:10px">
+      <b>🎵 This Sunday's band:</b>
+      <select id="setSel" style="font:inherit;background:var(--strip2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px;max-width:100%"></select>
+      <div class="sub" id="setNote" style="flex-basis:100%"></div>
+    </div>
     <div class="menu">
       <div class="card">
         <span class="tag">Start here</span>
@@ -193,7 +198,7 @@
       <p class="sub" id="syncNote"></p>
     </div>
     <div class="note"><b>The target mix for this service:</b> the <b>pastor</b> is always clearest → <b>worship leader</b> next → <b>Singer 2</b> just underneath → <b>keyboard</b> supporting the voices → <b>playback music</b> soft in the background → <b>audience mic</b> barely there.<br><br>
-    The walk-in and walk-out songs in "Follow the service order" are real recordings; the voices and band are built-in stand-ins. To practise with real voices, record each part separately on a phone (a 2-minute sermon clip, the keyboard, each singer) and tap <i>load recording</i> under a channel.</div>
+    Pick the band above: a real recording puts each singer and instrument on its own channel, like a real desk. The walk-in and walk-out songs are real recordings too. To practise with real voices, record each part separately on a phone (a 2-minute sermon clip, the keyboard, each singer) and tap <i>load recording</i> under a channel.</div>
   </section>
 
   <section id="session" class="hidden">
@@ -225,7 +230,7 @@
   </section>
 </div>
 
-<div class="overlay hidden" id="linecheck"><div class="panel" style="text-align:center"><h2>🎙️ Line check…</h2><p class="sub">Testing each microphone before the service starts.</p></div></div>
+<div class="overlay hidden" id="linecheck"><div class="panel" style="text-align:center"><h2 id="lcTitle">🎙️ Line check…</h2><p class="sub">Testing each microphone before the service starts.</p></div></div>
 
 <div class="overlay hidden" id="emPanel"><div class="panel">
   <div class="tag" id="emRound">Round 1 of 8</div>
@@ -310,6 +315,7 @@ function buildGraph(){
     n.trim=ctx.createGain();            // calibration
     n.rawAn=ctx.createAnalyser(); n.rawAn.fftSize=2048;
     n.file=ctx.createGain(); n.file.gain.value=0;  // loaded recordings land here
+    n.stem=ctx.createGain(); n.stem.gain.value=0;  // a service set's real recording for this channel
     n.src=ctx.createGain();             // event multiplier (pastor walks away, etc.)
     n.gain=ctx.createGain();            // GAIN knob
     n.shaper=ctx.createWaveShaper(); n.shaper.curve=curve; n.shaper.oversample='2x';
@@ -317,7 +323,7 @@ function buildGraph(){
     n.mute=ctx.createGain(); n.fader=ctx.createGain();
     n.an=ctx.createAnalyser(); n.an.fftSize=1024;
     n.synth.connect(n.trim); n.trim.connect(n.rawAn); n.trim.connect(n.src);
-    n.file.connect(n.src);
+    n.file.connect(n.src); n.stem.connect(n.src);
     n.src.connect(n.gain); n.gain.connect(n.shaper); n.shaper.connect(n.hi); n.hi.connect(n.mute);
     n.mute.connect(n.fader); n.fader.connect(n.an); n.an.connect(masterGain);
     A[c.id]=n;
@@ -451,9 +457,44 @@ async function loadFile(id,file,nameEl){
     const n2=A[id];
     if(n2.player){try{n2.player.stop()}catch(e){}}
     const src=ctx.createBufferSource(); src.buffer=buf; src.loop=true; src.connect(n2.file); src.start();
-    n2.player=src; n2.file.gain.value=clamp(0.1/r,0.05,40); n2.trim.gain.value=0;
+    n2.player=src; n2.file.gain.value=clamp(0.1/r,0.05,40); n2.trim.gain.value=0; n2.stem.gain.value=0;
     nameEl.textContent='▶ '+file.name;
   }catch(e){ nameEl.textContent='Could not read that file'; }
+}
+
+/* ---- Service sets: a real multitrack recording, one part per channel ----
+   Stems are pre-levelled to the same loudness (-26 dBFS while playing; the stem gain of 2 brings them to the
+   level the line check gives the built-in sounds), so the target mix and the marking stay the same. */
+const SETS=[
+  {id:'major82',name:"Major 82 · 'Buit, Tot Està Buit'",note:'Real recording: lead vocal, second vocal, piano, acoustic guitar. The pastor and audience mic are still built-in.',
+   credit:"Multitracks: Major 82 via the Cambridge-MT 'Mixing Secrets' library, for educational use.",
+   dir:'sets/major82/',stems:{leader:'lead-vocal.mp3',singer:'second-vocal.mp3',keys:'piano.mp3',playback:'acoustic-guitar.mp3'}},
+  {id:'builtin',name:'Built-in band (synthesised)',note:'Computer-made stand-in sounds for every channel.'},
+];
+let setId=(()=>{ try{ const v=localStorage.getItem('sounddesk-set'); return SETS.some(x=>x.id===v)?v:SETS[0].id; }catch(e){ return SETS[0].id; } })();
+const setState={loaded:null,srcs:[],trims:{}};
+async function applySet(){
+  const set=SETS.find(x=>x.id===setId)||SETS[0];
+  setState.srcs.forEach(x=>{ try{x.stop();}catch(e){} }); setState.srcs=[];
+  CH.forEach(c=>{ const n=A[c.id]; n.stem.gain.value=0; if(setState.trims[c.id]!=null){ n.trim.gain.value=setState.trims[c.id]; delete setState.trims[c.id]; } });
+  setState.loaded='builtin';
+  if(!set.stems) { setState.loaded=set.id; return; }
+  const ids=Object.keys(set.stems);
+  const bufs=await Promise.all(ids.map(id=>fetch(set.dir+set.stems[id]).then(r=>{ if(!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+    .then(b=>ctx.decodeAudioData(b)).catch(()=>null)));
+  if(bufs.some(b=>!b)){ toast('⚠ Couldn\'t load the recording. Using the built-in band instead.',true); return; }
+  const len=Math.min(...bufs.map(b=>b.duration)), t0=ctx.currentTime+0.15;   // every part starts together and loops together
+  ids.forEach((id,i)=>{
+    const n=A[id]; if(n.player) return;            // her own recording on this channel wins
+    const x=ctx.createBufferSource(); x.buffer=bufs[i]; x.loop=true; x.loopEnd=len; x.connect(n.stem); x.start(t0); setState.srcs.push(x);
+    setState.trims[id]=n.trim.gain.value; n.trim.gain.value=0; n.stem.gain.value=2;
+  });
+  setState.loaded=set.id;
+}
+function renderSetPick(){
+  const set=SETS.find(x=>x.id===setId)||SETS[0];
+  $('setSel').innerHTML=SETS.map(x=>`<option value="${x.id}"${x.id===setId?' selected':''}>${x.name}</option>`).join('');
+  $('setNote').textContent=set.note+(set.credit?' '+set.credit:'');
 }
 
 /* ---------------- DESK UI ---------------- */
@@ -608,7 +649,8 @@ async function startMode(m,lv){
   if(!ctx){ buildGraph(); buildDesk(); requestAnimationFrame(drawLoop); }
   await ctx.resume();
   resetState();
-  if(!calibrated){ $('linecheck').classList.remove('hidden'); await calibrate(); $('linecheck').classList.add('hidden'); }
+  if(!calibrated){ $('lcTitle').textContent='🎙️ Line check…'; $('linecheck').classList.remove('hidden'); await calibrate(); $('linecheck').classList.add('hidden'); }
+  if(setState.loaded!==setId){ $('lcTitle').textContent='🎵 The band is setting up…'; $('linecheck').classList.remove('hidden'); await applySet(); $('linecheck').classList.add('hidden'); }
   applyMaster();
   mode=m; T0=ctx.currentTime; active=[]; log=[]; healthT=0; totalT=0; score=0; nextEv=m==='live'?(level==='beginner'?30:20):8;
   if(m==='build'||m==='explore') scramble('zero'); else if(m==='live') scramble('mild');
@@ -833,7 +875,7 @@ async function musicOn(){
   const d=buf.getChannelData(0); let q=0,k=0; for(let i=0;i<d.length;i+=16){q+=d[i]*d[i];k++;}
   const n=A.playback, t=ctx.currentTime, src=ctx.createBufferSource();
   src.buffer=buf; src.loop=true; src.loopEnd=Math.max(5,buf.duration-1.2); src.connect(n.file); src.start();
-  trk.src=src; trk.trim=n.trim.gain.value;
+  trk.src=src; trk.trim=n.trim.gain.value; trk.stem=n.stem.gain.value; n.stem.gain.setTargetAtTime(0,t,0.05);
   n.file.gain.setTargetAtTime(clamp(0.1/(Math.sqrt(q/k)||0.01),0.05,40),t,0.05); n.trim.gain.setTargetAtTime(0,t,0.05);
   UI.playback.el.querySelector('.fname').textContent='▶ '+name;
 }
@@ -841,6 +883,7 @@ function musicOff(){
   if(!trk.on) return; trk.on=false; trk.i++;      // walk-out gets a different song from walk-in
   if(trk.src&&ctx){ const s=trk.src, t=ctx.currentTime; trk.src=null;
     A.playback.file.gain.setTargetAtTime(0,t,0.05); if(trk.trim!=null) A.playback.trim.gain.setTargetAtTime(trk.trim,t,0.05);
+    if(trk.stem!=null) A.playback.stem.gain.setTargetAtTime(trk.stem,t,0.05);
     setTimeout(()=>{ try{s.stop();}catch(e){} },400); }
   if(UI.playback) UI.playback.el.querySelector('.fname').textContent='';
 }
@@ -1092,6 +1135,8 @@ function progInit(){
 /* ---- wiring ---- */
 document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{ if(!b.disabled) startMode(b.dataset.mode,b.dataset.level); }));
 $('stageBtn').addEventListener('click',trSend);
+renderSetPick();
+$('setSel').addEventListener('change',e=>{ setId=e.target.value; try{ localStorage.setItem('sounddesk-set',setId); }catch(_){} renderSetPick(); });
 progInit();
 $('stopBtn').addEventListener('click',stopAll);
 })();
