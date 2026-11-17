@@ -1,0 +1,238 @@
+<!doctype html>
+<html>
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<style>
+  :root { --green: #3f7718; --green-soft: #e8f3dc; --amber: #8a5d14; --amber-soft: #fbf0dc; --ink: #1e2a33; --soft: #56687a; --line: #e3e9df; --bg: #f7f9f5; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif; }
+  main { max-width: 980px; margin: 0 auto; padding: 18px 16px 60px; }
+  header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 14px; }
+  h1 { margin: 0; font-size: 1.5rem; }
+  h2 { margin: 0 0 10px; font-size: 1.05rem; display: flex; align-items: center; gap: 8px; }
+  h3 { margin: 12px 0 6px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: .06em; color: var(--soft); }
+  a { color: var(--green); }
+  .links { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .9rem; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin-bottom: 14px; }
+  .count { font-size: .75rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--amber-soft); color: var(--amber); }
+  .count.zero { background: var(--green-soft); color: var(--green); }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .stat { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
+  .stat b { display: block; font-size: 1.35rem; }
+  .stat span { color: var(--soft); font-size: .85rem; }
+  .mail { display: block; padding: 9px 0; border-top: 1px solid var(--line); text-decoration: none; color: var(--ink); }
+  .mail:first-of-type { border-top: 0; }
+  .mail b { display: block; }
+  .mail small { color: var(--soft); }
+  .mail p { margin: 2px 0 0; color: var(--soft); font-size: .85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tag { font-size: .7rem; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: var(--green-soft); color: var(--green); margin-left: 6px; }
+  .empty { color: var(--soft); margin: 0; font-size: .9rem; }
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th { text-align: left; color: var(--soft); font-weight: 600; padding: 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 7px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  td small { color: var(--soft); display: block; }
+  .warn { color: #a33a52; font-size: .78rem; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 10px; }
+  button, .btn { font: inherit; border: 1px solid var(--green); color: var(--green); background: #fff; border-radius: 9px; padding: 6px 12px; cursor: pointer; text-decoration: none; }
+  button.primary { background: var(--green); color: #fff; }
+  button:disabled { opacity: .5; cursor: default; }
+  button.small { padding: 3px 9px; font-size: .82rem; }
+  form { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; align-items: end; }
+  label { display: flex; flex-direction: column; gap: 4px; font-size: .82rem; color: var(--soft); }
+  input, select { font: inherit; padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); }
+  .msg { margin: 10px 0 0; font-size: .9rem; }
+  .msg.err { color: #a33a52; }
+  .loading { color: var(--soft); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>LifeHub Admin</h1>
+    <div class="links">
+      <a id="sheet-link" href="#" target="_blank">Open the Sheet</a>
+      <a href="https://mail.google.com/mail/u/0/#drafts" target="_blank">Gmail drafts</a>
+      <a href="https://mail.google.com/mail/u/0/#label/Hiring" target="_blank">Hiring</a>
+    </div>
+  </header>
+
+  <section class="card">
+    <h2>Needs a reply <span class="count" id="inbox-count">…</span></h2>
+    <div id="inbox"><p class="loading">Checking Gmail…</p></div>
+  </section>
+
+  <div class="stats" id="stats"></div>
+
+  <section class="card" id="pay-card">
+    <h2>Record a payment</h2>
+    <form id="pay-form">
+      <label>Who<select id="pay-code" required></select></label>
+      <label>For<select id="pay-for"><option>School fees</option><option>Past dues</option></select></label>
+      <label>Amount (₹)<input id="pay-amount" type="number" min="1" step="1" required></label>
+      <label>Date<input id="pay-date" type="date" required></label>
+      <label>Mode<select id="pay-mode"><option>GPay</option><option>Bank transfer</option><option>Cash</option><option>Card</option><option>Cheque</option></select></label>
+      <label>Note<input id="pay-note" placeholder="optional"></label>
+      <button class="primary" type="submit" id="pay-btn">Record</button>
+    </form>
+    <p class="msg" id="pay-msg"></p>
+  </section>
+
+  <section class="card">
+    <h2>Fees owing <span class="count" id="owing-count">…</span></h2>
+    <div class="bar">
+      <button class="primary" id="draft-btn" disabled>Draft reminders for ticked</button>
+      <span class="empty">Drafts only: you check and send them from Gmail.</span>
+    </div>
+    <p class="msg" id="draft-msg"></p>
+    <div class="scroll"><table>
+      <thead><tr><th><input type="checkbox" id="all" aria-label="Tick all"></th><th>Child</th><th class="num">Balance</th><th class="num">Paid</th><th>Last paid</th><th>Last reminder</th><th></th></tr></thead>
+      <tbody id="owing"><tr><td colspan="7" class="loading">Loading…</td></tr></tbody>
+    </table></div>
+  </section>
+
+  <section class="card">
+    <h2>Past years still owing</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>Child</th><th>Year</th><th class="num">Balance</th><th>Timeline from parents</th><th></th></tr></thead>
+      <tbody id="past"></tbody>
+    </table></div>
+  </section>
+
+  <section class="card">
+    <h2>Recent payments</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>Date</th><th>Child</th><th>For</th><th class="num">Amount</th><th>Mode</th></tr></thead>
+      <tbody id="recent"></tbody>
+    </table></div>
+  </section>
+</main>
+
+<script>
+  var DATA = null;
+  var $ = function (id) { return document.getElementById(id); };
+  var rs = function (n) { return '₹' + Math.round(n).toLocaleString('en-IN'); };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  function fail(el) { return function (e) { el.textContent = (e && e.message) || String(e); el.className = 'msg err'; }; }
+
+  function loadInbox() {
+    google.script.run.withSuccessHandler(function (groups) {
+      var total = 0, html = '';
+      groups.forEach(function (g) {
+        total += g.items.length;
+        html += '<h3>' + esc(g.title) + ' (' + g.items.length + ')</h3>';
+        html += g.items.length
+          ? g.items.map(function (m) {
+              return '<a class="mail" href="' + m.url + '" target="_blank"><b>' + esc(m.subject) + (m.payment ? '<span class="tag">payment?</span>' : '') +
+                '</b><small>' + esc(m.from) + ' · ' + esc(m.date) + '</small><p>' + esc(m.snippet) + '</p></a>';
+            }).join('')
+          : '<p class="empty">Nothing waiting.</p>';
+      });
+      $('inbox').innerHTML = html;
+      $('inbox-count').textContent = total;
+      $('inbox-count').className = 'count' + (total ? '' : ' zero');
+    }).withFailureHandler(function (e) { $('inbox').innerHTML = '<p class="msg err">' + esc(e.message || e) + '</p>'; }).getInbox();
+  }
+
+  function loadFees() {
+    google.script.run.withSuccessHandler(render).withFailureHandler(function (e) {
+      $('owing').innerHTML = '<tr><td colspan="7" class="msg err">' + esc(e.message || e) + '</td></tr>';
+    }).getOverview();
+  }
+
+  function render(d) {
+    DATA = d;
+    $('sheet-link').href = d.sheetUrl;
+    var owing = d.students.filter(function (s) { return s.balance > 0; }).sort(function (a, b) { return b.balance - a.balance; });
+    var sum = function (list, k) { return list.reduce(function (a, s) { return a + (s[k] || 0); }, 0); };
+    var withExpected = d.students.filter(function (s) { return s.expected !== null; });
+    $('stats').innerHTML =
+      '<div class="stat"><b>' + rs(sum(owing, 'balance')) + '</b><span>owed this year</span></div>' +
+      '<div class="stat"><b>' + rs(sum(withExpected, 'paid')) + '</b><span>paid of ' + rs(sum(withExpected, 'expected')) + '</span></div>' +
+      '<div class="stat"><b>' + owing.length + '</b><span>children with a balance</span></div>' +
+      '<div class="stat"><b>' + rs(d.past.reduce(function (a, p) { return a + p.balance; }, 0)) + '</b><span>past years owing</span></div>';
+    $('owing-count').textContent = owing.length;
+    $('owing').innerHTML = owing.length ? owing.map(function (s) {
+      return '<tr><td><input type="checkbox" class="pick" value="' + esc(s.code) + '"' + (s.hasEmail ? '' : ' disabled') + '></td>' +
+        '<td>' + esc(s.child) + '<small>' + esc(s.group) + '</small>' + (s.hasEmail ? '' : '<span class="warn">No parent email</span>') + (s.notes ? '<small>' + esc(s.notes) + '</small>' : '') + '</td>' +
+        '<td class="num"><b>' + rs(s.balance) + '</b></td><td class="num">' + rs(s.paid) + '</td>' +
+        '<td>' + esc(s.lastPay || '–') + '</td><td>' + esc(s.lastReminder || '–') + '</td>' +
+        '<td><button class="small" data-pay="' + esc(s.code) + '">Paid…</button></td></tr>';
+    }).join('') : '<tr><td colspan="7" class="empty">Nobody owes anything.</td></tr>';
+    $('past').innerHTML = d.past.length ? d.past.map(function (p) {
+      return '<tr><td>' + esc(p.child) + '</td><td>' + esc(p.year) + '</td><td class="num">' + rs(p.balance) + '</td><td>' + esc(p.timeline || '–') + '</td>' +
+        '<td><button class="small" data-past="' + esc(p.id) + '">Paid…</button></td></tr>';
+    }).join('') : '<tr><td colspan="5" class="empty">Nothing owing from past years.</td></tr>';
+    $('recent').innerHTML = d.recent.map(function (p) {
+      return '<tr><td>' + esc(p.date) + '</td><td>' + esc(p.child) + '</td><td>' + esc(p.for) + '</td><td class="num">' + rs(p.amount) + '</td><td>' + esc(p.mode) + '</td></tr>';
+    }).join('');
+    fillWho();
+    $('all').checked = false;
+    updateDraftBtn();
+  }
+
+  function fillWho() {
+    var past = $('pay-for').value === 'Past dues';
+    var keep = $('pay-code').value;
+    var opts = past
+      ? DATA.past.map(function (p) { return '<option value="' + esc(p.id) + '">' + esc(p.child + ' (' + p.year + ')') + '</option>'; })
+      : DATA.students.slice().sort(function (a, b) { return a.child.localeCompare(b.child); }).map(function (s) { return '<option value="' + esc(s.code) + '">' + esc(s.child) + '</option>'; });
+    $('pay-code').innerHTML = '<option value="">Choose…</option>' + opts.join('');
+    $('pay-code').value = keep;
+  }
+
+  function updateDraftBtn() {
+    var n = document.querySelectorAll('.pick:checked').length;
+    $('draft-btn').disabled = !n;
+    $('draft-btn').textContent = n ? 'Draft reminders for ' + n + ' ticked' : 'Draft reminders for ticked';
+  }
+
+  document.addEventListener('change', function (e) {
+    if (e.target.id === 'all') document.querySelectorAll('.pick:not(:disabled)').forEach(function (c) { c.checked = e.target.checked; });
+    if (e.target.id === 'pay-for') fillWho();
+    updateDraftBtn();
+  });
+
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-pay], button[data-past]');
+    if (!b) return;
+    $('pay-for').value = b.dataset.past ? 'Past dues' : 'School fees';
+    fillWho();
+    $('pay-code').value = b.dataset.past || b.dataset.pay;
+    $('pay-card').scrollIntoView({ behavior: 'smooth' });
+    $('pay-amount').focus();
+  });
+
+  $('pay-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var msg = $('pay-msg');
+    var p = { code: $('pay-code').value, for: $('pay-for').value, amount: $('pay-amount').value, date: $('pay-date').value, mode: $('pay-mode').value, note: $('pay-note').value };
+    $('pay-btn').disabled = true;
+    google.script.run.withSuccessHandler(function (text) {
+      msg.textContent = text; msg.className = 'msg';
+      $('pay-amount').value = ''; $('pay-note').value = '';
+      $('pay-btn').disabled = false;
+      loadFees();
+    }).withFailureHandler(function (err) { fail(msg)(err); $('pay-btn').disabled = false; }).recordPayment(p);
+  });
+
+  $('draft-btn').addEventListener('click', function () {
+    var codes = Array.prototype.map.call(document.querySelectorAll('.pick:checked'), function (c) { return c.value; });
+    var msg = $('draft-msg');
+    $('draft-btn').disabled = true;
+    msg.textContent = 'Drafting…'; msg.className = 'msg';
+    google.script.run.withSuccessHandler(function (r) {
+      msg.innerHTML = r.drafted + ' draft' + (r.drafted === 1 ? '' : 's') + ' ready. <a href="https://mail.google.com/mail/u/0/#drafts" target="_blank">Check and send them in Gmail →</a>' +
+        (r.skipped.length ? '<br><span class="warn">Skipped: ' + esc(r.skipped.join('; ')) + '</span>' : '');
+      loadFees();
+    }).withFailureHandler(function (err) { fail(msg)(err); updateDraftBtn(); }).draftReminders(codes);
+  });
+
+  (function () { var t = new Date(); t.setMinutes(t.getMinutes() - t.getTimezoneOffset()); $('pay-date').value = t.toISOString().slice(0, 10); })();
+  loadInbox();
+  loadFees();
+</script>
+</body>
+</html>
