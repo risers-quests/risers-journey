@@ -61,6 +61,7 @@ import * as L4 from "./l4/la.js";
 import * as W3 from "./w3/writing.js";
 import * as L6 from "./l6/la.js";
 import * as W6 from "./w6/writing.js";
+import { SHAPES_G4, MEASURE_G4, AREA_G4, TIME_G4, MONEY_G4, DATA_G4, PATTERNS_G4, MISCONCEPTIONS as M4_MIS } from "./m4/more.js";
 import { NUMBERS_G3, ADDSUB_G3, MULT_G3, DIV_G3, MISCONCEPTIONS as M3A_MIS } from "./m3/numbers.js";
 import { FRACTIONS_G3, SHAPES_G3, MEASURE_G3, TIME_G3, MONEY_G3, DATA_G3, PATTERNS_G3, MISCONCEPTIONS as M3B_MIS } from "./m3/more.js";
 import { PUNCTUATION as LA7_PUNCT, USAGE, WORD_STUDY, MISCONCEPTIONS as LA7_PW } from "./la7/punctuationUsageWords.js";
@@ -100,6 +101,13 @@ const GRADE4_TEMPLATES: Record<string, Record<string, Template>> = {
   "factors-multiples": FACTORS_MULTIPLES_G4_TEMPLATES,
   "four-operations-fractions": FRACTIONS_G4_TEMPLATES,
   decimals: DECIMALS_G4_TEMPLATES,
+  "g4-shapes": SHAPES_G4,
+  "g4-measure": MEASURE_G4,
+  "g4-area": AREA_G4,
+  "g4-time": TIME_G4,
+  "g4-money": MONEY_G4,
+  "g4-data": DATA_G4,
+  "g4-patterns": PATTERNS_G4,
 };
 
 /** Grade 8 (its own book and topics): every topic's questions are generated. */
@@ -245,6 +253,7 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...W3.MISCONCEPTIONS,
   ...L6.MISCONCEPTIONS,
   ...W6.MISCONCEPTIONS,
+  ...M4_MIS,
   ...M3A_MIS,
   ...M3B_MIS,
 };
@@ -306,7 +315,7 @@ export function isGenerated(item: Item): item is GeneratedItem {
 }
 
 /** Topics ready at Grade 4, in book order (offered one by one on the start page). */
-export const GRADE4_TOPICS = ["more-large-numbers", "operations-large-numbers", "factors-multiples", "four-operations-fractions", "decimals"];
+export const GRADE4_TOPICS = ["more-large-numbers", "operations-large-numbers", "factors-multiples", "four-operations-fractions", "decimals", "g4-shapes", "g4-measure", "g4-area", "g4-time", "g4-money", "g4-data", "g4-patterns"];
 
 /** Grade 8 chapters ready, in book order (offered one by one on the start page). */
 export const GRADE8_TOPICS = Object.keys(GRADE8_TEMPLATES);

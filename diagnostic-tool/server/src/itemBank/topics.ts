@@ -228,6 +228,19 @@ TOPICS.push(
   ] as const).map(([id, strand, name]) => ({ id, strand, name, shortLabel: name, dependsOn: [], grade: 7 }))
 );
 
+/** Grade 4 Maths, Chapters 8–14 (CPA Maths 4); Chapters 1–7 use the shared topics above with grade4Name. */
+TOPICS.push(
+  ...([
+    ["g4-shapes", "Measurement & Geometry", "Shapes"],
+    ["g4-measure", "Measurement & Geometry", "Measurement"],
+    ["g4-area", "Measurement & Geometry", "Perimeter and Area"],
+    ["g4-time", "Measurement & Geometry", "Time"],
+    ["g4-money", "Measurement & Geometry", "Money"],
+    ["g4-data", "Data Handling", "Data Handling"],
+    ["g4-patterns", "Number & Algebra", "Patterns and Symmetry"],
+  ] as const).map(([id, strand, name]) => ({ id, strand, name, shortLabel: name, dependsOn: [], grade: 4 }))
+);
+
 /** Grade 3 Maths (CPA Maths 3), chosen chapter by chapter. */
 TOPICS.push(
   ...([

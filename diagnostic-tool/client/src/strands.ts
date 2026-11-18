@@ -6,6 +6,13 @@ export const GRADE4_TOPIC_CHOICES = [
   { id: "factors-multiples", chapter: "Chapter 5", name: "Factors and Multiples", about: "Factors, multiples, common factors and multiples, prime numbers" },
   { id: "four-operations-fractions", chapter: "Chapter 6", name: "Fractions", about: "Equivalent fractions, simplest form, comparing, adding and subtracting, mixed fractions" },
   { id: "decimals", chapter: "Chapter 7", name: "Decimals", about: "Tenths, hundredths and thousandths, number discs, place value, decimals as fractions" },
+  { id: "g4-shapes", chapter: "Chapter 8", name: "Shapes", about: "Open and closed figures, polygons, line segments, parts of a circle, tangrams, nets, views" },
+  { id: "g4-measure", chapter: "Chapter 9", name: "Measurement", about: "m, cm, mm, km; kg and g; L and mL; converting, adding, subtracting, estimating" },
+  { id: "g4-area", chapter: "Chapter 10", name: "Perimeter and Area", about: "Perimeter of rectangles, squares, triangles and closed figures; area of regular and irregular shapes" },
+  { id: "g4-time", chapter: "Chapter 11", name: "Time", about: "Time to the minute, 12- and 24-hour clock, durations, leap years, days between dates" },
+  { id: "g4-money", chapter: "Chapter 12", name: "Money", about: "Rupees and paise, the four operations with money, bills" },
+  { id: "g4-data", chapter: "Chapter 13", name: "Data Handling", about: "Bar graphs, pie charts, drawing conclusions" },
+  { id: "g4-patterns", chapter: "Chapter 14", name: "Patterns and Symmetry", about: "Number patterns, tiling, lines of symmetry, symmetric figures, mirror images" },
 ];
 
 // Grade 8 (Selina Concise Mathematics 8): chapters offered one by one, in
