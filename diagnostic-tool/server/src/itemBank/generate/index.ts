@@ -63,6 +63,7 @@ import * as L6 from "./l6/la.js";
 import * as W6 from "./w6/writing.js";
 import { ADDSUB_G4, MULT_G4, DIV_G4 } from "./m4/ops.js";
 import { FACTORS_G5, FRACTIONS_G5, DECIMALS_G5, GEOMETRY_G5, MEASUREMENT_G5, AREA_G5, MISCONCEPTIONS as M5A_MIS } from "./m5/a.js";
+import { LARGE_EXTRA_G5, OPS_EXTRA_G5, MISCONCEPTIONS as M5X_MIS } from "./m5/extra.js";
 import { VOLUME_G5, TIME_TEMP_G5, LIFE_G5, SCALES_G5, DATA_G5, PATTERNS_G5, MISCONCEPTIONS as M5B_MIS } from "./m5/b.js";
 import { SHAPES_G4, MEASURE_G4, AREA_G4, TIME_G4, MONEY_G4, DATA_G4, PATTERNS_G4, MISCONCEPTIONS as M4_MIS } from "./m4/more.js";
 import { NUMBERS_G3, ADDSUB_G3, MULT_G3, DIV_G3, MISCONCEPTIONS as M3A_MIS } from "./m3/numbers.js";
@@ -195,7 +196,13 @@ const ENGLISH8_TEMPLATES: Record<string, Record<string, Template>> = {
 /** Topics with generated questions (Grade 5; Grade 4 also uses GRADE4_TEMPLATES). */
 export const GENERATED_TOPICS = Object.keys(TEMPLATES);
 
+/** Grade 5: Chapters 1–2 outcomes the shared generators don't ask (international system, Roman numerals, averages, properties), mixed in 2 times in 5. */
+const GRADE5_EXTRA: Record<string, Record<string, Template>> = { "more-large-numbers": LARGE_EXTRA_G5, "operations-large-numbers": OPS_EXTRA_G5 };
+const blend = (base: Record<string, Template>, extra: Record<string, Template>): Record<string, Template> =>
+  Object.fromEntries(Object.entries(base).map(([cell, t]) => [cell, ((rng, g) => (extra[cell] && rng() < 0.4 ? extra[cell](rng, g) : t(rng, g))) as Template]));
+const BLENDED5: Record<string, Record<string, Template>> = {};
 function templatesFor(topicId: string, grade: number): Record<string, Template> | undefined {
+  if (grade === 5 && GRADE5_EXTRA[topicId]) return (BLENDED5[topicId] ??= blend(TEMPLATES[topicId], GRADE5_EXTRA[topicId]));
   if (topicId.startsWith("e8-")) return ENGLISH8_TEMPLATES[topicId];
   if (topicId.startsWith("l7-")) return LA7_TEMPLATES[topicId];
   if (topicId.startsWith("w7-")) return W7_TEMPLATES[topicId];
@@ -274,6 +281,7 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...M4_MIS,
   ...M5A_MIS,
   ...M5B_MIS,
+  ...M5X_MIS,
   ...M3A_MIS,
   ...M3B_MIS,
 };

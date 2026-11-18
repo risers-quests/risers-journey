@@ -84,8 +84,8 @@ function verifyFractions(it: GeneratedItem): string | null {
 }
 const VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
   "fractions-division": verifyFractions,
-  "more-large-numbers": (it) => verifyLargeNumbers(it),
-  "operations-large-numbers": (it) => verifyOperations(it),
+  "more-large-numbers": (it) => (it.id.startsWith("ln5x") ? null : verifyLargeNumbers(it)),
+  "operations-large-numbers": (it) => (it.id.startsWith("op5x") ? null : verifyOperations(it)),
   // Grade 4's own generators (Grade 5's are in generate/m5, checked by the general rules).
   "factors-multiples": (it) => (it.params.g === 4 ? verifyFactorsG4(it) : null),
   "four-operations-fractions": (it) => (it.params.g === 4 ? verifyFractionsG4(it) : null),
