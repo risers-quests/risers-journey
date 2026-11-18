@@ -62,7 +62,8 @@ export function baseFor(prefix: string, topicId: string) {
   });
 }
 
-export const words = (s: string) => s.split(/\s+/).filter(Boolean);
+// A dash joining two words (shop—cracked) splits them, so each can be tapped.
+export const words = (s: string) => s.replace(/—(?=\S)/g, "— ").split(/\s+/).filter(Boolean);
 
 /** Strip punctuation for matching a word ("tonight." matches "tonight"). */
 const bare = (w: string) => w.replace(/^[‘'"(“]+|[’'",.?!;:)”—]+$/g, "").toLowerCase();
