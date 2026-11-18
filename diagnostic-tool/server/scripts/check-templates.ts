@@ -46,6 +46,9 @@ import { verify as verifyTiger } from "../src/itemBank/generate/tigerE8.js";
 import { verify as verifyOzymandias } from "../src/itemBank/generate/ozymandiasE8.js";
 import { verify as verifyGame } from "../src/itemBank/generate/gameE8.js";
 import { verify as verifyMagi } from "../src/itemBank/generate/magiE8.js";
+import { verify as verifyMacavity } from "../src/itemBank/generate/macavityE8.js";
+import { verify as verifyCaesar } from "../src/itemBank/generate/caesarE8.js";
+import { verify as verifyExpectations } from "../src/itemBank/generate/expectationsE8.js";
 
 const N = Number(process.env.N || 20000);
 let failures = 0;
@@ -259,6 +262,9 @@ const ENGLISH_VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
   "e8-lit-ozymandias": () => verifyOzymandias(),
   "e8-lit-game": () => verifyGame(),
   "e8-lit-magi": () => verifyMagi(),
+  "e8-lit-macavity": () => verifyMacavity(),
+  "e8-lit-caesar": () => verifyCaesar(),
+  "e8-lit-expectations": () => verifyExpectations(),
 };
 for (const t of ENGLISH8_TOPICS) VERIFY[t] = ENGLISH_VERIFY[t] ?? (() => null);
 
