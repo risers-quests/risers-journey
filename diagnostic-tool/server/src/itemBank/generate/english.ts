@@ -115,7 +115,7 @@ export function mark(sentence: string, phrase: string): string {
 
 /** Like mark(), but only whole words ("was" doesn't match inside "wasp"). */
 export function markWord(sentence: string, phrase: string): string {
-  const m = new RegExp(`(^|[^A-Za-z’'])(${phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})(?![A-Za-z])`).exec(sentence);
+  const m = new RegExp(`(^|[^\\p{L}’'])(${phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})(?![\\p{L}])`, "u").exec(sentence);
   if (!m) throw new Error(`"${phrase}" not a whole word in "${sentence}"`);
   const at = m.index + m[1].length;
   return sentence.slice(0, at) + "[[" + phrase + "]]" + sentence.slice(at + phrase.length);

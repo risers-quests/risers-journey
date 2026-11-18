@@ -114,8 +114,9 @@ Topics in so far (each 15 levels, in `generate/*E8.ts`):
 | Punctuation & Spelling | Punctuation; Spelling and Pronunciation | punctuation / spelling columns |
 
 Quoted literary lines are public domain only (Southey, Shelley,
-Coleridge, O. Henry, Dickens); the reader's copyrighted poems (Eliot,
-Engle, Seth) are never quoted. The closing questionnaire has an English
+Coleridge, O. Henry, Dickens); the reader's copyrighted texts (Engle,
+Eliot, Seth) appear only as short extracts, the way the book's own
+questions quote them. The closing questionnaire has an English
 version (`ENGLISH_ANXIETY_QUESTIONS`): the same two factors and scale,
 our own adaptation, not a validated English scale. Reports and emails
 say English.

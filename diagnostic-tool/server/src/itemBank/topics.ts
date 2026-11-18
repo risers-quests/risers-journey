@@ -177,6 +177,7 @@ TOPICS.push(
   { id: "e8-lit-corner-shop", strand: "Literature", name: "The Corner Shop (Ch 3)", shortLabel: "The Corner Shop", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-lit-inchcape", strand: "Literature", name: "The Inchcape Rock (Ch 4)", shortLabel: "The Inchcape Rock", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-lit-dusk", strand: "Literature", name: "Dusk (Ch 5)", shortLabel: "Dusk", dependsOn: [], grade: 8, subject: "English" },
+  { id: "e8-lit-drum-dream", strand: "Literature", name: "Drum Dream Girl (Ch 6)", shortLabel: "Drum Dream Girl", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-clauses", strand: "Grammar", name: "Dependent and Independent Clauses", shortLabel: "Clauses", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-purpose", strand: "Grammar", name: "Words as Nouns and Verbs; Clauses of Purpose", shortLabel: "Nouns/Verbs & Purpose", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-participles", strand: "Grammar", name: "Participles and Gerunds", shortLabel: "Participles & Gerunds", dependsOn: [], grade: 8, subject: "English" },

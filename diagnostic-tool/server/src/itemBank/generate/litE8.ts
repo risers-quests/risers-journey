@@ -190,7 +190,7 @@ export function chapterTemplates(c: Chapter): Record<string, Template> {
 
 /** For the stress test: lines on cards and vocab words really appear where they should. */
 export function verifyChapter(c: Chapter): string | null {
-  for (const v of c.vocab) if (!new RegExp(`\\b${v.w}\\b`).test(v.s)) return `${c.topic}: "${v.w}" not in "${v.s}"`;
+  for (const v of c.vocab) if (!new RegExp(`(?<![\\p{L}])${v.w}(?![\\p{L}])`, "u").test(v.s)) return `${c.topic}: "${v.w}" not in "${v.s}"`;
   for (const x of c.wrongWord) if (!x.s.includes(x.bad) || x.bad === x.good) return `${c.topic}: bad word "${x.bad}"`;
   for (const x of [...c.rtc, ...c.infer]) if (!x.line) return `${c.topic}: missing line for "${x.q}"`;
   for (const o of c.orders) if (o.length < 3 || new Set(o).size !== o.length) return `${c.topic}: order needs 3+ different events`;
