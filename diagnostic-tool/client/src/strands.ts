@@ -181,3 +181,13 @@ export const LA6_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [
   { id: "l6-usage", chapter: "Chapter 5", name: "Usage", about: "Subjective and objective pronouns, tricky verbs, adjectives and adverbs, double negatives" },
   { id: "l6-words", chapter: "Chapter 6", name: "Word Study", about: "Synonyms, antonyms, analogies, homophones, homographs, connotation, figures of speech, roots and affixes" },
 ];
+
+// Grade 6 Writing (Spectrum Writing Grade 6); Chapters 2 and 3 split in two.
+export const W6_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [
+  { id: "w6-foundations", chapter: "Chapter 1", name: "Foundations of Writing", about: "Purpose, audience, main idea, staying on topic, proofreading, paragraphs, active and passive voice" },
+  { id: "w6-description", chapter: "Chapter 2", name: "Descriptive Writing", about: "Adjectives and adverbs, sensory details, vivid verbs, precise nouns, spatial organisation" },
+  { id: "w6-story", chapter: "Chapter 2", name: "Stories and Personal Narratives", about: "Sequence of events, parts of a story, setting, characters, dialogue, point of view" },
+  { id: "w6-inform", chapter: "Chapter 3", name: "Writing to Inform", about: "Directions, how-to, cause and effect, reporting an event, comparisons, introductions and conclusions" },
+  { id: "w6-research", chapter: "Chapter 3", name: "Research and Sources", about: "Credible sources, quotes and paraphrases, notes, outlines, Works Cited, visual aids" },
+  { id: "w6-argument", chapter: "Chapter 4", name: "Writing an Argument", about: "Facts and opinions, emotional appeals, advertising, bias, order of importance, claims, essays" },
+];

@@ -3,7 +3,7 @@ import { staffSignedIn } from "../staff";
 import { createSession, getSessionStatus } from "../api";
 import { SessionStatus } from "../types";
 import { forgetTest, rememberTest, savedTests } from "../saved";
-import { ENGLISH8_TOPIC_CHOICES, GRADE7_TOPIC_CHOICES, LA7_TOPIC_CHOICES, W7_TOPIC_CHOICES, W4_TOPIC_CHOICES, GRADE3_TOPIC_CHOICES, LA4_TOPIC_CHOICES, W3_TOPIC_CHOICES, LA6_TOPIC_CHOICES, GRADE4_TOPIC_CHOICES, GRADE8_TOPIC_CHOICES, STRAND_CHOICES } from "../strands";
+import { ENGLISH8_TOPIC_CHOICES, GRADE7_TOPIC_CHOICES, LA7_TOPIC_CHOICES, W7_TOPIC_CHOICES, W4_TOPIC_CHOICES, GRADE3_TOPIC_CHOICES, LA4_TOPIC_CHOICES, W3_TOPIC_CHOICES, LA6_TOPIC_CHOICES, W6_TOPIC_CHOICES, GRADE4_TOPIC_CHOICES, GRADE8_TOPIC_CHOICES, STRAND_CHOICES } from "../strands";
 
 // The 12 Risers. Their report email addresses are kept only in the email
 // script (diagnostic-tool/email), never on the site; it matches by name.
@@ -28,6 +28,7 @@ const LANGUAGE: Record<string, Record<string, { server: string; choices: Choice[
   },
   "Grade 6": {
     "Language Arts": { server: "Language Arts", choices: LA6_TOPIC_CHOICES, note: "Spectrum Language Arts Grade 6." },
+    Writing: { server: "Writing", choices: W6_TOPIC_CHOICES, note: "Spectrum Writing Grade 6: the parts of writing that have a right answer." },
   },
   "Grade 7": {
     "Language Arts": { server: "Language Arts", choices: LA7_TOPIC_CHOICES, note: "Spectrum Language Arts Grade 7." },
