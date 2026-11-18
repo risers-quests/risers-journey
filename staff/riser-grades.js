@@ -1,9 +1,10 @@
 /* The grade each Riser works at, per subject (staff-set, Term 3).
    One place for it: the staff Risers page reads it. Benjamin's English is
-   Grade 8 English (English Rose Reader 8); he has no separate Writing
-   book. Edit here when a Riser moves up a level. */
+   Grade 8 English (English Rose Reader 8): one subject covering both
+   language and writing, so `english` replaces the two. Edit here when a
+   Riser moves up a level. */
 window.LH_RISER_GRADES = {
-  benjamin: { maths: 8, language: 8, writing: null },
+  benjamin: { maths: 8, english: 8 },
   karis: { maths: 7, language: 7, writing: 7 },
   michael: { maths: 7, language: 7, writing: 7 },
   shalom: { maths: 7, language: 7, writing: 7 },

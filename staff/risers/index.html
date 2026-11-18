@@ -43,7 +43,9 @@
   app.appendChild(el('header', 'hd-welcome', '<h1>Risers’ grades</h1><p>The level each Riser works at, subject by subject.</p>'));
   var rows = kids.map(function (k) {
     var g = G[k.slug];
-    return '<tr><th scope="row">' + k.name + '</th><td>' + cell(g.maths) + '</td><td>' + cell(g.language) + (k.slug === 'benjamin' ? ' <small class="rg-none">(English)</small>' : '') + '</td><td>' + cell(g.writing) + '</td></tr>';
+    // One English subject (no separate Writing): one cell across both columns.
+    var lang = g.english ? '<td colspan="2"><span class="rg-g">Grade ' + g.english + ' English</span></td>' : '<td>' + cell(g.language) + '</td><td>' + cell(g.writing) + '</td>';
+    return '<tr><th scope="row">' + k.name + '</th><td>' + cell(g.maths) + '</td>' + lang + '</tr>';
   }).join('');
   app.appendChild(el('div', 'rg-wrap', '<table class="rg-table"><thead><tr><th>Riser</th><th>Maths</th><th>Language Arts</th><th>Writing</th></tr></thead><tbody>' + rows + '</tbody></table>'));
   app.appendChild(el('p', 'rg-note', kids.length + ' Risers. To change a grade, edit staff/riser-grades.js.'));
