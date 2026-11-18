@@ -79,3 +79,15 @@ export const STRAND_CHOICES = [
   { name: "Ratio & Proportion", topics: ["Life mathematics", "Scales and directions"] },
   { name: "Data Handling", topics: ["Data handling"] },
 ];
+
+// Grade 7 Language Arts (Spectrum Language Arts Grade 7) and Writing
+// (Spectrum Writing Grade 7): topics offered one by one, in book order
+// (ids match the server's LA7 and W7 banks).
+export const LA7_TOPIC_CHOICES = [
+  { id: "l7-nouns-pronouns", chapter: "Lessons 1.1–1.9", name: "Nouns and Pronouns", about: "Common, proper, collective and abstract nouns; possessives; appositives; kinds of pronouns; pronoun shifts" },
+  { id: "l7-verbs", chapter: "Lessons 1.10–1.17", name: "Verbs and Verb Tenses", about: "Action, linking and helping verbs; agreement; gerunds, participles, infinitives; progressive and perfect tenses" },
+  { id: "l7-modifiers", chapter: "Lessons 1.18–1.25", name: "Adjectives, Adverbs, Prepositions and Conjunctions", about: "Comparing, adjective or adverb, intensifiers, prepositional phrases, conjunctions, interjections" },
+];
+export const W7_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [];
+// Grade 7 Maths: chapters offered one by one (ids match the server's GRADE7 templates).
+export const GRADE7_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [];

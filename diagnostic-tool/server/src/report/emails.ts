@@ -1,3 +1,4 @@
+import { isLanguage } from "../itemBank/topics.js";
 import { Insights, TopicInsight, TopicStatus } from "../engine/insights.js";
 
 /**
@@ -197,9 +198,9 @@ export function staffEmail(ins: Insights): { subject: string; html: string } {
       `<div style="font-size:12px;margin-top:8px;">${label} <span style="color:${C.soft};">${v}/${a.factorMax}</span></div>${bar([[v, "#e0a75e"], [a.factorMax - v, C.line]], a.factorMax, 8)}`;
     body += section(
       h2(`${ins.subject} anxiety: <span style="color:${lvl[1]};background:${lvl[2]};padding:2px 8px;border-radius:999px;font-size:13px;">${lvl[0]}</span>`) +
-        factor(ins.subject === "English" ? "Worry about reading, writing and grammar" : "Worry about the maths itself", a.numericalScore) +
+        factor(isLanguage(ins.subject) ? "Worry about reading, writing and grammar" : "Worry about the maths itself", a.numericalScore) +
         factor("Worry about being tested or watched", a.situationalScore) +
-        `<div style="font-size:11px;color:${C.soft};margin-top:10px;">From the 8-question self-report at the end (${ins.subject === "English" ? "our adaptation of SEMA to English" : "adapted from SEMA"}). The bands are our estimate, not clinical cut-offs. Read it alongside the results, not as their cause.</div>`
+        `<div style="font-size:11px;color:${C.soft};margin-top:10px;">From the 8-question self-report at the end (${isLanguage(ins.subject) ? "our adaptation of SEMA to English" : "adapted from SEMA"}). The bands are our estimate, not clinical cut-offs. Read it alongside the results, not as their cause.</div>`
     );
   }
 

@@ -3,15 +3,15 @@ import { staffSignedIn } from "../staff";
 import { createSession, getSessionStatus } from "../api";
 import { SessionStatus } from "../types";
 import { forgetTest, rememberTest, savedTests } from "../saved";
-import { ENGLISH8_TOPIC_CHOICES, GRADE4_TOPIC_CHOICES, GRADE8_TOPIC_CHOICES, STRAND_CHOICES } from "../strands";
+import { ENGLISH8_TOPIC_CHOICES, GRADE7_TOPIC_CHOICES, LA7_TOPIC_CHOICES, W7_TOPIC_CHOICES, GRADE4_TOPIC_CHOICES, GRADE8_TOPIC_CHOICES, STRAND_CHOICES } from "../strands";
 
 // The 12 Risers. Their report email addresses are kept only in the email
 // script (diagnostic-tool/email), never on the site; it matches by name.
 const RISERS = ["Benjamin", "Chris", "Elyon", "Eva", "Gabby", "Karis", "Michael", "Owen", "Pranavi", "Shalom", "Yokesh", "Zach"];
 // Risers working from another grade's book; everyone else starts at Grade 5 (staff can still change it).
-const RISER_GRADE: Record<string, string> = { Eva: "Grade 4", Elyon: "Grade 4", Benjamin: "Grade 8" };
+const RISER_GRADE: Record<string, string> = { Eva: "Grade 4", Elyon: "Grade 4", Gabby: "Grade 4", Karis: "Grade 7", Michael: "Grade 7", Shalom: "Grade 7", Benjamin: "Grade 8" };
 // Grades tested chapter by chapter (their own book), and the chapters ready.
-const CHAPTERS: Record<string, typeof GRADE4_TOPIC_CHOICES> = { "Grade 4": GRADE4_TOPIC_CHOICES, "Grade 8": GRADE8_TOPIC_CHOICES };
+const CHAPTERS: Record<string, typeof GRADE4_TOPIC_CHOICES> = { "Grade 4": GRADE4_TOPIC_CHOICES, "Grade 8": GRADE8_TOPIC_CHOICES, ...(GRADE7_TOPIC_CHOICES.length ? { "Grade 7": GRADE7_TOPIC_CHOICES } : {}) };
 const gradeFor = (name: string) => RISER_GRADE[name] ?? "Grade 5";
 // Language subjects, per grade: the name on the start page, the subject the
 // server knows, and the topics offered. Grade 8 English is shown as two:
@@ -19,13 +19,18 @@ const gradeFor = (name: string) => RISER_GRADE[name] ?? "Grade 5";
 type Choice = (typeof GRADE4_TOPIC_CHOICES)[number];
 const isLit = (t: Choice) => t.id.startsWith("e8-lit-") || t.id === "e8-figures";
 const LANGUAGE: Record<string, Record<string, { server: string; choices: Choice[]; note: string }>> = {
+  "Grade 7": {
+    "Language Arts": { server: "Language Arts", choices: LA7_TOPIC_CHOICES, note: "Spectrum Language Arts Grade 7." },
+    ...(W7_TOPIC_CHOICES.length ? { Writing: { server: "Writing", choices: W7_TOPIC_CHOICES, note: "Spectrum Writing Grade 7: the parts of writing that have a right answer." } } : {}),
+  },
   "Grade 8": {
     Grammar: { server: "English", choices: ENGLISH8_TOPIC_CHOICES.filter((t) => !isLit(t)), note: "Grammar, vocabulary, punctuation and spelling (English Rose Reader 8)." },
     Literature: { server: "English", choices: ENGLISH8_TOPIC_CHOICES.filter(isLit), note: "The reader's stories, poems and play (English Rose Reader 8)." },
   },
 };
-const subjectsFor = (grade: string) => ["Maths", ...Object.keys(LANGUAGE[grade] ?? {})];
-const GRADES = ["Grade 4", "Grade 5", "Grade 8"];
+// Maths only where it is ready (Grade 5 by strand, other grades chapter by chapter).
+const subjectsFor = (grade: string) => [...(grade === "Grade 5" || CHAPTERS[grade] ? ["Maths"] : []), ...Object.keys(LANGUAGE[grade] ?? {})];
+const GRADES = ["Grade 4", "Grade 5", "Grade 7", "Grade 8"];
 
 export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) => void; signedIn?: string | null }) {
   // A Riser signed in on this device is chosen already.
@@ -34,7 +39,7 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
   const forName = RISERS.find((n) => n.toLowerCase() === (new URLSearchParams(location.search).get("for") || "").toLowerCase()) ?? "";
   // A Riser on their own device: their name and grade are known, so they only choose what to check.
   const kidMode = !!me && !staffSignedIn();
-  const [subject, setSubject] = useState("Maths");
+  const [subject, setSubject] = useState(subjectsFor(gradeFor(me || forName))[0]);
   const [childName, setChildNameRaw] = useState(me || forName);
   function setChildName(name: string) {
     setChildNameRaw(name);
@@ -56,7 +61,7 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
   }, [grade, subject]);
   // A subject not offered at the new grade goes back to Maths.
   useEffect(() => {
-    if (!subjectsFor(grade).includes(subject)) setSubject("Maths");
+    if (!subjectsFor(grade).includes(subject)) setSubject(subjectsFor(grade)[0]);
   }, [grade]);
   function toggleTopic(id: string) {
     setG4Topics((list) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id]));

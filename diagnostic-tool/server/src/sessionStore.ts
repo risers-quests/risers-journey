@@ -94,7 +94,7 @@ async function save(sessionId: string, session: StoredSession): Promise<void> {
   requestCache.getStore()?.set(sessionId, session);
 }
 
-export async function createSession(childName: string, grade: string, strands?: string[], topics?: string[], subject: "Maths" | "English" = "Maths"): Promise<{ id: string; state: SessionState }> {
+export async function createSession(childName: string, grade: string, strands?: string[], topics?: string[], subject = "Maths"): Promise<{ id: string; state: SessionState }> {
   const id = newId();
   const state = createInitialState(strands, gradeNumber(grade), topics, subject);
   await save(id, { child_name: childName, grade, created_at: new Date().toISOString(), status: "in_progress", state, responses: [] });
@@ -250,5 +250,5 @@ export async function replaceReports(kid: string, updated: ReportEntry[]): Promi
 /** "Grade 8" -> 8. Grades without their own questions use Grade 5's. */
 export function gradeNumber(grade: string | undefined): number {
   const n = Number(String(grade ?? "").replace(/\D/g, ""));
-  return n === 4 || n === 8 ? n : 5;
+  return n === 4 || n === 7 || n === 8 ? n : 5;
 }

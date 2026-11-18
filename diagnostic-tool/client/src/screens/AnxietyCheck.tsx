@@ -34,7 +34,7 @@ export function AnxietyCheck({ sessionId, onComplete }: { sessionId: string; onC
 
   return (
     <div className="anxiety-check">
-      <h1 className="serif">One last thing — how does {subject === "English" ? "English" : "math"} make you feel?</h1>
+      <h1 className="serif">One last thing — how does {subject === "Maths" ? "math" : subject} make you feel?</h1>
       <p className="anxiety-intro">
         This is separate from the questions you just did — there are no right or wrong answers here. Just pick
         whatever feels true for you.

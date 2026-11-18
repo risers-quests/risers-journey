@@ -1,3 +1,4 @@
+import { isLanguage } from "../itemBank/topics.js";
 import { SessionState } from "./state.js";
 import { ResponseRecord } from "../sessionStore.js";
 import { synthesizeReport, ReportData } from "./synthesis.js";
@@ -154,10 +155,10 @@ export function buildInsights(state: SessionState, responses: ResponseRecord[], 
       why = "Waits for a topic it builds on";
     } else if (t.tag === "skill_gap") {
       status = "gap";
-      why = lag ? `Stuck on ${(state.subject === "English" ? SHORT_STAGE_EN : SHORT_STAGE)[lag.cpa]} questions, at ${bloomLabel(lag.bloom)}` : "Couldn't get going";
+      why = lag ? `Stuck on ${(isLanguage(state.subject) ? SHORT_STAGE_EN : SHORT_STAGE)[lag.cpa]} questions, at ${bloomLabel(lag.bloom)}` : "Couldn't get going";
     } else if (t.tag === "procedural_not_conceptual") {
       status = "fragile";
-      why = state.subject === "English" ? "Right in rules, not in real sentences: knows the rule, not how it works" : "Right in numbers, not in pictures: knows the steps, not the idea";
+      why = isLanguage(state.subject) ? "Right in rules, not in real sentences: knows the rule, not how it works" : "Right in numbers, not in pictures: knows the steps, not the idea";
     } else if (unsureShare >= 0.4) {
       status = "fragile";
       why = `Mastered, but unsure on ${conf.unsureRight} of ${right} right answers`;
@@ -200,11 +201,11 @@ export function buildInsights(state: SessionState, responses: ResponseRecord[], 
       return {
         topic: t.name,
         what: m ? `Reteach. Main mistake: ${m.label.toLowerCase()}${m.sureCount ? ` (made ${m.sureCount}× while sure)` : ""}.` : "Reteach from the start of the topic.",
-        how: `Start with ${(report.subject === "English" ? STAGE_WORDS_EN : STAGE_WORDS)[t.startAt ?? "concrete"]}, then move up.`,
+        how: `Start with ${(isLanguage(report.subject) ? STAGE_WORDS_EN : STAGE_WORDS)[t.startAt ?? "concrete"]}, then move up.`,
       };
     }
     return isProcedural(t)
-      ? { topic: t.name, what: `Connect the method to what it means${m ? ` (main mistake: ${m.label.toLowerCase()})` : ""}.`, how: report.subject === "English" ? "Have them mark the parts of real sentences from their reader and say why each is right." : "Have them draw or build each sum they can already calculate." }
+      ? { topic: t.name, what: `Connect the method to what it means${m ? ` (main mistake: ${m.label.toLowerCase()})` : ""}.`, how: isLanguage(report.subject) ? "Have them mark the parts of real sentences from their reader and say why each is right." : "Have them draw or build each sum they can already calculate." }
       : { topic: t.name, what: "Mastered but unsure: build confidence.", how: "Short mixed practice; ask them to explain answers aloud." };
   });
 
@@ -220,7 +221,7 @@ export function buildInsights(state: SessionState, responses: ResponseRecord[], 
     topics,
     overall,
     actions: actions.slice(0, 3),
-    nextForChild: first ? { topic: first.name, tip: tip ?? "We'll practise this together, step by step.", atHome: AT_HOME[first.topicId] ?? (report.subject === "English" ? "Read together for ten minutes a day, and talk about what you read: who, why, and what you'd have done." : "Talk about where this maths shows up in everyday life.") } : null,
+    nextForChild: first ? { topic: first.name, tip: tip ?? "We'll practise this together, step by step.", atHome: AT_HOME[first.topicId] ?? (isLanguage(report.subject) ? "Read together for ten minutes a day, and talk about what you read: who, why, and what you'd have done." : "Talk about where this maths shows up in everyday life.") } : null,
     anxiety: report.mathAnxiety,
   };
 }

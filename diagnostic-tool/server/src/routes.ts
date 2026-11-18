@@ -18,8 +18,8 @@ import { reportEntry, combine } from "./report/history.js";
 import { selectNextQuestion, applyOutcome } from "./engine/skillEngine.js";
 import { readSignal } from "./engine/signalEngine.js";
 import { sanitizeItemForClient, getItemById, getTopic, topicName } from "./itemBank/index.js";
-import { STRANDS } from "./itemBank/topics.js";
-import { isGenerated, generateItem, hasTemplate, signature, MISCONCEPTIONS, GRADE4_TOPICS, GRADE8_TOPICS, ENGLISH8_TOPICS } from "./itemBank/generate/index.js";
+import { LANGUAGE_SUBJECTS, STRANDS, isLanguage } from "./itemBank/topics.js";
+import { isGenerated, generateItem, hasTemplate, signature, MISCONCEPTIONS, languageTopics, mathsTopics } from "./itemBank/generate/index.js";
 import { BLOOM_ORDER, CPA_ORDER } from "./types.js";
 import { checkActivity } from "./itemBank/generate/activities.js";
 import { buildInsights } from "./engine/insights.js";
@@ -58,7 +58,7 @@ export const router = Router();
 
 router.post("/sessions", async (req, res) => {
   const { childName, grade, strands, topics } = req.body ?? {};
-  const subject = req.body?.subject === "English" ? "English" : "Maths";
+  const subject: string = LANGUAGE_SUBJECTS.includes(req.body?.subject) ? req.body.subject : "Maths";
   if (!childName || typeof childName !== "string" || !childName.trim()) {
     return res.status(400).json({ error: "childName is required" });
   }
@@ -68,9 +68,8 @@ router.post("/sessions", async (req, res) => {
   const name = childName.trim().slice(0, 80);
   // Grade 4 and Grade 8: the topics chosen one by one (none given means every topic ready at that grade).
   const g = gradeNumber(grade);
-  // English (Grade 8 only so far): its own topics.
-  if (subject === "English" && g !== 8) return res.status(400).json({ error: "English is ready for Grade 8 only" });
-  const ready = subject === "English" ? ENGLISH8_TOPICS : g === 4 ? GRADE4_TOPICS : g === 8 ? GRADE8_TOPICS : null;
+  // Language subjects have their own topics; maths at Grades 4, 7 and 8 is chosen chapter by chapter.
+  const ready = isLanguage(subject) ? languageTopics(subject) : mathsTopics(g);
   const chosenTopics = ready && Array.isArray(topics) ? ready.filter((t) => topics.includes(t)) : undefined;
   if (ready && chosenTopics && !chosenTopics.length) return res.status(400).json({ error: "choose at least one topic" });
   const { id, state } = await createSession(name, `Grade ${g}`, chosen, chosenTopics, subject);
@@ -88,7 +87,7 @@ router.post("/sessions", async (req, res) => {
 // cell of a topic, with the right answer and each wrong option's mistake.
 router.get("/preview/:topic", (req, res) => {
   const topic = req.params.topic;
-  const g = topic.startsWith("g8-") || topic.startsWith("e8-") ? 8 : gradeNumber(String(req.query.grade ?? ""));
+  const g = /^(g8|e8)-/.test(topic) ? 8 : /^(g7|l7|w7)-/.test(topic) ? 7 : gradeNumber(String(req.query.grade ?? ""));
   const out = [];
   for (const cpa of CPA_ORDER) for (const bloom of BLOOM_ORDER) {
     if (!hasTemplate(topic, cpa, bloom, g)) continue;

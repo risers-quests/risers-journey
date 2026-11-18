@@ -1,6 +1,6 @@
 import { BloomLevel, CPAStage, ENTRY_BLOOM, ENTRY_CPA } from "../types.js";
-import { ENGLISH_STRANDS, STRANDS, TOPICS } from "../itemBank/topics.js";
-import { ENGLISH8_TOPICS, GRADE4_TOPICS, GRADE8_TOPICS } from "../itemBank/generate/index.js";
+import { STRANDS, TOPICS, isLanguage } from "../itemBank/topics.js";
+import { languageTopics, mathsTopics } from "../itemBank/generate/index.js";
 import type { ClientItem } from "../itemBank/index.js";
 import type { GeneratedItem } from "../itemBank/generate/index.js";
 
@@ -64,8 +64,8 @@ export interface SessionState {
   strands?: string[];
   /** 4 or 5 (older sessions: 5). Grade 4 uses only the topics generated for it. */
   grade?: number;
-  /** "English" for an English test (older sessions: Maths). */
-  subject?: "Maths" | "English";
+  /** "English", "Language Arts" or "Writing" for a language test (older sessions: Maths). */
+  subject?: string;
   topicOrder: string[];
   currentTopicIndex: number;
   topics: Record<string, TopicEngineState>;
@@ -88,17 +88,13 @@ export interface SessionState {
 }
 
 /** `topics`: Grade 4 and Grade 8 tests are chosen topic by topic (GRADE4_TOPICS, GRADE8_TOPICS); Grade 5 by strand. */
-export function createInitialState(strands: string[] = STRANDS, grade = 5, chosenTopics?: string[], subject: "Maths" | "English" = "Maths"): SessionState {
-  const english = subject === "English";
-  const topicOrder = TOPICS.filter((t) =>
-    english
-      ? ENGLISH8_TOPICS.includes(t.id) && (!chosenTopics || chosenTopics.includes(t.id))
-      : grade === 4
-      ? GRADE4_TOPICS.includes(t.id) && (!chosenTopics || chosenTopics.includes(t.id))
-      : grade === 8
-        ? GRADE8_TOPICS.includes(t.id) && (!chosenTopics || chosenTopics.includes(t.id))
-        : !t.grade && strands.includes(t.strand)
-  ).map((t) => t.id);
+export function createInitialState(strands: string[] = STRANDS, grade = 5, chosenTopics?: string[], subject = "Maths"): SessionState {
+  const english = isLanguage(subject);
+  // Language subjects and chapter-by-chapter maths grades: the topics chosen (in book order); Grade 5 maths: by strand.
+  const ready = english ? languageTopics(subject) : mathsTopics(grade);
+  const topicOrder = ready
+    ? TOPICS.filter((t) => ready.includes(t.id) && (!chosenTopics || chosenTopics.includes(t.id))).map((t) => t.id)
+    : TOPICS.filter((t) => !t.grade && strands.includes(t.strand)).map((t) => t.id);
   const topics: Record<string, TopicEngineState> = {};
   topicOrder.forEach((id, idx) => {
     topics[id] = {
@@ -120,7 +116,7 @@ export function createInitialState(strands: string[] = STRANDS, grade = 5, chose
   return {
     grade,
     // English: the strands of the topics chosen.
-    strands: english ? ENGLISH_STRANDS.filter((s) => topicOrder.some((id) => TOPICS.find((t) => t.id === id)?.strand === s)) : STRANDS.filter((s) => strands.includes(s)),
+    strands: english ? [...new Set(topicOrder.map((id) => TOPICS.find((t) => t.id === id)!.strand))] : STRANDS.filter((s) => strands.includes(s)),
     ...(english ? { subject } : {}),
     topicOrder,
     currentTopicIndex: 0,

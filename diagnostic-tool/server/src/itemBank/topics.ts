@@ -202,11 +202,21 @@ TOPICS.push(
   { id: "e8-spelling", strand: "Punctuation & Spelling", name: "Spelling and Pronunciation", shortLabel: "Spelling & Sounds", dependsOn: [], grade: 8, subject: "English" }
 );
 
+/** Grade 7 Language Arts (Spectrum Language Arts Grade 7), chosen topic by topic. */
+TOPICS.push(
+  { id: "l7-nouns-pronouns", strand: "Parts of Speech", name: "Nouns and Pronouns", shortLabel: "Nouns & Pronouns", dependsOn: [], grade: 7, subject: "Language Arts" },
+  { id: "l7-verbs", strand: "Parts of Speech", name: "Verbs and Verb Tenses", shortLabel: "Verbs & Tenses", dependsOn: [], grade: 7, subject: "Language Arts" },
+  { id: "l7-modifiers", strand: "Parts of Speech", name: "Adjectives, Adverbs, Prepositions and Conjunctions", shortLabel: "Modifiers & Joiners", dependsOn: [], grade: 7, subject: "Language Arts" }
+);
+
 /** English strands (Grade 8). */
 export const ENGLISH_STRANDS = ["Grammar", "Vocabulary", "Punctuation & Spelling", "Literature"];
 
-export type Subject = "Maths" | "English";
-export const subjectOfTopic = (id: string): Subject => (id.startsWith("e8-") ? "English" : "Maths");
+/** Subjects: Maths, and the language subjects (Grade 8 English; Grade 7 Language Arts and Writing). */
+export type Subject = "Maths" | "English" | "Language Arts" | "Writing";
+export const LANGUAGE_SUBJECTS = ["English", "Language Arts", "Writing"];
+export const isLanguage = (s?: string) => !!s && LANGUAGE_SUBJECTS.includes(s);
+export const subjectOfTopic = (id: string): Subject => (id.startsWith("e8-") ? "English" : id.startsWith("l7-") ? "Language Arts" : id.startsWith("w7-") ? "Writing" : "Maths");
 
 /** The book's strands, in order. A test covers one or more of them. */
 export const STRANDS = ["Number & Algebra", "Measurement & Geometry", "Ratio & Proportion", "Data Handling"];

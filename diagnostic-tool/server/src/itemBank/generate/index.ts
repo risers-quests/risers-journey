@@ -45,6 +45,10 @@ import { PUNCTUATION_E8_TEMPLATES, MISCONCEPTIONS as PUN_E8_MISCONCEPTIONS } fro
 import { SPELLING_E8_TEMPLATES, MISCONCEPTIONS as SPL_E8_MISCONCEPTIONS } from "./spellingE8.js";
 import { IDIOMS_E8_TEMPLATES, MISCONCEPTIONS as IDM_E8_MISCONCEPTIONS } from "./idiomsE8.js";
 import { LIT_MISCONCEPTIONS } from "./litE8.js";
+import { SkillTopic, skillTemplates } from "./skillTopic.js";
+import { NOUNS_PRONOUNS, MISCONCEPTIONS as LA7_NP } from "./la7/nounsPronouns.js";
+import { VERBS, MISCONCEPTIONS as LA7_VB } from "./la7/verbs.js";
+import { MODIFIERS, MISCONCEPTIONS as LA7_MD } from "./la7/modifiers.js";
 import { WINTER_OAK_TEMPLATES } from "./winterOakE8.js";
 import { DONT_QUIT_TEMPLATES } from "./dontQuitE8.js";
 import { CORNER_SHOP_TEMPLATES } from "./cornerShopE8.js";
@@ -146,6 +150,9 @@ export const GENERATED_TOPICS = Object.keys(TEMPLATES);
 
 function templatesFor(topicId: string, grade: number): Record<string, Template> | undefined {
   if (topicId.startsWith("e8-")) return ENGLISH8_TEMPLATES[topicId];
+  if (topicId.startsWith("l7-")) return LA7_TEMPLATES[topicId];
+  if (topicId.startsWith("w7-")) return W7_TEMPLATES[topicId];
+  if (topicId.startsWith("g7-")) return GRADE7_TEMPLATES[topicId];
   if (grade === 8) return GRADE8_TEMPLATES[topicId];
   return (grade === 4 ? GRADE4_TEMPLATES[topicId] : undefined) ?? TEMPLATES[topicId];
 }
@@ -196,6 +203,9 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...SPL_E8_MISCONCEPTIONS,
   ...IDM_E8_MISCONCEPTIONS,
   ...LIT_MISCONCEPTIONS,
+  ...LA7_NP,
+  ...LA7_VB,
+  ...LA7_MD,
 };
 
 export function hasTemplate(topicId: string, cpa: CPAStage, bloom: BloomLevel, grade = 5): boolean {
@@ -262,3 +272,20 @@ export const GRADE8_TOPICS = Object.keys(GRADE8_TEMPLATES);
 
 /** Grade 8 English topics ready, in the order offered (one by one on the start page). */
 export const ENGLISH8_TOPICS = Object.keys(ENGLISH8_TEMPLATES);
+
+/** Grade 7 Language Arts (Spectrum Language Arts Grade 7, ids l7-) and Writing (Spectrum Writing Grade 7, ids w7-). Filled in by their files. */
+export const LA7_TEMPLATES: Record<string, Record<string, Template>> = Object.fromEntries([NOUNS_PRONOUNS, VERBS, MODIFIERS].map((t) => [t.topic, skillTemplates(t)]));
+export const LA7_BANKS = [NOUNS_PRONOUNS, VERBS, MODIFIERS];
+export const W7_BANKS: SkillTopic[] = [];
+export const W7_TEMPLATES: Record<string, Record<string, Template>> = Object.fromEntries(W7_BANKS.map((t) => [t.topic, skillTemplates(t)]));
+/** Grade 7 Maths (ids g7-). */
+export const GRADE7_TEMPLATES: Record<string, Record<string, Template>> = {};
+
+/** The topics ready for each language subject, in book order. */
+export function languageTopics(subject: string): string[] {
+  return subject === "English" ? ENGLISH8_TOPICS : subject === "Language Arts" ? Object.keys(LA7_TEMPLATES) : subject === "Writing" ? Object.keys(W7_TEMPLATES) : [];
+}
+/** The maths topics ready at a grade chosen chapter by chapter (null: Grade 5, chosen by strand). */
+export function mathsTopics(grade: number): string[] | null {
+  return grade === 4 ? GRADE4_TOPICS : grade === 7 ? Object.keys(GRADE7_TEMPLATES) : grade === 8 ? GRADE8_TOPICS : null;
+}

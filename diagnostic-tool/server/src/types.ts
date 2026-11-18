@@ -422,7 +422,7 @@ export interface Topic {
   /** Set for a topic from another grade's book only (e.g. 8): never part of a Grade 5 strand test. */
   grade?: number;
   /** "English" for English topics (ids e8-…); Maths otherwise. */
-  subject?: "English";
+  subject?: "English" | "Language Arts" | "Writing";
 }
 
 export type DiagnosisTag = "mastered" | "skill_gap" | "procedural_not_conceptual" | "not_yet_reached";

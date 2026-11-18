@@ -1,3 +1,4 @@
+import { isLanguage } from "./topics.js";
 /**
  * A standalone math-anxiety self-report questionnaire, administered as its
  * own separate instrument after the skill assessment — NOT interleaved with
@@ -61,5 +62,5 @@ export const ENGLISH_ANXIETY_QUESTIONS: AnxietyQuestion[] = [
 ];
 
 export function anxietyQuestionsFor(subject?: string): AnxietyQuestion[] {
-  return subject === "English" ? ENGLISH_ANXIETY_QUESTIONS : ANXIETY_QUESTIONS;
+  return isLanguage(subject) ? ENGLISH_ANXIETY_QUESTIONS : ANXIETY_QUESTIONS;
 }

@@ -1,6 +1,7 @@
 import { SessionState } from "./state.js";
 import { ResponseRecord } from "../sessionStore.js";
 import { TOPICS, getTopic, topicName } from "../itemBank/index.js";
+import { isLanguage } from "../itemBank/topics.js";
 import { MISCONCEPTIONS } from "../itemBank/generate/index.js";
 import { anxietyQuestionsFor, AnxietyFactor } from "../itemBank/anxietyQuestionnaire.js";
 import { BLOOM_ORDER, BloomLevel, CPAStage, DiagnosisTag } from "../types.js";
@@ -64,7 +65,6 @@ const TAG_RECOMMENDATION: Record<DiagnosisTag, string> = {
 };
 
 const MATHS_STRANDS = ["Number & Algebra", "Measurement & Geometry", "Ratio & Proportion", "Data Handling"];
-const ENGLISH_STRANDS_ALL = ["Grammar", "Vocabulary", "Punctuation & Spelling", "Literature"];
 
 function fmtSec(ms: number) {
   return `${(ms / 1000).toFixed(1)}s`;
@@ -249,7 +249,7 @@ export function synthesizeReport(
   assessedAt: string
 ): ReportData {
   const topics = TOPICS.filter((t) => state.topics[t.id]).map((t) => buildTopicDiagnosis(t.id, state, responses));
-  const ALL_STRANDS = state.subject === "English" ? ENGLISH_STRANDS_ALL : MATHS_STRANDS;
+  const ALL_STRANDS = isLanguage(state.subject) ? state.strands ?? [] : MATHS_STRANDS;
   const strands = state.strands ?? ALL_STRANDS;
   // Prerequisites from strands not in this test, which were assumed known.
   const assumed: string[] = [];
