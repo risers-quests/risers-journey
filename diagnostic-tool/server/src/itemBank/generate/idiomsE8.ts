@@ -136,6 +136,10 @@ const idiomInSentence = (x: Idiom) => {
     "it's Greek to me": "Greek to me",
     "vanish into thin air": "vanished into thin air",
     "rock the boat": "rock the boat",
+    "run a tight ship": "runs a tight ship",
+    "sail against the wind": "sailed against the wind",
+    "go overboard": "went overboard",
+    "sail close to the wind": "sailing close to the wind",
   };
   return forms[x.idiom] ?? x.idiom;
 };
