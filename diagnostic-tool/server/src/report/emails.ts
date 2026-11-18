@@ -73,10 +73,39 @@ export function childEmail(ins: Insights): { subject: string; html: string } {
        <div style="font-size:13px;color:${C.soft};margin-top:4px;">The questions got harder as you went.</div>`
     );
   }
+  const grow = [...by("gap"), ...by("fragile")];
+  body += grow.length
+    ? section(
+        h2("What to work on") +
+          grow
+            .map((t) => {
+              const m = t.mistakes[0];
+              const slip = slipWords(t);
+              const row = (k: string, v: string) => `<div style="font-size:14px;margin-top:3px;"><span style="display:inline-block;width:70px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:${C.soft};">${k}</span>${esc(v)}</div>`;
+              return `<div style="padding:10px 0;border-top:1px solid ${C.line};">
+                <div style="font-size:15px;font-weight:700;">${esc(t.name)} <span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:${t.status === "gap" ? "#fbe1e6;color:#a33a52" : "#fdf0d6;color:#8a5d14"};">${t.status === "gap" ? "Not yet" : "Nearly there"}</span></div>
+                ${slip ? row("Where", slip) : ""}${m ? row("Mistake", `${m.label}${m.count > 1 ? ` (${m.count} times)` : ""}.`) : ""}${row("Try", m ? m.childTip : "A little more practice, step by step.")}
+              </div>`;
+            })
+            .join("")
+      )
+    : "";
   body += list("Strengths", ["secure"], "✓", "#3f8a1c");
-  body += list("Areas to grow", ["fragile", "gap"], "↑", "#c4851d");
   body += section(`<div style="font-size:15px;">Keep going!<br><span style="color:${C.soft};">Your teachers at LifeHub</span></div>`, "8px 24px 22px");
   return { subject: `${ins.childName}, your ${subj(ins)} Skill Check results`, html: shell(`Your ${subj(ins)} Skill Check`, body, ins.subject) };
+}
+
+const STAGE_PLAIN = { maths: ["hands-on", "picture", "numbers-only"], lang: ["hands-on", "marked-sentence", "rule"] };
+const BLOOM_PLAIN = ["remembering it", "explaining it", "using it", "working out why", "checking answers"];
+const joinWords = (xs: string[]) => (xs.length <= 1 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs[xs.length - 1]}`);
+/** Where a topic slips, in one plain sentence (same words as the report page). */
+function slipWords(t: { topicId: string; grid: string[][] }): string {
+  const words = /^(e8|l\d|w\d)-/.test(t.topicId) ? STAGE_PLAIN.lang : STAGE_PLAIN.maths;
+  const stuck = t.grid.map((row, i) => (row.includes("struggled") ? words[i] : "")).filter(Boolean);
+  const fine = t.grid.map((row, i) => (row.includes("cleared") && !row.includes("struggled") ? words[i] : "")).filter(Boolean);
+  const blooms = [0, 1, 2, 3, 4].filter((j) => t.grid.some((row) => row[j] === "struggled")).map((j) => BLOOM_PLAIN[j]);
+  if (!stuck.length) return "";
+  return `Slips on ${joinWords(stuck)} questions${blooms.length ? `, when ${joinWords(blooms.slice(0, 2))}` : ""}.${fine.length ? ` Fine with ${joinWords(fine)} ones.` : ""}`;
 }
 
 /** What being sure said about the child, in plain words (no numbers). Same as the report page. */

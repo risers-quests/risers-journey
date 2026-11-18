@@ -204,3 +204,70 @@ export function StaffSection({ topics, notes, summary, children }: { topics: Rep
     </details>
   );
 }
+
+/* ---- What to work on: for everyone, short and plain ---- */
+
+const isLangTopic = (id: string) => /^(e8|l\d|w\d)-/.test(id);
+const STAGE_PLAIN = { maths: ["hands-on", "picture", "numbers-only"], lang: ["hands-on", "marked-sentence", "rule"] };
+const BLOOM_PLAIN = ["remembering it", "explaining it", "using it", "working out why", "checking answers"];
+const join = (xs: string[]) => (xs.length <= 1 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs[xs.length - 1]}`);
+
+/** Where a topic slips, in one plain sentence, from its CPA × Bloom grid. */
+export function slipWords(t: { topicId: string; grid: string[][] }): string {
+  const words = isLangTopic(t.topicId) ? STAGE_PLAIN.lang : STAGE_PLAIN.maths;
+  const stuck = t.grid.map((row, i) => (row.includes("struggled") ? words[i] : "")).filter(Boolean);
+  const fine = t.grid.map((row, i) => (row.includes("cleared") && !row.includes("struggled") ? words[i] : "")).filter(Boolean);
+  const blooms = [0, 1, 2, 3, 4].filter((j) => t.grid.some((row) => row[j] === "struggled")).map((j) => BLOOM_PLAIN[j]);
+  if (!stuck.length) return "";
+  return `Slips on ${join(stuck)} questions${blooms.length ? `, when ${join(blooms.slice(0, 2))}` : ""}.${fine.length ? ` Fine with ${join(fine)} ones.` : ""}`;
+}
+
+/**
+ * What to work on: each topic still growing, gaps first, with where it
+ * slips, the mistake made most, and one tip. Three short lines at most.
+ */
+export function WorkOn({ topics, empty }: { topics: ReportTopic[]; empty: string }) {
+  const grow = [...topics.filter((t) => t.status === "gap"), ...topics.filter((t) => t.status === "fragile")];
+  return (
+    <section className="rp-card rp-work">
+      <h2>
+        What to work on<span className="rp-count">{grow.length}</span>
+      </h2>
+      {grow.length ? (
+        <ol className="rp-work-list">
+          {grow.map((t) => {
+            const m = t.mistakes[0];
+            const slip = slipWords(t);
+            return (
+              <li key={t.topicId}>
+                <div className="rp-work-head">
+                  <b>{t.name}</b>
+                  <em className={t.status === "gap" ? "rp-chip rp-chip-gap" : "rp-chip rp-chip-near"}>{t.status === "gap" ? "Not yet" : "Nearly there"}</em>
+                </div>
+                {slip && (
+                  <p>
+                    <span className="rp-k">Where</span>
+                    {slip}
+                  </p>
+                )}
+                {m && (
+                  <p>
+                    <span className="rp-k">Mistake</span>
+                    {m.label}
+                    {m.count > 1 ? ` (${m.count} times${m.sureCount ? `, ${m.sureCount} while sure` : ""})` : m.sureCount ? " (while sure)" : ""}.
+                  </p>
+                )}
+                <p>
+                  <span className="rp-k">Try</span>
+                  {m ? m.childTip : t.status === "gap" ? "Go back to the start of this topic and practise step by step." : "A little more practice to feel sure."}
+                </p>
+              </li>
+            );
+          })}
+        </ol>
+      ) : (
+        <p className="rp-empty">{empty}</p>
+      )}
+    </section>
+  );
+}

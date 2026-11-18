@@ -1,12 +1,12 @@
 import { ReportEntry, fmtDate } from "../reportTypes";
-import { ScoreRing, StaffSection, TopicList, splitTopics, sureWords } from "./ReportParts";
+import { ScoreRing, StaffSection, TopicList, WorkOn, splitTopics, sureWords } from "./ReportParts";
 
 /**
- * One test's report. For the child and parents: how many right, strengths
- * and areas to grow. For staff, folded away below: the detail.
+ * One test's report. For the child and parents: how many right, what to
+ * work on (where it slips, the main mistake, one tip) and strengths. For staff, folded away below: the detail.
  */
 export function ReportView({ childName, report, title }: { childName: string; report: ReportEntry; title?: string }) {
-  const { strong, grow } = splitTopics(report.topics);
+  const { strong } = splitTopics(report.topics);
   const observation = sureWords(report.sureRight, report.sureTotal, report.right);
   return (
     <div className="rp">
@@ -26,10 +26,8 @@ export function ReportView({ childName, report, title }: { childName: string; re
         </div>
       </section>
 
-      <div className="rp-lists">
-        <TopicList kind="strong" items={strong} empty="Keep going: your strengths will show here." />
-        <TopicList kind="grow" items={grow} empty="Nothing to work on from this check." />
-      </div>
+      <WorkOn topics={report.topics} empty="Nothing to work on from this check. Well done!" />
+      <TopicList kind="strong" items={strong} empty="Keep going: your strengths will show here." />
 
       <StaffSection
         topics={report.topics}

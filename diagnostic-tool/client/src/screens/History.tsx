@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getHistory } from "../api";
 import { CombinedTopic, History as HistoryData, TopicStatus, fmtDate } from "../reportTypes";
 import { Downloads } from "../components/Downloads";
-import { STAFF_WORD, ScoreRing, StaffSection, TopicList, splitTopics } from "../components/ReportParts";
+import { STAFF_WORD, ScoreRing, StaffSection, TopicList, WorkOn, splitTopics } from "../components/ReportParts";
 
 const RANK: Record<TopicStatus, number> = { gap: 0, notReached: 0, fragile: 1, secure: 2 };
 
@@ -31,7 +31,7 @@ export function History({ kid }: { kid: string }) {
     );
 
   const tested = c.topics.filter((t) => t.status !== "notReached");
-  const { strong, grow } = splitTopics(c.topics);
+  const { strong } = splitTopics(c.topics);
   const improved = (t: CombinedTopic) => !!t.before && t.before.status !== "notReached" && RANK[t.status] > RANK[t.before.status];
   const tag = (t: CombinedTopic) => (improved(t) ? "improved" : undefined);
   return (
@@ -60,10 +60,8 @@ export function History({ kid }: { kid: string }) {
         </div>
       </section>
 
-      <div className="rp-lists">
-        <TopicList kind="strong" items={strong.map((t) => ({ name: t.name, tag: tag(t) }))} empty="Keep going: your strengths will show here." />
-        <TopicList kind="grow" items={grow.map((t) => ({ name: t.name, tag: tag(t) }))} empty="Nothing to work on right now." />
-      </div>
+      <WorkOn topics={c.topics} empty="Nothing to work on right now." />
+      <TopicList kind="strong" items={strong.map((t) => ({ name: t.name, tag: tag(t) }))} empty="Keep going: your strengths will show here." />
 
       <section className="rp-card">
         <h2>Every check</h2>
