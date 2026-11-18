@@ -627,3 +627,31 @@ button.qp-ck { font: inherit; text-align: left; border: 2px solid transparent; c
 .rf-frame-w { margin: 4px 0 0; font-weight: 600; font-size: .95rem; color: var(--ink); }
 .rf-frame-in { font: inherit; font-size: .95rem; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; resize: vertical; min-height: 64px; background: #fff; }
 .rf-fb { color: #4b3a7a; }
+
+/* ---- Closing a quest (board.js: closeBar, pastBar, pastEl) ---- */
+.pb-finish { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; background: var(--good-soft); border: 2px solid var(--good); border-radius: 16px; padding: 14px 18px; margin: 0 0 14px; }
+.pb-finish > div { flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 3px; }
+.pb-finish strong { font-family: var(--font-head); font-size: 1.05rem; color: var(--ink); }
+.pb-finish span { font-size: .9rem; color: var(--ink-soft); }
+.pb-finish .pq-btn { background: var(--good); margin: 0; }
+.pb-finish-past { background: #fff; border-color: var(--border); }
+.pb-finish-past .pq-btn-ghost { background: #fff; color: var(--ink-soft); text-decoration: none; }
+.qp-checked { font-weight: 700; color: var(--good); margin: 10px 0 4px; }
+.qp-ok .pq-btn { margin-top: 10px; }
+.qp-ok .pq-link { margin-top: 2px; }
+.qp-locked button.qp-ck { cursor: default; }
+/* A closed quest is read-only: nothing to tap but the tabs and the way back. */
+.pb-past .pb-tabs ~ * button, .pb-past .pb-tabs ~ * label, .pb-past .pb-tabs ~ * input, .pb-past .pb-tabs ~ * textarea, .pb-past .pb-tabs ~ * select { pointer-events: none; }
+.pb-past .ph-add, .pb-past .pq-link { display: none; }
+.pq-closed { display: flex; gap: 14px; align-items: center; background: var(--good-soft); border-radius: 16px; padding: 16px 18px; margin: 0 0 18px; }
+.pq-closed-ic { font-size: 2.2rem; }
+.pq-closed h2 { margin: 0 0 4px; font-size: 1.1rem; }
+.pq-closed p { margin: 0; color: var(--ink-soft); font-size: .92rem; }
+.qc-did { position: absolute; left: 10px; bottom: 10px; background: var(--good); color: #fff; font-size: .72rem; font-weight: 700; border-radius: 99px; padding: 3px 9px; }
+.pq-past { margin-top: 28px; }
+.pq-past h2 { font-size: 1rem; margin: 0 0 10px; }
+.pq-past-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 14px; background: #fff; color: var(--ink); text-decoration: none; margin-bottom: 8px; }
+.pq-past-item > span { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.pq-past-item small { color: var(--ink-faint); font-size: .8rem; }
+.pq-past-item em { font-style: normal; font-weight: 600; font-size: .85rem; color: var(--accent-dark); white-space: nowrap; }
+.pq-past-item:hover { border-color: var(--good); }
