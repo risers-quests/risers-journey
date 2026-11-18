@@ -12,7 +12,7 @@
  *     caught as the right misconception
  * Run: npx tsx scripts/check-templates.ts   (N=2000 for a quicker run)
  */
-import { LA7_BANKS, W7_BANKS, W4_BANKS, L4_BANKS, languageTopics, mathsTopics, ENGLISH8_TOPICS, GENERATED_TOPICS, GRADE4_TOPICS, GRADE8_TOPICS, MISCONCEPTIONS, generateItem, GeneratedItem } from "../src/itemBank/generate/index.js";
+import { LA7_BANKS, W7_BANKS, W4_BANKS, L4_BANKS, W3_BANKS, languageTopics, mathsTopics, ENGLISH8_TOPICS, GENERATED_TOPICS, GRADE4_TOPICS, GRADE8_TOPICS, MISCONCEPTIONS, generateItem, GeneratedItem } from "../src/itemBank/generate/index.js";
 import { checkActivity } from "../src/itemBank/generate/activities.js";
 import { verify as verifyLargeNumbers, dropZeros } from "../src/itemBank/generate/moreOnLargeNumbers.js";
 import { verify as verifyOperations } from "../src/itemBank/generate/operationsOnLargeNumbers.js";
@@ -274,7 +274,7 @@ const ENGLISH_VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
   "e8-lit-louse": () => verifyLouse(),
 };
 for (const t of ENGLISH8_TOPICS) VERIFY[t] = ENGLISH_VERIFY[t] ?? (() => null);
-for (const b of [...LA7_BANKS, ...W7_BANKS, ...W4_BANKS, ...L4_BANKS]) VERIFY[b.topic] = () => verifySkill(b);
+for (const b of [...LA7_BANKS, ...W7_BANKS, ...W4_BANKS, ...L4_BANKS, ...W3_BANKS]) VERIFY[b.topic] = () => verifySkill(b);
 
 // ---- activities: a perfect attempt, and typical mistakes ----
 function checkActivityItem(it: GeneratedItem, where: string) {
@@ -452,7 +452,7 @@ function checkActivityItem(it: GeneratedItem, where: string) {
   } else fail(`${where}: unknown activity`);
 }
 
-const RUNS: [string, number][] = [...GENERATED_TOPICS.map((t) => [t, 5] as [string, number]), ...GRADE4_TOPICS.map((t) => [t, 4] as [string, number]), ...GRADE8_TOPICS.map((t) => [t, 8] as [string, number]), ...ENGLISH8_TOPICS.map((t) => [t, 8] as [string, number]), ...[...languageTopics("Language Arts"), ...languageTopics("Writing"), ...(mathsTopics(7) ?? [])].map((t) => [t, 7] as [string, number]), ...[...languageTopics("Writing", 4), ...languageTopics("Language Arts", 4)].map((t) => [t, 4] as [string, number]), ...(mathsTopics(3) ?? []).map((t) => [t, 3] as [string, number])];
+const RUNS: [string, number][] = [...GENERATED_TOPICS.map((t) => [t, 5] as [string, number]), ...GRADE4_TOPICS.map((t) => [t, 4] as [string, number]), ...GRADE8_TOPICS.map((t) => [t, 8] as [string, number]), ...ENGLISH8_TOPICS.map((t) => [t, 8] as [string, number]), ...[...languageTopics("Language Arts"), ...languageTopics("Writing"), ...(mathsTopics(7) ?? [])].map((t) => [t, 7] as [string, number]), ...[...languageTopics("Writing", 4), ...languageTopics("Language Arts", 4)].map((t) => [t, 4] as [string, number]), ...[...(mathsTopics(3) ?? []), ...languageTopics("Writing", 3)].map((t) => [t, 3] as [string, number])];
 for (let k = RUNS.length - 1; k >= 0; k--) if (process.env.ONLY && !RUNS[k][0].startsWith(process.env.ONLY)) RUNS.splice(k, 1);
 for (const [topic, grade] of RUNS) {
   for (const cpa of CPA_ORDER)

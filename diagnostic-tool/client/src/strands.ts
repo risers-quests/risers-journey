@@ -159,3 +159,12 @@ export const LA4_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [
   { id: "l4-nouns-usage", chapter: "Chapter 3", name: "Plurals, Possessives and Comparisons", about: "Plurals, possessives, subject and object pronouns, comparative adjectives and adverbs" },
   { id: "l4-words", chapter: "Chapter 3", name: "Word Study and Figurative Language", about: "Synonyms, antonyms, homophones, multiple meanings, similes, metaphors, personification, idioms" },
 ];
+
+// Grade 3 Writing (Spectrum Writing Grade 3); Chapter 1 split in two.
+export const W3_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [
+  { id: "w3-foundations", chapter: "Chapter 1", name: "Main Idea, Purpose and Organising", about: "Main idea and details, author's purpose, text structures, organising by topic, time-order words" },
+  { id: "w3-proofreading", chapter: "Chapter 1", name: "Complete Sentences and Proofreading", about: "Fragments and run-ons, capitals, end and inside punctuation, word mistakes, subject-verb agreement" },
+  { id: "w3-narrative", chapter: "Chapter 2", name: "Writing a Narrative", about: "Senses, varied sentences, similes, time order, titles, setting, dialogue" },
+  { id: "w3-inform", chapter: "Chapter 3", name: "Writing to Inform", about: "Friendly letters, instructions, audience, comparing, spatial order, linking words, main idea, news reports" },
+  { id: "w3-opinion", chapter: "Chapter 4", name: "Writing an Opinion", about: "Fact and opinion, reasons, linking words, examples, opinion paragraphs" },
+];

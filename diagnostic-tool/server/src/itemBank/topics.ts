@@ -274,6 +274,15 @@ TOPICS.push(
   { id: "l4-words", strand: "Usage", name: "Word Study and Figurative Language", shortLabel: "Words & Figures", dependsOn: [], grade: 4, subject: "Language Arts" }
 );
 
+/** Grade 3 Writing (Spectrum Writing Grade 3), chosen topic by topic. */
+TOPICS.push(
+  { id: "w3-foundations", strand: "Foundations of Writing", name: "Main Idea, Purpose and Organising", shortLabel: "Main Idea & Purpose", dependsOn: [], grade: 3, subject: "Writing" },
+  { id: "w3-proofreading", strand: "Foundations of Writing", name: "Complete Sentences and Proofreading", shortLabel: "Proofreading", dependsOn: [], grade: 3, subject: "Writing" },
+  { id: "w3-narrative", strand: "Writing a Narrative", name: "Writing a Narrative", shortLabel: "Narrative", dependsOn: [], grade: 3, subject: "Writing" },
+  { id: "w3-inform", strand: "Writing to Inform", name: "Writing to Inform", shortLabel: "Informing", dependsOn: [], grade: 3, subject: "Writing" },
+  { id: "w3-opinion", strand: "Writing an Opinion", name: "Writing an Opinion", shortLabel: "Opinion", dependsOn: [], grade: 3, subject: "Writing" }
+);
+
 /** Grade 4 Writing (Spectrum Writing Grade 4), chosen topic by topic. */
 TOPICS.push(
   { id: "w4-words", strand: "Foundations of Writing", name: "Words and Sentences", shortLabel: "Words & Sentences", dependsOn: [], grade: 4, subject: "Writing" },
@@ -290,7 +299,7 @@ export const ENGLISH_STRANDS = ["Grammar", "Vocabulary", "Punctuation & Spelling
 export type Subject = "Maths" | "English" | "Language Arts" | "Writing";
 export const LANGUAGE_SUBJECTS = ["English", "Language Arts", "Writing"];
 export const isLanguage = (s?: string) => !!s && LANGUAGE_SUBJECTS.includes(s);
-export const subjectOfTopic = (id: string): Subject => (id.startsWith("e8-") ? "English" : id.startsWith("l7-") || id.startsWith("l4-") ? "Language Arts" : id.startsWith("w7-") || id.startsWith("w4-") ? "Writing" : "Maths");
+export const subjectOfTopic = (id: string): Subject => (id.startsWith("e8-") ? "English" : id.startsWith("l7-") || id.startsWith("l4-") ? "Language Arts" : id.startsWith("w7-") || id.startsWith("w4-") || id.startsWith("w3-") ? "Writing" : "Maths");
 
 /** The book's strands, in order. A test covers one or more of them. */
 export const STRANDS = ["Number & Algebra", "Measurement & Geometry", "Ratio & Proportion", "Data Handling"];
