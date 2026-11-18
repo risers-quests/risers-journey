@@ -34,6 +34,8 @@ import { verify as verifyFiguresE8 } from "../src/itemBank/generate/figuresE8.js
 import { verify as verifyPunctuationE8 } from "../src/itemBank/generate/punctuationE8.js";
 import { verify as verifySpellingE8 } from "../src/itemBank/generate/spellingE8.js";
 import { verify as verifyIdiomsE8 } from "../src/itemBank/generate/idiomsE8.js";
+import { verify as verifyWinterOak } from "../src/itemBank/generate/winterOakE8.js";
+import { verify as verifyDontQuit } from "../src/itemBank/generate/dontQuitE8.js";
 
 const N = Number(process.env.N || 20000);
 let failures = 0;
@@ -235,6 +237,8 @@ const ENGLISH_VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
   "e8-punctuation": verifyPunctuationE8,
   "e8-spelling": verifySpellingE8,
   "e8-idioms": verifyIdiomsE8,
+  "e8-lit-winter-oak": () => verifyWinterOak(),
+  "e8-lit-dont-quit": () => verifyDontQuit(),
 };
 for (const t of ENGLISH8_TOPICS) VERIFY[t] = ENGLISH_VERIFY[t] ?? (() => null);
 

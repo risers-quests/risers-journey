@@ -65,7 +65,7 @@ export function baseFor(prefix: string, topicId: string) {
 export const words = (s: string) => s.split(/\s+/).filter(Boolean);
 
 /** Strip punctuation for matching a word ("tonight." matches "tonight"). */
-const bare = (w: string) => w.replace(/^[‘'"(]+|[’'",.?!;:)]+$/g, "").toLowerCase();
+const bare = (w: string) => w.replace(/^[‘'"(“]+|[’'",.?!;:)”—]+$/g, "").toLowerCase();
 
 /** Token indices of `phrase` (contiguous) in `tokens`; throws if missing so the stress test catches a bad bank entry. */
 export function span(tokens: string[], phrase: string, from = 0): number[] {

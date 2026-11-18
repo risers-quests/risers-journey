@@ -44,6 +44,9 @@ import { FIGURES_E8_TEMPLATES, MISCONCEPTIONS as FIG_E8_MISCONCEPTIONS } from ".
 import { PUNCTUATION_E8_TEMPLATES, MISCONCEPTIONS as PUN_E8_MISCONCEPTIONS } from "./punctuationE8.js";
 import { SPELLING_E8_TEMPLATES, MISCONCEPTIONS as SPL_E8_MISCONCEPTIONS } from "./spellingE8.js";
 import { IDIOMS_E8_TEMPLATES, MISCONCEPTIONS as IDM_E8_MISCONCEPTIONS } from "./idiomsE8.js";
+import { LIT_MISCONCEPTIONS } from "./litE8.js";
+import { WINTER_OAK_TEMPLATES } from "./winterOakE8.js";
+import { DONT_QUIT_TEMPLATES } from "./dontQuitE8.js";
 
 export type { GeneratedItem } from "./core.js";
 
@@ -108,6 +111,8 @@ const ENGLISH8_TEMPLATES: Record<string, Record<string, Template>> = {
   "e8-punctuation": PUNCTUATION_E8_TEMPLATES,
   "e8-spelling": SPELLING_E8_TEMPLATES,
   "e8-idioms": IDIOMS_E8_TEMPLATES,
+  "e8-lit-winter-oak": WINTER_OAK_TEMPLATES,
+  "e8-lit-dont-quit": DONT_QUIT_TEMPLATES,
 };
 
 /** Topics with generated questions (Grade 5; Grade 4 also uses GRADE4_TEMPLATES). */
@@ -164,6 +169,7 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...PUN_E8_MISCONCEPTIONS,
   ...SPL_E8_MISCONCEPTIONS,
   ...IDM_E8_MISCONCEPTIONS,
+  ...LIT_MISCONCEPTIONS,
 };
 
 export function hasTemplate(topicId: string, cpa: CPAStage, bloom: BloomLevel, grade = 5): boolean {
