@@ -86,10 +86,10 @@ const VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
   "fractions-division": verifyFractions,
   "more-large-numbers": (it) => verifyLargeNumbers(it),
   "operations-large-numbers": (it) => verifyOperations(it),
-  // Grade 4 only (Grade 5 factors are hand-written).
-  "factors-multiples": (it) => verifyFactorsG4(it),
-  "four-operations-fractions": (it) => verifyFractionsG4(it),
-  decimals: (it) => verifyDecimalsG4(it),
+  // Grade 4's own generators (Grade 5's are in generate/m5, checked by the general rules).
+  "factors-multiples": (it) => (it.params.g === 4 ? verifyFactorsG4(it) : null),
+  "four-operations-fractions": (it) => (it.params.g === 4 ? verifyFractionsG4(it) : null),
+  decimals: (it) => (it.params.g === 4 ? verifyDecimalsG4(it) : null),
 };
 
 // ---- Grade 8: the right answer recomputed from the numbers, independently ----
@@ -453,7 +453,7 @@ function checkActivityItem(it: GeneratedItem, where: string) {
 }
 
 const RUNS: [string, number][] = [...GENERATED_TOPICS.map((t) => [t, 5] as [string, number]), ...GRADE4_TOPICS.map((t) => [t, 4] as [string, number]), ...GRADE8_TOPICS.map((t) => [t, 8] as [string, number]), ...ENGLISH8_TOPICS.map((t) => [t, 8] as [string, number]), ...[...languageTopics("Language Arts"), ...languageTopics("Writing"), ...(mathsTopics(7) ?? [])].map((t) => [t, 7] as [string, number]), ...[...languageTopics("Writing", 4), ...languageTopics("Language Arts", 4)].map((t) => [t, 4] as [string, number]), ...[...(mathsTopics(3) ?? []), ...languageTopics("Writing", 3)].map((t) => [t, 3] as [string, number]), ...[...languageTopics("Language Arts", 6), ...languageTopics("Writing", 6)].map((t) => [t, 6] as [string, number])];
-for (let k = RUNS.length - 1; k >= 0; k--) if (process.env.ONLY && !RUNS[k][0].startsWith(process.env.ONLY)) RUNS.splice(k, 1);
+for (let k = RUNS.length - 1; k >= 0; k--) if (process.env.ONLY && !process.env.ONLY.split(",").some((o) => RUNS[k][0].startsWith(o))) RUNS.splice(k, 1);
 for (const [topic, grade] of RUNS) {
   for (const cpa of CPA_ORDER)
     for (const bloom of BLOOM_ORDER) {

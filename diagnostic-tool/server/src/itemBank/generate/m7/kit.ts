@@ -56,4 +56,16 @@ export function safe(ts: Record<string, Template>): Record<string, Template> {
     ])
   );
 }
+
+/** Retry when the right answer happens to appear in the question (it would give itself away). */
+export function noEcho(ts: Record<string, Template>): Record<string, Template> {
+  return Object.fromEntries(Object.entries(ts).map(([cell, t]) => [cell, ((rng, g) => {
+    for (let n = 0; ; n++) {
+      const it = t(rng, g);
+      const right = it.choices.find((c) => c.id === it.correctChoiceId)?.text ?? "";
+      const shown = it.prompt + " " + JSON.stringify(it.representation ?? "");
+      if (right.length <= 2 || !shown.includes(right) || n > 40) return it;
+    }
+  }) as Template]));
+}
 export type Misconceptions = Record<string, { label: string; detail: string; childTip: string }>;

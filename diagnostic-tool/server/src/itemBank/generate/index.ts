@@ -62,6 +62,8 @@ import * as W3 from "./w3/writing.js";
 import * as L6 from "./l6/la.js";
 import * as W6 from "./w6/writing.js";
 import { ADDSUB_G4, MULT_G4, DIV_G4 } from "./m4/ops.js";
+import { FACTORS_G5, FRACTIONS_G5, DECIMALS_G5, GEOMETRY_G5, MEASUREMENT_G5, AREA_G5, MISCONCEPTIONS as M5A_MIS } from "./m5/a.js";
+import { VOLUME_G5, TIME_TEMP_G5, LIFE_G5, SCALES_G5, DATA_G5, PATTERNS_G5, MISCONCEPTIONS as M5B_MIS } from "./m5/b.js";
 import { SHAPES_G4, MEASURE_G4, AREA_G4, TIME_G4, MONEY_G4, DATA_G4, PATTERNS_G4, MISCONCEPTIONS as M4_MIS } from "./m4/more.js";
 import { NUMBERS_G3, ADDSUB_G3, MULT_G3, DIV_G3, MISCONCEPTIONS as M3A_MIS } from "./m3/numbers.js";
 import { FRACTIONS_G3, SHAPES_G3, MEASURE_G3, TIME_G3, MONEY_G3, DATA_G3, PATTERNS_G3, MISCONCEPTIONS as M3B_MIS } from "./m3/more.js";
@@ -92,6 +94,18 @@ const TEMPLATES: Record<string, Record<string, Template>> = {
   "fractions-division": FRACTIONS_DIVISION_TEMPLATES,
   "more-large-numbers": MORE_ON_LARGE_NUMBERS_TEMPLATES,
   "operations-large-numbers": OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES,
+  "factors-multiples": FACTORS_G5,
+  "four-operations-fractions": FRACTIONS_G5,
+  decimals: DECIMALS_G5,
+  geometry: GEOMETRY_G5,
+  measurement: MEASUREMENT_G5,
+  "perimeter-area": AREA_G5,
+  "volume-nets": VOLUME_G5,
+  "time-temperature": TIME_TEMP_G5,
+  "life-mathematics": LIFE_G5,
+  "scales-directions": SCALES_G5,
+  "data-handling": DATA_G5,
+  "patterns-symmetry": PATTERNS_G5,
 };
 
 /**
@@ -258,6 +272,8 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...L6.MISCONCEPTIONS,
   ...W6.MISCONCEPTIONS,
   ...M4_MIS,
+  ...M5A_MIS,
+  ...M5B_MIS,
   ...M3A_MIS,
   ...M3B_MIS,
 };
