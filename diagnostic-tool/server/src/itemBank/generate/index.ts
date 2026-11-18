@@ -57,6 +57,8 @@ import { MODIFIERS, MISCONCEPTIONS as LA7_MD } from "./la7/modifiers.js";
 import { SENTENCES as LA7_SENTENCES, CAPITALS, MISCONCEPTIONS as LA7_SC } from "./la7/sentencesMechanics.js";
 import { PARAGRAPHS, NARRATIVE, INFORMATIONAL, OPINION, RESEARCH, MISCONCEPTIONS as W7_MIS } from "./w7/writing.js";
 import * as W4 from "./w4/writing.js";
+import { NUMBERS_G3, ADDSUB_G3, MULT_G3, DIV_G3, MISCONCEPTIONS as M3A_MIS } from "./m3/numbers.js";
+import { FRACTIONS_G3, SHAPES_G3, MEASURE_G3, TIME_G3, MONEY_G3, DATA_G3, PATTERNS_G3, MISCONCEPTIONS as M3B_MIS } from "./m3/more.js";
 import { PUNCTUATION as LA7_PUNCT, USAGE, WORD_STUDY, MISCONCEPTIONS as LA7_PW } from "./la7/punctuationUsageWords.js";
 import { WINTER_OAK_TEMPLATES } from "./winterOakE8.js";
 import { DONT_QUIT_TEMPLATES } from "./dontQuitE8.js";
@@ -169,6 +171,7 @@ function templatesFor(topicId: string, grade: number): Record<string, Template> 
   if (topicId.startsWith("w7-")) return W7_TEMPLATES[topicId];
   if (topicId.startsWith("w4-")) return W4_TEMPLATES[topicId];
   if (topicId.startsWith("g7-")) return GRADE7_TEMPLATES[topicId];
+  if (topicId.startsWith("g3-")) return GRADE3_TEMPLATES[topicId];
   if (grade === 8) return GRADE8_TEMPLATES[topicId];
   return (grade === 4 ? GRADE4_TEMPLATES[topicId] : undefined) ?? TEMPLATES[topicId];
 }
@@ -230,6 +233,8 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...LA7_PW,
   ...W7_MIS,
   ...W4.MISCONCEPTIONS,
+  ...M3A_MIS,
+  ...M3B_MIS,
 };
 
 export function hasTemplate(topicId: string, cpa: CPAStage, bloom: BloomLevel, grade = 5): boolean {
@@ -305,6 +310,20 @@ export const W7_TEMPLATES: Record<string, Record<string, Template>> = Object.fro
 /** Grade 4 Writing (Spectrum Writing Grade 4, ids w4-). */
 export const W4_BANKS: SkillTopic[] = [W4.WORDS_SENTENCES, W4.PROOFREADING, W4.NARRATIVE, W4.INFORM, W4.OPINION];
 export const W4_TEMPLATES: Record<string, Record<string, Template>> = Object.fromEntries(W4_BANKS.map((t) => [t.topic, skillTemplates(t)]));
+/** Grade 3 Maths (CPA Maths 3, ids g3-), in book order. */
+export const GRADE3_TEMPLATES: Record<string, Record<string, Template>> = {
+  "g3-numbers": NUMBERS_G3,
+  "g3-addsub": ADDSUB_G3,
+  "g3-mult": MULT_G3,
+  "g3-div": DIV_G3,
+  "g3-fractions": FRACTIONS_G3,
+  "g3-shapes": SHAPES_G3,
+  "g3-measure": MEASURE_G3,
+  "g3-time": TIME_G3,
+  "g3-money": MONEY_G3,
+  "g3-data": DATA_G3,
+  "g3-patterns": PATTERNS_G3,
+};
 /** Grade 7 Maths (ids g7-). */
 /** A Grade 8 topic's questions used for a Grade 7 chapter that teaches the same thing (the item carries the Grade 7 topic id). */
 const as7 = (id: string, from: Record<string, Template>): Record<string, Template> =>
@@ -336,5 +355,5 @@ export function languageTopics(subject: string, grade = 7): string[] {
 }
 /** The maths topics ready at a grade chosen chapter by chapter (null: Grade 5, chosen by strand). */
 export function mathsTopics(grade: number): string[] | null {
-  return grade === 4 ? GRADE4_TOPICS : grade === 7 ? Object.keys(GRADE7_TEMPLATES) : grade === 8 ? GRADE8_TOPICS : null;
+  return grade === 3 ? Object.keys(GRADE3_TEMPLATES) : grade === 4 ? GRADE4_TOPICS : grade === 7 ? Object.keys(GRADE7_TEMPLATES) : grade === 8 ? GRADE8_TOPICS : null;
 }

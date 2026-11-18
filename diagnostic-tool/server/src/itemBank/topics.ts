@@ -228,6 +228,23 @@ TOPICS.push(
   ] as const).map(([id, strand, name]) => ({ id, strand, name, shortLabel: name, dependsOn: [], grade: 7 }))
 );
 
+/** Grade 3 Maths (CPA Maths 3), chosen chapter by chapter. */
+TOPICS.push(
+  ...([
+    ["g3-numbers", "Number & Algebra", "Large Numbers"],
+    ["g3-addsub", "Number & Algebra", "Addition and Subtraction"],
+    ["g3-mult", "Number & Algebra", "Multiplication"],
+    ["g3-div", "Number & Algebra", "Division"],
+    ["g3-fractions", "Number & Algebra", "Fractions"],
+    ["g3-shapes", "Measurement & Geometry", "Shapes"],
+    ["g3-measure", "Measurement & Geometry", "Measurement"],
+    ["g3-time", "Measurement & Geometry", "Time"],
+    ["g3-money", "Measurement & Geometry", "Money"],
+    ["g3-data", "Data Handling", "Data Handling"],
+    ["g3-patterns", "Number & Algebra", "Patterns and Symmetry"],
+  ] as const).map(([id, strand, name]) => ({ id, strand, name, shortLabel: name, dependsOn: [], grade: 3 }))
+);
+
 /** Grade 7 Language Arts (Spectrum Language Arts Grade 7), chosen topic by topic. */
 TOPICS.push(
   { id: "l7-nouns-pronouns", strand: "Parts of Speech", name: "Nouns and Pronouns", shortLabel: "Nouns & Pronouns", dependsOn: [], grade: 7, subject: "Language Arts" },

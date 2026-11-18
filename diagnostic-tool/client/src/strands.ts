@@ -132,3 +132,18 @@ export const W4_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [
   { id: "w4-inform", chapter: "Chapter 3", name: "Writing to Inform", about: "Letters, comparing, cause and effect, instructions, main idea, topic sentences" },
   { id: "w4-opinion", chapter: "Chapter 4", name: "Writing an Opinion", about: "Fact and opinion, reasons, emotional appeal, bias, slogans, business letters" },
 ];
+
+// Grade 3 Maths (CPA Maths 3, Macmillan): chapters offered one by one, in the book's order.
+export const GRADE3_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [
+  { id: "g3-numbers", chapter: "Chapter 1", name: "Large Numbers", about: "4-digit numbers: names, place and face value, comparing, largest and smallest, rounding" },
+  { id: "g3-addsub", chapter: "Chapter 2", name: "Addition and Subtraction", about: "3- and 4-digit numbers with regrouping, properties, estimating" },
+  { id: "g3-mult", chapter: "Chapter 3", name: "Multiplication", about: "Tables of 6 to 9, number line, properties, 3-digit by 1- and 2-digit, word problems" },
+  { id: "g3-div", chapter: "Chapter 4", name: "Division", about: "Repeated subtraction, number line, properties, dividing by 1 digit, checking, word problems" },
+  { id: "g3-fractions", chapter: "Chapter 5", name: "Fractions", about: "Numerator and denominator, one-half, one-third, one-quarter, fractions of a figure" },
+  { id: "g3-shapes", chapter: "Chapter 6", name: "Shapes", about: "Point, line, segment, ray; plane and solid shapes; dot grids, tangrams, simple maps" },
+  { id: "g3-measure", chapter: "Chapter 7", name: "Measurement", about: "Units of length, weight and capacity, converting, adding and subtracting, conservation" },
+  { id: "g3-time", chapter: "Chapter 8", name: "Time", about: "Time to 5 minutes, days, weeks, months and years, calendars, time order" },
+  { id: "g3-money", chapter: "Chapter 9", name: "Money", about: "Rupees and paise, adding, subtracting, multiplying, dividing, bills" },
+  { id: "g3-data", chapter: "Chapter 10", name: "Data Handling", about: "Tally marks, pictographs with a scale, bar graphs, conclusions" },
+  { id: "g3-patterns", chapter: "Chapter 11", name: "Patterns and Symmetry", about: "Number, letter and shape patterns, lines of symmetry, tiling" },
+];

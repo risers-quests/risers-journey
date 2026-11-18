@@ -250,5 +250,5 @@ export async function replaceReports(kid: string, updated: ReportEntry[]): Promi
 /** "Grade 8" -> 8. Grades without their own questions use Grade 5's. */
 export function gradeNumber(grade: string | undefined): number {
   const n = Number(String(grade ?? "").replace(/\D/g, ""));
-  return n === 4 || n === 7 || n === 8 ? n : 5;
+  return n === 3 || n === 4 || n === 7 || n === 8 ? n : 5;
 }

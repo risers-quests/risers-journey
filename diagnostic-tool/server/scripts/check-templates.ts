@@ -452,7 +452,7 @@ function checkActivityItem(it: GeneratedItem, where: string) {
   } else fail(`${where}: unknown activity`);
 }
 
-const RUNS: [string, number][] = [...GENERATED_TOPICS.map((t) => [t, 5] as [string, number]), ...GRADE4_TOPICS.map((t) => [t, 4] as [string, number]), ...GRADE8_TOPICS.map((t) => [t, 8] as [string, number]), ...ENGLISH8_TOPICS.map((t) => [t, 8] as [string, number]), ...[...languageTopics("Language Arts"), ...languageTopics("Writing"), ...(mathsTopics(7) ?? [])].map((t) => [t, 7] as [string, number]), ...languageTopics("Writing", 4).map((t) => [t, 4] as [string, number])];
+const RUNS: [string, number][] = [...GENERATED_TOPICS.map((t) => [t, 5] as [string, number]), ...GRADE4_TOPICS.map((t) => [t, 4] as [string, number]), ...GRADE8_TOPICS.map((t) => [t, 8] as [string, number]), ...ENGLISH8_TOPICS.map((t) => [t, 8] as [string, number]), ...[...languageTopics("Language Arts"), ...languageTopics("Writing"), ...(mathsTopics(7) ?? [])].map((t) => [t, 7] as [string, number]), ...languageTopics("Writing", 4).map((t) => [t, 4] as [string, number]), ...(mathsTopics(3) ?? []).map((t) => [t, 3] as [string, number])];
 for (let k = RUNS.length - 1; k >= 0; k--) if (process.env.ONLY && !RUNS[k][0].startsWith(process.env.ONLY)) RUNS.splice(k, 1);
 for (const [topic, grade] of RUNS) {
   for (const cpa of CPA_ORDER)

@@ -3,7 +3,7 @@ import { staffSignedIn } from "../staff";
 import { createSession, getSessionStatus } from "../api";
 import { SessionStatus } from "../types";
 import { forgetTest, rememberTest, savedTests } from "../saved";
-import { ENGLISH8_TOPIC_CHOICES, GRADE7_TOPIC_CHOICES, LA7_TOPIC_CHOICES, W7_TOPIC_CHOICES, W4_TOPIC_CHOICES, GRADE4_TOPIC_CHOICES, GRADE8_TOPIC_CHOICES, STRAND_CHOICES } from "../strands";
+import { ENGLISH8_TOPIC_CHOICES, GRADE7_TOPIC_CHOICES, LA7_TOPIC_CHOICES, W7_TOPIC_CHOICES, W4_TOPIC_CHOICES, GRADE3_TOPIC_CHOICES, GRADE4_TOPIC_CHOICES, GRADE8_TOPIC_CHOICES, STRAND_CHOICES } from "../strands";
 
 // The 12 Risers. Their report email addresses are kept only in the email
 // script (diagnostic-tool/email), never on the site; it matches by name.
@@ -11,7 +11,7 @@ const RISERS = ["Benjamin", "Chris", "Elyon", "Eva", "Gabby", "Karis", "Michael"
 // Risers working from another grade's book; everyone else starts at Grade 5 (staff can still change it).
 const RISER_GRADE: Record<string, string> = { Eva: "Grade 4", Elyon: "Grade 4", Gabby: "Grade 4", Karis: "Grade 7", Michael: "Grade 7", Shalom: "Grade 7", Benjamin: "Grade 8" };
 // Grades tested chapter by chapter (their own book), and the chapters ready.
-const CHAPTERS: Record<string, typeof GRADE4_TOPIC_CHOICES> = { "Grade 4": GRADE4_TOPIC_CHOICES, "Grade 8": GRADE8_TOPIC_CHOICES, ...(GRADE7_TOPIC_CHOICES.length ? { "Grade 7": GRADE7_TOPIC_CHOICES } : {}) };
+const CHAPTERS: Record<string, typeof GRADE4_TOPIC_CHOICES> = { "Grade 3": GRADE3_TOPIC_CHOICES, "Grade 4": GRADE4_TOPIC_CHOICES, "Grade 8": GRADE8_TOPIC_CHOICES, ...(GRADE7_TOPIC_CHOICES.length ? { "Grade 7": GRADE7_TOPIC_CHOICES } : {}) };
 const gradeFor = (name: string) => RISER_GRADE[name] ?? "Grade 5";
 // Language subjects, per grade: the name on the start page, the subject the
 // server knows, and the topics offered. Grade 8 English is shown as two:
@@ -33,7 +33,7 @@ const LANGUAGE: Record<string, Record<string, { server: string; choices: Choice[
 };
 // Maths only where it is ready (Grade 5 by strand, other grades chapter by chapter).
 const subjectsFor = (grade: string) => [...(grade === "Grade 5" || CHAPTERS[grade] ? ["Maths"] : []), ...Object.keys(LANGUAGE[grade] ?? {})];
-const GRADES = ["Grade 4", "Grade 5", "Grade 7", "Grade 8"];
+const GRADES = ["Grade 3", "Grade 4", "Grade 5", "Grade 7", "Grade 8"];
 // Each Riser's subjects and the grade for each (matches staff/riser-grades.js).
 // A Riser on their own device sees only these, and only the ones built so far;
 // staff see every grade and subject.
