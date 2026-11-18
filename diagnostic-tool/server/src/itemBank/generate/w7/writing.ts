@@ -62,6 +62,8 @@ export const PARAGRAPHS: SkillTopic = {
   a4: [
     { q: "Which is the best topic sentence for a paragraph about saving water?", a: "There are many easy ways to save water at home.", w: ["Turn off the tap while brushing.", "My bathroom is blue.", "Water is wet."], m: "wr-topic-sentence" },
     { q: "In which part of the writing process do you fix spelling and punctuation?", a: "Editing", w: ["Prewriting", "Drafting", "Publishing"], m: "wr-sequence" },
+    { q: "Which sentence uses the active voice, as good writing usually should?", a: "The committee approved the plan.", w: ["The plan was approved by the committee.", "The plan has been approved.", "Approval was given to the plan by the committee."], m: "wr-audience" },
+    { q: "You are writing to a younger child about brushing teeth. Which sentence suits your audience?", a: "Brush your teeth for two minutes, morning and night!", w: ["Dental hygiene necessitates biannual professional prophylaxis.", "Pursuant to guidelines, oral care is advised.", "Teeth are calcified structures of the jaw."], m: "wr-audience" },
   ],
 };
 
@@ -181,6 +183,9 @@ export const OPINION: SkillTopic = {
     { q: "Which is a fact?", a: "Water boils at 100 °C at sea level.", w: ["Water is the best drink.", "Everyone should drink water.", "Cold water tastes better."], m: "wr-fact-opinion" },
   ],
   a4: [
+    { q: "'Join the thousands of happy kids who already drink Zippy Juice!' This advert uses ___", a: "a bandwagon appeal", w: ["a fact with evidence", "an expert opinion", "a counterargument"], m: "wr-evidence" },
+    { q: "'Without your donation, these puppies will go hungry tonight.' This is ___", a: "an emotional appeal", w: ["a statistic", "a counterargument", "a citation"], m: "wr-evidence" },
+    { q: "In an argument organised by order of importance, the strongest reason usually comes ___", a: "last (or first), where readers remember it", w: ["hidden in the middle", "in the title only", "nowhere: leave it out"], m: "wr-structure" },
     { q: "Which opening suits a letter to a newspaper editor?", a: "Dear Editor, I am writing about the closure of the city library.", w: ["Hey Editor! Guess what?", "Yo, listen up about the library.", "Hi there, library stuff is bad lol."], m: "wr-audience" },
   ],
 };
@@ -216,6 +221,8 @@ export const RESEARCH: SkillTopic = {
     { q: "What does a bibliography list?", a: "The sources used in a piece of writing", w: ["The writer's opinions", "The chapters of the report", "Difficult words"], m: "wr-source" },
   ],
   a4: [
+    { q: "In an informational piece about a room, describing it from left to right is ___", a: "spatial organisation", w: ["cause-and-effect organisation", "order of importance", "chronological order"], m: "wr-structure" },
+    { q: "A works cited page ___", a: "lists the sources quoted or used, in a standard format", w: ["lists the writer's opinions", "summarises each paragraph", "lists the hardest words"], m: "wr-source" },
     { q: "Which is the best focused research question?", a: "How did the 2004 tsunami affect fishing in Tamil Nadu?", w: ["What is the ocean?", "Tell me about water.", "Are tsunamis interesting?"], m: "wr-sequence" },
   ],
 };

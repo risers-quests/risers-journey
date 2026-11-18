@@ -94,11 +94,11 @@ export const LA7_TOPIC_CHOICES = [
   { id: "l7-words", chapter: "Chapter 6", name: "Word Study", about: "Roots, prefixes, suffixes, synonyms, homophones, multiple meanings, connotations, figurative language, analogies, allusions" },
 ];
 export const W7_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [
-  { id: "w7-paragraphs", chapter: "Writing process", name: "Paragraphs and the Writing Process", about: "Topic sentences, details that belong, transitions, conclusions, the steps of writing" },
-  { id: "w7-narrative", chapter: "Narrative", name: "Narrative and Descriptive Writing", about: "Order of events, point of view, sensory and precise details, dialogue, showing not telling" },
-  { id: "w7-informational", chapter: "Informational", name: "Informational Writing", about: "Text structures: compare and contrast, cause and effect, problem and solution, sequence" },
-  { id: "w7-opinion", chapter: "Opinion", name: "Opinion and Argument Writing", about: "Fact and opinion, claims and evidence, bias and loaded words, counterarguments, audience" },
-  { id: "w7-research", chapter: "Research", name: "Research Writing", about: "Reliable sources, paraphrasing, plagiarism, citing, research questions" },
+  { id: "w7-paragraphs", chapter: "Chapter 1", name: "Foundations of Writing", about: "Audience, main ideas and details, staying on topic, proofreading, paragraphs, active voice" },
+  { id: "w7-narrative", chapter: "Chapter 2", name: "Writing a Narrative", about: "Order of events, point of view, sensory and precise details, dialogue, showing not telling" },
+  { id: "w7-informational", chapter: "Chapter 3", name: "Writing to Inform", about: "Spatial, compare-and-contrast and cause-and-effect organisation, directions, explanatory writing" },
+  { id: "w7-opinion", chapter: "Chapter 4", name: "Writing an Argument", about: "Facts, opinions and bias, emotional appeals, advertising, claims, order of importance, audience" },
+  { id: "w7-research", chapter: "Chapter 3 (research)", name: "Research and Sources", about: "Reliable sources, quoting and paraphrasing, citing, notes, works cited" },
 ];
 // Grade 7 Maths: chapters offered one by one (ids match the server's GRADE7 templates).
 export const GRADE7_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [];
