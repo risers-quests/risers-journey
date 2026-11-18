@@ -168,3 +168,16 @@ export const W3_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [
   { id: "w3-inform", chapter: "Chapter 3", name: "Writing to Inform", about: "Friendly letters, instructions, audience, comparing, spatial order, linking words, main idea, news reports" },
   { id: "w3-opinion", chapter: "Chapter 4", name: "Writing an Opinion", about: "Fact and opinion, reasons, linking words, examples, opinion paragraphs" },
 ];
+
+// Grade 6 Language Arts (Spectrum Language Arts Grade 6).
+export const LA6_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [
+  { id: "l6-nouns-pronouns", chapter: "Chapter 1", name: "Nouns and Pronouns", about: "Common, proper and plural nouns; personal, intensive, demonstrative, relative and indefinite pronouns; pronoun shifts" },
+  { id: "l6-verbs", chapter: "Chapter 1", name: "Verbs and Verbals", about: "Present and past tense, agreement, action, helping, linking and transitive verbs, gerunds, participles, infinitives" },
+  { id: "l6-modifiers", chapter: "Chapter 1", name: "Modifiers and Joiners", about: "Adjectives, adverbs, conjunctions, interjections, prepositional phrases, articles" },
+  { id: "l6-sentences", chapter: "Chapter 2", name: "Sentences", about: "Four sentence types, simple, compound and complex sentences, fragments, combining" },
+  { id: "l6-capitals", chapter: "Chapter 3", name: "Capitalization", about: "Days, months, events, languages, teams, organisations, government, regions, titles, places" },
+  { id: "l6-punctuation", chapter: "Chapter 4", name: "End Marks and Commas", about: "Periods, abbreviations, initials, question and exclamation marks, commas, set-off dialogue" },
+  { id: "l6-marks", chapter: "Chapter 4", name: "Other Punctuation", about: "Quotation marks, apostrophes, colons, semicolons, hyphens, dashes, parentheses" },
+  { id: "l6-usage", chapter: "Chapter 5", name: "Usage", about: "Subjective and objective pronouns, tricky verbs, adjectives and adverbs, double negatives" },
+  { id: "l6-words", chapter: "Chapter 6", name: "Word Study", about: "Synonyms, antonyms, analogies, homophones, homographs, connotation, figures of speech, roots and affixes" },
+];

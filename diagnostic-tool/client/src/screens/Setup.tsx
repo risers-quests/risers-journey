@@ -3,7 +3,7 @@ import { staffSignedIn } from "../staff";
 import { createSession, getSessionStatus } from "../api";
 import { SessionStatus } from "../types";
 import { forgetTest, rememberTest, savedTests } from "../saved";
-import { ENGLISH8_TOPIC_CHOICES, GRADE7_TOPIC_CHOICES, LA7_TOPIC_CHOICES, W7_TOPIC_CHOICES, W4_TOPIC_CHOICES, GRADE3_TOPIC_CHOICES, LA4_TOPIC_CHOICES, W3_TOPIC_CHOICES, GRADE4_TOPIC_CHOICES, GRADE8_TOPIC_CHOICES, STRAND_CHOICES } from "../strands";
+import { ENGLISH8_TOPIC_CHOICES, GRADE7_TOPIC_CHOICES, LA7_TOPIC_CHOICES, W7_TOPIC_CHOICES, W4_TOPIC_CHOICES, GRADE3_TOPIC_CHOICES, LA4_TOPIC_CHOICES, W3_TOPIC_CHOICES, LA6_TOPIC_CHOICES, GRADE4_TOPIC_CHOICES, GRADE8_TOPIC_CHOICES, STRAND_CHOICES } from "../strands";
 
 // The 12 Risers. Their report email addresses are kept only in the email
 // script (diagnostic-tool/email), never on the site; it matches by name.
@@ -26,6 +26,9 @@ const LANGUAGE: Record<string, Record<string, { server: string; choices: Choice[
     "Language Arts": { server: "Language Arts", choices: LA4_TOPIC_CHOICES, note: "Spectrum Language Arts Grade 4." },
     Writing: { server: "Writing", choices: W4_TOPIC_CHOICES, note: "Spectrum Writing Grade 4: the parts of writing that have a right answer." },
   },
+  "Grade 6": {
+    "Language Arts": { server: "Language Arts", choices: LA6_TOPIC_CHOICES, note: "Spectrum Language Arts Grade 6." },
+  },
   "Grade 7": {
     "Language Arts": { server: "Language Arts", choices: LA7_TOPIC_CHOICES, note: "Spectrum Language Arts Grade 7." },
     ...(W7_TOPIC_CHOICES.length ? { Writing: { server: "Writing", choices: W7_TOPIC_CHOICES, note: "Spectrum Writing Grade 7: the parts of writing that have a right answer." } } : {}),
@@ -37,7 +40,7 @@ const LANGUAGE: Record<string, Record<string, { server: string; choices: Choice[
 };
 // Maths only where it is ready (Grade 5 by strand, other grades chapter by chapter).
 const subjectsFor = (grade: string) => [...(grade === "Grade 5" || CHAPTERS[grade] ? ["Maths"] : []), ...Object.keys(LANGUAGE[grade] ?? {})];
-const GRADES = ["Grade 3", "Grade 4", "Grade 5", "Grade 7", "Grade 8"];
+const GRADES = ["Grade 3", "Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grade 8"];
 // Each Riser's subjects and the grade for each (matches staff/riser-grades.js).
 // A Riser on their own device sees only these, and only the ones built so far;
 // staff see every grade and subject.
