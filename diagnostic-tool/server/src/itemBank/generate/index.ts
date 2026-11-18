@@ -51,6 +51,8 @@ import { CORNER_SHOP_TEMPLATES } from "./cornerShopE8.js";
 import { INCHCAPE_TEMPLATES } from "./inchcapeE8.js";
 import { DUSK_TEMPLATES } from "./duskE8.js";
 import { DRUM_DREAM_TEMPLATES } from "./drumDreamE8.js";
+import { SALAAM_TEMPLATES } from "./salaamE8.js";
+import { GIFT_INDIA_TEMPLATES } from "./giftIndiaE8.js";
 
 export type { GeneratedItem } from "./core.js";
 
@@ -121,6 +123,8 @@ const ENGLISH8_TEMPLATES: Record<string, Record<string, Template>> = {
   "e8-lit-inchcape": INCHCAPE_TEMPLATES,
   "e8-lit-dusk": DUSK_TEMPLATES,
   "e8-lit-drum-dream": DRUM_DREAM_TEMPLATES,
+  "e8-lit-salaam": SALAAM_TEMPLATES,
+  "e8-lit-gift-india": GIFT_INDIA_TEMPLATES,
 };
 
 /** Topics with generated questions (Grade 5; Grade 4 also uses GRADE4_TEMPLATES). */

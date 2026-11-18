@@ -178,6 +178,8 @@ TOPICS.push(
   { id: "e8-lit-inchcape", strand: "Literature", name: "The Inchcape Rock (Ch 4)", shortLabel: "The Inchcape Rock", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-lit-dusk", strand: "Literature", name: "Dusk (Ch 5)", shortLabel: "Dusk", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-lit-drum-dream", strand: "Literature", name: "Drum Dream Girl (Ch 6)", shortLabel: "Drum Dream Girl", dependsOn: [], grade: 8, subject: "English" },
+  { id: "e8-lit-salaam", strand: "Literature", name: "Salaam Namaste (Ch 7)", shortLabel: "Salaam Namaste", dependsOn: [], grade: 8, subject: "English" },
+  { id: "e8-lit-gift-india", strand: "Literature", name: "The Gift of India (Ch 8)", shortLabel: "The Gift of India", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-clauses", strand: "Grammar", name: "Dependent and Independent Clauses", shortLabel: "Clauses", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-purpose", strand: "Grammar", name: "Words as Nouns and Verbs; Clauses of Purpose", shortLabel: "Nouns/Verbs & Purpose", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-participles", strand: "Grammar", name: "Participles and Gerunds", shortLabel: "Participles & Gerunds", dependsOn: [], grade: 8, subject: "English" },

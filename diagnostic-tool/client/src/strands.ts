@@ -48,6 +48,8 @@ export const ENGLISH8_TOPIC_CHOICES = [
   { id: "e8-lit-inchcape", chapter: "Literature · Ch 4", name: "The Inchcape Rock", about: "Robert Southey's ballad: the Abbot's bell and Sir Ralph the Rover" },
   { id: "e8-lit-dusk", chapter: "Literature · Ch 5", name: "Dusk", about: "Saki's story: Gortsby, the young man and the cake of soap" },
   { id: "e8-lit-drum-dream", chapter: "Literature · Ch 6", name: "Drum Dream Girl", about: "Margarita Engle's poem about a girl who dared to drum" },
+  { id: "e8-lit-salaam", chapter: "Literature · Ch 7", name: "Salaam Namaste", about: "Sudha Murty's story: Sheikh Mohammed, Zubeida and Tabassum" },
+  { id: "e8-lit-gift-india", chapter: "Literature · Ch 8", name: "The Gift of India", about: "Sarojini Naidu's poem honouring Indian soldiers of World War I" },
   { id: "e8-clauses", chapter: "Grammar · Ch 1", name: "Dependent and Independent Clauses", about: "Which clause stands alone; noun, adjective and adverb clauses; who, which, whose, where" },
   { id: "e8-purpose", chapter: "Grammar · Ch 3", name: "Words as Nouns and Verbs; Adverb Clauses of Purpose", about: "a watch / we watch; so that, in order that, lest; purpose or result" },
   { id: "e8-participles", chapter: "Grammar · Ch 5", name: "Participles and Gerunds", about: "-ing words as nouns and adjectives, -ing after prepositions, joining with a participle, -ing / -ed feelings" },
