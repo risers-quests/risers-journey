@@ -49,7 +49,7 @@ export function safe(ts: Record<string, Template>): Record<string, Template> {
           try {
             return t(rng, g);
           } catch (e) {
-            if (n > 40) throw e;
+            if (n > 200) throw e;
           }
         }
       }) as Template,
