@@ -121,6 +121,29 @@ version (`ENGLISH_ANXIETY_QUESTIONS`): the same two factors and scale,
 our own adaptation, not a validated English scale. Reports and emails
 say English.
 
+Grade 8 English now shows as two subjects on the start page, **Grammar**
+and **Literature** (one card each, same `e8-` topics split by strand).
+Literature has one topic per chapter (18 chapters), built from chapter
+data files by `generate/litE8.ts` (`chapterTemplates`).
+
+## Grade 7 (Karis, Michael, Shalom)
+
+Three subjects: **Maths** (`g7-`, 18 book chapters as 17 topics;
+Constructions, ch 15, is folded into Properties of Triangles), **Language
+Arts** (`l7-`, 8 topics) and **Writing** (`w7-`, 5 topics), built by
+`generate/skillTopic.ts`. Integers, Fractions, Decimals and the geometry
+chapters have their own Grade 7 generators (`generate/m7/`); Rational
+Numbers, Exponents, Expressions, Equations, Ratio, Percent, Symmetry,
+Solids, Data and Probability reuse the Grade 8 generators under `g7-`
+ids, so they can run a little above Grade 7 level. Writing questions test
+writing skills by choice/tap/tiles; an essay itself isn't marked.
+
+## Who sees what
+
+In kid mode the start page shows only that child's grade and subjects
+(`RISER_SUBJECTS` in `client/src/screens/Setup.tsx`); staff see every
+grade and subject, and all reports.
+
 ## Stack
 
 - **Server**: Node.js + TypeScript + Express. Each session is saved as one
