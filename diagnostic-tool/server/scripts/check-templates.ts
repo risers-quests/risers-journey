@@ -37,6 +37,8 @@ import { verify as verifyIdiomsE8 } from "../src/itemBank/generate/idiomsE8.js";
 import { verify as verifyWinterOak } from "../src/itemBank/generate/winterOakE8.js";
 import { verify as verifyDontQuit } from "../src/itemBank/generate/dontQuitE8.js";
 import { verify as verifyCornerShop } from "../src/itemBank/generate/cornerShopE8.js";
+import { verify as verifyInchcape } from "../src/itemBank/generate/inchcapeE8.js";
+import { verify as verifyDusk } from "../src/itemBank/generate/duskE8.js";
 
 const N = Number(process.env.N || 20000);
 let failures = 0;
@@ -241,6 +243,8 @@ const ENGLISH_VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
   "e8-lit-winter-oak": () => verifyWinterOak(),
   "e8-lit-dont-quit": () => verifyDontQuit(),
   "e8-lit-corner-shop": () => verifyCornerShop(),
+  "e8-lit-inchcape": () => verifyInchcape(),
+  "e8-lit-dusk": () => verifyDusk(),
 };
 for (const t of ENGLISH8_TOPICS) VERIFY[t] = ENGLISH_VERIFY[t] ?? (() => null);
 

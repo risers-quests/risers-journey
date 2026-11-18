@@ -48,6 +48,8 @@ import { LIT_MISCONCEPTIONS } from "./litE8.js";
 import { WINTER_OAK_TEMPLATES } from "./winterOakE8.js";
 import { DONT_QUIT_TEMPLATES } from "./dontQuitE8.js";
 import { CORNER_SHOP_TEMPLATES } from "./cornerShopE8.js";
+import { INCHCAPE_TEMPLATES } from "./inchcapeE8.js";
+import { DUSK_TEMPLATES } from "./duskE8.js";
 
 export type { GeneratedItem } from "./core.js";
 
@@ -115,6 +117,8 @@ const ENGLISH8_TEMPLATES: Record<string, Record<string, Template>> = {
   "e8-lit-winter-oak": WINTER_OAK_TEMPLATES,
   "e8-lit-dont-quit": DONT_QUIT_TEMPLATES,
   "e8-lit-corner-shop": CORNER_SHOP_TEMPLATES,
+  "e8-lit-inchcape": INCHCAPE_TEMPLATES,
+  "e8-lit-dusk": DUSK_TEMPLATES,
 };
 
 /** Topics with generated questions (Grade 5; Grade 4 also uses GRADE4_TEMPLATES). */
