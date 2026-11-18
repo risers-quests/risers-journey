@@ -123,3 +123,12 @@ export const GRADE7_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [
   { id: "g7-data", chapter: "Chapter 17", name: "Data Handling", about: "Organising data, bar graphs, pie charts" },
   { id: "g7-probability", chapter: "Chapter 18", name: "Probability", about: "Coins, dice, cards and spinners" },
 ];
+
+// Grade 4 Writing (Spectrum Writing Grade 4); Chapter 1 split in two.
+export const W4_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [
+  { id: "w4-words", chapter: "Chapter 1", name: "Words and Sentences", about: "Precise nouns, strong verbs, adjectives, adverbs, time order, shades of meaning, conjunctions" },
+  { id: "w4-proofreading", chapter: "Chapter 1", name: "Proofreading", about: "Capitals, commas, dialogue punctuation, spelling, subject-verb agreement" },
+  { id: "w4-narrative", chapter: "Chapter 2", name: "Writing a Narrative", about: "Senses, imagery, story elements, dialogue, characters, point of view" },
+  { id: "w4-inform", chapter: "Chapter 3", name: "Writing to Inform", about: "Letters, comparing, cause and effect, instructions, main idea, topic sentences" },
+  { id: "w4-opinion", chapter: "Chapter 4", name: "Writing an Opinion", about: "Fact and opinion, reasons, emotional appeal, bias, slogans, business letters" },
+];

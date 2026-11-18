@@ -91,7 +91,7 @@ export interface SessionState {
 export function createInitialState(strands: string[] = STRANDS, grade = 5, chosenTopics?: string[], subject = "Maths"): SessionState {
   const english = isLanguage(subject);
   // Language subjects and chapter-by-chapter maths grades: the topics chosen (in book order); Grade 5 maths: by strand.
-  const ready = english ? languageTopics(subject) : mathsTopics(grade);
+  const ready = english ? languageTopics(subject, grade) : mathsTopics(grade);
   const topicOrder = ready
     ? TOPICS.filter((t) => ready.includes(t.id) && (!chosenTopics || chosenTopics.includes(t.id))).map((t) => t.id)
     : TOPICS.filter((t) => !t.grade && strands.includes(t.strand)).map((t) => t.id);

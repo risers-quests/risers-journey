@@ -69,7 +69,7 @@ router.post("/sessions", async (req, res) => {
   // Grade 4 and Grade 8: the topics chosen one by one (none given means every topic ready at that grade).
   const g = gradeNumber(grade);
   // Language subjects have their own topics; maths at Grades 4, 7 and 8 is chosen chapter by chapter.
-  const ready = isLanguage(subject) ? languageTopics(subject) : mathsTopics(g);
+  const ready = isLanguage(subject) ? languageTopics(subject, g) : mathsTopics(g);
   const chosenTopics = ready && Array.isArray(topics) ? ready.filter((t) => topics.includes(t)) : undefined;
   if (ready && chosenTopics && !chosenTopics.length) return res.status(400).json({ error: "choose at least one topic" });
   const { id, state } = await createSession(name, `Grade ${g}`, chosen, chosenTopics, subject);

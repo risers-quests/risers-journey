@@ -3,7 +3,7 @@ import { staffSignedIn } from "../staff";
 import { createSession, getSessionStatus } from "../api";
 import { SessionStatus } from "../types";
 import { forgetTest, rememberTest, savedTests } from "../saved";
-import { ENGLISH8_TOPIC_CHOICES, GRADE7_TOPIC_CHOICES, LA7_TOPIC_CHOICES, W7_TOPIC_CHOICES, GRADE4_TOPIC_CHOICES, GRADE8_TOPIC_CHOICES, STRAND_CHOICES } from "../strands";
+import { ENGLISH8_TOPIC_CHOICES, GRADE7_TOPIC_CHOICES, LA7_TOPIC_CHOICES, W7_TOPIC_CHOICES, W4_TOPIC_CHOICES, GRADE4_TOPIC_CHOICES, GRADE8_TOPIC_CHOICES, STRAND_CHOICES } from "../strands";
 
 // The 12 Risers. Their report email addresses are kept only in the email
 // script (diagnostic-tool/email), never on the site; it matches by name.
@@ -19,6 +19,9 @@ const gradeFor = (name: string) => RISER_GRADE[name] ?? "Grade 5";
 type Choice = (typeof GRADE4_TOPIC_CHOICES)[number];
 const isLit = (t: Choice) => t.id.startsWith("e8-lit-") || t.id === "e8-figures";
 const LANGUAGE: Record<string, Record<string, { server: string; choices: Choice[]; note: string }>> = {
+  "Grade 4": {
+    Writing: { server: "Writing", choices: W4_TOPIC_CHOICES, note: "Spectrum Writing Grade 4: the parts of writing that have a right answer." },
+  },
   "Grade 7": {
     "Language Arts": { server: "Language Arts", choices: LA7_TOPIC_CHOICES, note: "Spectrum Language Arts Grade 7." },
     ...(W7_TOPIC_CHOICES.length ? { Writing: { server: "Writing", choices: W7_TOPIC_CHOICES, note: "Spectrum Writing Grade 7: the parts of writing that have a right answer." } } : {}),
