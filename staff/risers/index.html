@@ -18,7 +18,7 @@
 .rg-table th, .rg-table td { padding: 12px 16px; text-align: left; border-top: 1px solid var(--border); font-size: .95rem; }
 .rg-table thead th { border-top: 0; font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); background: #fafbf8; }
 .rg-table tbody th { font-weight: 600; }
-.rg-g { display: inline-block; min-width: 76px; padding: 4px 10px; border-radius: 99px; font-size: .85rem; font-weight: 600; background: var(--accent-soft); color: var(--accent-dark); text-align: center; }
+.rg-g { display: inline-block; min-width: 76px; white-space: nowrap; padding: 4px 10px; border-radius: 99px; font-size: .85rem; font-weight: 600; background: var(--accent-soft); color: var(--accent-dark); text-align: center; }
 .rg-none { color: var(--ink-soft); }
 .rg-note { max-width: 820px; font-size: .88rem; color: var(--ink-soft); margin: 14px 0 0; }
 @media (max-width: 560px) { .rg-table th, .rg-table td { padding: 10px 8px; font-size: .88rem; } .rg-g { min-width: 0; } }
@@ -43,11 +43,12 @@
   app.appendChild(el('header', 'hd-welcome', '<h1>Risers’ grades</h1><p>The level each Riser works at, subject by subject.</p>'));
   var rows = kids.map(function (k) {
     var g = G[k.slug];
-    // One English subject (no separate Writing): one cell across both columns.
-    var lang = g.english ? '<td colspan="2"><span class="rg-g">Grade ' + g.english + ' English</span></td>' : '<td>' + cell(g.language) + '</td><td>' + cell(g.writing) + '</td>';
+    // Grade 8 English is Grammar and Literature, in place of Language Arts and Writing.
+    var named = function (n, what) { return '<span class="rg-g">Grade ' + n + ' ' + what + '</span>'; };
+    var lang = g.grammar ? '<td>' + named(g.grammar, 'Grammar') + '</td><td>' + named(g.literature, 'Literature') + '</td>' : '<td>' + cell(g.language) + '</td><td>' + cell(g.writing) + '</td>';
     return '<tr><th scope="row">' + k.name + '</th><td>' + cell(g.maths) + '</td>' + lang + '</tr>';
   }).join('');
-  app.appendChild(el('div', 'rg-wrap', '<table class="rg-table"><thead><tr><th>Riser</th><th>Maths</th><th>Language Arts</th><th>Writing</th></tr></thead><tbody>' + rows + '</tbody></table>'));
+  app.appendChild(el('div', 'rg-wrap', '<table class="rg-table"><thead><tr><th>Riser</th><th>Maths</th><th>Language Arts / Grammar</th><th>Writing / Literature</th></tr></thead><tbody>' + rows + '</tbody></table>'));
   app.appendChild(el('p', 'rg-note', kids.length + ' Risers. To change a grade, edit staff/riser-grades.js.'));
 })();
 </script>

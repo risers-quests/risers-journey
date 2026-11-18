@@ -13,9 +13,19 @@ const RISER_GRADE: Record<string, string> = { Eva: "Grade 4", Elyon: "Grade 4", 
 // Grades tested chapter by chapter (their own book), and the chapters ready.
 const CHAPTERS: Record<string, typeof GRADE4_TOPIC_CHOICES> = { "Grade 4": GRADE4_TOPIC_CHOICES, "Grade 8": GRADE8_TOPIC_CHOICES };
 const gradeFor = (name: string) => RISER_GRADE[name] ?? "Grade 5";
-// Subjects a Skill Check can cover, and the grades each is ready for.
-const SUBJECTS = ["Maths", "English"];
-const ENGLISH_GRADES = ["Grade 8"];
+// Language subjects, per grade: the name on the start page, the subject the
+// server knows, and the topics offered. Grade 8 English is shown as two:
+// Grammar (grammar, vocabulary, punctuation, spelling) and Literature.
+type Choice = (typeof GRADE4_TOPIC_CHOICES)[number];
+const isLit = (t: Choice) => t.id.startsWith("e8-lit-") || t.id === "e8-figures";
+const LANGUAGE: Record<string, Record<string, { server: string; choices: Choice[]; note: string }>> = {
+  "Grade 8": {
+    Grammar: { server: "English", choices: ENGLISH8_TOPIC_CHOICES.filter((t) => !isLit(t)), note: "Grammar, vocabulary, punctuation and spelling (English Rose Reader 8)." },
+    Literature: { server: "English", choices: ENGLISH8_TOPIC_CHOICES.filter(isLit), note: "The reader's stories, poems and play (English Rose Reader 8)." },
+  },
+};
+const subjectsFor = (grade: string) => ["Maths", ...Object.keys(LANGUAGE[grade] ?? {})];
+const GRADES = ["Grade 4", "Grade 5", "Grade 8"];
 
 export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) => void; signedIn?: string | null }) {
   // A Riser signed in on this device is chosen already.
@@ -24,7 +34,7 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
   const forName = RISERS.find((n) => n.toLowerCase() === (new URLSearchParams(location.search).get("for") || "").toLowerCase()) ?? "";
   // A Riser on their own device: their name and grade are known, so they only choose what to check.
   const kidMode = !!me && !staffSignedIn();
-  const [subject, setSubject] = useState(SUBJECTS[0]);
+  const [subject, setSubject] = useState("Maths");
   const [childName, setChildNameRaw] = useState(me || forName);
   function setChildName(name: string) {
     setChildNameRaw(name);
@@ -38,15 +48,16 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
   const [grade, setGrade] = useState(gradeFor(me || forName));
   // Grade 4 and 8: one chapter per sitting by default; tick more to test them together.
   const [g4Topics, setG4Topics] = useState<string[]>([(CHAPTERS[gradeFor(me || forName)] ?? GRADE4_TOPIC_CHOICES)[0].id]);
-  const english = subject === "English";
-  const chapters = english ? ENGLISH8_TOPIC_CHOICES : CHAPTERS[grade];
+  const lang = LANGUAGE[grade]?.[subject];
+  const english = !!lang;
+  const chapters = lang ? lang.choices : CHAPTERS[grade];
   useEffect(() => {
     if (chapters) setG4Topics([chapters[0].id]);
   }, [grade, subject]);
-  // English is ready for Grade 8 only: choosing it moves the grade there.
+  // A subject not offered at the new grade goes back to Maths.
   useEffect(() => {
-    if (english && !ENGLISH_GRADES.includes(grade)) setGrade(ENGLISH_GRADES[0]);
-  }, [subject]);
+    if (!subjectsFor(grade).includes(subject)) setSubject("Maths");
+  }, [grade]);
   function toggleTopic(id: string) {
     setG4Topics((list) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id]));
   }
@@ -75,7 +86,7 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
     setError(null);
     try {
       const name = childName.trim();
-      const sessionId = await createSession(name, grade, chapters ? ["Number & Algebra"] : strands, chapters ? g4Topics : undefined, subject);
+      const sessionId = await createSession(name, grade, chapters ? ["Number & Algebra"] : strands, chapters ? g4Topics : undefined, lang ? lang.server : "Maths");
       rememberTest({ id: sessionId, childName: name, startedAt: new Date().toISOString() });
       const status = await getSessionStatus(sessionId);
       if (!status) throw new Error("Couldn't start the test");
@@ -142,7 +153,7 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
         {!kidMode && <div>
           <label htmlFor="grade">Grade</label>
           <select id="grade" value={grade} onChange={(e) => setGrade(e.target.value)}>
-            {(english ? ENGLISH_GRADES : ["Grade 5", "Grade 4", "Grade 8"]).map((g) => (
+            {GRADES.map((g) => (
               <option key={g}>{g}</option>
             ))}
           </select>
@@ -150,17 +161,16 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
         <div>
           <label htmlFor="subject">Subject</label>
           <select id="subject" value={subject} onChange={(e) => setSubject(e.target.value)}>
-            {/* A Riser on their own device sees only the subjects ready for their grade. */}
-            {SUBJECTS.filter((s) => !kidMode || s !== "English" || ENGLISH_GRADES.includes(grade)).map((s) => (
+            {subjectsFor(grade).map((s) => (
               <option key={s}>{s}</option>
             ))}
           </select>
-          <small className="grade-note">{english ? "English: Grade 8 (English Rose Reader 8) so far." : "More subjects are coming."}</small>
+          <small className="grade-note">{lang ? lang.note : "Language subjects are offered at Grades 7 and 8."}</small>
 
         </div>
         {chapters && (
           <fieldset className="strand-pick">
-            <legend>Which topics? (from the {grade} {english ? "English reader" : "book"})</legend>
+            <legend>Which topics? ({grade} {lang ? subject : "Maths"})</legend>
             {chapters.map((t) => (
               <label key={t.id} className={"strand-option" + (g4Topics.includes(t.id) ? " on" : "")}>
                 <input type="checkbox" checked={g4Topics.includes(t.id)} onChange={() => toggleTopic(t.id)} />
