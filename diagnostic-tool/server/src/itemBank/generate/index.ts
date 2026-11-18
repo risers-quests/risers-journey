@@ -67,6 +67,9 @@ import { MAGI_TEMPLATES } from "./magiE8.js";
 import { MACAVITY_TEMPLATES } from "./macavityE8.js";
 import { CAESAR_TEMPLATES } from "./caesarE8.js";
 import { EXPECTATIONS_TEMPLATES } from "./expectationsE8.js";
+import { TREE_TEMPLATES } from "./treeE8.js";
+import { NAME_TEMPLATES } from "./nameE8.js";
+import { LOUSE_TEMPLATES } from "./louseE8.js";
 
 export type { GeneratedItem } from "./core.js";
 
@@ -146,6 +149,9 @@ const ENGLISH8_TEMPLATES: Record<string, Record<string, Template>> = {
   "e8-lit-macavity": MACAVITY_TEMPLATES,
   "e8-lit-caesar": CAESAR_TEMPLATES,
   "e8-lit-expectations": EXPECTATIONS_TEMPLATES,
+  "e8-lit-tree": TREE_TEMPLATES,
+  "e8-lit-name": NAME_TEMPLATES,
+  "e8-lit-louse": LOUSE_TEMPLATES,
 };
 
 /** Topics with generated questions (Grade 5; Grade 4 also uses GRADE4_TEMPLATES). */

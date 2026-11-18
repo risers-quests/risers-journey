@@ -176,6 +176,24 @@ const ACTIVES_ONLY = (e: Entry) => active(e);
 
 const RULES: { q: string; a: string; w: { text: string; mistake: string }[] }[] = [
   {
+    q: "Which sentence wrongly uses the passive with a verb that shows a state, not an action?",
+    a: "Common sense is lacked by your sister.",
+    w: [
+      { text: "Dinner is being prepared now.", mistake: "voice-rule" },
+      { text: "Has she been informed?", mistake: "voice-rule" },
+      { text: "I was invited to the party.", mistake: "voice-rule" },
+    ],
+  },
+  {
+    q: "For an instrument that causes the action, the passive uses ___",
+    a: "with (He was injured with a gun)",
+    w: [
+      { text: "by (He was injured by a gun)", mistake: "voice-doer" },
+      { text: "from (He was injured from a gun)", mistake: "voice-doer" },
+      { text: "to (He was injured to a gun)", mistake: "voice-doer" },
+    ],
+  },
+  {
     q: "Passive voice = a form of 'be' + ___",
     a: "the past participle (written, taken)",
     w: [

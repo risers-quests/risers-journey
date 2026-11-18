@@ -50,6 +50,9 @@ import { verify as verifyMagi } from "../src/itemBank/generate/magiE8.js";
 import { verify as verifyMacavity } from "../src/itemBank/generate/macavityE8.js";
 import { verify as verifyCaesar } from "../src/itemBank/generate/caesarE8.js";
 import { verify as verifyExpectations } from "../src/itemBank/generate/expectationsE8.js";
+import { verify as verifyTree } from "../src/itemBank/generate/treeE8.js";
+import { verify as verifyName } from "../src/itemBank/generate/nameE8.js";
+import { verify as verifyLouse } from "../src/itemBank/generate/louseE8.js";
 
 const N = Number(process.env.N || 20000);
 let failures = 0;
@@ -266,6 +269,9 @@ const ENGLISH_VERIFY: Record<string, (it: GeneratedItem) => string | null> = {
   "e8-lit-macavity": () => verifyMacavity(),
   "e8-lit-caesar": () => verifyCaesar(),
   "e8-lit-expectations": () => verifyExpectations(),
+  "e8-lit-tree": () => verifyTree(),
+  "e8-lit-name": () => verifyName(),
+  "e8-lit-louse": () => verifyLouse(),
 };
 for (const t of ENGLISH8_TOPICS) VERIFY[t] = ENGLISH_VERIFY[t] ?? (() => null);
 for (const b of [...LA7_BANKS, ...W7_BANKS]) VERIFY[b.topic] = () => verifySkill(b);
