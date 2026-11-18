@@ -181,6 +181,7 @@ TOPICS.push(
   { id: "e8-speech", strand: "Grammar", name: "Direct and Indirect Speech", shortLabel: "Reported Speech", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-conditionals", strand: "Grammar", name: "Conditionals (First, Second and Third)", shortLabel: "Conditionals", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-words", strand: "Vocabulary", name: "Word Study", shortLabel: "Word Study", dependsOn: [], grade: 8, subject: "English" },
+  { id: "e8-idioms", strand: "Vocabulary", name: "Idioms, Proverbs and Compound Words", shortLabel: "Idioms & Proverbs", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-figures", strand: "Literature", name: "Figures of Speech", shortLabel: "Figures of Speech", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-punctuation", strand: "Punctuation & Spelling", name: "Punctuation", shortLabel: "Punctuation", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-spelling", strand: "Punctuation & Spelling", name: "Spelling and Pronunciation", shortLabel: "Spelling & Sounds", dependsOn: [], grade: 8, subject: "English" }

@@ -70,6 +70,56 @@ All questions are generated, with a named mistake behind every wrong
 option, and are covered by the stress test (algebra answers are checked by
 substituting numbers). All 25 chapters of the book are in.
 
+## English, Grade 8
+
+English is its own subject on the start page (Grade 8 only so far), from
+the school's reader, **English Rose Reader 8** (Macmillan / Frank Bros.).
+Topic ids start `e8-` (`itemBank/topics.ts`, strands Grammar, Vocabulary,
+Literature, Punctuation & Spelling); the start page lists them in
+`ENGLISH8_TOPIC_CHOICES` (`client/src/strands.ts`) in the reader's
+chapter order, and a session stores `subject: "English"`.
+
+What the three stages mean for English (`itemBank/generate/english.ts`):
+- **Concrete (hands-on):** tap words in a sentence (`WordsActivity`: the
+  verb, the dependent clause, where commas go, the stressed syllable) or
+  build a sentence or word from tiles (`OrderActivity`, with spare tiles
+  that tempt a named mistake: "to swim" in "fond of ___", "were" for
+  "was"). `glue: true` joins word-part tiles into one word.
+- **Pictorial:** a text card (`TextSpec`) with the part that matters
+  `[[highlighted]]`; the prompt only says what to do with it.
+- **Abstract:** the rule or the sentence on its own.
+
+English can't be generated from random numbers, so each topic keeps banks
+of hand-checked sentences with their parts marked (the clause, the
+passive, the reported form …); a template picks one and builds the
+question, every wrong option a named mistake. `params.i` is the
+sentence's index in its bank (with `k` naming the bank where a topic has
+several), so a child doesn't meet the same sentence twice in a topic.
+Gap-fills give the verb as the book does, "(verb: stay)".
+
+Topics in so far (each 15 levels, in `generate/*E8.ts`):
+
+| Strand | Topic | Reader |
+|---|---|---|
+| Grammar | Dependent and Independent Clauses | ch 1 |
+| Grammar | Words as Nouns and Verbs; Clauses of Purpose | ch 3 |
+| Grammar | Participles and Gerunds | ch 5 |
+| Grammar | Forms of Have; Infinitive and Bare Infinitive | ch 7 |
+| Grammar | Simple, Compound and Complex Sentences (+ joining, transformation) | ch 9, 11, 12 |
+| Grammar | Active and Passive Voice | ch 14 |
+| Grammar | Direct and Indirect Speech | ch 15 |
+| Grammar | Conditionals | ch 17 |
+| Vocabulary | Word Study (homophones, homonyms, synonyms, affixes, confused words, loanwords) | vocabulary column |
+| Literature | Figures of Speech | "Appreciating the poem" |
+| Punctuation & Spelling | Punctuation; Spelling and Pronunciation | punctuation / spelling columns |
+
+Quoted literary lines are public domain only (Southey, Shelley,
+Coleridge, O. Henry, Dickens); the reader's copyrighted poems (Eliot,
+Engle, Seth) are never quoted. The closing questionnaire has an English
+version (`ENGLISH_ANXIETY_QUESTIONS`): the same two factors and scale,
+our own adaptation, not a validated English scale. Reports and emails
+say English.
+
 ## Stack
 
 - **Server**: Node.js + TypeScript + Express. Each session is saved as one

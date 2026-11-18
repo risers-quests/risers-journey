@@ -51,6 +51,7 @@ export const ENGLISH8_TOPIC_CHOICES = [
   { id: "e8-speech", chapter: "Grammar · Ch 15", name: "Direct and Indirect Speech", about: "Statements, questions and commands; tense, pronoun and time-word changes, both ways" },
   { id: "e8-conditionals", chapter: "Grammar · Ch 17", name: "Conditionals", about: "First, second and third conditionals: making them from prompts, what they mean" },
   { id: "e8-words", chapter: "Vocabulary", name: "Word Study", about: "Homophones, homonyms, synonyms and antonyms, prefixes and suffixes, confused words, loanwords" },
+  { id: "e8-idioms", chapter: "Vocabulary", name: "Idioms, Proverbs and Compound Words", about: "Ship and sailing idioms, Shakespearean idioms and proverbs, compound words" },
   { id: "e8-figures", chapter: "Appreciating the poem", name: "Figures of Speech", about: "Simile, metaphor, personification, alliteration, onomatopoeia, hyperbole, irony, synecdoche" },
   { id: "e8-punctuation", chapter: "Punctuation", name: "Punctuation", about: "Capitals, end marks, commas, apostrophes, inverted commas, colon, hyphen" },
   { id: "e8-spelling", chapter: "Spelling · Pronunciation", name: "Spelling and Pronunciation", about: "ie / ei, doubling, -tion / -sion, -ance / -ence, dis-, British spelling, syllables and stress, -ed sounds" },
