@@ -28,7 +28,7 @@ export type Rng = () => number;
  */
 let currentGrade = 5;
 export function setGrade(g: number) {
-  currentGrade = g === 4 ? 4 : g === 8 ? 8 : 5;
+  currentGrade = g === 4 ? 4 : g === 8 ? 8 : g === 7 ? 7 : 5;
 }
 export const G = () => (currentGrade === 4 ? 10 : 1);
 export const D = () => (currentGrade === 4 ? 1 : 0);

@@ -104,4 +104,18 @@ export const W7_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [
   { id: "w7-research", chapter: "Chapter 3 (research)", name: "Research and Sources", about: "Reliable sources, quoting and paraphrasing, citing, notes, works cited" },
 ];
 // Grade 7 Maths: chapters offered one by one (ids match the server's GRADE7 templates).
-export const GRADE7_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [];
+export const GRADE7_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [
+  { id: "g7-integers", chapter: "Chapter 1", name: "Integers", about: "Properties, adding, subtracting, multiplying and dividing integers" },
+  { id: "g7-fractions", chapter: "Chapter 2", name: "Fractions", about: "Kinds of fractions, the four operations, 'of', reciprocals, word problems" },
+  { id: "g7-decimals", chapter: "Chapter 3", name: "Decimals", about: "Multiplying and dividing decimals; by 10, 100 and 1000" },
+  { id: "g7-rational", chapter: "Chapter 4", name: "Rational Numbers", about: "On the number line, between two numbers, the four operations" },
+  { id: "g7-exponents", chapter: "Chapter 5", name: "Powers and Exponents", about: "Base and exponent, laws of exponents, standard form" },
+  { id: "g7-expressions", chapter: "Chapter 6", name: "Algebraic Expressions", about: "Terms, coefficients, like terms, adding and subtracting, substituting" },
+  { id: "g7-equations", chapter: "Chapter 7", name: "Linear Equations", about: "Solving equations in one variable and word problems" },
+  { id: "g7-ratio", chapter: "Chapter 8", name: "Ratio and Proportion", about: "Ratios, proportion, the unitary method" },
+  { id: "g7-percent", chapter: "Chapter 9", name: "Percentage and Its Applications", about: "Percent of a quantity, the whole from a part, increase and decrease" },
+  { id: "g7-symmetry", chapter: "Chapter 12", name: "Symmetry", about: "Lines of symmetry, reflection, rotational symmetry and its order" },
+  { id: "g7-solids", chapter: "Chapter 13", name: "Visualising Solid Shapes", about: "Faces, edges and vertices, nets, views of solids" },
+  { id: "g7-data", chapter: "Chapter 17", name: "Data Handling", about: "Organising data, bar graphs, pie charts" },
+  { id: "g7-probability", chapter: "Chapter 18", name: "Probability", about: "Coins, dice, cards and spinners" },
+];

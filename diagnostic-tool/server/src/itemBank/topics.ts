@@ -205,6 +205,25 @@ TOPICS.push(
   { id: "e8-spelling", strand: "Punctuation & Spelling", name: "Spelling and Pronunciation", shortLabel: "Spelling & Sounds", dependsOn: [], grade: 8, subject: "English" }
 );
 
+/** Grade 7 Maths (the school's Grade 7 book), chapter by chapter. Some chapters use the Grade 8 questions for the same skill. */
+TOPICS.push(
+  ...([
+    ["g7-integers", "Number & Algebra", "Integers"],
+    ["g7-fractions", "Number & Algebra", "Fractions"],
+    ["g7-decimals", "Number & Algebra", "Decimals"],
+    ["g7-rational", "Number & Algebra", "Rational Numbers"],
+    ["g7-exponents", "Number & Algebra", "Powers and Exponents"],
+    ["g7-expressions", "Number & Algebra", "Algebraic Expressions"],
+    ["g7-equations", "Number & Algebra", "Linear Equations"],
+    ["g7-ratio", "Ratio & Proportion", "Ratio and Proportion"],
+    ["g7-percent", "Ratio & Proportion", "Percentage and Its Applications"],
+    ["g7-symmetry", "Measurement & Geometry", "Symmetry"],
+    ["g7-solids", "Measurement & Geometry", "Visualising Solid Shapes"],
+    ["g7-data", "Data Handling", "Data Handling"],
+    ["g7-probability", "Data Handling", "Probability"],
+  ] as const).map(([id, strand, name]) => ({ id, strand, name, shortLabel: name, dependsOn: [], grade: 7 }))
+);
+
 /** Grade 7 Language Arts (Spectrum Language Arts Grade 7), chosen topic by topic. */
 TOPICS.push(
   { id: "l7-nouns-pronouns", strand: "Parts of Speech", name: "Nouns and Pronouns", shortLabel: "Nouns & Pronouns", dependsOn: [], grade: 7, subject: "Language Arts" },

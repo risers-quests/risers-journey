@@ -45,6 +45,10 @@ import { PUNCTUATION_E8_TEMPLATES, MISCONCEPTIONS as PUN_E8_MISCONCEPTIONS } fro
 import { SPELLING_E8_TEMPLATES, MISCONCEPTIONS as SPL_E8_MISCONCEPTIONS } from "./spellingE8.js";
 import { IDIOMS_E8_TEMPLATES, MISCONCEPTIONS as IDM_E8_MISCONCEPTIONS } from "./idiomsE8.js";
 import { LIT_MISCONCEPTIONS } from "./litE8.js";
+import { safe } from "./m7/kit.js";
+import { INTEGERS_G7, MISCONCEPTIONS as INT7_MIS } from "./m7/integers.js";
+import { FRACTIONS_G7, MISCONCEPTIONS as FR7_MIS } from "./m7/fractions.js";
+import { DECIMALS_G7, MISCONCEPTIONS as DEC7_MIS } from "./m7/decimals.js";
 import { SkillTopic, skillTemplates } from "./skillTopic.js";
 import { NOUNS_PRONOUNS, MISCONCEPTIONS as LA7_NP } from "./la7/nounsPronouns.js";
 import { VERBS, MISCONCEPTIONS as LA7_VB } from "./la7/verbs.js";
@@ -212,6 +216,9 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...SPL_E8_MISCONCEPTIONS,
   ...IDM_E8_MISCONCEPTIONS,
   ...LIT_MISCONCEPTIONS,
+  ...INT7_MIS,
+  ...FR7_MIS,
+  ...DEC7_MIS,
   ...LA7_NP,
   ...LA7_VB,
   ...LA7_MD,
@@ -291,7 +298,24 @@ export const LA7_BANKS = [NOUNS_PRONOUNS, VERBS, MODIFIERS, LA7_SENTENCES, CAPIT
 export const W7_BANKS: SkillTopic[] = [PARAGRAPHS, NARRATIVE, INFORMATIONAL, OPINION, RESEARCH];
 export const W7_TEMPLATES: Record<string, Record<string, Template>> = Object.fromEntries(W7_BANKS.map((t) => [t.topic, skillTemplates(t)]));
 /** Grade 7 Maths (ids g7-). */
-export const GRADE7_TEMPLATES: Record<string, Record<string, Template>> = {};
+/** A Grade 8 topic's questions used for a Grade 7 chapter that teaches the same thing (the item carries the Grade 7 topic id). */
+const as7 = (id: string, from: Record<string, Template>): Record<string, Template> =>
+  Object.fromEntries(Object.entries(from).map(([cell, t]) => [cell, ((rng, g) => ({ ...t(rng, g), topicId: id })) as Template]));
+export const GRADE7_TEMPLATES: Record<string, Record<string, Template>> = {
+  "g7-integers": safe(INTEGERS_G7),
+  "g7-fractions": safe(FRACTIONS_G7),
+  "g7-decimals": safe(DECIMALS_G7),
+  "g7-rational": as7("g7-rational", RATIONAL_G8_TEMPLATES),
+  "g7-exponents": as7("g7-exponents", EXPONENTS_G8_TEMPLATES),
+  "g7-expressions": as7("g7-expressions", EXPRESSIONS_G8_TEMPLATES),
+  "g7-equations": as7("g7-equations", EQUATIONS_G8_TEMPLATES),
+  "g7-ratio": as7("g7-ratio", VARIATION_G8_TEMPLATES),
+  "g7-percent": as7("g7-percent", PERCENT_G8_TEMPLATES),
+  "g7-symmetry": as7("g7-symmetry", SYMMETRY_G8_TEMPLATES),
+  "g7-solids": as7("g7-solids", SOLIDS_G8_TEMPLATES),
+  "g7-data": as7("g7-data", DATA_G8_TEMPLATES),
+  "g7-probability": as7("g7-probability", PROBABILITY_G8_TEMPLATES),
+};
 
 /** The topics ready for each language subject, in book order. */
 export function languageTopics(subject: string): string[] {
