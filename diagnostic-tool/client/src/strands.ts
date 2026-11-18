@@ -114,8 +114,12 @@ export const GRADE7_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [
   { id: "g7-equations", chapter: "Chapter 7", name: "Linear Equations", about: "Solving equations in one variable and word problems" },
   { id: "g7-ratio", chapter: "Chapter 8", name: "Ratio and Proportion", about: "Ratios, proportion, the unitary method" },
   { id: "g7-percent", chapter: "Chapter 9", name: "Percentage and Its Applications", about: "Percent of a quantity, the whole from a part, increase and decrease" },
+  { id: "g7-angles", chapter: "Chapter 10", name: "Lines and Angles", about: "Complementary, supplementary, vertically opposite, angles at parallel lines" },
+  { id: "g7-triangles", chapter: "Chapter 11 & 15", name: "Properties of Triangles", about: "Angle sum, exterior angle, sides rule, Pythagoras, kinds, constructing" },
   { id: "g7-symmetry", chapter: "Chapter 12", name: "Symmetry", about: "Lines of symmetry, reflection, rotational symmetry and its order" },
   { id: "g7-solids", chapter: "Chapter 13", name: "Visualising Solid Shapes", about: "Faces, edges and vertices, nets, views of solids" },
+  { id: "g7-congruence", chapter: "Chapter 14", name: "Congruence of Triangles", about: "SSS, SAS, ASA, RHS and corresponding parts" },
+  { id: "g7-area", chapter: "Chapter 16", name: "Perimeter and Area", about: "Rectangles, squares, triangles, parallelograms, circles, paths" },
   { id: "g7-data", chapter: "Chapter 17", name: "Data Handling", about: "Organising data, bar graphs, pie charts" },
   { id: "g7-probability", chapter: "Chapter 18", name: "Probability", about: "Coins, dice, cards and spinners" },
 ];

@@ -49,6 +49,7 @@ import { safe } from "./m7/kit.js";
 import { INTEGERS_G7, MISCONCEPTIONS as INT7_MIS } from "./m7/integers.js";
 import { FRACTIONS_G7, MISCONCEPTIONS as FR7_MIS } from "./m7/fractions.js";
 import { DECIMALS_G7, MISCONCEPTIONS as DEC7_MIS } from "./m7/decimals.js";
+import { ANGLES_G7, TRIANGLES_G7, CONGRUENCE_G7, AREA_G7, MISCONCEPTIONS as GEO7_MIS } from "./m7/geometry.js";
 import { SkillTopic, skillTemplates } from "./skillTopic.js";
 import { NOUNS_PRONOUNS, MISCONCEPTIONS as LA7_NP } from "./la7/nounsPronouns.js";
 import { VERBS, MISCONCEPTIONS as LA7_VB } from "./la7/verbs.js";
@@ -219,6 +220,7 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...INT7_MIS,
   ...FR7_MIS,
   ...DEC7_MIS,
+  ...GEO7_MIS,
   ...LA7_NP,
   ...LA7_VB,
   ...LA7_MD,
@@ -311,8 +313,12 @@ export const GRADE7_TEMPLATES: Record<string, Record<string, Template>> = {
   "g7-equations": as7("g7-equations", EQUATIONS_G8_TEMPLATES),
   "g7-ratio": as7("g7-ratio", VARIATION_G8_TEMPLATES),
   "g7-percent": as7("g7-percent", PERCENT_G8_TEMPLATES),
+  "g7-angles": ANGLES_G7,
+  "g7-triangles": TRIANGLES_G7,
   "g7-symmetry": as7("g7-symmetry", SYMMETRY_G8_TEMPLATES),
   "g7-solids": as7("g7-solids", SOLIDS_G8_TEMPLATES),
+  "g7-congruence": CONGRUENCE_G7,
+  "g7-area": AREA_G7,
   "g7-data": as7("g7-data", DATA_G8_TEMPLATES),
   "g7-probability": as7("g7-probability", PROBABILITY_G8_TEMPLATES),
 };

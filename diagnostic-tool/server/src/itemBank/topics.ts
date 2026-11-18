@@ -217,8 +217,12 @@ TOPICS.push(
     ["g7-equations", "Number & Algebra", "Linear Equations"],
     ["g7-ratio", "Ratio & Proportion", "Ratio and Proportion"],
     ["g7-percent", "Ratio & Proportion", "Percentage and Its Applications"],
+    ["g7-angles", "Measurement & Geometry", "Lines and Angles"],
+    ["g7-triangles", "Measurement & Geometry", "Properties of Triangles"],
     ["g7-symmetry", "Measurement & Geometry", "Symmetry"],
     ["g7-solids", "Measurement & Geometry", "Visualising Solid Shapes"],
+    ["g7-congruence", "Measurement & Geometry", "Congruence of Triangles"],
+    ["g7-area", "Measurement & Geometry", "Perimeter and Area"],
     ["g7-data", "Data Handling", "Data Handling"],
     ["g7-probability", "Data Handling", "Probability"],
   ] as const).map(([id, strand, name]) => ({ id, strand, name, shortLabel: name, dependsOn: [], grade: 7 }))
