@@ -51,6 +51,8 @@ export const GIFT_INDIA: Chapter = {
     { line: "Can ye measure the grief of the tears I weep Or compass the woe of the watch I keep?", q: "What does the speaker mean?", a: "Her sorrow is too great to be measured", w: ["Her grief is small", "She is watching a clock", "She wants someone to count her tears"] },
     { line: "They are strewn like blossoms mown down by chance", q: "What does this simile suggest about the soldiers?", a: "Young lives cut short, like flowers cut down", w: ["They are planting gardens", "They are resting in a meadow", "They are celebrating"] },
     { line: "And the far sad glorious vision I see Of the torn red banners of Victory?", q: "Why is victory 'sad' and the banners 'torn'?", a: "Victory came at the cost of many lives", w: ["The banners are old", "The war was lost", "Victory is always joyful"] },
+    { line: "And life be refashioned on anvils of peace,", q: "Which figure of speech is used in 'anvils of peace'?", a: "A metaphor: peace is compared to an anvil without 'like' or 'as'", w: ["A simile", "Alliteration", "Onomatopoeia"] },
+    { line: "Gathered like pearls in their alien graves", q: "Which figure of speech is used here?", a: "A simile: the soldiers are compared to pearls using 'like'", w: ["A metaphor", "Personification", "Hyperbole"] },
     { line: "Is there aught you need that my hands withhold,", q: "Who is the speaker?", a: "Mother India", w: ["A British soldier", "The poet's son", "The King of England"] },
   ],
   claims: [

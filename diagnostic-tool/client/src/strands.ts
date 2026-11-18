@@ -50,6 +50,8 @@ export const ENGLISH8_TOPIC_CHOICES = [
   { id: "e8-lit-drum-dream", chapter: "Literature · Ch 6", name: "Drum Dream Girl", about: "Margarita Engle's poem about a girl who dared to drum" },
   { id: "e8-lit-salaam", chapter: "Literature · Ch 7", name: "Salaam Namaste", about: "Sudha Murty's story: Sheikh Mohammed, Zubeida and Tabassum" },
   { id: "e8-lit-gift-india", chapter: "Literature · Ch 8", name: "The Gift of India", about: "Sarojini Naidu's poem honouring Indian soldiers of World War I" },
+  { id: "e8-lit-tiger", chapter: "Literature · Ch 9", name: "Monitoring the Tiger", about: "Pugmarks, camera traps and radio telemetry in Ranthambore" },
+  { id: "e8-lit-ozymandias", chapter: "Literature · Ch 10", name: "Ozymandias", about: "Shelley's poem about a ruined statue and the end of pride" },
   { id: "e8-clauses", chapter: "Grammar · Ch 1", name: "Dependent and Independent Clauses", about: "Which clause stands alone; noun, adjective and adverb clauses; who, which, whose, where" },
   { id: "e8-purpose", chapter: "Grammar · Ch 3", name: "Words as Nouns and Verbs; Adverb Clauses of Purpose", about: "a watch / we watch; so that, in order that, lest; purpose or result" },
   { id: "e8-participles", chapter: "Grammar · Ch 5", name: "Participles and Gerunds", about: "-ing words as nouns and adjectives, -ing after prepositions, joining with a participle, -ing / -ed feelings" },
