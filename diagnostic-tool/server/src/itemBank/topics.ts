@@ -211,7 +211,12 @@ TOPICS.push(
   { id: "l7-capitals", strand: "Mechanics", name: "Capitalization", shortLabel: "Capitals", dependsOn: [], grade: 7, subject: "Language Arts" },
   { id: "l7-punctuation", strand: "Mechanics", name: "Punctuation", shortLabel: "Punctuation", dependsOn: [], grade: 7, subject: "Language Arts" },
   { id: "l7-usage", strand: "Usage", name: "Usage", shortLabel: "Usage", dependsOn: [], grade: 7, subject: "Language Arts" },
-  { id: "l7-words", strand: "Word Study", name: "Word Study", shortLabel: "Word Study", dependsOn: [], grade: 7, subject: "Language Arts" }
+  { id: "l7-words", strand: "Word Study", name: "Word Study", shortLabel: "Word Study", dependsOn: [], grade: 7, subject: "Language Arts" },
+  { id: "w7-paragraphs", strand: "Writing", name: "Paragraphs and the Writing Process", shortLabel: "Paragraphs", dependsOn: [], grade: 7, subject: "Writing" },
+  { id: "w7-narrative", strand: "Writing", name: "Narrative and Descriptive Writing", shortLabel: "Narrative", dependsOn: [], grade: 7, subject: "Writing" },
+  { id: "w7-informational", strand: "Writing", name: "Informational Writing", shortLabel: "Informational", dependsOn: [], grade: 7, subject: "Writing" },
+  { id: "w7-opinion", strand: "Writing", name: "Opinion and Argument Writing", shortLabel: "Opinion", dependsOn: [], grade: 7, subject: "Writing" },
+  { id: "w7-research", strand: "Writing", name: "Research Writing", shortLabel: "Research", dependsOn: [], grade: 7, subject: "Writing" }
 );
 
 /** English strands (Grade 8). */
