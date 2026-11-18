@@ -40,7 +40,19 @@
    every 15 seconds. A team chooses only from the levels set for it in
    quest-data.js and never sees the levels, or makes up its own quest
    (name, what it is, what we learn, what we make, how long), which a
-   facilitator OKs before the team can choose it. */
+   facilitator OKs before the team can choose it.
+
+   Closing a quest: the team ticks every line of "Done looks like…" in the
+   Quest Pack; a facilitator checks it and OKs it (meta.doneOk), from the
+   staff board. Then anyone on the team, or staff, can close it: the whole
+   board is copied to its own record (week "past-<time>"), the board is
+   cleared (meta._reset, same as the Try-out page) and keeps only the list
+   of closed quests (meta.past: { key, project, title, started, closedAt,
+   by, okBy, jobs, photos }), and the team picks its next quest. A closed
+   quest opens read-only with ?past=<key>. Each closed quest's entry in
+   meta.past also keeps its summary (summarize(): goal, done list and who
+   ticked it, photos), shown on the Finished tab and under the chooser so
+   the team always has its record. */
 (function () {
   var app = document.getElementById('app');
   var params = new URLSearchParams(location.search);
@@ -78,8 +90,13 @@
     var OVERVIEW = !params.get('group');
   }
   var tab = params.get('tab') || '';
+  // A closed quest, opened read-only from the list of quests we've finished.
+  var PAST = /^past-\d+$/.test(params.get('past') || '') ? params.get('past') : '';
+  if (PAST) OVERVIEW = false;
+  var RECORD = PAST || 'board';
   var state = blank();
-  var loaded = false, saving = false, dirty = false, saveTimer = null;
+  var loaded = false, saving = false, dirty = false, saveTimer = null, closing = false;
+  var pastInfo = null, justClosed = null;
 
   function blank() { return { meta: {}, cards: {}, standups: {}, checkins: {}, blockers: {}, materials: {}, plan: {}, shop: {}, photos: {} }; }
   function now() { return Date.now(); }
@@ -173,6 +190,7 @@
     if (s) { s.textContent = text; s.className = 'pb-status ' + (cls || ''); }
   }
   function changed() {
+    if (PAST) return;   // a closed quest is read-only
     dirty = true;
     setStatus('Saving…');
     if (saveTimer) clearTimeout(saveTimer);
@@ -194,15 +212,16 @@
     }).catch(function () { saving = false; setStatus('Not saved — check the connection', 'is-bad'); });
   }
   function load() {
-    return window.eot2Fetch('term-3', group.id, 'board').then(function (d) {
+    return window.eot2Fetch('term-3', group.id, RECORD).then(function (d) {
       var remote = d && d.state;
+      if (PAST) pastInfo = (remote && remote.closed) || null;
       state = merge(remote || blank(), state);
       loaded = true;
     });
   }
   // Pick up other devices' changes, unless someone here is mid-typing.
   setInterval(function () {
-    if (!loaded || dirty || saving || document.hidden || (!KID && OVERVIEW)) return;
+    if (!loaded || dirty || saving || closing || PAST || document.hidden || (!KID && OVERVIEW)) return;
     var a = document.activeElement;
     // Only real typing pauses the refresh: a locked (read-only) box that was
     // just tapped mustn't, or the page never learns it's now editable (e.g.
@@ -257,33 +276,42 @@
   var approvals = {};
   function approved(b) { var a = approvals[b.id]; return a && a.v === 'yes'; }
 
-  var TABS = [['pack', 'Quest Pack'], ['plan', 'Our Plan'], ['board', 'Board'], ['standup', 'Stand-up'], ['checkin', 'Look Back'], ['photos', 'Photos']];
+  var TABS = [['pack', 'Quest Pack'], ['plan', 'Our Plan'], ['board', 'Board'], ['standup', 'Stand-up'], ['checkin', 'Look Back'], ['photos', 'Photos'], ['history', '🏁 Finished']];
 
   function draw() {
     var main = app.querySelector('.pb-main');
     if (!main) return;
     var y = window.scrollY;
     main.innerHTML = '';
-    if (!project(meta('project')) || changing) { main.appendChild(chooserView(project(meta('project')))); return; }
+    main.classList.toggle('pb-past', !!PAST);
+    if (PAST) { main.appendChild(pastBar()); if (!project(meta('project'))) return; }
+    else if (!project(meta('project')) || changing) { main.appendChild(chooserView(project(meta('project')))); return; }
     // A new own-quest idea from a team already on a quest: staff see it here.
     var idea = project('own');
     if (!KID && idea && idea.st === 'waiting' && meta('project') !== 'own') main.appendChild(ownEl(project(meta('project'))));
-    main.appendChild(topLine());
-    if (TABS.map(function (t) { return t[0]; }).indexOf(tab) === -1) tab = 'board';
+    if (!PAST) main.appendChild(topLine());
+    // Checked by a facilitator: close it, on every tab.
+    if (!PAST && finish().ok) main.appendChild(closeBar());
+    // A closed quest: the parts that still make sense (the Board, Stand-up
+    // and Look Back only show this school week).
+    var shownTabs = PAST ? TABS.filter(function (t) { return ['pack', 'plan', 'photos'].indexOf(t[0]) !== -1; })
+      : TABS.filter(function (t) { return t[0] !== 'history' || past().length; });
+    if (shownTabs.map(function (t) { return t[0]; }).indexOf(tab) === -1) tab = PAST ? 'pack' : 'board';
     var tabs = el('div', 'pb-tabs');
-    var nb = openBlockers().length;
-    TABS.forEach(function (t) {
+    var nb = PAST ? 0 : openBlockers().length;
+    shownTabs.forEach(function (t) {
       var b = el('button', 'pb-tab' + (tab === t[0] ? ' is-on' : ''), t[1] + (t[0] === 'board' && nb ? ' <span class="pb-tab-flag">🚩 ' + nb + '</span>' : ''));
       b.type = 'button';
       b.addEventListener('click', function () {
         tab = t[0];
-        history.replaceState(null, '', KID ? '?tab=' + tab : '?group=' + group.id + '&tab=' + tab);
+        history.replaceState(null, '', (KID ? '?tab=' + tab : '?group=' + group.id + '&tab=' + tab) + (PAST ? '&past=' + PAST : ''));
         draw();
       });
       tabs.appendChild(b);
     });
     main.appendChild(tabs);
-    main.appendChild(tab === 'pack' ? packView() : tab === 'plan' ? planView() : tab === 'standup' ? standupView() : tab === 'checkin' ? checkinView() : tab === 'photos' ? photosView() : boardView());
+    main.appendChild(tab === 'pack' ? packView() : tab === 'plan' ? planView() : tab === 'standup' ? standupView() : tab === 'checkin' ? checkinView() : tab === 'photos' ? photosView() : tab === 'history' ? historyEl() : boardView());
+    if (PAST) Array.prototype.forEach.call(main.querySelectorAll('.pb-tabs ~ * input, .pb-tabs ~ * textarea, .pb-tabs ~ * select'), function (x) { x.disabled = true; });
     window.scrollTo(0, y);
   }
 
@@ -312,6 +340,188 @@
     return line;
   }
 
+  /* ---------- closing the quest ---------- */
+
+  // How close a team is to finishing: the Quest Pack's "Done looks like…"
+  // lines ticked, and a facilitator's OK. An own quest (or one whose pack
+  // isn't ready) has no lines, so the facilitator's OK is all it needs.
+  function finish(s) {
+    s = s || state;
+    var m = function (k) { var x = s.meta[k]; return x && x.v !== undefined ? x.v : null; };
+    var b = project(m('project'), s), p = b && PACKS[b.id], lines = (p && p.done) || [];
+    var ticked = lines.filter(function (d, i) { return m('done_' + i); }).length;
+    return { b: b, total: lines.length, ticked: ticked, all: !!b && ticked === lines.length, ok: b ? m('doneOk') : null };
+  }
+  function niceDay(isoTime) {
+    return isoTime ? new Date(isoTime).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '';
+  }
+  // A new quest starts with nothing ticked and no OK.
+  function clearDone() {
+    Object.keys(state.meta).forEach(function (k) { if (/^(done_\d+|doneOk)$/.test(k) && meta(k)) setMeta(k, null); });
+  }
+
+  // The facilitator's check (staff only), under "Done looks like…".
+  function okEl(ready) {
+    var chk = meta('doneOk'), box = el('div', 'qp-ok');
+    if (chk) {
+      box.innerHTML = '<p class="qp-checked">✓ Checked by ' + esc(chk.by) + ': it’s done!' + (KID ? ' Close your quest with the button at the top.' : '') + '</p>';
+      if (!KID && !PAST) {
+        var undo = el('button', 'pq-link', 'Take back the OK');
+        undo.type = 'button';
+        undo.addEventListener('click', function () { setMeta('doneOk', null); draw(); });
+        box.appendChild(undo);
+      }
+    } else if (!KID && ready) {
+      var cb = el('button', 'pq-btn', '✓ I’ve checked it: it’s done');
+      cb.type = 'button';
+      cb.addEventListener('click', function () { setMeta('doneOk', { by: niceName(staffName()), at: new Date().toISOString() }); draw(); });
+      box.appendChild(cb);
+    } else {
+      box.innerHTML = '<p class="qp-note">' + (ready ? 'A facilitator checks it with you. After their OK, you can close your quest and choose a new one.'
+        : 'When every box is ticked, a facilitator checks it with you. After their OK, you can close your quest and choose a new one.') + '</p>';
+    }
+    return box;
+  }
+
+  // Shown on every tab once a facilitator has OK'd it.
+  function closeBar() {
+    var f = finish();
+    var bar = el('div', 'pb-finish',
+      '<div><strong>🎉 ' + esc(f.b.title) + ' is done!</strong><span>Checked by ' + esc(f.ok.by) + (f.ok.at ? ' on ' + niceDay(f.ok.at) : '') +
+      '. Close it to choose your next quest. Everything you made here is kept.</span></div>');
+    var go = el('button', 'pq-btn', '🏁 Close our quest');
+    go.type = 'button';
+    go.addEventListener('click', closeQuest);
+    bar.appendChild(go);
+    return bar;
+  }
+
+  // What a finished quest leaves behind, for the team's history: the goal,
+  // the done list (and who ticked each line), who checked it, and the photos
+  // (their pictures stay in their own records).
+  function summarize(full) {
+    var m = function (k, fb) { var x = full.meta[k]; return x && x.v !== undefined && x.v !== null ? x.v : fb; };
+    var live = function (map) { return Object.keys(full[map] || {}).map(function (k) { return Object.assign({ id: k }, full[map][k]); }).filter(function (x) { return !x.deleted; }); };
+    var b = project(m('project'), full), p = b && PACKS[b.id], c = b && CARDS[b.id], ok = m('doneOk', {}) || {};
+    var pics = live('photos').sort(function (x, y) { return (x.w || 0) - (y.w || 0) || (x.order || 0) - (y.order || 0); });
+    return {
+      project: m('project', ''), title: b ? b.title : '', icon: c ? c.icon : b && b.own ? '💡' : '⭐',
+      goal: p ? p.goal : b ? (c ? c.tag : b.what) || '' : '', make: b && b.own ? b.make || '' : '',
+      started: m('started', ''), okBy: ok.by || '', okAt: ok.at || '',
+      done: ((p && p.done) || []).map(function (t, i) { return { t: t, by: (m('done_' + i, {}) || {}).by || '' }; }),
+      jobs: live('cards').filter(function (x) { return x.col === 'done'; }).length,
+      photos: pics.length, pics: pics.map(function (x) { return { id: x.id, cap: x.cap || '', by: x.by || '', w: x.w }; })
+    };
+  }
+
+  // Copy the whole board to its own record, then clear the board so the
+  // team can choose its next quest. Nothing is cleared unless the copy
+  // saved.
+  function closeQuest() {
+    var f = finish();
+    if (!f.ok || closing) return;
+    if (!confirm('Close “' + f.b.title + '”?\n\nYour board, plan, Look Backs and photos are kept, and you can look back at them any time. Then you choose your next quest.')) return;
+    closing = true;
+    if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+    setStatus('Closing…');
+    (function go() {
+      if (saving) { setTimeout(go, 300); return; }
+      saving = true;
+      window.eot2Fetch('term-3', group.id, 'board').then(function (d) {
+        var full = merge(d && d.state, state);
+        var m = function (k, fb) { var x = full.meta[k]; return x && x.v !== undefined && x.v !== null ? x.v : fb; };
+        var t = now(), key = 'past-' + t;
+        var entry = Object.assign(summarize(full), { key: key, closedAt: new Date(t).toISOString(), by: KID ? ME : niceName(staffName()) });
+        return window.eot2Save('term-3', group.id, key, Object.assign({}, full, { closed: entry })).then(function (r) {
+          if (!r.ok) throw new Error('copy not saved');
+          var fresh = blank();
+          fresh.meta._reset = { v: t, u: t };
+          fresh.meta.past = { v: m('past', []).concat([entry]), u: t };
+          return window.eot2Save('term-3', group.id, 'board', fresh).then(function (r2) {
+            if (!r2.ok) throw new Error('board not cleared');
+            state = fresh; dirty = false; changing = false; tab = 'pack'; justClosed = entry;
+          });
+        });
+      }).then(function () {
+        saving = false; closing = false;
+        setStatus('Saved', 'is-ok');
+        history.replaceState(null, '', KID ? '?' : '?group=' + group.id);
+        draw();
+        window.scrollTo(0, 0);
+      }, function () {
+        saving = false; closing = false;
+        setStatus('Not closed — check the connection', 'is-bad');
+        alert('The quest wasn’t closed. Check the connection and try again.');
+      });
+    })();
+  }
+
+  // On a closed quest: what it is, and the way back.
+  function pastBar() {
+    var c = pastInfo || {}, b = project(meta('project'));
+    var bar = el('div', 'pb-finish pb-finish-past',
+      '<div><strong>🏁 ' + esc((b && b.title) || c.title || 'A finished quest') + '</strong><span>' +
+      (b ? 'Finished' + (c.closedAt ? ' on ' + niceDay(c.closedAt) : '') + '. This is how it looked when it was closed: nothing here can be changed.' : 'This quest couldn’t be found.') + '</span></div>');
+    var back = el('a', 'pq-btn pq-btn-ghost', '&larr; Back to our quest');
+    back.href = KID ? '?' : '?group=' + group.id;
+    bar.appendChild(back);
+    return bar;
+  }
+
+  // The team's record of every quest it has finished, newest first: the
+  // goal, the done list, who checked it, and the photos. Shown on its own
+  // tab (Finished quests) and under the quest chooser, so it never looks
+  // as if a team hasn't done one.
+  function past() { return meta('past', null) || []; }
+  function historyEl() {
+    var list = past();
+    if (!list.length) return null;
+    var box = el('section', 'qh');
+    box.appendChild(el('h2', 'qh-title', '🏁 Quests we’ve finished <small>' + list.length + '</small>'));
+    list.slice().reverse().forEach(function (x) {
+      var card = el('article', 'qh-card');
+      box.appendChild(card);
+      // An entry saved without its summary: read it from the closed quest's copy.
+      if (!x.done) {
+        card.innerHTML = '<p class="pb-empty">Loading ' + esc(x.title || 'quest') + '…</p>';
+        window.eot2Fetch('term-3', group.id, x.key).then(function (d) {
+          var full = merge((d && d.state) || blank(), blank());
+          fillHistory(card, Object.assign({}, x, summarize(full), { key: x.key, closedAt: x.closedAt, by: x.by }));
+        });
+      } else fillHistory(card, x);
+    });
+    return box;
+  }
+  function fillHistory(card, x) {
+    var ticked = x.done.filter(function (d) { return d.by; }).length;
+    card.innerHTML =
+      '<div class="qh-head"><span class="qh-ic">' + (x.icon || '⭐') + '</span><div><h3>' + esc(x.title || 'Quest') + '</h3>' +
+        '<p class="qh-when">' + (x.started ? shortDate(x.started) + ' – ' : '') + 'finished ' + niceDay(x.closedAt) +
+        (x.okBy ? ' · ✓ checked by ' + esc(x.okBy) : '') + (x.jobs ? ' · ' + x.jobs + ' jobs done' : '') + '</p></div>' +
+        '<span class="qh-badge">✓ Finished</span></div>' +
+      (x.goal ? '<div class="qh-sec"><div class="qh-lbl">🎯 Our goal</div><p>' + esc(x.goal) + '</p></div>' : '') +
+      (x.make ? '<div class="qh-sec"><div class="qh-lbl">🎁 What we made</div><p>' + esc(x.make) + '</p></div>' : '') +
+      (x.done.length ? '<div class="qh-sec"><div class="qh-lbl">🏁 Done looks like… <small>' + ticked + ' of ' + x.done.length + '</small></div><ul class="qh-done">' +
+        x.done.map(function (d) { return '<li class="' + (d.by ? 'is-on' : '') + '"><i>' + (d.by ? '✓' : '') + '</i><span>' + esc(d.t) + (d.by ? ' <small>' + esc(d.by) + '</small>' : '') + '</span></li>'; }).join('') + '</ul></div>' : '');
+    if ((x.pics || []).length) {
+      var ps = el('div', 'qh-sec', '<div class="qh-lbl">📷 Photos <small>' + x.pics.length + '</small></div>');
+      var grid = el('div', 'qh-pics');
+      x.pics.forEach(function (ph) {
+        var f = el('figure', 'qh-pic');
+        var im = photoImg(ph);
+        im.addEventListener('click', function () { if (!im.classList.contains('is-missing')) viewPhoto(ph); });
+        f.appendChild(im);
+        if (ph.cap) f.appendChild(el('figcaption', '', esc(ph.cap)));
+        grid.appendChild(f);
+      });
+      ps.appendChild(grid);
+      card.appendChild(ps);
+    } else card.appendChild(el('div', 'qh-sec', '<div class="qh-lbl">📷 Photos</div><p class="pb-mute">No photos were added.</p>'));
+    var open = el('a', 'qh-open', 'Open the whole board &rarr;');
+    open.href = (KID ? '?' : '?group=' + group.id + '&') + 'past=' + encodeURIComponent(x.key) + '&tab=pack';
+    card.appendChild(open);
+  }
+
   /* ---------- choosing the quest ---------- */
 
   function deadline(id, started) {
@@ -329,8 +539,13 @@
   function chooserView(current) {
     var wrap = el('div', 'pq');
     var levels = Q.LEVELS[group.id] || [1, 2, 3];
+    var did = past().map(function (x) { return x.project; });
+    if (justClosed && !current) wrap.appendChild(el('div', 'pq-closed',
+      '<span class="pq-closed-ic">🏆</span><div><h2>' + esc(justClosed.title) + ' is closed. Well done, team!</h2>' +
+      '<p>It’s saved under “Quests we’ve finished” at the bottom of this page. Now choose your next quest together.</p></div>'));
     wrap.appendChild(el('p', 'pq-intro', current
       ? 'Choose a different quest, or keep <b>' + esc(current.title) + '</b>.'
+      : past().length ? 'Pick your next quest. Talk about it together first, then choose one as a team.'
       : 'Pick your quest. Talk about it together first, then choose one as a team.'));
     if (current) {
       var keep = el('button', 'pq-btn pq-btn-ghost', 'Keep ' + esc(current.title));
@@ -349,7 +564,7 @@
       list.forEach(function (b) {
         var c = CARDS[b.id];
         var card = el('article', 'qc qc-' + cat,
-          '<div class="qc-art"><span class="qc-kind">' + esc(Q.CATS[cat].name) + '</span>' + (KID ? '' : '<span class="qc-level">Level ' + b.level + '</span>') + (c ? c.icon : '') + '</div>' +
+          '<div class="qc-art"><span class="qc-kind">' + esc(Q.CATS[cat].name) + '</span>' + (KID ? '' : '<span class="qc-level">Level ' + b.level + '</span>') + (did.indexOf(b.id) !== -1 ? '<span class="qc-did">✓ Done before</span>' : '') + (c ? c.icon : '') + '</div>' +
           '<div class="qc-body"><h3>' + esc(b.title) + '</h3>' +
           '<p class="qc-tag">' + esc(c ? c.tag : b.what) + '</p>' +
           (c ? '<p class="qc-make">🎁 ' + esc(c.make) + '</p>' : '') +
@@ -360,9 +575,11 @@
         go.disabled = !!(current && current.id === b.id);
         go.addEventListener('click', function () {
           if (!confirm('Choose “' + b.title + '” for your team?')) return;
+          if (meta('project') !== b.id) clearDone();
           setMeta('project', b.id);
           setMeta('started', today());
           changing = false;
+          justClosed = null;
           tab = 'pack';
           draw();
           window.scrollTo(0, 0);
@@ -376,6 +593,8 @@
     // Risers no longer make up their own quests; a team that already has
     // one still sees it.
     if (!KID || project('own')) wrap.appendChild(ownEl(current));
+    var pe = historyEl();
+    if (pe) wrap.appendChild(pe);
     return wrap;
   }
 
@@ -421,9 +640,11 @@
       go.disabled = ours;
       go.addEventListener('click', function () {
         if (!confirm('Choose “' + o.title + '” for your team?')) return;
+        if (meta('project') !== 'own') clearDone();
         setMeta('project', 'own');
         setMeta('started', today());
         changing = false;
+        justClosed = null;
         tab = 'pack';
         draw();
         window.scrollTo(0, 0);
@@ -540,6 +761,10 @@
       oq.insertAdjacentHTML('beforeend', '<div class="qp-make"><div class="qp-tile"><span class="e">🎁</span><b>What we make</b><span>' + esc(b.make) + '</span></div>' +
         '<div class="qp-tile"><span class="e">🧠</span><b>What we learn</b><span>' + esc(b.learn) + '</span></div></div>');
       wrap.appendChild(oq);
+      // No "Done looks like…" list: the facilitator's check is enough.
+      var od = sec('🏁', 'good', 'Is it done?');
+      od.appendChild(okEl(true));
+      wrap.appendChild(od);
     } else if (!p) {
       wrap.appendChild(el('section', 'qp-sec qp-wait', '<div class="qp-h"><span class="qp-n qp-good">📦</span><h3>Your Quest Pack is on its way</h3></div>' +
         '<p>A facilitator is getting it ready for you: what you must make, when it’s done, the boundaries and the rules. Start <b>Our Plan</b> while you wait.</p>'));
@@ -556,24 +781,23 @@
       var ticked = p.done.filter(function (d, i) { return meta('done_' + i); }).length;
       var dn = sec('🏁', 'good', 'Done looks like…', ticked + ' of ' + p.done.length + ' ticked');
       dn.insertAdjacentHTML('beforeend', '<div class="qp-bar"><span style="width:' + Math.round(ticked / p.done.length * 100) + '%"></span></div>' +
-        (ticked === p.done.length ? '<p class="qp-all">🎉 Everything is ticked! Show a facilitator at your Look Back.</p>' : '') +
+        (ticked === p.done.length && !meta('doneOk') ? '<p class="qp-all">🎉 Everything is ticked! Show a facilitator so they can check it.</p>' : '') +
         '<div class="qp-done">' + p.done.map(function (d, i) {
           var t = meta('done_' + i);
           return '<button type="button" class="qp-ck' + (t ? ' is-on' : '') + '" data-i="' + i + '"><i>' + (t ? '✓' : '') + '</i><span>' + esc(d) + (t && t.by ? '<small>' + esc(t.by) + '</small>' : '') + '</span></button>';
         }).join('') + '</div>' +
         (p.notDone ? '<div class="qp-not">✗ <span><b>Not done:</b> ' + esc(p.notDone) + '</span></div>' : ''));
-      // At the end, a facilitator checks it really is done.
+      // At the end, a facilitator checks it really is done; then the team
+      // can close it.
       var chk = meta('doneOk');
-      if (chk) dn.insertAdjacentHTML('beforeend', '<p class="qp-checked">✓ Checked by ' + esc(chk.by) + ': it’s done!</p>');
-      else if (!KID && ticked === p.done.length) {
-        var cb = el('button', 'pq-btn', '✓ I’ve checked it: it’s done');
-        cb.type = 'button';
-        cb.addEventListener('click', function () { setMeta('doneOk', { by: niceName(staffName()), at: new Date().toISOString() }); draw(); });
-        dn.appendChild(cb);
-      } else dn.insertAdjacentHTML('beforeend', '<p class="qp-note">When every box is ticked, a facilitator checks it with you.</p>');
+      if (PAST || (chk && KID)) dn.classList.add('qp-locked');
+      dn.appendChild(okEl(ticked === p.done.length));
       Array.prototype.forEach.call(dn.querySelectorAll('.qp-ck'), function (bt) {
         bt.addEventListener('click', function () {
+          // Once it's OK'd, the ticks stay put; staff unticking one takes the OK back.
+          if (PAST || (chk && KID)) return;
           var k = 'done_' + bt.dataset.i;
+          if (meta(k) && chk) setMeta('doneOk', null);
           setMeta(k, meta(k) ? null : { by: KID ? ME : 'Facilitator' });
           draw();
         });
@@ -616,6 +840,7 @@
     ru.insertAdjacentHTML('beforeend', (p && p.rules ? tiles(p.rules, 'qp-rule qp-rule-q') + '<div class="qp-sub">Every quest</div>' : '') + tiles(window.T3_EVERY_RULES || [], 'qp-rule'));
     wrap.appendChild(ru);
 
+    if (PAST) return wrap;
     var change = el('button', 'pq-link', 'Change our quest');
     change.type = 'button';
     change.addEventListener('click', function () { changing = true; draw(); window.scrollTo(0, 0); });
@@ -1558,8 +1783,9 @@
       return r && (r.did || r.will || r.stuck);
     });
     var ci = s.checkins['w' + w + '_staff'] || s.checkins['w' + w] || {};
-    var b = project(m('project'), s);
+    var b = project(m('project'), s), fin = finish(s);
     return {
+      fin: fin, closed: (m('past', null) || []).length,
       build: b ? b.title : '', due: b && m('started') ? Q.dueFor(b, m('started')) : null,
       idea: s.meta.own && s.meta.own.v && s.meta.own.v.st === 'waiting' ? s.meta.own.v.title : '',
       plan: !!(s.meta.planOk && s.meta.planOk.v && s.meta.planOk.v.st === 'waiting'),
@@ -1584,7 +1810,9 @@
         var row = el('a', 'pb-ov-row');
         row.href = '?group=' + g.id;
         row.innerHTML =
-          '<span class="pb-ov-group"><strong>' + g.name + '</strong><em>' + esc(a.build || 'No quest chosen yet') + '</em>' + (a.idea ? '<small class="qo-flag">💡 Own quest idea to OK: ' + esc(a.idea) + '</small>' : '') + (a.plan ? '<small class="qo-flag">📝 Plan to OK</small>' : '') + (a.due ? '<small>Ready by ' + Q.nice(a.due.date) + '</small>' : '') + '<small>' + g.kids.join(', ') + '</small></span>' +
+          '<span class="pb-ov-group"><strong>' + g.name + '</strong><em>' + esc(a.build || (a.closed ? 'Choosing their next quest' : 'No quest chosen yet')) + '</em>' + (a.idea ? '<small class="qo-flag">💡 Own quest idea to OK: ' + esc(a.idea) + '</small>' : '') + (a.plan ? '<small class="qo-flag">📝 Plan to OK</small>' : '') +
+            (a.fin.ok ? '<small class="is-ok">✓ Done and OK’d: the team can close it</small>' : a.fin.all && a.fin.total ? '<small class="qo-flag">🏁 Done list all ticked: check it and OK it</small>' : a.fin.total ? '<small>Done list: ' + a.fin.ticked + ' of ' + a.fin.total + ' ticked</small>' : '') +
+            (a.closed ? '<small>🏁 ' + a.closed + ' quest' + (a.closed === 1 ? '' : 's') + ' finished</small>' : '') + (a.due ? '<small>Ready by ' + Q.nice(a.due.date) + '</small>' : '') + '<small>' + g.kids.join(', ') + '</small></span>' +
           '<span class="pb-ov-week"><small>Week ' + a.week + '</small><strong>' + (a.master ? 'Quest Master: ' + esc(a.master) : '<em class="pb-ov-none">No Quest Master yet</em>') + '</strong>' + (a.goal ? '<em>' + esc(a.goal) + '</em>' : '') + '</span>' +
           '<span class="pb-ov-prog">' + (a.total ? '<span class="pb-track"><span style="width:' + pct + '%"></span></span><em>' + a.got + ' of ' + a.total + ' done this week</em>' : '<em class="pb-ov-none">No jobs this week</em>') + '</span>' +
           '<span class="pb-ov-stuck">' + (a.stuck.length ? '<strong class="pb-ov-flag" title="' + esc(a.stuck.join(', ')) + '">🚩 ' + a.stuck.length + '</strong>' : '<em class="pb-ov-none">—</em>') + '</span>' +

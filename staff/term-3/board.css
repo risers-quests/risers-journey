@@ -627,3 +627,50 @@ button.qp-ck { font: inherit; text-align: left; border: 2px solid transparent; c
 .rf-frame-w { margin: 4px 0 0; font-weight: 600; font-size: .95rem; color: var(--ink); }
 .rf-frame-in { font: inherit; font-size: .95rem; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; resize: vertical; min-height: 64px; background: #fff; }
 .rf-fb { color: #4b3a7a; }
+
+/* ---- Closing a quest (board.js: closeBar, pastBar, pastEl) ---- */
+.pb-finish { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; background: var(--good-soft); border: 2px solid var(--good); border-radius: 16px; padding: 14px 18px; margin: 0 0 14px; }
+.pb-finish > div { flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 3px; }
+.pb-finish strong { font-family: var(--font-head); font-size: 1.05rem; color: var(--ink); }
+.pb-finish span { font-size: .9rem; color: var(--ink-soft); }
+.pb-finish .pq-btn { background: var(--good); margin: 0; }
+.pb-finish-past { background: #fff; border-color: var(--border); }
+.pb-finish-past .pq-btn-ghost { background: #fff; color: var(--ink-soft); text-decoration: none; }
+.qp-checked { font-weight: 700; color: var(--good); margin: 10px 0 4px; }
+.qp-ok .pq-btn { margin-top: 10px; }
+.qp-ok .pq-link { margin-top: 2px; }
+.qp-locked button.qp-ck { cursor: default; }
+/* A closed quest is read-only: nothing to tap but the tabs and the way back. */
+.pb-past .pb-tabs ~ * button, .pb-past .pb-tabs ~ * label, .pb-past .pb-tabs ~ * input, .pb-past .pb-tabs ~ * textarea, .pb-past .pb-tabs ~ * select { pointer-events: none; }
+.pb-past .ph-add, .pb-past .pq-link { display: none; }
+.pq-closed { display: flex; gap: 14px; align-items: center; background: var(--good-soft); border-radius: 16px; padding: 16px 18px; margin: 0 0 18px; }
+.pq-closed-ic { font-size: 2.2rem; }
+.pq-closed h2 { margin: 0 0 4px; font-size: 1.1rem; }
+.pq-closed p { margin: 0; color: var(--ink-soft); font-size: .92rem; }
+.qc-did { position: absolute; left: 10px; bottom: 10px; background: var(--good); color: #fff; font-size: .72rem; font-weight: 700; border-radius: 99px; padding: 3px 9px; }
+.qh { margin-top: 28px; display: flex; flex-direction: column; gap: 14px; }
+.pb-tabs + .qh { margin-top: 0; }
+.qh-title { font-size: 1.05rem; margin: 0; display: flex; align-items: center; gap: 8px; }
+.qh-title small { font-size: .78rem; background: var(--good-soft); color: var(--good); border-radius: 99px; padding: 2px 9px; }
+.qh-card { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+.qh-head { display: flex; gap: 14px; align-items: center; }
+.qh-head > div { flex: 1; min-width: 0; }
+.qh-head h3 { margin: 0 0 3px; font-size: 1.15rem; }
+.qh-ic { font-size: 2rem; width: 56px; height: 56px; display: grid; place-items: center; background: var(--good-soft); border-radius: 14px; flex: none; }
+.qh-when { margin: 0; font-size: .84rem; color: var(--ink-faint); }
+.qh-badge { background: var(--good); color: #fff; font-size: .75rem; font-weight: 700; border-radius: 99px; padding: 4px 11px; white-space: nowrap; }
+.qh-sec p { margin: 0; font-size: .94rem; color: var(--ink-soft); }
+.qh-lbl { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; }
+.qh-lbl small { letter-spacing: 0; text-transform: none; font-weight: 600; margin-left: 4px; }
+.qh-done { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 6px; }
+.qh-done li { display: flex; gap: 9px; align-items: flex-start; font-size: .88rem; padding: 8px 10px; border-radius: 10px; background: var(--paper-soft, #f6f7f3); }
+.qh-done li.is-on { background: var(--good-soft); }
+.qh-done i { font-style: normal; width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--good); display: grid; place-items: center; font-size: .72rem; flex: none; background: #fff; color: var(--good); }
+.qh-done li.is-on i { background: var(--good); color: #fff; }
+.qh-done small { color: var(--good); font-weight: 600; font-size: .72rem; }
+.qh-pics { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.qh-pic { margin: 0; background: var(--paper-soft, #f6f7f3); border-radius: 12px; overflow: hidden; }
+.qh-pic figcaption { font-size: .78rem; color: var(--ink-soft); padding: 6px 8px 8px; line-height: 1.35; }
+.qh-open { align-self: flex-start; font-weight: 600; font-size: .88rem; color: var(--accent-dark); text-decoration: none; }
+.qh-open:hover { text-decoration: underline; }
+@media (max-width: 560px) { .qh-card { padding: 14px; } .qh-badge { display: none; } .qh-pics { grid-template-columns: 1fr 1fr; } }
