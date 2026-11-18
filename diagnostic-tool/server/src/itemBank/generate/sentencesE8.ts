@@ -44,6 +44,11 @@ export const MISCONCEPTIONS: Misconceptions = {
     detail: "Writes She was nervous, she spoke well (a comma splice).",
     childTip: "A comma can't join two sentences on its own: add and / but / so, or start one with although / because.",
   },
+  "st-join-pair": {
+    label: "Mixes up no sooner…than / hardly…when / not only…but also",
+    detail: "Writes no sooner…when, hardly…than, forgets to invert (No sooner I had…), or misplaces 'not only'.",
+    childTip: "No sooner had I … than …; Hardly / Scarcely had I … when …; not only X but also Y (X and Y the same kind of word).",
+  },
   "st-not-changed": {
     label: "Doesn't change the sentence as directed",
     detail: "Gives back the sentence (or the same kind of sentence) instead of changing it.",
@@ -123,6 +128,17 @@ const formOf = (e: Entry, v: number) => (v === 0 ? e.simple ?? e.a : v === 1 ? c
 const TYPE_LABEL: Record<Form, string> = { simple: "Simple", compound: "Compound", complex: "Complex" };
 
 const DEFS: { q: string; a: string; w: { text: string; mistake: string }[] }[] = [
+  ...(
+    [
+      ["Join with 'no sooner…than': The alarm rang. I woke up.", "No sooner had the alarm rung than I woke up.", "No sooner had the alarm rung when I woke up.", "No sooner the alarm had rung than I woke up.", "No sooner had the alarm rang than I woke up."],
+      ["Join with 'hardly…when': I reached the bus stop. It started raining.", "Hardly had I reached the bus stop when it started raining.", "Hardly had I reached the bus stop than it started raining.", "Hardly I had reached the bus stop when it started raining.", "Hardly had I reach the bus stop when it started raining."],
+      ["Join with 'scarcely…when': The cook placed the food on the table. The rats came out.", "Scarcely had the cook placed the food on the table when the rats came out.", "Scarcely had the cook placed the food on the table than the rats came out.", "Scarcely the cook had placed the food on the table when the rats came out.", "Scarcely does the cook placed the food on the table when the rats came out."],
+      ["Join with 'no sooner…than': We heard the crash. We rushed outside.", "No sooner did we hear the crash than we rushed outside.", "No sooner did we hear the crash when we rushed outside.", "No sooner we heard the crash than we rushed outside.", "No sooner did we heard the crash than we rushed outside."],
+      ["Join with 'not only…but also': The restaurant serves breakfast. It serves lunch.", "The restaurant serves not only breakfast but also lunch.", "The restaurant serves breakfast not only but lunch.", "The restaurant not only serves breakfast but lunch also.", "The restaurant serves not only breakfast and also lunch."],
+      ["Join with 'not only…but also': You will get an offer. You will get a scholarship.", "You will get not only an offer but also a scholarship.", "You will get an offer not only but a scholarship also.", "Not only you will get an offer but a scholarship.", "You will get not only an offer and also a scholarship."],
+      ["Join with 'hardly…when': I finished the last question. The bell rang.", "Hardly had I finished the last question when the bell rang.", "Hardly had I finished the last question than the bell rang.", "Hardly I had finished the last question when the bell rang.", "Hardly had I finish the last question when the bell rang."],
+    ] as const
+  ).map(([q, a, w1, w2, w3]) => ({ q, a, w: [w1, w2, w3].map((text) => ({ text, mistake: "st-join-pair" })) })),
   {
     q: "A complex sentence has ___",
     a: "one main clause and at least one dependent clause",

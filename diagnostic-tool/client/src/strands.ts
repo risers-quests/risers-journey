@@ -52,6 +52,7 @@ export const ENGLISH8_TOPIC_CHOICES = [
   { id: "e8-lit-gift-india", chapter: "Literature · Ch 8", name: "The Gift of India", about: "Sarojini Naidu's poem honouring Indian soldiers of World War I" },
   { id: "e8-lit-tiger", chapter: "Literature · Ch 9", name: "Monitoring the Tiger", about: "Pugmarks, camera traps and radio telemetry in Ranthambore" },
   { id: "e8-lit-ozymandias", chapter: "Literature · Ch 10", name: "Ozymandias", about: "Shelley's poem about a ruined statue and the end of pride" },
+  { id: "e8-lit-game", chapter: "Literature · Ch 11", name: "The Game", about: "Premchand's story: Fundan, Jatin the hawker and a basket of stones" },
   { id: "e8-clauses", chapter: "Grammar · Ch 1", name: "Dependent and Independent Clauses", about: "Which clause stands alone; noun, adjective and adverb clauses; who, which, whose, where" },
   { id: "e8-purpose", chapter: "Grammar · Ch 3", name: "Words as Nouns and Verbs; Adverb Clauses of Purpose", about: "a watch / we watch; so that, in order that, lest; purpose or result" },
   { id: "e8-participles", chapter: "Grammar · Ch 5", name: "Participles and Gerunds", about: "-ing words as nouns and adjectives, -ing after prepositions, joining with a participle, -ing / -ed feelings" },

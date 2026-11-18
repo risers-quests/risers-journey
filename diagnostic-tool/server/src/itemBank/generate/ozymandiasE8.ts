@@ -52,6 +52,11 @@ export const OZYMANDIAS: Chapter = {
     { q: "The speaker of the poem saw the statue himself.", a: "No: a traveller from an antique land told him about it", w: ["Yes: he describes his own journey", "Yes: he is the sculptor", "No: he read about it in a book"] },
   ],
   facts: [
+    { q: "The statue lies in a ___", a: "desert", w: ["forest", "river", "palace"] },
+    { q: "The head of the statue is half sunk in the ___", a: "sand", w: ["sea", "mud of a river", "temple floor"] },
+    { q: "Ozymandias is honoured as the ___", a: "king of kings", w: ["god of the desert", "greatest sculptor", "traveller from an antique land"] },
+    { q: "The two words used for the sands that stretch far away are ___", a: "lone and level", w: ["boundless and bare", "vast and trunkless", "cold and wrinkled"] },
+    { q: "Where is the traveller from?", a: "An antique (ancient) land", w: ["England", "A new city", "The desert itself"] },
     { q: "Ozymandias was the Greek name of ___", a: "Ramesses II, an Egyptian king", w: ["a Greek god", "a Persian soldier", "the sculptor"] },
     { q: "The statue is found in ___", a: "the desert", w: ["a city square", "a temple", "a museum"] },
     { q: "The poem 'Ozymandias' is by ___", a: "Percy Bysshe Shelley", w: ["Robert Southey", "Sarojini Naidu", "Edgar Albert Guest"] },
@@ -63,6 +68,8 @@ export const OZYMANDIAS: Chapter = {
   ],
   theme: [
     { q: "What is the main message of 'Ozymandias'?", a: "Even the mightiest must perish with time", w: ["Kings live forever", "Deserts are dangerous", "Statues are valuable"] },
+    { q: "How does the poem pay tribute to the sculptor?", a: "His skill outlasted the king: the stone still shows Ozymandias's passions", w: ["It names the sculptor", "It says the statue is perfect", "It says the sculptor was a king"] },
+    { q: "'The hand that mock'd them and the heart that fed' uses which figure of speech?", a: "Synecdoche: the hand stands for the sculptor, the heart for the king", w: ["Simile", "Onomatopoeia", "Alliteration"] },
     { q: "What is the irony in the poem?", a: "The boast 'Look on my works…' stands over nothing but sand", w: ["The traveller is a king", "The statue is made of sand", "The poem has no irony"] },
   ],
 };
