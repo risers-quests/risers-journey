@@ -183,6 +183,7 @@ TOPICS.push(
   { id: "e8-lit-tiger", strand: "Literature", name: "Monitoring the Tiger (Ch 9)", shortLabel: "Monitoring the Tiger", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-lit-ozymandias", strand: "Literature", name: "Ozymandias (Ch 10)", shortLabel: "Ozymandias", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-lit-game", strand: "Literature", name: "The Game (Ch 11)", shortLabel: "The Game", dependsOn: [], grade: 8, subject: "English" },
+  { id: "e8-lit-magi", strand: "Literature", name: "The Gift of the Magi (Ch 12)", shortLabel: "The Gift of the Magi", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-clauses", strand: "Grammar", name: "Dependent and Independent Clauses", shortLabel: "Clauses", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-purpose", strand: "Grammar", name: "Words as Nouns and Verbs; Clauses of Purpose", shortLabel: "Nouns/Verbs & Purpose", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-participles", strand: "Grammar", name: "Participles and Gerunds", shortLabel: "Participles & Gerunds", dependsOn: [], grade: 8, subject: "English" },

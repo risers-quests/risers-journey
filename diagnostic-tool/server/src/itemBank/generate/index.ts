@@ -56,6 +56,7 @@ import { GIFT_INDIA_TEMPLATES } from "./giftIndiaE8.js";
 import { TIGER_TEMPLATES } from "./tigerE8.js";
 import { OZYMANDIAS_TEMPLATES } from "./ozymandiasE8.js";
 import { GAME_TEMPLATES } from "./gameE8.js";
+import { MAGI_TEMPLATES } from "./magiE8.js";
 
 export type { GeneratedItem } from "./core.js";
 
@@ -131,6 +132,7 @@ const ENGLISH8_TEMPLATES: Record<string, Record<string, Template>> = {
   "e8-lit-tiger": TIGER_TEMPLATES,
   "e8-lit-ozymandias": OZYMANDIAS_TEMPLATES,
   "e8-lit-game": GAME_TEMPLATES,
+  "e8-lit-magi": MAGI_TEMPLATES,
 };
 
 /** Topics with generated questions (Grade 5; Grade 4 also uses GRADE4_TEMPLATES). */
