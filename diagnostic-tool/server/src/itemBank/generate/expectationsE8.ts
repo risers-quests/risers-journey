@@ -64,6 +64,12 @@ export const EXPECTATIONS: Chapter = {
     tf("The second convict was called Compeyson.", true),
     tf("The soldiers needed Joe to mend their handcuffs.", true),
     tf("The prison where the convicts escaped from was called the Black Gate.", false),
+    { q: "In the original novel, 'Pirrip' was Pip's ___", a: "father's family name", w: ["mother's family name", "grandfather's name", "uncle's name"] },
+    { q: "Pip had no photographs of his parents because ___", a: "their days were long before the days of photographs", w: ["they had never bothered to click any", "he had never been given any", "his sister burnt them"] },
+    { q: "Pip's mother was called ___", a: "Georgiana", w: ["Anna", "Catherine", "Della"] },
+    { q: "In the original novel, Pip describes the sea as ___", a: "a distant savage lair", w: ["a blue vastness", "an endless wilderness", "a calm mirror"] },
+    { q: "The fearful man had ___", a: "a great iron on his leg", w: ["a big hat on his head", "a pair of new shoes with him", "a sword in his hand"] },
+    { q: "The man seized Pip by his ___", a: "chin", w: ["trousers", "hair", "ear"] },
     { q: "'Great Expectations' was written by ___", a: "Charles Dickens", w: ["O. Henry", "Shakespeare", "T. S. Eliot"] },
   ],
   character: [
