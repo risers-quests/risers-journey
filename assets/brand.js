@@ -122,6 +122,7 @@
     { label: 'Term 2', href: root + 'staff/term-2/index.html', icon: 'term', short: 'Term 2', match: /\/(staff\/term-2|end-of-term-2|staff\/quests)\// },
     { label: 'Term 1', href: root + 'staff/term-1/index.html', icon: 'conf', short: 'Term 1', match: /\/(staff\/term-1|term-1-conference)\// },
     { label: 'Skill Check', href: root + 'diagnostic/index.html', icon: 'check', short: 'Skill Check', match: /\/diagnostic\// },
+    { label: 'Risers’ grades', href: root + 'staff/risers/index.html', icon: 'sel', short: 'Grades', match: /\/staff\/risers\// },
     { label: 'Risers’ links', href: root + 'staff/links/index.html', icon: 'link', short: 'Links', match: /\/staff\/links\// }
   ] : [
     { label: 'Home', href: root + 'index.html', icon: 'home', match: /\/(index\.html)?$/, exact: true },

@@ -9,7 +9,7 @@ import { ENGLISH8_TOPIC_CHOICES, GRADE4_TOPIC_CHOICES, GRADE8_TOPIC_CHOICES, STR
 // script (diagnostic-tool/email), never on the site; it matches by name.
 const RISERS = ["Benjamin", "Chris", "Elyon", "Eva", "Gabby", "Karis", "Michael", "Owen", "Pranavi", "Shalom", "Yokesh", "Zach"];
 // Risers working from another grade's book; everyone else starts at Grade 5 (staff can still change it).
-const RISER_GRADE: Record<string, string> = { Eva: "Grade 4", Benjamin: "Grade 8" };
+const RISER_GRADE: Record<string, string> = { Eva: "Grade 4", Elyon: "Grade 4", Benjamin: "Grade 8" };
 // Grades tested chapter by chapter (their own book), and the chapters ready.
 const CHAPTERS: Record<string, typeof GRADE4_TOPIC_CHOICES> = { "Grade 4": GRADE4_TOPIC_CHOICES, "Grade 8": GRADE8_TOPIC_CHOICES };
 const gradeFor = (name: string) => RISER_GRADE[name] ?? "Grade 5";
