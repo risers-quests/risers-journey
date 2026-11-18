@@ -31,6 +31,20 @@ const LANGUAGE: Record<string, Record<string, { server: string; choices: Choice[
 // Maths only where it is ready (Grade 5 by strand, other grades chapter by chapter).
 const subjectsFor = (grade: string) => [...(grade === "Grade 5" || CHAPTERS[grade] ? ["Maths"] : []), ...Object.keys(LANGUAGE[grade] ?? {})];
 const GRADES = ["Grade 4", "Grade 5", "Grade 7", "Grade 8"];
+// Each Riser's subjects and the grade for each (matches staff/riser-grades.js).
+// A Riser on their own device sees only these, and only the ones built so far;
+// staff see every grade and subject.
+const G7 = { Maths: "Grade 7", "Language Arts": "Grade 7", Writing: "Grade 7" };
+const G5 = { Maths: "Grade 5", "Language Arts": "Grade 6", Writing: "Grade 6" };
+const G4 = { Maths: "Grade 4", "Language Arts": "Grade 4", Writing: "Grade 4" };
+const RISER_SUBJECTS: Record<string, Record<string, string>> = {
+  Benjamin: { Maths: "Grade 8", Grammar: "Grade 8", Literature: "Grade 8" },
+  Karis: G7, Michael: G7, Shalom: G7,
+  Chris: G5, Zach: G5, Yokesh: G5, Owen: G5, Pranavi: G5,
+  Elyon: G4, Eva: G4,
+  Gabby: { Maths: "Grade 3", "Language Arts": "Grade 4", Writing: "Grade 3" },
+};
+const readySubjects = (name: string) => Object.entries(RISER_SUBJECTS[name] ?? {}).filter(([s, g]) => subjectsFor(g).includes(s));
 
 export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) => void; signedIn?: string | null }) {
   // A Riser signed in on this device is chosen already.
@@ -39,7 +53,8 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
   const forName = RISERS.find((n) => n.toLowerCase() === (new URLSearchParams(location.search).get("for") || "").toLowerCase()) ?? "";
   // A Riser on their own device: their name and grade are known, so they only choose what to check.
   const kidMode = !!me && !staffSignedIn();
-  const [subject, setSubject] = useState(subjectsFor(gradeFor(me || forName))[0]);
+  const kidReady = kidMode ? readySubjects(me) : [];
+  const [subject, setSubject] = useState(kidMode ? kidReady[0]?.[0] ?? "Maths" : subjectsFor(gradeFor(me || forName))[0]);
   const [childName, setChildNameRaw] = useState(me || forName);
   function setChildName(name: string) {
     setChildNameRaw(name);
@@ -50,7 +65,7 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
   const [unfinished, setUnfinished] = useState<SessionStatus[]>([]);
   // One strand per sitting by default, so a test stays well under an hour.
   const [strands, setStrands] = useState<string[]>(["Number & Algebra"]);
-  const [grade, setGrade] = useState(gradeFor(me || forName));
+  const [grade, setGrade] = useState(kidMode ? kidReady[0]?.[1] ?? gradeFor(me) : gradeFor(me || forName));
   // Grade 4 and 8: one chapter per sitting by default; tick more to test them together.
   const [g4Topics, setG4Topics] = useState<string[]>([(CHAPTERS[gradeFor(me || forName)] ?? GRADE4_TOPIC_CHOICES)[0].id]);
   const lang = LANGUAGE[grade]?.[subject];
@@ -165,12 +180,20 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
         </div>}
         <div>
           <label htmlFor="subject">Subject</label>
-          <select id="subject" value={subject} onChange={(e) => setSubject(e.target.value)}>
-            {subjectsFor(grade).map((s) => (
+          <select
+            id="subject"
+            value={subject}
+            onChange={(e) => {
+              setSubject(e.target.value);
+              // A Riser's own grade for that subject.
+              if (kidMode) setGrade(RISER_SUBJECTS[me][e.target.value]);
+            }}
+          >
+            {(kidMode ? kidReady.map(([s]) => s) : subjectsFor(grade)).map((s) => (
               <option key={s}>{s}</option>
             ))}
           </select>
-          <small className="grade-note">{lang ? lang.note : "Language subjects are offered at Grades 7 and 8."}</small>
+          <small className="grade-note">{kidMode && !kidReady.length ? "Your Skill Checks are being made. Ask your teacher." : lang ? lang.note : "Language subjects are offered at Grades 7 and 8."}</small>
 
         </div>
         {chapters && (
@@ -211,7 +234,7 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
           </div>
         </fieldset>}
         {error && <div style={{ color: "var(--soft-clay)", fontSize: "0.85rem" }}>{error}</div>}
-        <button className="btn btn-primary" type="submit" disabled={loading || !childName.trim() || (chapters ? !g4Topics.length : !strands.length)}>
+        <button className="btn btn-primary" type="submit" disabled={loading || !childName.trim() || (kidMode && !kidReady.length) || (chapters ? !g4Topics.length : !strands.length)}>
           {loading ? "Starting…" : "Start the test"}
         </button>
       </form>
