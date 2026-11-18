@@ -49,6 +49,8 @@ import { SkillTopic, skillTemplates } from "./skillTopic.js";
 import { NOUNS_PRONOUNS, MISCONCEPTIONS as LA7_NP } from "./la7/nounsPronouns.js";
 import { VERBS, MISCONCEPTIONS as LA7_VB } from "./la7/verbs.js";
 import { MODIFIERS, MISCONCEPTIONS as LA7_MD } from "./la7/modifiers.js";
+import { SENTENCES as LA7_SENTENCES, CAPITALS, MISCONCEPTIONS as LA7_SC } from "./la7/sentencesMechanics.js";
+import { PUNCTUATION as LA7_PUNCT, USAGE, WORD_STUDY, MISCONCEPTIONS as LA7_PW } from "./la7/punctuationUsageWords.js";
 import { WINTER_OAK_TEMPLATES } from "./winterOakE8.js";
 import { DONT_QUIT_TEMPLATES } from "./dontQuitE8.js";
 import { CORNER_SHOP_TEMPLATES } from "./cornerShopE8.js";
@@ -206,6 +208,8 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...LA7_NP,
   ...LA7_VB,
   ...LA7_MD,
+  ...LA7_SC,
+  ...LA7_PW,
 };
 
 export function hasTemplate(topicId: string, cpa: CPAStage, bloom: BloomLevel, grade = 5): boolean {
@@ -274,8 +278,8 @@ export const GRADE8_TOPICS = Object.keys(GRADE8_TEMPLATES);
 export const ENGLISH8_TOPICS = Object.keys(ENGLISH8_TEMPLATES);
 
 /** Grade 7 Language Arts (Spectrum Language Arts Grade 7, ids l7-) and Writing (Spectrum Writing Grade 7, ids w7-). Filled in by their files. */
-export const LA7_TEMPLATES: Record<string, Record<string, Template>> = Object.fromEntries([NOUNS_PRONOUNS, VERBS, MODIFIERS].map((t) => [t.topic, skillTemplates(t)]));
-export const LA7_BANKS = [NOUNS_PRONOUNS, VERBS, MODIFIERS];
+export const LA7_TEMPLATES: Record<string, Record<string, Template>> = Object.fromEntries([NOUNS_PRONOUNS, VERBS, MODIFIERS, LA7_SENTENCES, CAPITALS, LA7_PUNCT, USAGE, WORD_STUDY].map((t) => [t.topic, skillTemplates(t)]));
+export const LA7_BANKS = [NOUNS_PRONOUNS, VERBS, MODIFIERS, LA7_SENTENCES, CAPITALS, LA7_PUNCT, USAGE, WORD_STUDY];
 export const W7_BANKS: SkillTopic[] = [];
 export const W7_TEMPLATES: Record<string, Record<string, Template>> = Object.fromEntries(W7_BANKS.map((t) => [t.topic, skillTemplates(t)]));
 /** Grade 7 Maths (ids g7-). */

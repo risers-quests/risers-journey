@@ -206,7 +206,12 @@ TOPICS.push(
 TOPICS.push(
   { id: "l7-nouns-pronouns", strand: "Parts of Speech", name: "Nouns and Pronouns", shortLabel: "Nouns & Pronouns", dependsOn: [], grade: 7, subject: "Language Arts" },
   { id: "l7-verbs", strand: "Parts of Speech", name: "Verbs and Verb Tenses", shortLabel: "Verbs & Tenses", dependsOn: [], grade: 7, subject: "Language Arts" },
-  { id: "l7-modifiers", strand: "Parts of Speech", name: "Adjectives, Adverbs, Prepositions and Conjunctions", shortLabel: "Modifiers & Joiners", dependsOn: [], grade: 7, subject: "Language Arts" }
+  { id: "l7-modifiers", strand: "Parts of Speech", name: "Adjectives, Adverbs, Prepositions and Conjunctions", shortLabel: "Modifiers & Joiners", dependsOn: [], grade: 7, subject: "Language Arts" },
+  { id: "l7-sentences", strand: "Sentences", name: "Sentences", shortLabel: "Sentences", dependsOn: [], grade: 7, subject: "Language Arts" },
+  { id: "l7-capitals", strand: "Mechanics", name: "Capitalization", shortLabel: "Capitals", dependsOn: [], grade: 7, subject: "Language Arts" },
+  { id: "l7-punctuation", strand: "Mechanics", name: "Punctuation", shortLabel: "Punctuation", dependsOn: [], grade: 7, subject: "Language Arts" },
+  { id: "l7-usage", strand: "Usage", name: "Usage", shortLabel: "Usage", dependsOn: [], grade: 7, subject: "Language Arts" },
+  { id: "l7-words", strand: "Word Study", name: "Word Study", shortLabel: "Word Study", dependsOn: [], grade: 7, subject: "Language Arts" }
 );
 
 /** English strands (Grade 8). */

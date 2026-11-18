@@ -87,6 +87,11 @@ export const LA7_TOPIC_CHOICES = [
   { id: "l7-nouns-pronouns", chapter: "Lessons 1.1–1.9", name: "Nouns and Pronouns", about: "Common, proper, collective and abstract nouns; possessives; appositives; kinds of pronouns; pronoun shifts" },
   { id: "l7-verbs", chapter: "Lessons 1.10–1.17", name: "Verbs and Verb Tenses", about: "Action, linking and helping verbs; agreement; gerunds, participles, infinitives; progressive and perfect tenses" },
   { id: "l7-modifiers", chapter: "Lessons 1.18–1.25", name: "Adjectives, Adverbs, Prepositions and Conjunctions", about: "Comparing, adjective or adverb, intensifiers, prepositional phrases, conjunctions, interjections" },
+  { id: "l7-sentences", chapter: "Chapter 2", name: "Sentences", about: "Sentence types; simple, compound and complex; adjective and adverb clauses; run-ons and fragments" },
+  { id: "l7-capitals", chapter: "Chapter 3", name: "Capitalization", about: "Sentences and quotations, letter parts, names, titles, places, other proper nouns" },
+  { id: "l7-punctuation", chapter: "Chapter 4", name: "Punctuation", about: "End marks, commas, semicolons and colons, quotation marks, apostrophes, hyphens, dashes, parentheses, italics" },
+  { id: "l7-usage", chapter: "Chapter 5", name: "Usage", about: "Dangling and misplaced modifiers, double negatives, wordiness, redundancies" },
+  { id: "l7-words", chapter: "Chapter 6", name: "Word Study", about: "Roots, prefixes, suffixes, synonyms, homophones, multiple meanings, connotations, figurative language, analogies, allusions" },
 ];
 export const W7_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [];
 // Grade 7 Maths: chapters offered one by one (ids match the server's GRADE7 templates).
