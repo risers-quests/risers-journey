@@ -231,6 +231,9 @@ TOPICS.push(
 /** Grade 4 Maths, Chapters 8–14 (CPA Maths 4); Chapters 1–7 use the shared topics above with grade4Name. */
 TOPICS.push(
   ...([
+    ["g4-addsub", "Number & Algebra", "Addition and Subtraction"],
+    ["g4-mult", "Number & Algebra", "Multiplication"],
+    ["g4-div", "Number & Algebra", "Division"],
     ["g4-shapes", "Measurement & Geometry", "Shapes"],
     ["g4-measure", "Measurement & Geometry", "Measurement"],
     ["g4-area", "Measurement & Geometry", "Perimeter and Area"],

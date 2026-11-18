@@ -100,7 +100,7 @@ export function tiles(rng: Rng, answer: string, spares: string[] = [], wrong: { 
   const plain = parts.join(" ");
   let t = shuffle(rng, [...parts, ...spares]);
   // never start already in the right order
-  for (let n = 0; n < 5 && t.slice(0, parts.length).join(" ") === plain; n++) t = shuffle(rng, t);
+  for (let n = 0; n < 30 && t.slice(0, parts.length).join(" ") === plain; n++) t = shuffle(rng, t);
   return { kind: "order", tiles: t, answers: [plain, ...also], wrong: wrong.filter((w) => w.text !== plain && !also.includes(w.text)) };
 }
 

@@ -2,7 +2,9 @@
 // (ids match the server's GRADE4_TOPICS). Add a line here as each chapter is ready.
 export const GRADE4_TOPIC_CHOICES = [
   { id: "more-large-numbers", chapter: "Chapter 1", name: "Large Numbers", about: "Number names, place and face value, comparing, rounding, Roman numerals" },
-  { id: "operations-large-numbers", chapter: "Chapters 2–4", name: "Addition, Subtraction, Multiplication and Division", about: "Up to 6 digits, tables of 11–15, dividing with remainders, estimating" },
+  { id: "g4-addsub", chapter: "Chapter 2", name: "Addition and Subtraction", about: "Up to 6 digits with regrouping, word problems, estimating sums and differences" },
+  { id: "g4-mult", chapter: "Chapter 3", name: "Multiplication", about: "× 10 to 10,000, properties, tables of 11–15, the grid method, 3- and 4-digit products, estimating" },
+  { id: "g4-div", chapter: "Chapter 4", name: "Division", about: "÷ 10, 100, 1000; 3-digit ÷ 2-digit; 4-digit ÷ 1- and 2-digit; properties; estimating" },
   { id: "factors-multiples", chapter: "Chapter 5", name: "Factors and Multiples", about: "Factors, multiples, common factors and multiples, prime numbers" },
   { id: "four-operations-fractions", chapter: "Chapter 6", name: "Fractions", about: "Equivalent fractions, simplest form, comparing, adding and subtracting, mixed fractions" },
   { id: "decimals", chapter: "Chapter 7", name: "Decimals", about: "Tenths, hundredths and thousandths, number discs, place value, decimals as fractions" },

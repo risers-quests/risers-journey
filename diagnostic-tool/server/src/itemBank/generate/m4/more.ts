@@ -41,7 +41,7 @@ export const SHAPES_G4: Record<string, Template> = safe({
   },
   "concrete|apply": (rng) => {
     const k = int(rng, 1, 3);
-    return SH.order("apply", "views of a solid", rng, { k }, "Match each view to where you look from, in this order: plan, front elevation, side view.", "from the top | from the front | from the side", [], [["from the front from the top from the side", "m4-net-view"]]);
+    return SH.order("apply", "views of a solid", rng, { k }, "Match each view to where you look from, in this order: plan, front elevation, side view.", "from the top | from the front | from the side", ["from inside"], [["from the front from the top from the side", "m4-net-view"]]);
   },
   "concrete|analyze": (rng) => {
     const a = int(rng, 3, 9), b = int(rng, 2, 9);
