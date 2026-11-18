@@ -41,6 +41,8 @@ export const DONT_QUIT: Chapter = {
     { line: "rest if you must, but don't you quit.", q: "What difference does the poet make here?", a: "Resting is fine; giving up is not", w: ["Resting and quitting are the same", "You should never rest", "Quitting is fine if you are tired"] },
     { line: "it may be near when it seems afar;", q: "What may be near?", a: "Success", w: ["The night", "Failure", "The clouds of doubt"] },
     { line: "when care is pressing you down a bit—", q: "What does 'care' mean here?", a: "Worry", w: ["Kindness", "Looking after someone", "Being careful"] },
+    { line: "Success is failure turned inside out— the silver tint of the clouds of doubt,", q: "Which popular saying does 'the silver tint of the clouds of doubt' refer to?", a: "Every cloud has a silver lining", w: ["All that glitters is not gold", "Slow and steady wins the race", "Look before you leap"] },
+    { line: "Often the struggler has given up when he might have captured the victor's cup;", q: "What do the 'victor's cup' and the 'golden crown' stand for in the poem?", a: "Success: the reward for not giving up", w: ["Money and jewels", "A king's treasure", "Prizes in a sports day"] },
   ],
   vocab: [
     { s: "when the road you're trudging seems all uphill,", w: "trudging", meaning: "walking slowly because of tiredness or harsh conditions", wrong: ["running happily", "driving fast", "dancing along"] },
@@ -75,6 +77,8 @@ export const DONT_QUIT: Chapter = {
     { q: "What kind of person is the speaker of the poem?", a: "An encourager who believes in perseverance", w: ["Someone who has given up", "A person who loves money", "A strict, angry teacher"] },
     { q: "What mistake does 'the struggler' make?", a: "He gives up just before success", w: ["He works too slowly", "He rests too often", "He never tries at all"] },
     { q: "How does the poet want the reader to feel?", a: "Hopeful and determined", w: ["Afraid of failure", "Sad about life", "Bored with trying"] },
+    { q: "What is the tone of the poem?", a: "Encouraging and hopeful", w: ["Angry and bitter", "Sad and hopeless", "Funny and silly"] },
+    { q: "What is the poet's opinion about rest?", a: "Rest is allowed when you must, as long as you don't quit", w: ["Rest is for lazy people", "You should rest instead of trying", "Rest means you have failed"] },
   ],
   theme: [
     { q: "What is the main message of 'Don't Quit'?", a: "Keep going when things are hard: success may be closer than it seems", w: ["Rest is a waste of time", "Life is always fair", "Money brings happiness"] },

@@ -174,6 +174,7 @@ TOPICS.push(
 TOPICS.push(
   { id: "e8-lit-winter-oak", strand: "Literature", name: "The Winter Oak (Ch 1)", shortLabel: "The Winter Oak", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-lit-dont-quit", strand: "Literature", name: "Don't Quit (Ch 2)", shortLabel: "Don't Quit", dependsOn: [], grade: 8, subject: "English" },
+  { id: "e8-lit-corner-shop", strand: "Literature", name: "The Corner Shop (Ch 3)", shortLabel: "The Corner Shop", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-clauses", strand: "Grammar", name: "Dependent and Independent Clauses", shortLabel: "Clauses", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-purpose", strand: "Grammar", name: "Words as Nouns and Verbs; Clauses of Purpose", shortLabel: "Nouns/Verbs & Purpose", dependsOn: [], grade: 8, subject: "English" },
   { id: "e8-participles", strand: "Grammar", name: "Participles and Gerunds", shortLabel: "Participles & Gerunds", dependsOn: [], grade: 8, subject: "English" },

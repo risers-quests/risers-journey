@@ -44,6 +44,7 @@ export const GRADE8_TOPIC_CHOICES = [
 export const ENGLISH8_TOPIC_CHOICES = [
   { id: "e8-lit-winter-oak", chapter: "Literature · Ch 1", name: "The Winter Oak", about: "Yuri Nagibin's story: Anna Vasilyevna, Savushkin and the forest" },
   { id: "e8-lit-dont-quit", chapter: "Literature · Ch 2", name: "Don't Quit", about: "Edgar Albert Guest's poem about perseverance" },
+  { id: "e8-lit-corner-shop", chapter: "Literature · Ch 3", name: "The Corner Shop", about: "Cynthia Asquith's ghost story: the jade frog and the old man" },
   { id: "e8-clauses", chapter: "Grammar · Ch 1", name: "Dependent and Independent Clauses", about: "Which clause stands alone; noun, adjective and adverb clauses; who, which, whose, where" },
   { id: "e8-purpose", chapter: "Grammar · Ch 3", name: "Words as Nouns and Verbs; Adverb Clauses of Purpose", about: "a watch / we watch; so that, in order that, lest; purpose or result" },
   { id: "e8-participles", chapter: "Grammar · Ch 5", name: "Participles and Gerunds", about: "-ing words as nouns and adjectives, -ing after prepositions, joining with a participle, -ing / -ed feelings" },
