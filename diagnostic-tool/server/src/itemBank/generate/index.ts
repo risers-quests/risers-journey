@@ -57,6 +57,7 @@ import { MODIFIERS, MISCONCEPTIONS as LA7_MD } from "./la7/modifiers.js";
 import { SENTENCES as LA7_SENTENCES, CAPITALS, MISCONCEPTIONS as LA7_SC } from "./la7/sentencesMechanics.js";
 import { PARAGRAPHS, NARRATIVE, INFORMATIONAL, OPINION, RESEARCH, MISCONCEPTIONS as W7_MIS } from "./w7/writing.js";
 import * as W4 from "./w4/writing.js";
+import * as L4 from "./l4/la.js";
 import { NUMBERS_G3, ADDSUB_G3, MULT_G3, DIV_G3, MISCONCEPTIONS as M3A_MIS } from "./m3/numbers.js";
 import { FRACTIONS_G3, SHAPES_G3, MEASURE_G3, TIME_G3, MONEY_G3, DATA_G3, PATTERNS_G3, MISCONCEPTIONS as M3B_MIS } from "./m3/more.js";
 import { PUNCTUATION as LA7_PUNCT, USAGE, WORD_STUDY, MISCONCEPTIONS as LA7_PW } from "./la7/punctuationUsageWords.js";
@@ -170,6 +171,7 @@ function templatesFor(topicId: string, grade: number): Record<string, Template> 
   if (topicId.startsWith("l7-")) return LA7_TEMPLATES[topicId];
   if (topicId.startsWith("w7-")) return W7_TEMPLATES[topicId];
   if (topicId.startsWith("w4-")) return W4_TEMPLATES[topicId];
+  if (topicId.startsWith("l4-")) return L4_TEMPLATES[topicId];
   if (topicId.startsWith("g7-")) return GRADE7_TEMPLATES[topicId];
   if (topicId.startsWith("g3-")) return GRADE3_TEMPLATES[topicId];
   if (grade === 8) return GRADE8_TEMPLATES[topicId];
@@ -233,6 +235,7 @@ export const MISCONCEPTIONS: Record<string, { label: string; detail: string; chi
   ...LA7_PW,
   ...W7_MIS,
   ...W4.MISCONCEPTIONS,
+  ...L4.MISCONCEPTIONS,
   ...M3A_MIS,
   ...M3B_MIS,
 };
@@ -307,6 +310,9 @@ export const LA7_TEMPLATES: Record<string, Record<string, Template>> = Object.fr
 export const LA7_BANKS = [NOUNS_PRONOUNS, VERBS, MODIFIERS, LA7_SENTENCES, CAPITALS, LA7_PUNCT, USAGE, WORD_STUDY];
 export const W7_BANKS: SkillTopic[] = [PARAGRAPHS, NARRATIVE, INFORMATIONAL, OPINION, RESEARCH];
 export const W7_TEMPLATES: Record<string, Record<string, Template>> = Object.fromEntries(W7_BANKS.map((t) => [t.topic, skillTemplates(t)]));
+/** Grade 4 Language Arts (Spectrum Language Arts Grade 4, ids l4-). */
+export const L4_BANKS: SkillTopic[] = [L4.NOUNS_VERBS, L4.MODIFIERS, L4.SENTENCES, L4.CAPITALS, L4.PUNCTUATION, L4.VERB_USAGE, L4.NOUN_USAGE, L4.WORDS];
+export const L4_TEMPLATES: Record<string, Record<string, Template>> = Object.fromEntries(L4_BANKS.map((t) => [t.topic, skillTemplates(t)]));
 /** Grade 4 Writing (Spectrum Writing Grade 4, ids w4-). */
 export const W4_BANKS: SkillTopic[] = [W4.WORDS_SENTENCES, W4.PROOFREADING, W4.NARRATIVE, W4.INFORM, W4.OPINION];
 export const W4_TEMPLATES: Record<string, Record<string, Template>> = Object.fromEntries(W4_BANKS.map((t) => [t.topic, skillTemplates(t)]));
@@ -351,6 +357,7 @@ export const GRADE7_TEMPLATES: Record<string, Record<string, Template>> = {
 /** The topics ready for each language subject, in book order. */
 export function languageTopics(subject: string, grade = 7): string[] {
   if (subject === "Writing" && grade === 4) return Object.keys(W4_TEMPLATES);
+  if (subject === "Language Arts" && grade === 4) return Object.keys(L4_TEMPLATES);
   return subject === "English" ? ENGLISH8_TOPICS : subject === "Language Arts" ? Object.keys(LA7_TEMPLATES) : subject === "Writing" ? Object.keys(W7_TEMPLATES) : [];
 }
 /** The maths topics ready at a grade chosen chapter by chapter (null: Grade 5, chosen by strand). */

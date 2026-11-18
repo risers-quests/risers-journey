@@ -262,6 +262,18 @@ TOPICS.push(
   { id: "w7-research", strand: "Writing", name: "Research and Sources", shortLabel: "Research", dependsOn: [], grade: 7, subject: "Writing" }
 );
 
+/** Grade 4 Language Arts (Spectrum Language Arts Grade 4), chosen topic by topic. */
+TOPICS.push(
+  { id: "l4-nouns-verbs", strand: "Grammar", name: "Nouns, Pronouns and Verbs", shortLabel: "Nouns & Verbs", dependsOn: [], grade: 4, subject: "Language Arts" },
+  { id: "l4-modifiers", strand: "Grammar", name: "Adjectives, Adverbs, Articles, Prepositions and Conjunctions", shortLabel: "Describing & Joining", dependsOn: [], grade: 4, subject: "Language Arts" },
+  { id: "l4-sentences", strand: "Grammar", name: "Sentences", shortLabel: "Sentences", dependsOn: [], grade: 4, subject: "Language Arts" },
+  { id: "l4-capitals", strand: "Mechanics", name: "Capitalization", shortLabel: "Capitals", dependsOn: [], grade: 4, subject: "Language Arts" },
+  { id: "l4-punctuation", strand: "Mechanics", name: "Punctuation", shortLabel: "Punctuation", dependsOn: [], grade: 4, subject: "Language Arts" },
+  { id: "l4-verbs", strand: "Usage", name: "Verb Usage", shortLabel: "Verb Usage", dependsOn: [], grade: 4, subject: "Language Arts" },
+  { id: "l4-nouns-usage", strand: "Usage", name: "Plurals, Possessives, Pronouns and Comparisons", shortLabel: "Plurals & Comparisons", dependsOn: [], grade: 4, subject: "Language Arts" },
+  { id: "l4-words", strand: "Usage", name: "Word Study and Figurative Language", shortLabel: "Words & Figures", dependsOn: [], grade: 4, subject: "Language Arts" }
+);
+
 /** Grade 4 Writing (Spectrum Writing Grade 4), chosen topic by topic. */
 TOPICS.push(
   { id: "w4-words", strand: "Foundations of Writing", name: "Words and Sentences", shortLabel: "Words & Sentences", dependsOn: [], grade: 4, subject: "Writing" },
@@ -278,7 +290,7 @@ export const ENGLISH_STRANDS = ["Grammar", "Vocabulary", "Punctuation & Spelling
 export type Subject = "Maths" | "English" | "Language Arts" | "Writing";
 export const LANGUAGE_SUBJECTS = ["English", "Language Arts", "Writing"];
 export const isLanguage = (s?: string) => !!s && LANGUAGE_SUBJECTS.includes(s);
-export const subjectOfTopic = (id: string): Subject => (id.startsWith("e8-") ? "English" : id.startsWith("l7-") ? "Language Arts" : id.startsWith("w7-") || id.startsWith("w4-") ? "Writing" : "Maths");
+export const subjectOfTopic = (id: string): Subject => (id.startsWith("e8-") ? "English" : id.startsWith("l7-") || id.startsWith("l4-") ? "Language Arts" : id.startsWith("w7-") || id.startsWith("w4-") ? "Writing" : "Maths");
 
 /** The book's strands, in order. A test covers one or more of them. */
 export const STRANDS = ["Number & Algebra", "Measurement & Geometry", "Ratio & Proportion", "Data Handling"];

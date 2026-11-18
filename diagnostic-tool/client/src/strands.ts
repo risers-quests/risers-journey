@@ -147,3 +147,15 @@ export const GRADE3_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [
   { id: "g3-data", chapter: "Chapter 10", name: "Data Handling", about: "Tally marks, pictographs with a scale, bar graphs, conclusions" },
   { id: "g3-patterns", chapter: "Chapter 11", name: "Patterns and Symmetry", about: "Number, letter and shape patterns, lines of symmetry, tiling" },
 ];
+
+// Grade 4 Language Arts (Spectrum Language Arts Grade 4).
+export const LA4_TOPIC_CHOICES: typeof LA7_TOPIC_CHOICES = [
+  { id: "l4-nouns-verbs", chapter: "Chapter 1", name: "Nouns, Pronouns and Verbs", about: "Common and proper nouns, pronouns, action, helping and linking verbs" },
+  { id: "l4-modifiers", chapter: "Chapter 1", name: "Adjectives, Adverbs and More", about: "Adjectives, adverbs, articles, prepositions, conjunctions" },
+  { id: "l4-sentences", chapter: "Chapter 1", name: "Sentences", about: "Sentence types, subject, predicate, direct object, fragments, compound, run-ons, combining" },
+  { id: "l4-capitals", chapter: "Chapter 2", name: "Capitalization", about: "Names, titles, places, dates, holidays, book, movie and song titles" },
+  { id: "l4-punctuation", chapter: "Chapter 2", name: "Punctuation", about: "End marks, abbreviations, commas, dialogue, titles, colons" },
+  { id: "l4-verbs", chapter: "Chapter 3", name: "Verb Usage", about: "Subject-verb agreement, past and future tense, tricky verbs, contractions, double negatives" },
+  { id: "l4-nouns-usage", chapter: "Chapter 3", name: "Plurals, Possessives and Comparisons", about: "Plurals, possessives, subject and object pronouns, comparative adjectives and adverbs" },
+  { id: "l4-words", chapter: "Chapter 3", name: "Word Study and Figurative Language", about: "Synonyms, antonyms, homophones, multiple meanings, similes, metaphors, personification, idioms" },
+];
