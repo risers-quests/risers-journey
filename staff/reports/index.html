@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reports — Risers Journey — Staff</title>
+<link rel="stylesheet" href="../../home.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/lifehub.css" />
+<script src="../../assets/brand.js" data-area="staff"></script>
+<script src="../../end-of-term-2/shared/eot2-data.js"></script>
+<script src="../riser-grades.js"></script>
+<style>
+.sr-list { max-width: 860px; display: grid; gap: 10px; }
+.sr-row { display: grid; grid-template-columns: minmax(120px, 1.1fr) 1fr 2.2fr auto; gap: 14px; align-items: center; background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 14px 18px; color: var(--ink); text-decoration: none; }
+a.sr-row:hover { border-color: var(--accent); }
+.sr-name strong { display: block; font-size: 1rem; }
+.sr-name span, .sr-last span { font-size: .8rem; color: var(--ink-soft); }
+.sr-last b { display: block; font-size: .92rem; font-weight: 600; }
+.sr-work { font-size: .88rem; line-height: 1.45; }
+.sr-chip { display: inline-block; font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 99px; margin: 1px 4px 1px 0; }
+.sr-gap { background: #fbe1e6; color: #a33a52; }
+.sr-near { background: #fdf0d6; color: #8a5d14; }
+.sr-ok { color: #2f6b12; font-weight: 600; }
+.sr-none { color: var(--ink-soft); }
+.sr-go { color: var(--accent-dark); font-weight: 600; white-space: nowrap; }
+.sr-note { max-width: 860px; font-size: .85rem; color: var(--ink-soft); margin: 14px 0 0; }
+@media (max-width: 720px) {
+  .sr-row { grid-template-columns: 1fr auto; }
+  .sr-last { grid-column: 1 / -1; grid-row: 2; }
+  .sr-work { grid-column: 1 / -1; grid-row: 3; }
+  .sr-go { grid-row: 1; grid-column: 2; }
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* Staff: every Riser's Skill Check reports in one place. Each row shows how
+   many checks, the latest one, and what to work on now (gaps first, then
+   nearly there, from each topic's latest result); it opens that Riser's
+   full reports. Data: the Skill Check server, /api/diagnostic/children/<kid>/reports. */
+(function () {
+  var staff = null;
+  try { staff = localStorage.getItem('rj-staff-name'); } catch (e) {}
+  if (!staff) { location.replace('../index.html'); return; }
+  var API = '../../api/diagnostic';
+  var G = window.LH_RISER_GRADES || {};
+  var app = document.getElementById('app');
+  function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html !== undefined) e.innerHTML = html; return e; }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function date(iso) { return iso ? new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : ''; }
+  function gradeLine(g) {
+    if (!g) return '';
+    var parts = ['Maths ' + g.maths];
+    if (g.grammar) parts.push('English ' + g.grammar);
+    else { if (g.language) parts.push('LA ' + g.language); if (g.writing) parts.push('Writing ' + g.writing); }
+    return 'Grade ' + parts.join(' · ');
+  }
+
+  var kids = window.EOT2_KIDS.slice().sort(function (a, b) { return a.name.localeCompare(b.name); });
+  app.appendChild(el('header', 'hd-welcome', '<h1>Reports</h1><p>Every Riser’s Skill Check reports. Open a Riser to see each check in full.</p>'));
+  var list = el('div', 'sr-list');
+  app.appendChild(list);
+  var note = el('p', 'sr-note', 'Getting the reports…');
+  app.appendChild(note);
+
+  var rows = kids.map(function (k) {
+    var row = el('a', 'sr-row');
+    row.href = '../../diagnostic/index.html?child=' + encodeURIComponent(k.slug);
+    row.innerHTML = '<div class="sr-name"><strong>' + esc(k.name) + '</strong><span>' + esc(gradeLine(G[k.slug])) + '</span></div>' +
+      '<div class="sr-last"><span>…</span></div><div class="sr-work"></div><span class="sr-go">Open →</span>';
+    list.appendChild(row);
+    return row;
+  });
+
+  var done = 0, tested = 0;
+  kids.forEach(function (k, i) {
+    fetch(API + '/children/' + encodeURIComponent(k.slug) + '/reports').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }).then(function (h) {
+      var row = rows[i];
+      var last = row.querySelector('.sr-last'), work = row.querySelector('.sr-work');
+      if (!h) { last.innerHTML = '<span>Couldn’t load</span>'; }
+      else if (!h.reports || !h.reports.length) { last.innerHTML = '<span>No checks yet</span>'; work.innerHTML = '<span class="sr-none">—</span>'; }
+      else {
+        tested++;
+        var r0 = h.reports[0], c = h.combined;
+        last.innerHTML = '<b>' + esc(date(r0.date)) + '</b><span>' + esc(r0.subject || 'Maths') + ' · ' + r0.right + '/' + r0.questions + ' right · ' + h.reports.length + ' check' + (h.reports.length === 1 ? '' : 's') + '</span>';
+        var chips = (c.gaps || []).map(function (n) { return '<span class="sr-chip sr-gap">' + esc(n) + '</span>'; })
+          .concat((c.nearly || []).map(function (n) { return '<span class="sr-chip sr-near">' + esc(n) + '</span>'; }));
+        work.innerHTML = chips.length ? chips.slice(0, 5).join('') + (chips.length > 5 ? '<span class="sr-none"> +' + (chips.length - 5) + ' more</span>' : '') : '<span class="sr-ok">Nothing to work on</span>';
+      }
+      if (++done === kids.length) note.innerHTML = tested + ' of ' + kids.length + ' Risers have taken a Skill Check. <span class="sr-chip sr-gap">Not yet</span><span class="sr-chip sr-near">Nearly there</span> show what to work on now, from each topic’s latest result.';
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -250,16 +250,6 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
         </button>
       </form>
 
-      <div className="card setup-form" style={{ marginTop: 16 }}>
-        <label>Past reports</label>
-        <div className="report-links">
-          {(me ? [me] : RISERS).map((n) => (
-            <a key={n} href={`?child=${n.toLowerCase()}`}>
-              {me ? `See all of ${n}'s reports →` : n}
-            </a>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

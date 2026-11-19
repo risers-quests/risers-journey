@@ -45,15 +45,21 @@
       '<p class="hd-eyebrow">' + new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) + '</p>' +
       '<h1>' + hello + ', ' + staffInfo.label + '</h1>' +
       '<p>Where would you like to go today?</p>'));
-    app.appendChild(el('div', 'hd-tiles', window.LH_tiles([
-      { title: 'Term 3', desc: 'Quests, weekly check-ins and assessments.', href: 'term-3/index.html', icon: 'skills', tone: 'amber' },
-      { title: 'Term 2', desc: 'The Term 2 conference and quests.', href: 'term-2/index.html', icon: 'term', tone: 'slate' },
-      { title: 'Term 1', desc: 'The Term 1 conference.', href: 'term-1/index.html', icon: 'conf', tone: 'violet' },
-      { title: 'Skill Check', desc: 'Maths (Grades 4, 5, 8) and English (Grade 8): gaps, mistakes and how the subject feels.', href: '../diagnostic/', icon: 'check', tone: 'green' },
-      { title: 'Risers’ grades', desc: 'The grade each Riser works at in Maths, Language Arts and Writing.', href: 'risers/index.html', icon: 'sel', tone: 'violet' }
-    ].concat(staffInfo.id === 'jeran' ? [
-      { title: 'Admin', desc: 'Fees, payments, reminders and emails waiting for a reply.', href: ADMIN_CONSOLE_URL, icon: 'paper', tone: 'slate', soon: !ADMIN_CONSOLE_URL }
-    ] : []))));
+    app.appendChild(el('div', 'hd-groups', window.LH_tileGroups([
+      { title: 'This term', tiles: [
+        { title: 'Term 3', desc: 'Quests, weekly check-ins and assessments.', href: 'term-3/index.html', icon: 'skills', tone: 'amber' }] },
+      { title: 'Skill Check', tiles: [
+        { title: 'Skill Check', desc: 'Maths, Language Arts and Writing, Grades 3 to 8: start a check or try the questions.', href: '../diagnostic/', icon: 'check', tone: 'green' },
+        { title: 'Reports', desc: 'Every Riser’s Skill Check reports: what to work on, mistakes and strengths.', href: 'reports/index.html', icon: 'paper', tone: 'rose' }] },
+      { title: 'Risers', tiles: [
+        { title: 'Risers’ grades', desc: 'The grade each Riser works at in Maths, Language Arts and Writing.', href: 'risers/index.html', icon: 'sel', tone: 'violet' },
+        { title: 'Risers’ links', desc: 'Each Riser’s own sign-in link.', href: 'links/index.html', icon: 'link', tone: 'slate' }] },
+      { title: 'Past terms', tiles: [
+        { title: 'Term 2', desc: 'The Term 2 conference and quests.', href: 'term-2/index.html', icon: 'term', tone: 'slate' },
+        { title: 'Term 1', desc: 'The Term 1 conference.', href: 'term-1/index.html', icon: 'conf', tone: 'violet' }] },
+      { title: 'Admin', tiles: staffInfo.id === 'jeran' ? [
+        { title: 'Admin', desc: 'Fees, payments, reminders and emails waiting for a reply.', href: ADMIN_CONSOLE_URL, icon: 'paper', tone: 'slate', soon: !ADMIN_CONSOLE_URL }] : [] }
+    ])));
   }
 
   function init() {

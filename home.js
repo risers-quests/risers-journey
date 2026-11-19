@@ -45,14 +45,17 @@
       '<p class="hd-eyebrow">' + new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) + '</p>' +
       '<h1>' + hello + ', ' + escapeHtml(kidEntry.displayName) + '</h1>' +
       '<p>Where would you like to go today?</p>'));
-    app.appendChild(el('div', 'hd-tiles', window.LH_tiles([
-      { title: 'Term 3', desc: 'Your weekly check-in and everything else for this term.', href: 'term-3/index.html', icon: 'skills', tone: 'amber' },
-      { title: 'Skill Check', desc: 'Show what you know in a subject, one topic at a time.', href: 'diagnostic/', icon: 'check', tone: 'green' },
-      { title: 'My Reports', desc: 'Your Skill Check results: what you’ve got and what to learn next.', href: 'diagnostic/?child=' + encodeURIComponent(kidKey), icon: 'paper', tone: 'rose' }
-    ].concat(OWN_TILES[kidKey] || []).concat([
-      { title: 'Term 2', desc: 'Your Term 2 conference and quests.', href: 'term-2/index.html', icon: 'term', tone: 'slate' },
-      { title: 'Term 1', desc: 'Your Term 1 conference.', href: 'term-1/index.html', icon: 'conf', tone: 'violet' }
-    ]))));
+    app.appendChild(el('div', 'hd-groups', window.LH_tileGroups([
+      { title: 'This term', tiles: [
+        { title: 'Term 3', desc: 'Your weekly check-in and everything else for this term.', href: 'term-3/index.html', icon: 'skills', tone: 'amber' }] },
+      { title: 'Skill Check', tiles: [
+        { title: 'Skill Check', desc: 'Show what you know in a subject, one topic at a time.', href: 'diagnostic/', icon: 'check', tone: 'green' },
+        { title: 'My Reports', desc: 'Your Skill Check results: what to work on and what you’ve got.', href: 'diagnostic/?child=' + encodeURIComponent(kidKey), icon: 'paper', tone: 'rose' }] },
+      { title: 'My tools', tiles: OWN_TILES[kidKey] || [] },
+      { title: 'Past terms', tiles: [
+        { title: 'Term 2', desc: 'Your Term 2 conference and quests.', href: 'term-2/index.html', icon: 'term', tone: 'slate' },
+        { title: 'Term 1', desc: 'Your Term 1 conference.', href: 'term-1/index.html', icon: 'conf', tone: 'violet' }] }
+    ])));
   }
 
   function init() {

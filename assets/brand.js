@@ -89,6 +89,13 @@
     }).join('');
   };
 
+  // Home tiles in labelled groups: [{ title, tiles: [...] }]. Empty groups are left out.
+  window.LH_tileGroups = function (groups) {
+    return groups.filter(function (g) { return g.tiles.length; }).map(function (g) {
+      return '<section class="hd-group"><h2 class="hd-group-title">' + g.title + '</h2><div class="hd-tiles">' + window.LH_tiles(g.tiles) + '</div></section>';
+    }).join('');
+  };
+
   // Risers trying Term 3 out before it starts: they can tick any check-in
   // week early. Staff clear their try-out data on Term 3 → Try-out data.
   window.LH_TRIAL = ['benjamin'];
@@ -115,24 +122,40 @@
   };
   var kidKey = (function () { try { return localStorage.getItem(KID_KEY) || ''; } catch (e) { return ''; } })();
 
+  // Tools added for one Riser only (match home.js OWN_TILES).
+  var OWN_NAV = {
+    karis: [{ label: 'Sound Desk', href: root + 'tools/sound-desk/index.html', icon: 'sound', short: 'Sound', match: /\/tools\/sound-desk\//, noTab: true }]
+  };
+
+  // Grouped: this term, Skill Check, Risers / my tools, past terms.
+  // noTab: left out of the phone's bottom tab bar (it has little room).
   var NAV = isStaff ? [
     // Only the staff Home itself (not end-of-term-2/staff/ and the like).
     { label: 'Home', href: root + 'staff/index.html', icon: 'home', match: new RegExp('^' + new URL(root, location.href).pathname + 'staff/(index\\.html)?$') },
+    { section: 'This term' },
     { label: 'Term 3', href: root + 'staff/term-3/index.html', icon: 'skills', short: 'Term 3', match: /\/term-3\// },
-    { label: 'Term 2', href: root + 'staff/term-2/index.html', icon: 'term', short: 'Term 2', match: /\/(staff\/term-2|end-of-term-2|staff\/quests)\// },
-    { label: 'Term 1', href: root + 'staff/term-1/index.html', icon: 'conf', short: 'Term 1', match: /\/(staff\/term-1|term-1-conference)\// },
+    { section: 'Skill Check' },
     { label: 'Skill Check', href: root + 'diagnostic/index.html', icon: 'check', short: 'Skill Check', match: /\/diagnostic\// },
+    { label: 'Reports', href: root + 'staff/reports/index.html', icon: 'paper', short: 'Reports', match: /\/staff\/reports\// },
+    { section: 'Risers' },
     { label: 'Risers’ grades', href: root + 'staff/risers/index.html', icon: 'sel', short: 'Grades', match: /\/staff\/risers\// },
-    { label: 'Risers’ links', href: root + 'staff/links/index.html', icon: 'link', short: 'Links', match: /\/staff\/links\// }
+    { label: 'Risers’ links', href: root + 'staff/links/index.html', icon: 'link', short: 'Links', match: /\/staff\/links\//, noTab: true },
+    { section: 'Past terms' },
+    { label: 'Term 2', href: root + 'staff/term-2/index.html', icon: 'term', short: 'Term 2', match: /\/(staff\/term-2|end-of-term-2|staff\/quests)\// },
+    { label: 'Term 1', href: root + 'staff/term-1/index.html', icon: 'conf', short: 'Term 1', match: /\/(staff\/term-1|term-1-conference)\// }
   ] : [
     { label: 'Home', href: root + 'index.html', icon: 'home', match: /\/(index\.html)?$/, exact: true },
+    { section: 'This term' },
     { label: 'Term 3', href: root + 'term-3/index.html', icon: 'skills', short: 'Term 3', match: /\/term-3\// },
-    { label: 'Term 2', href: root + 'term-2/index.html', icon: 'term', short: 'Term 2', match: /\/(term-2|end-of-term-2|dashboard)\// },
-    { label: 'Term 1', href: root + 'term-1/index.html', icon: 'conf', short: 'Term 1', match: /\/(term-1|term-1-conference)\// },
+    { section: 'Skill Check' },
     // Skill Check (take one) and My Reports (results) share a page; the address tells them apart.
     { label: 'Skill Check', href: root + 'diagnostic/index.html', icon: 'check', short: 'Skill Check', match: /\/diagnostic\//, notQuery: 'child=' },
     { label: 'My Reports', href: root + 'diagnostic/index.html?child=' + encodeURIComponent(kidKey), icon: 'paper', short: 'Reports', match: /\/diagnostic\//, query: 'child=' }
-  ];
+  ].concat(OWN_NAV[kidKey] ? [{ section: 'My tools' }].concat(OWN_NAV[kidKey]) : []).concat([
+    { section: 'Past terms' },
+    { label: 'Term 2', href: root + 'term-2/index.html', icon: 'term', short: 'Term 2', match: /\/(term-2|end-of-term-2|dashboard)\// },
+    { label: 'Term 1', href: root + 'term-1/index.html', icon: 'conf', short: 'Term 1', match: /\/(term-1|term-1-conference)\// }
+  ]);
 
 
   function isActive(item) {
@@ -158,7 +181,7 @@
   function navHtml(compact) {
     return NAV.map(function (item) {
       if (item.section) return compact ? '' : '<div class="lh-nav-section">' + item.section + '</div>';
-      if (compact && item.soon) return '';
+      if (compact && (item.soon || item.noTab)) return '';
       var cls = 'lh-nav-item' + (isActive(item) ? ' is-active' : '') + (item.soon ? ' is-soon' : '');
       var inner = svg(item.icon) + '<span>' + (compact && item.short ? item.short : item.label) + '</span>' +
         (item.soon ? '<em>Soon</em>' : '');

@@ -279,3 +279,10 @@ a { color: var(--accent); }
 /* Long forms (Self-Assessment, Term Reflection, MOM) read better at a
    narrower measure than the dashboards. */
 .lh-has-shell #app:has(.eot2-form-header) { max-width: 900px; }
+
+/* Home tiles in labelled groups (LH_tileGroups). */
+.hd-group + .hd-group { margin-top: 26px; }
+.hd-group-title {
+  font-family: var(--font-body); font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink-faint, #7a8893); margin: 0 4px 12px;
+}
