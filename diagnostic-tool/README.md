@@ -138,6 +138,29 @@ Solids, Data and Probability reuse the Grade 8 generators under `g7-`
 ids, so they can run a little above Grade 7 level. Writing questions test
 writing skills by choice/tap/tiles; an essay itself isn't marked.
 
+## Grades 3, 4, 5 and 6 (added later)
+
+| Grade | Maths | Language Arts | Writing |
+|---|---|---|---|
+| 3 | `g3-` (CPA Maths 3, 11 chapters, `generate/m3/`) | — | `w3-` (Spectrum Writing 3, `generate/w3/`) |
+| 4 | Ch 1, 5–7 shared topics; Ch 2–4 `g4-addsub/mult/div` (`generate/m4/ops.ts`); Ch 8–14 `g4-` (`generate/m4/more.ts`) | `l4-` (Spectrum LA 4, `generate/l4/`) | `w4-` (Spectrum Writing 4, `generate/w4/`) |
+| 5 | All 15 topics generated: Ch 3–14 in `generate/m5/a.ts`, `b.ts`; Ch 1–2 shared generators plus Grade 5 extras (international system, Roman numerals, averages, properties) mixed in 2 in 5 (`generate/m5/extra.ts`, `GRADE5_EXTRA` in `generate/index.ts`) | — | — |
+| 6 | — | `l6-` (Spectrum LA 6, `generate/l6/`) | `w6-` (Spectrum Writing 6, `generate/w6/`) |
+
+Language topics are chosen by subject and grade (`languageTopics(subject, grade)`).
+`m7/kit.ts` holds the shared helpers: `safe()` retries a template when its
+numbers clash, `noEcho()` retries when the right answer would appear in the
+question. Stress test several prefixes at once with `ONLY=a,b,c`.
+
+## Reports: what to work on
+
+Every report (one test, all tests together, and the child's email) shows
+**What to work on**: each gap or nearly-there topic with three lines,
+*Where* (from the CPA × Bloom's grid, in plain words), *Mistake* (the one
+made most) and *Try* (its child tip). `WorkOn` / `slipWords` in
+`client/src/components/ReportParts.tsx`, and the same in
+`server/src/report/emails.ts`. The CPA × Bloom's grid stays in the staff section.
+
 ## Who sees what
 
 In kid mode the start page shows only that child's grade and subjects
