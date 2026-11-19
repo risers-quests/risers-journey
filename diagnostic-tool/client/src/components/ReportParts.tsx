@@ -271,3 +271,64 @@ export function WorkOn({ topics, empty }: { topics: ReportTopic[]; empty: string
     </section>
   );
 }
+
+/* ---- Topic ring: green "Got it", amber "Nearly there", with a key that names them ---- */
+
+type RingTopic = { name: string; status: TopicStatus; tag?: string };
+
+/**
+ * A ring of the topics tested: green for "Got it", amber for "Nearly
+ * there", the rest of the track for "Not yet". Beside it, a short key that
+ * names the topics in each colour, so "1 of 3" says which 3 and which 1.
+ * `extra` adds a line under the key (e.g. questions right).
+ */
+export function TopicRing({ topics, extra }: { topics: RingTopic[]; extra?: string }) {
+  const tested = topics.filter((t) => t.status !== "notReached");
+  const got = tested.filter((t) => t.status === "secure");
+  const nearly = tested.filter((t) => t.status === "fragile");
+  const notYet = tested.filter((t) => t.status === "gap");
+  const waiting = topics.filter((t) => t.status === "notReached");
+  const total = tested.length;
+  const r = 52;
+  const c = 2 * Math.PI * r;
+  const g = total ? got.length / total : 0;
+  const n = total ? nearly.length / total : 0;
+  const names = (ts: RingTopic[]) => ts.map((t) => (t.tag ? `${t.name} (${t.tag})` : t.name)).join(", ");
+  const rows: [string, string, RingTopic[]][] = [
+    ["rp-key-got", "Got it", got],
+    ["rp-key-near", "Nearly there", nearly],
+    ["rp-key-gap", "Not yet", notYet],
+    ["rp-key-wait", "Not reached", waiting],
+  ];
+  return (
+    <section className="rp-card rp-top">
+      <div className="rp-ring" role="img" aria-label={`${got.length} of ${total} topics got it, ${nearly.length} nearly there`}>
+        <svg viewBox="0 0 120 120" width="148" height="148">
+          <circle cx="60" cy="60" r={r} className="rp-ring-track" />
+          {n > 0 && <circle cx="60" cy="60" r={r} className="rp-ring-amber" strokeDasharray={`${c * n} ${c}`} strokeDashoffset={-c * g} transform="rotate(-90 60 60)" />}
+          {g > 0 && <circle cx="60" cy="60" r={r} className="rp-ring-fill" strokeDasharray={`${c * g} ${c}`} transform="rotate(-90 60 60)" />}
+        </svg>
+        <div className="rp-ring-text">
+          <b>{got.length}</b>
+          <span>of {total} topic{total === 1 ? "" : "s"}</span>
+          <small>got it</small>
+        </div>
+      </div>
+      <div className="rp-top-text">
+        <ul className="rp-key">
+          {rows
+            .filter(([, , ts]) => ts.length)
+            .map(([cls, label, ts]) => (
+              <li key={label}>
+                <i className={cls} aria-hidden="true" />
+                <span>
+                  <b>{label}</b> {names(ts)}
+                </span>
+              </li>
+            ))}
+        </ul>
+        {extra && <p className="rp-note">{extra}</p>}
+      </div>
+    </section>
+  );
+}

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getHistory } from "../api";
 import { CombinedTopic, History as HistoryData, TopicStatus, fmtDate } from "../reportTypes";
 import { Downloads } from "../components/Downloads";
-import { STAFF_WORD, ScoreRing, StaffSection, TopicList, WorkOn, splitTopics } from "../components/ReportParts";
+import { STAFF_WORD, StaffSection, TopicRing, WorkOn } from "../components/ReportParts";
 
 const RANK: Record<TopicStatus, number> = { gap: 0, notReached: 0, fragile: 1, secure: 2 };
 
@@ -30,8 +30,6 @@ export function History({ kid }: { kid: string }) {
       </div>
     );
 
-  const tested = c.topics.filter((t) => t.status !== "notReached");
-  const { strong } = splitTopics(c.topics);
   const improved = (t: CombinedTopic) => !!t.before && t.before.status !== "notReached" && RANK[t.status] > RANK[t.before.status];
   const tag = (t: CombinedTopic) => (improved(t) ? "improved" : undefined);
   return (
@@ -52,16 +50,9 @@ export function History({ kid }: { kid: string }) {
         <Downloads childName={childName} reports={reports} fileName={`${childName} - Skill Check reports - ${fmtDate(c.lastDate)}`} />
       </div>
 
-      <section className="rp-card rp-top">
-        <ScoreRing value={strong.length} total={tested.length} label={`topic${tested.length === 1 ? "" : "s"} are strengths`} />
-        <div className="rp-top-text">
-          <p className="rp-observe">All your checks together.</p>
-          {c.topics.some(improved) && <p className="rp-note">Topics marked “improved” got better since an earlier check.</p>}
-        </div>
-      </section>
+      <TopicRing topics={c.topics.map((t) => ({ name: t.name, status: t.status, tag: tag(t) }))} extra={`All ${c.tests} check${c.tests === 1 ? "" : "s"} together: each topic's latest result.`} />
 
       <WorkOn topics={c.topics} empty="Nothing to work on right now." />
-      <TopicList kind="strong" items={strong.map((t) => ({ name: t.name, tag: tag(t) }))} empty="Keep going: your strengths will show here." />
 
       <section className="rp-card">
         <h2>Every check</h2>
