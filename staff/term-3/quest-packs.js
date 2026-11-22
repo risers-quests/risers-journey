@@ -41,6 +41,37 @@ window.T3_PACKS = {
 
   /* ---------- Make it for LifeHub ---------- */
 
+  'sol-cart': {
+    goal: 'Build a pull cart that carries 20 kg round LifeHub, steers and stops safely.',
+    who: 'Every room that carries heavy things. Ask them what they carry, and let them book deliveries.',
+    make: [
+      ['🧩', '1 model', 'Small, with working steering'],
+      ['🛒', '1 cart', 'Four wheels, a handle and sides'],
+      ['↪️', 'Steering', 'Front wheels turn with the handle'],
+      ['🛑', '1 brake', 'Holds it still on a slope'],
+      ['🏁', '1 test course', 'A corner, a slope and a doorway'],
+      ['📦', 'Delivery week', 'Trips booked by the rooms']
+    ],
+    done: [
+      'Carries 20 kg round the test course without tipping',
+      'Turns the corner without lifting the handle',
+      'The brake holds it still on the slope, fully loaded',
+      'Fits through LifeHub’s doors',
+      'At least 15 deliveries in the delivery week',
+      'You can explain how wheels and axles cut friction'
+    ],
+    notDone: 'a box on wheels that only goes straight.',
+    skills: [['Maths', 'Measure, draw a plan and time runs with different loads'], ['Science', 'Test how wheels, axles and friction change the push needed'], ['Language', 'Write a safety checklist and a booking sheet']],
+    uses: [['Maths', 'Measuring in cm and kg, timing, comparing'], ['Science', 'Forces, friction and gravity'], ['Language', 'Clear lists and instructions']],
+    show: ['Pull it round the course with 20 kg', 'How the steering and brake work'],
+    bounds: [
+      ['🚫', 'Nobody rides the cart, ever'],
+      ['🚶', 'Walk, never run, when pulling it'],
+      ['🪚', 'Saws and drills only with a facilitator'],
+      ['🦶', 'Load it with the brake on, feet clear of the wheels']
+    ]
+  },
+
   'sol-claypot': {
     goal: 'Build a clay pot fridge that keeps the LifeHub kitchen’s fruit and vegetables cool and fresh with no electricity.',
     who: 'The LifeHub kitchen. Ask them what spoils fastest, and let them use the winner.',

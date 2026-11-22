@@ -1,4 +1,4 @@
-/* Term 3 Quests — the build pool: 62 projects the groups choose from, in
+/* Term 3 Quests — the build pool: 63 projects (61 offered) the groups choose from, in
    two kinds, "Science in action" (sci) and "Make it for LifeHub" (sol).
    Each one has a name, what it is, the idea or reason behind it (hook),
    what the group ends up with (make), the science concept or skill they
@@ -11,7 +11,10 @@
    Written in very simple English so every Riser can read it.
 
    added: the date a project joined the pool. Newer projects come first on
-   the quest picker (and on the staff page), then the older ones. */
+   the quest picker (and on the staff page), then the older ones.
+   retired: no longer offered (no space for an escape room; a go-kart is
+   too much for 8–10 year olds). Kept so teams that did it still see it
+   in their finished quests. */
 window.T3_POOL = [
   /* ---------- Science in action ---------- */
   { id: 'sci-fizz', cat: 'sci', level: 1, title: 'Fizzy bath bomb lab', added: '2026-11-23',
@@ -359,6 +362,17 @@ window.T3_POOL = [
     ] },
 
   /* ---------- Make it for LifeHub ---------- */
+  { id: 'sol-cart', cat: 'sol', level: 3, title: 'LifeHub cargo cart', added: '2026-11-23',
+    what: 'Books, plants, sports gear and water bottles get carried around LifeHub by hand. You design and build a pull cart with four wheels, front wheels that steer, and a brake. It must carry 20 kg across LifeHub without tipping. Nobody rides it.',
+    hook: 'Wheels make heavy things easy to move. Getting them to steer, hold a load and stop is the hard part.',
+    make: 'A pull cart that carries 20 kg, steers round corners and stops with a brake, and a delivery week round LifeHub.',
+    learn: 'Wheels and axles, friction and strong frames',
+    lo: 'We can explain how wheels and axles cut friction, show our cart carries 20 kg round a test course, and show what we changed after each test.',
+    resp: [
+      ['Ask each room what they carry and how heavy it is', 'Find out how wheels and axles cut friction', 'Time the test course with 5, 10 and 20 kg', 'Run the delivery week and count the trips'],
+      ['Draw the plan with measurements', 'Plan the steering and the brake', 'Mark the test course with a corner and a slope', 'Make the delivery booking sheet'],
+      ['Build a small model with steering', 'Build the frame and fit the axles with a facilitator', 'Fit the steering, the handle and the brake', 'Fix what breaks in the load test']
+    ] },
   { id: 'sol-claypot', cat: 'sol', level: 1, title: 'Clay pot fridge', added: '2026-11-23',
     what: 'A fridge with no electricity. You put one clay pot inside a bigger one, fill the gap with wet sand, and the water drying off keeps the inside cool. You build three designs, find the coolest, and the kitchen uses the winner to keep fruit and vegetables fresh.',
     hook: 'Millions of homes have no fridge. When water dries off, it takes heat with it.',
@@ -524,7 +538,7 @@ window.T3_POOL = [
       ['Design four game ideas with sizes', 'Design the tickets and prize list', 'Make the signs and game map', 'Make the money chart'],
       ['Build game 1', 'Build game 2', 'Build game 4', 'Build the ticket booth']
     ] },
-  { id: 'sol-escaperoom', cat: 'sol', level: 2, title: 'LifeHub escape room',
+  { id: 'sol-escaperoom', cat: 'sol', level: 2, title: 'LifeHub escape room', retired: true,
     what: 'You turn a room into an escape room. You make puzzles, secret codes and locked boxes. Teams have 30 minutes to solve them all and escape.',
     hook: 'Puzzles are the most fun when friends work them out together.',
     make: 'An escape room with four puzzles and two locked boxes, played by other Risers and families.',
@@ -678,7 +692,7 @@ window.T3_POOL = [
       ['Sketch the cupboard', 'Design the sloped roof', 'Paint the cupboard', 'Put up the sign'],
       ['Mark the wood', 'Join the box', 'Fit the hinge and catch', 'Open the little library']
     ] },
-  { id: 'sol-gokart', cat: 'sol', level: 3, title: 'Sports day go-kart',
+  { id: 'sol-gokart', cat: 'sol', level: 3, title: 'Sports day go-kart', retired: true,
     what: 'A wooden go-kart that rolls down a gentle slope, with real steering, a seat and a brake. You build it, test it and race it on sports day.',
     hook: 'Racing something you built yourself is the best feeling.',
     make: 'A go-kart that steers and stops safely, and a timed race on sports day.',
@@ -706,6 +720,7 @@ window.T3_POOL = [
    make (short), what you'll learn (short) and a feel tag. A project without
    a card here shows its plain name and description. */
 window.T3_CARDS = {
+  'sol-cart': { icon: '🛒', tag: 'Move 20 kg round LifeHub. Nobody rides.', make: 'A cargo cart that steers and brakes', learn: 'Wheels, axles and friction', feel: '🔨 Woodwork' },
   'sol-claypot': { icon: '🏺', tag: 'A fridge with no electricity.', make: 'A clay pot fridge for the kitchen', learn: 'Evaporation', feel: '🧪 Testing' },
   'sol-handwash': { icon: '🧼', tag: 'Wash your hands without touching a thing.', make: 'A foot-pedal handwash station', learn: 'Levers and pulleys', feel: '🔨 Building' },
   'sol-zerowaste': { icon: '♻️', tag: 'Cut LifeHub’s rubbish by a third.', make: 'A waste report and three changes', learn: 'Data and percentages', feel: '📊 Data' },

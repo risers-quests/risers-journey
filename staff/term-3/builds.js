@@ -60,11 +60,11 @@
     body.appendChild(ideasEl());
     body.appendChild(chips([['all', 'Everything'], ['sol', Q.CATS.sol.name], ['sci', Q.CATS.sci.name]], 'cat'));
     body.appendChild(chips([[0, 'All levels'], [1, 'Level 1'], [2, 'Level 2'], [3, 'Level 3']], 'level'));
-    var count = function (v) { return POOL.filter(function (b) { return status(b.id) === v; }).length; };
+    var count = function (v) { return POOL.filter(function (b) { return !b.retired && status(b.id) === v; }).length; };
     body.appendChild(chips([['all', 'Any'], ['none', 'To check (' + count('none') + ')'], ['yes', 'Approved (' + count('yes') + ')'], ['tweak', 'Tweak (' + count('tweak') + ')'], ['maybe', 'Maybe (' + count('maybe') + ')'], ['no', 'Not approved (' + count('no') + ')']], 'status'));
     ['sol', 'sci'].forEach(function (cat) {
       if (ui.cat !== 'all' && ui.cat !== cat) return;
-      var list = POOL.filter(function (b) { return b.cat === cat && (!ui.level || b.level === ui.level) && (ui.status === 'all' || status(b.id) === ui.status); })
+      var list = POOL.filter(function (b) { return !b.retired && b.cat === cat && (!ui.level || b.level === ui.level) && (ui.status === 'all' || status(b.id) === ui.status); })
         .sort(function (x, y) { return (y.added || '').localeCompare(x.added || '') || x.level - y.level || x.title.localeCompare(y.title); });
       body.appendChild(el('h2', 'pq-cat pq-cat-' + cat, esc(Q.CATS[cat].name) + ' <span>(' + list.length + ')</span>'));
       var grid = el('div', 'pq-grid');

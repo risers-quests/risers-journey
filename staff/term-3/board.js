@@ -407,7 +407,7 @@
     var b = project(m('project'), full), p = b && PACKS[b.id], c = b && CARDS[b.id], ok = m('doneOk', {}) || {};
     var pics = live('photos').sort(function (x, y) { return (x.w || 0) - (y.w || 0) || (x.order || 0) - (y.order || 0); });
     return {
-      project: m('project', ''), title: b ? b.title : '', icon: c ? c.icon : b && b.own ? '💡' : '⭐',
+      project: m('project', ''), cat: b ? b.cat || '' : '', title: b ? b.title : '', icon: c ? c.icon : b && b.own ? '💡' : '⭐',
       goal: p ? p.goal : b ? (c ? c.tag : b.what) || '' : '', make: b && b.own ? b.make || '' : '',
       started: m('started', ''), okBy: ok.by || '', okAt: ok.at || '',
       done: ((p && p.done) || []).map(function (t, i) { return { t: t, by: (m('done_' + i, {}) || {}).by || '' }; }),
@@ -542,6 +542,12 @@
     var wrap = el('div', 'pq');
     var levels = Q.LEVELS[group.id] || [1, 2, 3];
     var did = past().map(function (x) { return x.project; });
+    // Take turns: after a Science in action quest, the next is Make it for
+    // LifeHub, and the other way round. The category comes from the last
+    // finished quest (its pool entry, or the cat saved with it).
+    var last = past()[past().length - 1], lastB = last && project(last.project);
+    var lastCat = last && (last.cat || (lastB && !lastB.own && lastB.cat)) || '';
+    var turn = lastCat === 'sci' ? 'sol' : lastCat === 'sol' ? 'sci' : '';
     if (justClosed && !current) wrap.appendChild(el('div', 'pq-closed',
       '<span class="pq-closed-ic">🏆</span><div><h2>' + esc(justClosed.title) + ' is closed. Well done, team!</h2>' +
       '<p>It’s saved under “Quests we’ve finished” at the bottom of this page. Now choose your next quest together.</p></div>'));
@@ -555,14 +561,19 @@
       keep.addEventListener('click', function () { changing = false; draw(); });
       wrap.appendChild(keep);
     }
+    if (turn) wrap.appendChild(el('div', 'pq-turn', '🔄 Your last quest was <b>' + esc(Q.CATS[lastCat].name) + '</b>, so this time it’s <b>' + esc(Q.CATS[turn].name) + '</b>.' +
+      (KID ? '' : ' <small>(Staff: the other kind is shown below, greyed, in case you need to override.)</small>')));
     var shown = 0;
     ['sol', 'sci'].forEach(function (cat) {
-      var list = POOL.filter(function (b) { return b.cat === cat && levels.indexOf(b.level) !== -1 && approved(b); })
+      // Risers only see the category whose turn it is; staff see both.
+      if (turn && cat !== turn && KID) return;
+      var off = turn && cat !== turn;
+      var list = POOL.filter(function (b) { return !b.retired && b.cat === cat && levels.indexOf(b.level) !== -1 && approved(b); })
         .sort(function (x, y) { return (y.added || '').localeCompare(x.added || '') || x.title.localeCompare(y.title); });
       if (!list.length) return;
-      shown += list.length;
-      wrap.appendChild(el('h2', 'pq-cat pq-cat-' + cat, esc(Q.CATS[cat].name)));
-      var grid = el('div', 'qc-grid');
+      if (!off) shown += list.length;
+      wrap.appendChild(el('h2', 'pq-cat pq-cat-' + cat, esc(Q.CATS[cat].name) + (off ? ' <small>· not their turn</small>' : '')));
+      var grid = el('div', 'qc-grid' + (off ? ' qc-off' : ''));
       list.forEach(function (b) {
         var c = CARDS[b.id];
         var card = el('article', 'qc qc-' + cat,
@@ -576,7 +587,7 @@
         go.type = 'button';
         go.disabled = !!(current && current.id === b.id);
         go.addEventListener('click', function () {
-          if (!confirm('Choose “' + b.title + '” for your team?')) return;
+          if (!confirm((off ? 'It’s their turn for ' + Q.CATS[turn].name + '. Choose “' + b.title + '” anyway?' : 'Choose “' + b.title + '” for your team?'))) return;
           if (meta('project') !== b.id) clearDone();
           setMeta('project', b.id);
           setMeta('started', today());
