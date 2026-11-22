@@ -41,31 +41,147 @@ window.T3_PACKS = {
 
   /* ---------- Make it for LifeHub ---------- */
 
-  'sol-lostfound': {
-    goal: 'Set up a lost and found station that gets lost things back to their owners.',
-    who: 'Every Riser and facilitator. Ask 10 of them what they lose, and where.',
+  'sol-claypot': {
+    goal: 'Build a clay pot fridge that keeps the LifeHub kitchen’s fruit and vegetables cool and fresh with no electricity.',
+    who: 'The LifeHub kitchen. Ask them what spoils fastest, and let them use the winner.',
     make: [
-      ['📦', '1 station', 'A box with sections, by the door'],
-      ['📝', '1 found-things log', 'What, where, when, returned?'],
-      ['🏷️', 'Name labels', 'For bottles, boxes and jumpers'],
-      ['📊', '1 chart', 'What gets lost most'],
-      ['🎉', '“Get it back” day', 'Owners collect their things']
+      ['🏺', '3 test fridges', 'One change each time'],
+      ['🌡️', '1 temperature chart', 'Inside each fridge and the room, every day'],
+      ['🍅', '1 freshness test', 'Same food in the fridge and in the room'],
+      ['🏆', '1 kitchen fridge', 'The best design, built again'],
+      ['📝', '1 how-to-use card', 'How to fill, wet and keep it']
     ],
     done: [
-      'Every found thing is in the log',
-      'Things are sorted into sections',
-      'At least 10 things went back to their owners',
-      'The chart shows what gets lost most',
-      'Everyone knows where the station is'
+      'Temperatures read every day for at least 7 days',
+      'The best fridge is at least 4 °C cooler than the room',
+      'The freshness test shows food lasting longer in the fridge',
+      'You can explain why drying water cools the pot',
+      'The kitchen has used it for a week'
     ],
-    notDone: 'a box by the door with things thrown in.',
-    skills: [['Maths', 'Sort, count and make a bar chart'], ['Science', 'Test which label stays on after washing'], ['Language', 'Write clear posters and ask good questions']],
-    uses: [['Maths', 'Tally marks, counting and bar charts'], ['Science', 'Materials: what sticks and what is waterproof'], ['Language', 'Asking questions politely']],
-    show: ['Your chart: what gets lost most', 'How many things went home'],
+    notDone: 'one pot with wet sand that nobody checked.',
+    skills: [['Maths', 'Read a thermometer and draw a line chart'], ['Science', 'Run a fair test on cooling'], ['Language', 'Write a clear how-to-use card']],
+    uses: [['Maths', 'Reading scales in °C, finding the difference'], ['Science', 'Evaporation and the water cycle'], ['Language', 'Steps in order']],
+    show: ['Your temperature chart, and the winner', 'Your fresh and spoiled food, side by side'],
     bounds: [
-      ['🙅', 'Never open bags or pockets'],
-      ['💰', 'Money and phones go straight to a facilitator'],
-      ['🧼', 'Wash or wipe things before they go back']
+      ['🏺', 'Lift big pots with two people'],
+      ['🧼', 'Wash hands before touching food'],
+      ['🚫', 'Throw away food that has gone bad']
+    ]
+  },
+
+  'sol-handwash': {
+    goal: 'Build a handwash station where your feet do the work and your hands touch nothing.',
+    who: 'Everyone who washes hands at LifeHub. Watch 10 of them use it and fix what goes wrong.',
+    make: [
+      ['🦶', '1 water pedal', 'Press for water, let go to stop'],
+      ['🧴', '1 soap pedal', 'One squirt per press'],
+      ['🧩', '1 model', 'Small, before you build'],
+      ['💧', '1 water test', 'Pedal against the tap'],
+      ['🪧', '1 sign', 'How to use it, in pictures']
+    ],
+    done: [
+      'Water and soap with no hands touching anything',
+      'Water stops when you let go',
+      'Works 50 handwashes in a row',
+      'Uses less water per wash than the tap',
+      'Steady: it doesn’t tip when you press hard',
+      'Still working after a week of use'
+    ],
+    notDone: 'a bottle of water with a hole in it.',
+    skills: [['Maths', 'Measure water in ml and work out the saving'], ['Science', 'Use levers and pulleys to move a push'], ['Language', 'Make a sign anyone can follow, even a little one']],
+    uses: [['Maths', 'Measuring in ml and cm, averages'], ['Science', 'Forces, levers and pulleys'], ['Language', 'Instructions in order']],
+    show: ['Wash your hands with no hands', 'How much water it saves'],
+    bounds: [
+      ['💦', 'Keep the floor dry: add a tray'],
+      ['🔨', 'No sharp edges or nails'],
+      ['🧪', 'Only soap from the LifeHub supply']
+    ]
+  },
+
+  'sol-zerowaste': {
+    goal: 'Cut LifeHub’s rubbish by one third, and prove it with weights.',
+    who: 'Every room at LifeHub and the kitchen. Ask why waste happens, and get them on your side.',
+    make: [
+      ['⚖️', '1 week of weights', 'Every bin, every day'],
+      ['🔍', '1 sort day', 'What is in the rubbish?'],
+      ['📄', '1 waste report', 'The three biggest wastes'],
+      ['🔄', '3 changes', 'Running at LifeHub'],
+      ['📊', '1 before-and-after chart', 'Did it work?']
+    ],
+    done: [
+      'Every bin weighed every day for a week, before',
+      'The three biggest wastes found by sorting',
+      'Three changes running for at least a week',
+      'Every bin weighed again, after',
+      'You can show the drop as a fraction or percentage',
+      'Rubbish cut by one third, or you can explain why not'
+    ],
+    notDone: 'posters saying “Don’t waste!”.',
+    skills: [['Maths', 'Weigh, add totals and work out a percentage drop'], ['Science', 'Sort waste: what rots, what recycles, what lasts'], ['Language', 'Write a report and persuade people to change']],
+    uses: [['Maths', 'Weighing in kg, fractions, bar charts'], ['Science', 'Materials and recycling'], ['Language', 'Asking questions and explaining']],
+    show: ['Your before-and-after chart', 'The change that worked best, and why'],
+    bounds: [
+      ['🧤', 'Gloves on when sorting rubbish'],
+      ['🚫', 'Never touch glass, sharps or medicine: tell a facilitator'],
+      ['🧼', 'Wash hands every time']
+    ]
+  },
+
+  'sol-vending': {
+    goal: 'Build a vending machine that sells one snack for the right coin, every time.',
+    who: 'Every Riser who buys from it. Let 10 of them test it, and fix what goes wrong.',
+    make: [
+      ['🪙', '1 coin checker', 'Takes the right coin, returns the wrong ones'],
+      ['🍪', '1 drop', 'One snack per coin'],
+      ['🧩', '1 card model', 'Before you build in wood'],
+      ['📦', '1 machine', 'A strong case with a lock'],
+      ['📒', '1 money and stock record', 'Every day of the sale week']
+    ],
+    done: [
+      'The right coin drops one snack, 20 times out of 20',
+      'Wrong coins come back',
+      'Nobody can get a snack without paying',
+      'Sold for a week, with money and stock counted every day',
+      'You can show your cost, price and profit',
+      'You can explain how the coin checker works'
+    ],
+    notDone: 'a box where you put a coin in and someone hands you a snack.',
+    skills: [['Maths', 'Measure coins, and work out cost, price and profit'], ['Science', 'Use gravity, levers and size to sort coins'], ['Language', 'Write clear instructions and a price sign']],
+    uses: [['Maths', 'Measuring in mm, money, adding and subtracting'], ['Science', 'Forces, gravity and levers'], ['Language', 'Short, clear signs']],
+    show: ['Buy a snack, and try a wrong coin', 'Your money record and profit'],
+    bounds: [
+      ['🪚', 'Saws and drills only with a facilitator'],
+      ['🔒', 'A facilitator keeps the money key'],
+      ['🍪', 'Only wrapped snacks']
+    ]
+  },
+
+  'sol-watering': {
+    goal: 'Build a drip system that keeps the LifeHub garden alive over the December holiday.',
+    who: 'The LifeHub garden, and whoever looks after it. Ask them which plants need the most water.',
+    make: [
+      ['🛢️', '1 raised tank', 'On a strong stand'],
+      ['〰️', 'Pipes and drippers', 'One at every plant'],
+      ['⏱️', '1 drip-rate test', 'Height and hole size'],
+      ['🗺️', '1 garden map', 'Every plant and pipe'],
+      ['📅', '1 weekend test', 'Nobody waters, plants still healthy']
+    ],
+    done: [
+      'Every plant gets water from a dripper',
+      'The drip rate is tested and set for each plant',
+      'Plants are healthy after a weekend with nobody watering',
+      'The tank lasts long enough for the holiday, or you show how to refill it',
+      'No leaks or blocks',
+      'You can explain how height changes the flow'
+    ],
+    notDone: 'a bottle upside down in one pot.',
+    skills: [['Maths', 'Measure flow in ml per hour and work out how long the tank lasts'], ['Science', 'Test how height and hole size change water flow'], ['Language', 'Write a care guide for the garden']],
+    uses: [['Maths', 'Measuring in ml and m, multiplying, time'], ['Science', 'Gravity, and what plants need'], ['Language', 'Steps in order']],
+    show: ['Your weekend test: before and after', 'How long the tank lasts, and how you worked it out'],
+    bounds: [
+      ['🛢️', 'The tank stand must hold the full tank safely'],
+      ['🧗', 'No climbing: a facilitator lifts the tank'],
+      ['🦟', 'Cover the tank so mosquitoes can’t breed']
     ]
   },
 
@@ -94,119 +210,6 @@ window.T3_PACKS = {
       ['🧼', 'Wash hands before touching food'],
       ['🌱', 'Only seeds that are safe to eat'],
       ['🚫', 'Don’t eat anything mouldy']
-    ]
-  },
-
-  'sol-birdcafe': {
-    goal: 'Build a bird café in the LifeHub garden and find out which birds visit.',
-    who: 'The birds, and every Riser who wants to watch them. Let 5 Risers help count.',
-    make: [
-      ['🪺', '3 feeders', 'Each one a different design'],
-      ['💧', '1 bird bath', 'Shallow and clean'],
-      ['🔭', '1 spotter card', 'The birds near LifeHub, with pictures'],
-      ['📊', '1 bird count chart', 'Tally every visit'],
-      ['🪧', '1 sign', 'Bird café rules']
-    ],
-    done: [
-      'All feeders and the bath are up and safe',
-      'Birds have visited the café',
-      'Birds counted for at least 10 days',
-      'The chart shows the favourite feeder and food',
-      'Food and water filled every day'
-    ],
-    notDone: 'a bottle with seeds that nobody fills.',
-    skills: [['Maths', 'Keep a tally and draw a bar chart'], ['Science', 'Learn what birds need, and test which food they like'], ['Language', 'Make a spotter card with names and facts']],
-    uses: [['Maths', 'Tally marks, counting, bar charts'], ['Science', 'Habitats: food, water and shelter'], ['Language', 'Short facts and labels']],
-    show: ['The birds you spotted', 'Your chart: favourite feeder and food'],
-    bounds: [
-      ['🤫', 'Quiet near the café: don’t scare the birds'],
-      ['🐦', 'Never touch birds, nests or eggs'],
-      ['🧼', 'Wash hands after filling and cleaning']
-    ]
-  },
-
-  'sol-obstacle': {
-    goal: 'Build a safe, fun obstacle course that every Riser wants to run.',
-    who: 'Every Riser. Ask 10 of them what makes a course fun, and let 5 test it.',
-    make: [
-      ['🗺️', '1 course map', 'All 6 stations, with sizes'],
-      ['🥷', '6 stations', 'Climb, crawl, balance, jump'],
-      ['🪧', '6 signs', 'What to do at each station'],
-      ['⏱️', '1 timing board', 'Every runner’s time'],
-      ['🎉', 'Ninja day', '15 runners or more']
-    ],
-    done: [
-      'All 6 stations are built and tested',
-      'Nothing wobbles, tips or has sharp bits',
-      'A new runner knows what to do from the signs',
-      'Every runner timed twice',
-      'The chart shows if runners got faster'
-    ],
-    notDone: 'some cones in a line on the grass.',
-    skills: [['Maths', 'Time runs and work out the change'], ['Science', 'Test what makes a station steady and safe'], ['Language', 'Write short, clear station signs']],
-    uses: [['Maths', 'Measuring in m, timing in seconds, comparing'], ['Science', 'Forces, balance and grip'], ['Language', 'Instructions in order']],
-    show: ['Your fastest time, and how runners improved', 'How you made each station safe'],
-    bounds: [
-      ['🦺', 'Nothing higher than knee height to jump off'],
-      ['🧱', 'Soft ground under every station'],
-      ['🔨', 'No sharp bits, nails or glass'],
-      ['🏃', 'One runner on the course at a time']
-    ]
-  },
-
-  'sol-shoerack': {
-    goal: 'Build a strong shoe and bag rack with a place for every Riser.',
-    who: 'Every Riser who uses the door. Count their shoes and bags, and ask 5 what would help.',
-    make: [
-      ['📐', '1 plan', 'With real measurements'],
-      ['🧩', '1 model', 'Small, before you build'],
-      ['👟', '1 rack', 'A spot for every pair of shoes'],
-      ['🎒', 'Bag hooks', 'One for every Riser'],
-      ['🏷️', 'Name labels', 'Everyone knows their spot']
-    ],
-    done: [
-      'Every Riser has a named spot',
-      'The biggest shoes and bags fit',
-      'It doesn’t wobble or tip, even when full',
-      'No sharp edges or nails sticking out',
-      'Still neat after a week of use'
-    ],
-    notDone: 'a box on the floor for shoes.',
-    skills: [['Maths', 'Measure, draw a plan to scale and cost it'], ['Science', 'Test what makes a frame strong and steady'], ['Language', 'Write a cutting list and labels']],
-    uses: [['Maths', 'Measuring in cm, adding and multiplying'], ['Science', 'Forces, weight and strong shapes'], ['Language', 'Clear lists and labels']],
-    show: ['Your plan next to the real rack', 'Why it doesn’t tip over'],
-    bounds: [
-      ['🪚', 'Saws and drills only with a facilitator'],
-      ['🔨', 'No nails sticking out'],
-      ['🚪', 'Keep the doorway clear']
-    ]
-  },
-
-  'sol-compost': {
-    goal: 'Build a compost station that turns LifeHub’s food scraps into soil.',
-    who: 'Every room at LifeHub, and the kitchen. Teach them what goes in.',
-    make: [
-      ['🪱', '2 compost bins', 'One filling, one resting'],
-      ['🪣', 'A caddy per room', 'With a lid'],
-      ['🪧', 'A sorting poster', 'What can and can’t go in'],
-      ['⚖️', '1 scraps chart', 'Kilos saved from the bin'],
-      ['🎓', 'A room visit', 'Teach each room how to use it']
-    ],
-    done: [
-      'Both bins are built and in place',
-      'Every room has a caddy and a poster',
-      'Scraps added and weighed every day',
-      'The heap gets warm and is turned every week',
-      'You can say how scraps turn into soil'
-    ],
-    notDone: 'a hole in the ground with peels thrown in.',
-    skills: [['Maths', 'Weigh scraps and add up a weekly total'], ['Science', 'Test the heat and wetness of the heap'], ['Language', 'Teach a room clearly, with a poster']],
-    uses: [['Maths', 'Weighing in g and kg, adding totals'], ['Science', 'Living things, decomposers and soil'], ['Language', 'Explaining to an audience']],
-    show: ['How many kilos you saved from the bin', 'What is living in your compost'],
-    bounds: [
-      ['🧤', 'Gloves on when handling scraps'],
-      ['🍖', 'No meat, fish, dairy or oil'],
-      ['🧼', 'Wash hands every time']
     ]
   },
 
