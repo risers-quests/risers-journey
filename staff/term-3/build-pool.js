@@ -1,4 +1,4 @@
-/* Term 3 Quests — the build pool: 50 projects the groups choose from, in
+/* Term 3 Quests — the build pool: 62 projects the groups choose from, in
    two kinds, "Science in action" (sci) and "Make it for LifeHub" (sol).
    Each one has a name, what it is, the idea or reason behind it (hook),
    what the group ends up with (make), the science concept or skill they
@@ -8,9 +8,78 @@
 
    resp: for each role (roles in quest-data.js ROLES), the kind of things
    that person looks after in this project. The team decides its own jobs.
-   Written in very simple English so every Riser can read it. */
+   Written in very simple English so every Riser can read it.
+
+   added: the date a project joined the pool. Newer projects come first on
+   the quest picker (and on the staff page), then the older ones. */
 window.T3_POOL = [
   /* ---------- Science in action ---------- */
+  { id: 'sci-fizz', cat: 'sci', level: 1, title: 'Fizzy bath bomb lab', added: '2026-11-23',
+    what: 'You mix baking soda and citric acid into balls that fizz when they hit water. Then you change the recipe, one thing at a time, to find the bath bomb that fizzes the longest.',
+    hook: 'When an acid meets baking soda in water, they make a gas. The gas is the fizz.',
+    make: 'Your own bath bomb recipes, a fizz-time chart, and a gift box of the best bath bombs.',
+    learn: 'Acids, bases and gases',
+    lo: 'We can explain where the fizz comes from, and show from a fair test which recipe fizzes the longest.',
+    resp: [
+      ['Find out why baking soda and acid fizz', 'Choose four recipe changes and predict each', 'Find out why the winner fizzes longest', 'Make the fizz science poster'],
+      ['Make the first bath bomb', 'Make the four recipe changes', 'Make the winning recipe for the gift box', 'Write the recipe card'],
+      ['Plan the fizz test and the results table', 'Time every bath bomb in water', 'Chart all the fizz times', 'Make the label for each bath bomb']
+    ] },
+  { id: 'sci-crystals', cat: 'sci', level: 1, title: 'Crystal garden', added: '2026-11-23',
+    what: 'You dissolve salt, sugar and alum in hot water and hang a string in each jar. Day by day, real crystals grow. You measure them, look at them up close and make a crystal garden.',
+    hook: 'Water can only hold so much salt. When it cools and dries, the extra comes back as crystals.',
+    make: 'Jars of growing crystals, a crystal growth chart, and a crystal garden on show with labels.',
+    learn: 'Dissolving and crystals',
+    lo: 'We can explain how crystals grow from a mix, and show from our measurements which mix grows the biggest crystals.',
+    resp: [
+      ['Find out what dissolving means', 'Find out how crystals grow', 'Choose three mixes and predict each', 'Lead the crystal garden talk'],
+      ['Make the salt, sugar and alum jars with a facilitator', 'Hang strings and pipe-cleaner shapes', 'Start a second batch to make them bigger', 'Set up the crystal garden'],
+      ['Make the daily growth table', 'Measure and photograph the crystals every day', 'Draw the growth chart', 'Write the labels for the garden']
+    ] },
+  { id: 'sci-bridge', cat: 'sci', level: 2, title: 'Bridge breakers', added: '2026-11-23',
+    what: 'You build bridges from paper, straws and sticks that cross a 50 cm gap. Then you load them with weights until they break. The strongest, lightest bridge wins.',
+    hook: 'The shape of a bridge matters more than how much stuff you use. Triangles do not bend.',
+    make: 'Three test bridges, one champion bridge, a load chart, and a bridge-breaking show.',
+    learn: 'Forces and strong shapes',
+    lo: 'We can explain why triangles and arches make a bridge strong, and show from our load tests which shape holds the most.',
+    resp: [
+      ['Find out about beam, arch and truss bridges', 'Predict which shape will hold most', 'Find out why the winner was strongest', 'Explain the science at the bridge-breaking show'],
+      ['Build a beam bridge', 'Build an arch bridge and a truss bridge', 'Build the champion bridge, lighter and stronger', 'Set up the test stand'],
+      ['Plan the load test and the results table', 'Weigh each bridge and add weights until it breaks', 'Chart weight held for each bridge', 'Make the score board for the show']
+    ] },
+  { id: 'sci-filter', cat: 'sci', level: 2, title: 'Muddy water challenge', added: '2026-11-23',
+    what: 'You make muddy water, then build filters from bottles, sand, gravel, charcoal and cloth to make it clear. You test which filter cleans it best. (You never drink it.)',
+    hook: 'Many people get their water from rivers and wells. Layers of sand and stones can trap the dirt.',
+    make: 'Three bottle filters, a clearness chart, and a “before and after” water show.',
+    learn: 'Filtering and clean water',
+    lo: 'We can explain what each layer of a filter traps, and show from our tests which order of layers cleans water best.',
+    resp: [
+      ['Find out how sand and stones clean water', 'Find out why filtered water is still not safe to drink', 'Choose three filter designs and predict', 'Lead the water show'],
+      ['Build the first bottle filter', 'Build two more with the layers in a different order', 'Build the best filter again, bigger', 'Set up the before-and-after jars'],
+      ['Make a clearness scale from 1 to 5', 'Test each filter three times', 'Chart how clear and how fast each one is', 'Make the results board']
+    ] },
+  { id: 'sci-magnet', cat: 'sci', level: 3, title: 'Electromagnet crane', added: '2026-11-23',
+    what: 'You wind wire round an iron nail and join it to a battery. It becomes a magnet you can switch on and off. Then you build a crane that picks up metal and drops it where you want.',
+    hook: 'Electricity flowing round a coil makes a magnet. Switch it off, and the magnet is gone.',
+    make: 'A working crane with an electromagnet, a turns-and-clips chart, and a scrap-yard game.',
+    learn: 'Electricity and magnetism',
+    lo: 'We can explain how a coil of wire becomes a magnet, and show from our tests how more turns make it stronger.',
+    resp: [
+      ['Find out how electricity makes a magnet', 'Predict how turns and batteries change the pull', 'Write the scrap-yard game rules', 'Explain the science before the game'],
+      ['Make the first electromagnet with a facilitator', 'Make magnets with 20, 40 and 60 turns', 'Build the crane arm and the switch', 'Fit the best magnet and test the crane'],
+      ['Plan the paper-clip test and results table', 'Count clips picked up for each magnet', 'Chart turns against clips', 'Keep score in the scrap-yard game']
+    ] },
+  { id: 'sci-weather', cat: 'sci', level: 3, title: 'LifeHub weather station', added: '2026-11-23',
+    what: 'You build your own weather tools: a rain gauge, a wind vane, a spinning wind-speed cup and a thermometer box. You set them up outside, record the weather every day, and give a weather report.',
+    hook: 'Weather people do not guess. They measure every day and look for patterns.',
+    make: 'A weather station in the garden, a weather log for every school day, and a weather report for LifeHub.',
+    learn: 'Weather and measuring over time',
+    lo: 'We can explain what each weather tool measures, and show patterns in our weather log.',
+    resp: [
+      ['Find out what each weather tool measures', 'Find the best place for the station', 'Look for patterns in the log', 'Give the weather report'],
+      ['Build the rain gauge and the wind vane', 'Build the wind-speed cups', 'Build the thermometer box', 'Set up the station and fix what breaks'],
+      ['Make the weather log', 'Read every tool at the same time each day', 'Draw the temperature and rain charts', 'Make the weather report board']
+    ] },
   { id: 'sci-slime', cat: 'sci', level: 1, title: 'Slime lab',
     what: 'You mix glue, water and a few other things to make slime. Then you change the recipe, one thing at a time, to make the stretchiest, bounciest or gooiest slime ever.',
     hook: 'Slime is a liquid and a solid at the same time. A tiny change to the recipe changes everything.',
@@ -290,6 +359,72 @@ window.T3_POOL = [
     ] },
 
   /* ---------- Make it for LifeHub ---------- */
+  { id: 'sol-lostfound', cat: 'sol', level: 1, title: 'Lost and found station', added: '2026-11-23',
+    what: 'Water bottles, jumpers and pencil boxes go missing every week. You set up a lost and found station, sort what is found, make labels so things don’t get lost, and run a “get it back” day.',
+    hook: 'Lost things cost money and make people sad. A good system gets them home.',
+    make: 'A lost and found box with sections, a found-things log, name labels, and a “get it back” day.',
+    learn: 'Sorting and counting data',
+    lo: 'We can sort and count lost things, show in a chart what gets lost most, and return things to their owners.',
+    resp: [
+      ['Ask 10 Risers and facilitators what they lose', 'Collect everything lost around LifeHub', 'Count what was found and returned', 'Make the chart of what gets lost most'],
+      ['Draw the station with its sections', 'Plan the found-things log', 'Design name labels', 'Make the posters for “get it back” day'],
+      ['Build the box with sections', 'Make the name labels', 'Set up the station by the door', 'Run “get it back” day']
+    ] },
+  { id: 'sol-microgreens', cat: 'sol', level: 1, title: 'Microgreens farm', added: '2026-11-23',
+    what: 'Microgreens are baby plants you can eat in about ten days. You grow trays of them, like mustard, fenugreek (methi) and green gram, and give the harvest to the LifeHub kitchen.',
+    hook: 'Fresh, healthy food can grow on a windowsill, and fast.',
+    make: 'Trays of microgreens, a growth chart, and a harvest for the LifeHub kitchen.',
+    learn: 'What plants need to grow',
+    lo: 'We can grow microgreens, and show from our chart how light and water change how fast they grow.',
+    resp: [
+      ['Find out what seeds need to sprout', 'Ask the kitchen which greens they would use', 'Find out which seeds grew best and why', 'Write a microgreens recipe card'],
+      ['Plan the trays and where they go', 'Plan the light test: sun and shade', 'Make the growth chart', 'Make labels for each tray'],
+      ['Make trays from old boxes and bottles', 'Soak and sow the seeds', 'Water every day', 'Harvest and wash the greens']
+    ] },
+  { id: 'sol-birdcafe', cat: 'sol', level: 2, title: 'Bird café', added: '2026-11-23',
+    what: 'You build feeders and a bird bath from things people throw away, and set them up in the LifeHub garden. Then you watch, count and name the birds that come to your café.',
+    hook: 'Birds need food and water too, and they are fun to watch. A garden full of birds is a happy place.',
+    make: 'Three bird feeders, a bird bath, a bird-watching hide spot, and a bird count chart.',
+    learn: 'Birds, habitats and tally charts',
+    lo: 'We can name the birds that visit LifeHub, and show in a chart which feeder and food they like best.',
+    resp: [
+      ['Find out which birds live near LifeHub', 'Find out what food and water birds need', 'Make a bird spotter card', 'Find out which feeder birds like best'],
+      ['Draw where the feeders and bath will go', 'Design three different feeders', 'Plan the tally chart', 'Make the bird café sign'],
+      ['Build three feeders from bottles and cartons', 'Make the bird bath', 'Hang the feeders out of reach of cats', 'Clean and fill them every day']
+    ] },
+  { id: 'sol-obstacle', cat: 'sol', level: 2, title: 'Ninja obstacle course', added: '2026-11-23',
+    what: 'You design and build an obstacle course in the garden: things to climb over, crawl under, balance on and jump between. Then every Riser runs it against the clock.',
+    hook: 'Moving makes your body and brain stronger. A great course makes everyone want to have a go.',
+    make: 'An obstacle course with 6 stations, a course map, a timing board, and a ninja day.',
+    learn: 'Timing, measuring and safe design',
+    lo: 'We can build a safe course, time every run, and show in a chart how runners got faster with practice.',
+    resp: [
+      ['Ask 10 Risers what makes a course fun', 'Find out how to make each station safe', 'Time 5 testers on the course', 'Make the chart of best times'],
+      ['Draw the course map with 6 stations', 'Plan each station with sizes', 'Make the station signs', 'Plan the ninja day'],
+      ['Build stations 1 to 3', 'Build stations 4 to 6', 'Fix anything wobbly after testing', 'Set up and put away on ninja day']
+    ] },
+  { id: 'sol-shoerack', cat: 'sol', level: 3, title: 'Shoe and bag rack', added: '2026-11-23',
+    what: 'Shoes and bags pile up by the door. You measure what needs to fit, design a strong rack with a place for every Riser, and build it from wood or old crates.',
+    hook: 'A messy doorway is hard to walk through, and things get lost or stepped on.',
+    make: 'A rack with a named spot for every Riser’s shoes and bag, by the LifeHub door.',
+    learn: 'Measuring, planning and woodwork',
+    lo: 'We can draw a plan with real measurements, build a rack that is strong and steady, and show that it fits everyone’s things.',
+    resp: [
+      ['Count the shoes and bags at the door', 'Measure the space and the biggest shoes and bags', 'Ask 5 Risers what would help', 'Check it fits everyone’s things'],
+      ['Sketch three ideas', 'Draw the plan with measurements', 'Make the cutting list and the cost', 'Make the name labels'],
+      ['Build a small model first', 'Cut and join the frame with a facilitator', 'Add the shelves and hooks', 'Sand, paint and fix it in place']
+    ] },
+  { id: 'sol-compost', cat: 'sol', level: 3, title: 'Compost station', added: '2026-11-23',
+    what: 'Fruit peels and leaves from LifeHub go in the bin. You build a compost station that turns them into rich soil for the garden, and teach every room what goes in it.',
+    hook: 'Food scraps in the bin are wasted. In a compost heap, tiny living things turn them into food for plants.',
+    make: 'A two-bin compost station, a caddy and a sorting poster for every room, and a scraps chart.',
+    learn: 'Decomposers and the cycle of food',
+    lo: 'We can explain how scraps turn into soil, keep our compost working, and show how much waste we stopped from going in the bin.',
+    resp: [
+      ['Find out how scraps turn into soil', 'Find out what can and can’t go in', 'Check the heap’s heat and wetness', 'Teach each room how to use it'],
+      ['Draw the two-bin station and measure the spot', 'Design the caddies', 'Make the sorting poster', 'Plan the scraps chart'],
+      ['Build the two bins with a facilitator', 'Make a caddy for every room', 'Collect and add scraps each day', 'Turn the heap every week']
+    ] },
   { id: 'sol-snackshop', cat: 'sol', level: 1, title: 'LifeHub snack shop',
     what: 'You run a real no-cook snack business, like fruit cups or trail mix. Find out what Risers want, work out costs and prices, design your brand, take orders, then make and sell on one sale day.',
     hook: 'A real shop teaches you how money works, and everyone gets a tasty snack.',
@@ -571,6 +706,18 @@ window.T3_POOL = [
    make (short), what you'll learn (short) and a feel tag. A project without
    a card here shows its plain name and description. */
 window.T3_CARDS = {
+  'sci-fizz': { icon: '🛁', tag: 'Make bath bombs that fizz and fizz.', make: 'Bath bombs and a gift box', learn: 'Acids and gases', feel: '🧪 Messy' },
+  'sci-crystals': { icon: '💎', tag: 'Grow real crystals in a jar.', make: 'A crystal garden', learn: 'Dissolving', feel: '🔬 Watching' },
+  'sci-bridge': { icon: '🌉', tag: 'Build it strong. Then break it.', make: 'Bridges and a breaking show', learn: 'Strong shapes', feel: '📊 Testing' },
+  'sci-filter': { icon: '💧', tag: 'Turn muddy water clear.', make: 'Bottle filters and a water show', learn: 'Filtering', feel: '🧪 Messy' },
+  'sci-magnet': { icon: '🧲', tag: 'A magnet you switch on and off.', make: 'A crane that lifts metal', learn: 'Electricity and magnets', feel: '⚡ Wiring' },
+  'sci-weather': { icon: '🌦️', tag: 'Measure the weather like a scientist.', make: 'A weather station and a report', learn: 'Weather', feel: '🌳 Outdoors' },
+  'sol-lostfound': { icon: '🧦', tag: 'Get lost things back home.', make: 'A lost and found station', learn: 'Sorting and charts', feel: '📬 Service' },
+  'sol-microgreens': { icon: '🌱', tag: 'Grow food in ten days.', make: 'Microgreens for the kitchen', learn: 'What plants need', feel: '🌱 Growing' },
+  'sol-birdcafe': { icon: '🐦', tag: 'Open a café for birds.', make: 'Feeders, a bird bath and a bird count', learn: 'Birds and tally charts', feel: '🌳 Outdoors' },
+  'sol-obstacle': { icon: '🥷', tag: 'Build a course. Beat the clock.', make: 'A 6-station course and a ninja day', learn: 'Timing and safe design', feel: '🏃 Active' },
+  'sol-shoerack': { icon: '👟', tag: 'A place for every shoe and bag.', make: 'A rack by the LifeHub door', learn: 'Measuring and woodwork', feel: '🔨 Woodwork' },
+  'sol-compost': { icon: '🪱', tag: 'Turn food scraps into soil.', make: 'A compost station and room caddies', learn: 'Decomposers', feel: '🌳 Outdoors' },
   'sci-junkband': { icon: '🎸', tag: 'Turn junk into a real band.', make: 'Instruments and a concert', learn: 'Sound', feel: '🎵 Music' },
   'sci-planes': { icon: '✈️', tag: 'Fold, fly, test… and win the cup.', make: 'Your best planes and a championship', learn: 'Lift and drag', feel: '📊 Testing' },
   'sci-slime': { icon: '🟢', tag: 'Make the stretchiest slime ever.', make: 'Slime recipes and a slime stall', learn: 'Mixing and fair tests', feel: '🧪 Messy' },

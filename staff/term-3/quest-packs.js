@@ -42,6 +42,199 @@ window.T3_PACKS = {
 
   /* ---------- Make it for LifeHub ---------- */
 
+  'sol-lostfound': {
+    goal: 'Set up a lost and found station that gets lost things back to their owners.',
+    who: 'Every Riser and facilitator. Ask 10 of them what they lose, and where.',
+    make: [
+      ['📦', '1 station', 'A box with sections, by the door'],
+      ['📝', '1 found-things log', 'What, where, when, returned?'],
+      ['🏷️', 'Name labels', 'For bottles, boxes and jumpers'],
+      ['📊', '1 chart', 'What gets lost most'],
+      ['🎉', '“Get it back” day', 'Owners collect their things']
+    ],
+    done: [
+      'Every found thing is in the log',
+      'Things are sorted into sections',
+      'At least 10 things went back to their owners',
+      'The chart shows what gets lost most',
+      'Everyone knows where the station is'
+    ],
+    notDone: 'a box by the door with things thrown in.',
+    skills: [['Maths', 'Sort, count and make a bar chart'], ['Science', 'Test which label stays on after washing'], ['Language', 'Write clear posters and ask good questions']],
+    uses: [['Maths', 'Tally marks, counting and bar charts'], ['Science', 'Materials: what sticks and what is waterproof'], ['Language', 'Asking questions politely']],
+    show: ['Your chart: what gets lost most', 'How many things went home'],
+    bounds: [
+      ['🙅', 'Never open bags or pockets'],
+      ['💰', 'Money and phones go straight to a facilitator'],
+      ['🧼', 'Wash or wipe things before they go back']
+    ],
+    rules: [
+      ['📝', 'Log it before you put it away'],
+      ['🔍', 'Check the station every day']
+    ]
+  },
+
+  'sol-microgreens': {
+    goal: 'Grow fresh microgreens and give the harvest to the LifeHub kitchen.',
+    who: 'The LifeHub kitchen. Ask them which greens they would use, and how much.',
+    make: [
+      ['🌱', '4 trays', 'Made from old boxes and bottles'],
+      ['🌞', '1 light test', 'Sun or shade: which grows best?'],
+      ['📈', '1 growth chart', 'Height every day'],
+      ['🥗', '1 harvest', 'Washed and ready for the kitchen'],
+      ['📝', '1 recipe card', 'A way to eat your greens']
+    ],
+    done: [
+      'The seeds have sprouted in every tray',
+      'Heights are on the chart every day',
+      'You can say if sun or shade grew better',
+      'The kitchen has used your harvest',
+      'The trays are clean and ready to grow again'
+    ],
+    notDone: 'one pot of seeds left to dry out.',
+    skills: [['Maths', 'Measure heights and draw a line chart'], ['Science', 'Run a fair test on light'], ['Language', 'Write a simple recipe card']],
+    uses: [['Maths', 'Measuring in mm and cm, counting days'], ['Science', 'Plants need water, light and air'], ['Language', 'Writing steps in order']],
+    show: ['Your growth chart, and what it shows', 'A taste of your greens'],
+    bounds: [
+      ['🧼', 'Wash hands before touching food'],
+      ['🌱', 'Only seeds that are safe to eat'],
+      ['🚫', 'Don’t eat anything mouldy']
+    ],
+    rules: [
+      ['💧', 'Water every day, even Friday'],
+      ['📏', 'Measure at the same time each day']
+    ]
+  },
+
+  'sol-birdcafe': {
+    goal: 'Build a bird café in the LifeHub garden and find out which birds visit.',
+    who: 'The birds, and every Riser who wants to watch them. Let 5 Risers help count.',
+    make: [
+      ['🪺', '3 feeders', 'Each one a different design'],
+      ['💧', '1 bird bath', 'Shallow and clean'],
+      ['🔭', '1 spotter card', 'The birds near LifeHub, with pictures'],
+      ['📊', '1 bird count chart', 'Tally every visit'],
+      ['🪧', '1 sign', 'Bird café rules']
+    ],
+    done: [
+      'All feeders and the bath are up and safe',
+      'Birds have visited the café',
+      'Birds counted for at least 10 days',
+      'The chart shows the favourite feeder and food',
+      'Food and water filled every day'
+    ],
+    notDone: 'a bottle with seeds that nobody fills.',
+    skills: [['Maths', 'Keep a tally and draw a bar chart'], ['Science', 'Learn what birds need, and test which food they like'], ['Language', 'Make a spotter card with names and facts']],
+    uses: [['Maths', 'Tally marks, counting, bar charts'], ['Science', 'Habitats: food, water and shelter'], ['Language', 'Short facts and labels']],
+    show: ['The birds you spotted', 'Your chart: favourite feeder and food'],
+    bounds: [
+      ['🤫', 'Quiet near the café: don’t scare the birds'],
+      ['🐦', 'Never touch birds, nests or eggs'],
+      ['🧼', 'Wash hands after filling and cleaning']
+    ],
+    rules: [
+      ['🍚', 'Only bird-safe food: no salty or spicy food'],
+      ['🧽', 'Clean the bath every day']
+    ]
+  },
+
+  'sol-obstacle': {
+    goal: 'Build a safe, fun obstacle course that every Riser wants to run.',
+    who: 'Every Riser. Ask 10 of them what makes a course fun, and let 5 test it.',
+    make: [
+      ['🗺️', '1 course map', 'All 6 stations, with sizes'],
+      ['🥷', '6 stations', 'Climb, crawl, balance, jump'],
+      ['🪧', '6 signs', 'What to do at each station'],
+      ['⏱️', '1 timing board', 'Every runner’s time'],
+      ['🎉', 'Ninja day', '15 runners or more']
+    ],
+    done: [
+      'All 6 stations are built and tested',
+      'Nothing wobbles, tips or has sharp bits',
+      'A new runner knows what to do from the signs',
+      'Every runner timed twice',
+      'The chart shows if runners got faster'
+    ],
+    notDone: 'some cones in a line on the grass.',
+    skills: [['Maths', 'Time runs and work out the change'], ['Science', 'Test what makes a station steady and safe'], ['Language', 'Write short, clear station signs']],
+    uses: [['Maths', 'Measuring in m, timing in seconds, comparing'], ['Science', 'Forces, balance and grip'], ['Language', 'Instructions in order']],
+    show: ['Your fastest time, and how runners improved', 'How you made each station safe'],
+    bounds: [
+      ['🦺', 'Nothing higher than knee height to jump off'],
+      ['🧱', 'Soft ground under every station'],
+      ['🔨', 'No sharp bits, nails or glass'],
+      ['🏃', 'One runner on the course at a time']
+    ],
+    rules: [
+      ['🧪', 'Test every station before ninja day'],
+      ['⏱️', 'Same start and finish line for everyone']
+    ]
+  },
+
+  'sol-shoerack': {
+    goal: 'Build a strong shoe and bag rack with a place for every Riser.',
+    who: 'Every Riser who uses the door. Count their shoes and bags, and ask 5 what would help.',
+    make: [
+      ['📐', '1 plan', 'With real measurements'],
+      ['🧩', '1 model', 'Small, before you build'],
+      ['👟', '1 rack', 'A spot for every pair of shoes'],
+      ['🎒', 'Bag hooks', 'One for every Riser'],
+      ['🏷️', 'Name labels', 'Everyone knows their spot']
+    ],
+    done: [
+      'Every Riser has a named spot',
+      'The biggest shoes and bags fit',
+      'It doesn’t wobble or tip, even when full',
+      'No sharp edges or nails sticking out',
+      'Still neat after a week of use'
+    ],
+    notDone: 'a box on the floor for shoes.',
+    skills: [['Maths', 'Measure, draw a plan to scale and cost it'], ['Science', 'Test what makes a frame strong and steady'], ['Language', 'Write a cutting list and labels']],
+    uses: [['Maths', 'Measuring in cm, adding and multiplying'], ['Science', 'Forces, weight and strong shapes'], ['Language', 'Clear lists and labels']],
+    show: ['Your plan next to the real rack', 'Why it doesn’t tip over'],
+    bounds: [
+      ['🪚', 'Saws and drills only with a facilitator'],
+      ['🔨', 'No nails sticking out'],
+      ['🚪', 'Keep the doorway clear']
+    ],
+    rules: [
+      ['📏', 'Measure twice, cut once'],
+      ['🧩', 'Build the model first']
+    ]
+  },
+
+  'sol-compost': {
+    goal: 'Build a compost station that turns LifeHub’s food scraps into soil.',
+    who: 'Every room at LifeHub, and the kitchen. Teach them what goes in.',
+    make: [
+      ['🪱', '2 compost bins', 'One filling, one resting'],
+      ['🪣', 'A caddy per room', 'With a lid'],
+      ['🪧', 'A sorting poster', 'What can and can’t go in'],
+      ['⚖️', '1 scraps chart', 'Kilos saved from the bin'],
+      ['🎓', 'A room visit', 'Teach each room how to use it']
+    ],
+    done: [
+      'Both bins are built and in place',
+      'Every room has a caddy and a poster',
+      'Scraps added and weighed every day',
+      'The heap gets warm and is turned every week',
+      'You can say how scraps turn into soil'
+    ],
+    notDone: 'a hole in the ground with peels thrown in.',
+    skills: [['Maths', 'Weigh scraps and add up a weekly total'], ['Science', 'Test the heat and wetness of the heap'], ['Language', 'Teach a room clearly, with a poster']],
+    uses: [['Maths', 'Weighing in g and kg, adding totals'], ['Science', 'Living things, decomposers and soil'], ['Language', 'Explaining to an audience']],
+    show: ['How many kilos you saved from the bin', 'What is living in your compost'],
+    bounds: [
+      ['🧤', 'Gloves on when handling scraps'],
+      ['🍖', 'No meat, fish, dairy or oil'],
+      ['🧼', 'Wash hands every time']
+    ],
+    rules: [
+      ['🍂', 'Add dry leaves with every load of scraps'],
+      ['🔄', 'Turn the heap every week']
+    ]
+  },
+
   'sol-minigolf': {
     goal: 'Build a 6-hole mini golf course that anyone at LifeHub can play.',
     who: 'Every Riser and facilitator. Ask 5 of them what makes a hole fun, and let them test it.',
@@ -251,6 +444,194 @@ window.T3_PACKS = {
   },
 
   /* ---------- Science in action ---------- */
+
+  'sci-fizz': {
+    goal: 'Find the bath bomb recipe that fizzes the longest, changing one thing at a time.',
+    who: 'Friends and families who get your gift box. Let them test and vote.',
+    make: [
+      ['🛁', '4 recipe changes', 'One change each time'],
+      ['⏱️', '1 fizz chart', 'Every bath bomb timed'],
+      ['🧪', '1 science poster', 'Where the fizz comes from'],
+      ['🎁', '1 gift box', 'The best bath bombs, with labels']
+    ],
+    done: [
+      'Every recipe tested in the same water',
+      'Every fizz timed and on the chart',
+      'The chart shows the longest fizz',
+      'You can say where the fizz comes from',
+      'The gift box has labels and a recipe card'
+    ],
+    notDone: 'one bath bomb dropped in a cup.',
+    skills: [['Maths', 'Measure amounts, time and chart results'], ['Science', 'Run a fair test on an acid and a base'], ['Language', 'Write a recipe card and labels']],
+    uses: [['Maths', 'Measuring in spoons and grams, timing in seconds'], ['Science', 'Mixing, and solids, liquids and gases'], ['Language', 'Steps in order']],
+    show: ['Your fizz chart, and the winner', 'Drop one in water and explain the fizz'],
+    bounds: [
+      ['👀', 'Keep powder away from eyes'],
+      ['🚫', 'Never taste it'],
+      ['🧼', 'Wash hands after mixing']
+    ],
+    rules: [
+      ['⚖️', 'Change only one thing each time'],
+      ['🌡️', 'Same cup, same amount of water']
+    ]
+  },
+
+  'sci-crystals': {
+    goal: 'Grow crystals and find out which mix grows the biggest ones.',
+    who: 'Visitors to your crystal garden. Let them look up close with a magnifier.',
+    make: [
+      ['🫙', '3 crystal jars', 'Salt, sugar and alum'],
+      ['📏', '1 growth chart', 'Size every day'],
+      ['📸', 'Daily photos', 'Watch them grow'],
+      ['💎', '1 crystal garden', 'On show, with labels']
+    ],
+    done: [
+      'Crystals grew in every jar',
+      'Measured and photographed every day',
+      'The chart shows which grew biggest',
+      'You can say how crystals grow',
+      'The garden has a label for every jar'
+    ],
+    notDone: 'a jar of salty water that was never checked.',
+    skills: [['Maths', 'Measure in mm and draw a line chart'], ['Science', 'Find out how dissolving and drying make crystals'], ['Language', 'Write labels and explain to visitors']],
+    uses: [['Maths', 'Measuring in mm, counting days'], ['Science', 'Dissolving, and solids and liquids'], ['Language', 'Short, clear labels']],
+    show: ['Your biggest crystal', 'Your chart: which mix grew best'],
+    bounds: [
+      ['♨️', 'A facilitator pours the hot water'],
+      ['🚫', 'Never taste the crystals or the mix'],
+      ['🧼', 'Wash hands after touching alum']
+    ],
+    rules: [
+      ['🤚', 'Don’t move the jars once they start'],
+      ['📏', 'Measure at the same time each day']
+    ]
+  },
+
+  'sci-bridge': {
+    goal: 'Build the strongest, lightest bridge across a 50 cm gap.',
+    who: 'The audience at your bridge-breaking show. Let them add the weights.',
+    make: [
+      ['🌉', '3 test bridges', 'Beam, arch and truss'],
+      ['🏆', '1 champion bridge', 'Stronger and lighter'],
+      ['⚖️', '1 load chart', 'Weight held by each bridge'],
+      ['💥', 'Bridge-breaking show', 'Load it till it breaks']
+    ],
+    done: [
+      'Every bridge crosses the 50 cm gap',
+      'Every bridge weighed and load tested',
+      'The chart shows which shape held most',
+      'You can say why triangles and arches are strong',
+      'The champion held more than your first bridge'
+    ],
+    notDone: 'one flat strip of card that sags.',
+    skills: [['Maths', 'Weigh, compare and chart results'], ['Science', 'Test how shape changes strength'], ['Language', 'Explain your results to an audience']],
+    uses: [['Maths', 'Measuring in cm and grams, comparing'], ['Science', 'Forces: push, pull and weight'], ['Language', 'Predicting and explaining']],
+    show: ['Your champion bridge, loaded until it breaks', 'Why triangles don’t bend'],
+    bounds: [
+      ['🦶', 'Keep feet clear when weights drop'],
+      ['✂️', 'Scissors and glue guns with care'],
+      ['📄', 'Paper, straws, sticks and tape only']
+    ],
+    rules: [
+      ['⚖️', 'Same gap and same weights for every bridge'],
+      ['📝', 'Record before you break it']
+    ]
+  },
+
+  'sci-filter': {
+    goal: 'Build the filter that turns muddy water the clearest.',
+    who: 'The audience at your water show. Show them the before and after.',
+    make: [
+      ['🧴', '3 bottle filters', 'Layers in different orders'],
+      ['🔢', '1 clearness scale', 'From 1 (muddy) to 5 (clear)'],
+      ['📊', '1 results chart', 'How clear, and how fast'],
+      ['🫙', 'Before and after jars', 'For the water show']
+    ],
+    done: [
+      'Every filter tested three times with the same mud',
+      'Every test scored on the clearness scale',
+      'The chart shows the best filter',
+      'You can say what each layer traps',
+      'You can say why it is still not safe to drink'
+    ],
+    notDone: 'muddy water poured through one cloth.',
+    skills: [['Maths', 'Measure, time and chart results'], ['Science', 'Test how layers of a filter trap dirt'], ['Language', 'Explain clean water to an audience']],
+    uses: [['Maths', 'Measuring in ml, timing, scoring'], ['Science', 'Solids and liquids, mixtures'], ['Language', 'Explaining clearly']],
+    show: ['Your before and after jars', 'Why we still never drink it'],
+    bounds: [
+      ['🚫', 'Never drink the filtered water'],
+      ['✂️', 'A facilitator cuts the bottles'],
+      ['🧼', 'Wash hands after the mud']
+    ],
+    rules: [
+      ['⚖️', 'Same mud, same amount, every test'],
+      ['🧹', 'Work outside or over a tray']
+    ]
+  },
+
+  'sci-magnet': {
+    goal: 'Make an electromagnet and build a crane that lifts metal and drops it on command.',
+    who: 'Players in your scrap-yard game. Let them work the crane.',
+    make: [
+      ['🧲', '3 electromagnets', '20, 40 and 60 turns'],
+      ['📊', '1 turns chart', 'Turns against paper clips'],
+      ['🏗️', '1 crane', 'Arm, magnet and switch'],
+      ['🎮', 'Scrap-yard game', 'Move the metal, beat the clock']
+    ],
+    done: [
+      'Every magnet tested with paper clips',
+      'The chart shows how turns change the pull',
+      'The crane picks up and drops metal with the switch',
+      'You can say how a coil becomes a magnet',
+      'The game works for 10 players'
+    ],
+    notDone: 'a nail with wire round it that sometimes picks up a pin.',
+    skills: [['Maths', 'Count, compare and chart results'], ['Science', 'Test how turns change a magnet’s pull'], ['Language', 'Write game rules and explain the science']],
+    uses: [['Maths', 'Counting, tables and charts'], ['Science', 'Circuits and magnets'], ['Language', 'Explaining clearly']],
+    show: ['Switch the magnet on and off', 'Your chart: more turns, more pull'],
+    bounds: [
+      ['🔋', 'AA batteries only. Never mains'],
+      ['🔥', 'Switch off when not lifting: the wire gets warm'],
+      ['💳', 'Keep magnets away from phones and cards']
+    ],
+    rules: [
+      ['⚖️', 'Same nail and battery for every test'],
+      ['🔌', 'Check the circuit before you play']
+    ]
+  },
+
+  'sci-weather': {
+    goal: 'Build a weather station, measure the weather every day and give a weather report.',
+    who: 'Everyone at LifeHub. Give them your weather report.',
+    make: [
+      ['🌧️', '1 rain gauge', 'Marked in mm'],
+      ['🧭', '1 wind vane', 'Points where the wind comes from'],
+      ['🌀', '1 wind-speed cups', 'Count spins in a minute'],
+      ['🌡️', '1 thermometer box', 'In the shade'],
+      ['📒', '1 weather log', 'Every school day'],
+      ['📺', '1 weather report', 'For all of LifeHub']
+    ],
+    done: [
+      'All four tools built and set up outside',
+      'Every tool read every school day',
+      'Temperature and rain on a chart',
+      'You can say what each tool measures',
+      'You can show one pattern in your log'
+    ],
+    notDone: 'a cup outside that nobody checks.',
+    skills: [['Maths', 'Read scales and draw line and bar charts'], ['Science', 'Measure the weather and look for patterns'], ['Language', 'Write and give a weather report']],
+    uses: [['Maths', 'Reading scales, mm and °C, charts'], ['Science', 'Weather, wind and the water cycle'], ['Language', 'Speaking to an audience']],
+    show: ['Your weather station', 'One pattern you found in your log'],
+    bounds: [
+      ['🧗', 'Never climb to fix a tool: ask a facilitator'],
+      ['⛈️', 'Stay inside in a storm'],
+      ['🌡️', 'No glass thermometers with mercury']
+    ],
+    rules: [
+      ['🕘', 'Read the tools at the same time each day'],
+      ['📝', 'Write it down straight away']
+    ]
+  },
 
   'sci-junkband': {
     goal: 'Turn junk into real instruments and play a concert.',

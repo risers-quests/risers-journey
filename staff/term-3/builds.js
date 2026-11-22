@@ -65,7 +65,7 @@
     ['sol', 'sci'].forEach(function (cat) {
       if (ui.cat !== 'all' && ui.cat !== cat) return;
       var list = POOL.filter(function (b) { return b.cat === cat && (!ui.level || b.level === ui.level) && (ui.status === 'all' || status(b.id) === ui.status); })
-        .sort(function (x, y) { return x.level - y.level || x.title.localeCompare(y.title); });
+        .sort(function (x, y) { return (y.added || '').localeCompare(x.added || '') || x.level - y.level || x.title.localeCompare(y.title); });
       body.appendChild(el('h2', 'pq-cat pq-cat-' + cat, esc(Q.CATS[cat].name) + ' <span>(' + list.length + ')</span>'));
       var grid = el('div', 'pq-grid');
       list.forEach(function (b) {

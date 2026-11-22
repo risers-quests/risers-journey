@@ -274,6 +274,8 @@
   }
   // Projects staff have approved; Risers only see these.
   var approvals = {};
+  // Added to the pool in the last three weeks.
+  function isNew(b) { return !!b.added && (Date.now() - Q.day(b.added).getTime()) < 21 * 864e5; }
   function approved(b) { var a = approvals[b.id]; return a && a.v === 'yes'; }
 
   var TABS = [['pack', 'Quest Pack'], ['plan', 'Our Plan'], ['board', 'Board'], ['standup', 'Stand-up'], ['checkin', 'Look Back'], ['photos', 'Photos'], ['history', '🏁 Finished']];
@@ -556,7 +558,7 @@
     var shown = 0;
     ['sol', 'sci'].forEach(function (cat) {
       var list = POOL.filter(function (b) { return b.cat === cat && levels.indexOf(b.level) !== -1 && approved(b); })
-        .sort(function (x, y) { return x.title.localeCompare(y.title); });
+        .sort(function (x, y) { return (y.added || '').localeCompare(x.added || '') || x.title.localeCompare(y.title); });
       if (!list.length) return;
       shown += list.length;
       wrap.appendChild(el('h2', 'pq-cat pq-cat-' + cat, esc(Q.CATS[cat].name)));
@@ -564,7 +566,7 @@
       list.forEach(function (b) {
         var c = CARDS[b.id];
         var card = el('article', 'qc qc-' + cat,
-          '<div class="qc-art"><span class="qc-kind">' + esc(Q.CATS[cat].name) + '</span>' + (KID ? '' : '<span class="qc-level">Level ' + b.level + '</span>') + (did.indexOf(b.id) !== -1 ? '<span class="qc-did">✓ Done before</span>' : '') + (c ? c.icon : '') + '</div>' +
+          '<div class="qc-art"><span class="qc-kind">' + esc(Q.CATS[cat].name) + '</span>' + (KID ? '' : '<span class="qc-level">Level ' + b.level + '</span>') + (did.indexOf(b.id) !== -1 ? '<span class="qc-did">✓ Done before</span>' : isNew(b) ? '<span class="qc-new">✨ New</span>' : '') + (c ? c.icon : '') + '</div>' +
           '<div class="qc-body"><h3>' + esc(b.title) + '</h3>' +
           '<p class="qc-tag">' + esc(c ? c.tag : b.what) + '</p>' +
           (c ? '<p class="qc-make">🎁 ' + esc(c.make) + '</p>' : '') +
