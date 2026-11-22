@@ -1,7 +1,7 @@
 /* Term 3 Quests — a team's quest, in five parts:
 
    - Quest Pack: what we'll make and learn, when it's done, boundaries
-     and rules.
+     (this quest's own, then the ones for every quest).
    - Our Plan: five steps the team fills in: Quest Masters for each
      week, the parts, the jobs in each part, a shopping list within the
      budget, and a goal for each week. A facilitator OKs it, and its jobs
@@ -769,7 +769,7 @@
       wrap.appendChild(od);
     } else if (!p) {
       wrap.appendChild(el('section', 'qp-sec qp-wait', '<div class="qp-h"><span class="qp-n qp-good">📦</span><h3>Your Quest Pack is on its way</h3></div>' +
-        '<p>A facilitator is getting it ready for you: what you must make, when it’s done, the boundaries and the rules. Start <b>Our Plan</b> while you wait.</p>'));
+        '<p>A facilitator is getting it ready for you: what you must make, when it’s done and the boundaries. Start <b>Our Plan</b> while you wait.</p>'));
     } else {
       var wh = sec('👥', 'blue', 'Who it’s for');
       wh.insertAdjacentHTML('beforeend', '<p class="qp-text">' + esc(p.who) + '</p>');
@@ -835,12 +835,10 @@
       wrap.appendChild(sh);
       var bd = sec('🛑', 'bad', 'Boundaries', 'never cross these');
       bd.insertAdjacentHTML('beforeend', '<p class="qp-note">For our ' + esc(b.title.toLowerCase()) + ':</p>' + tiles(p.bounds, 'qp-nv') +
+        '<div class="qp-sub">Every quest</div>' + tiles(window.T3_EVERY_BOUNDS || [], 'qp-nv') +
         '<div class="qp-ask">🙋 Not sure if something is OK? Ask a facilitator <b>before</b> you do it.</div>');
       wrap.appendChild(bd);
     }
-    var ru = sec('📏', 'blue', 'Quest rules');
-    ru.insertAdjacentHTML('beforeend', (p && p.rules ? tiles(p.rules, 'qp-rule qp-rule-q') + '<div class="qp-sub">Every quest</div>' : '') + tiles(window.T3_EVERY_RULES || [], 'qp-rule'));
-    wrap.appendChild(ru);
 
     if (PAST) return wrap;
     var change = el('button', 'pq-link', 'Change our quest');

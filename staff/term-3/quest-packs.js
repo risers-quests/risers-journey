@@ -14,21 +14,20 @@
      uses:    [['Maths' | 'Science' | 'Language', 'what we already know and use'], …],
      show:    ['what to show or talk about', …]         at the showcase,
      bounds:  [[icon, 'short line'], …]                 for this quest,
-     rules:   [[icon, 'short line'], …]                 for this quest,
      formats: [{ title, note, cols: […], rows: [[…], …] }]  optional,
      looks:   [{ title, sample: '<html of a finished example>', must: ['…'] }]  optional
    }
    The team ticks the "done" lines as they become true, and a facilitator
    checks it at the end. Every quest has the same budget (T3_BUDGET, in
-   rupees), the rules in T3_EVERY_RULES and the showcase points in
-   T3_EVERY_SHOW. */
+   rupees), the boundaries in T3_EVERY_BOUNDS and the showcase points in
+   T3_EVERY_SHOW. No rules section: boundaries only. */
 window.T3_BUDGET = 1000;
 
-window.T3_EVERY_RULES = [
-  ['🛠️', 'Ask before using tools, and use them safely'],
-  ['🤝', 'Decide together: listen to every idea, and vote if you can’t agree'],
-  ['📋', 'Keep the Board up to date: move your jobs every day'],
-  ['🧹', 'Clean up and put things back every time']
+// Boundaries for every quest, shown under each quest's own boundaries.
+window.T3_EVERY_BOUNDS = [
+  ['🔄', 'Take turns: after a Science in action quest, your next one is Make it for LifeHub. After Make it for LifeHub, the next is Science in action.'],
+  ['📅', 'Finish your quest by its deadline'],
+  ['🧑‍🏫', 'Machines, electrical things or fire: only with a facilitator there']
 ];
 
 window.T3_EVERY_SHOW = [
@@ -67,10 +66,6 @@ window.T3_PACKS = {
       ['🙅', 'Never open bags or pockets'],
       ['💰', 'Money and phones go straight to a facilitator'],
       ['🧼', 'Wash or wipe things before they go back']
-    ],
-    rules: [
-      ['📝', 'Log it before you put it away'],
-      ['🔍', 'Check the station every day']
     ]
   },
 
@@ -99,10 +94,6 @@ window.T3_PACKS = {
       ['🧼', 'Wash hands before touching food'],
       ['🌱', 'Only seeds that are safe to eat'],
       ['🚫', 'Don’t eat anything mouldy']
-    ],
-    rules: [
-      ['💧', 'Water every day, even Friday'],
-      ['📏', 'Measure at the same time each day']
     ]
   },
 
@@ -131,10 +122,6 @@ window.T3_PACKS = {
       ['🤫', 'Quiet near the café: don’t scare the birds'],
       ['🐦', 'Never touch birds, nests or eggs'],
       ['🧼', 'Wash hands after filling and cleaning']
-    ],
-    rules: [
-      ['🍚', 'Only bird-safe food: no salty or spicy food'],
-      ['🧽', 'Clean the bath every day']
     ]
   },
 
@@ -164,10 +151,6 @@ window.T3_PACKS = {
       ['🧱', 'Soft ground under every station'],
       ['🔨', 'No sharp bits, nails or glass'],
       ['🏃', 'One runner on the course at a time']
-    ],
-    rules: [
-      ['🧪', 'Test every station before ninja day'],
-      ['⏱️', 'Same start and finish line for everyone']
     ]
   },
 
@@ -196,10 +179,6 @@ window.T3_PACKS = {
       ['🪚', 'Saws and drills only with a facilitator'],
       ['🔨', 'No nails sticking out'],
       ['🚪', 'Keep the doorway clear']
-    ],
-    rules: [
-      ['📏', 'Measure twice, cut once'],
-      ['🧩', 'Build the model first']
     ]
   },
 
@@ -228,10 +207,6 @@ window.T3_PACKS = {
       ['🧤', 'Gloves on when handling scraps'],
       ['🍖', 'No meat, fish, dairy or oil'],
       ['🧼', 'Wash hands every time']
-    ],
-    rules: [
-      ['🍂', 'Add dry leaves with every load of scraps'],
-      ['🔄', 'Turn the heap every week']
     ]
   },
 
@@ -271,10 +246,6 @@ window.T3_PACKS = {
       { title: 'the score sheet',
         sample: '<table class="lk-score"><tr><th>Name</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>Total</th></tr><tr><td>Asha</td><td>2</td><td>4</td><td>3</td><td>2</td><td>5</td><td>3</td><td>19</td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></table>',
         must: ['A box for every hole', 'A total at the end', 'Room for 6 players', 'Lowest total wins'] }
-    ],
-    rules: [
-      ['🏌️', 'Tap the ball gently'],
-      ['🧪', 'Test before golf day']
     ]
   },
 
@@ -304,10 +275,6 @@ window.T3_PACKS = {
       ['📖', 'Books and pictures fine for every age'],
       ['🚪', 'Keep doors and paths clear'],
       ['🔥', 'No candles or fairy lights on mains power']
-    ],
-    rules: [
-      ['🧪', 'Build a test stool first'],
-      ['📏', 'Measure twice, cut once']
     ]
   },
 
@@ -337,10 +304,6 @@ window.T3_PACKS = {
       ['🪡', 'Needles and scissors only with a facilitator nearby'],
       ['👕', 'Outfits go over clothes. Nothing too short or tight.'],
       ['😊', 'Kind words about every model']
-    ],
-    rules: [
-      ['📏', 'Measure your model first'],
-      ['🧪', 'Make a test patch before the real thing']
     ]
   },
 
@@ -370,10 +333,6 @@ window.T3_PACKS = {
       ['🏃', 'Walk, don’t run, indoors'],
       ['🔒', 'Don’t move or open other people’s things'],
       ['🧩', 'Clues are kind and fun']
-    ],
-    rules: [
-      ['📏', 'Measure before you draw'],
-      ['🧭', 'Check north with a compass']
     ]
   },
 
@@ -403,10 +362,6 @@ window.T3_PACKS = {
       ['🐢', 'Gentle slope only, with a facilitator there'],
       ['🛑', 'No run without a working brake'],
       ['🚗', 'Never near roads or cars']
-    ],
-    rules: [
-      ['🪚', 'Saws and drills only with a facilitator'],
-      ['✅', 'Safety check before every run']
     ]
   },
 
@@ -436,10 +391,6 @@ window.T3_PACKS = {
       ['🧃', 'Light loads only: no glass, nothing heavy'],
       ['🪢', 'A facilitator checks the ends before every use'],
       ['🚪', 'Not across doors or paths']
-    ],
-    rules: [
-      ['🧪', 'Test low and short first'],
-      ['👀', 'Shout “Delivery!” before you send']
     ]
   },
 
@@ -469,10 +420,6 @@ window.T3_PACKS = {
       ['👀', 'Keep powder away from eyes'],
       ['🚫', 'Never taste it'],
       ['🧼', 'Wash hands after mixing']
-    ],
-    rules: [
-      ['⚖️', 'Change only one thing each time'],
-      ['🌡️', 'Same cup, same amount of water']
     ]
   },
 
@@ -500,10 +447,6 @@ window.T3_PACKS = {
       ['♨️', 'A facilitator pours the hot water'],
       ['🚫', 'Never taste the crystals or the mix'],
       ['🧼', 'Wash hands after touching alum']
-    ],
-    rules: [
-      ['🤚', 'Don’t move the jars once they start'],
-      ['📏', 'Measure at the same time each day']
     ]
   },
 
@@ -531,10 +474,6 @@ window.T3_PACKS = {
       ['🦶', 'Keep feet clear when weights drop'],
       ['✂️', 'Scissors and glue guns with care'],
       ['📄', 'Paper, straws, sticks and tape only']
-    ],
-    rules: [
-      ['⚖️', 'Same gap and same weights for every bridge'],
-      ['📝', 'Record before you break it']
     ]
   },
 
@@ -562,10 +501,6 @@ window.T3_PACKS = {
       ['🚫', 'Never drink the filtered water'],
       ['✂️', 'A facilitator cuts the bottles'],
       ['🧼', 'Wash hands after the mud']
-    ],
-    rules: [
-      ['⚖️', 'Same mud, same amount, every test'],
-      ['🧹', 'Work outside or over a tray']
     ]
   },
 
@@ -593,10 +528,6 @@ window.T3_PACKS = {
       ['🔋', 'AA batteries only. Never mains'],
       ['🔥', 'Switch off when not lifting: the wire gets warm'],
       ['💳', 'Keep magnets away from phones and cards']
-    ],
-    rules: [
-      ['⚖️', 'Same nail and battery for every test'],
-      ['🔌', 'Check the circuit before you play']
     ]
   },
 
@@ -626,10 +557,6 @@ window.T3_PACKS = {
       ['🧗', 'Never climb to fix a tool: ask a facilitator'],
       ['⛈️', 'Stay inside in a storm'],
       ['🌡️', 'No glass thermometers with mercury']
-    ],
-    rules: [
-      ['🕘', 'Read the tools at the same time each day'],
-      ['📝', 'Write it down straight away']
     ]
   },
 
@@ -657,10 +584,6 @@ window.T3_PACKS = {
       ['🔊', 'Not too loud: look after everyone’s ears'],
       ['✂️', 'No sharp edges on cans or bottles'],
       ['🧼', 'Clean junk only']
-    ],
-    rules: [
-      ['🎵', 'Tune before you play'],
-      ['🤫', 'Practise in the quiet corner']
     ]
   },
 
@@ -687,10 +610,6 @@ window.T3_PACKS = {
       ['🙅', 'Never throw at faces'],
       ['📄', 'Scrap paper only'],
       ['🏃', 'Throw from the line, one at a time']
-    ],
-    rules: [
-      ['📏', 'Measure every flight'],
-      ['⚖️', 'Same throw for every plane']
     ]
   },
 
@@ -718,10 +637,6 @@ window.T3_PACKS = {
       ['👅', 'Never taste it'],
       ['🧴', 'Only the safe things a facilitator gives you'],
       ['🧽', 'Keep it off clothes, books and carpets']
-    ],
-    rules: [
-      ['🧪', 'Change one thing at a time'],
-      ['📏', 'Measure every amount']
     ]
   },
 
@@ -748,10 +663,6 @@ window.T3_PACKS = {
       ['🔥', 'A facilitator does all the heating'],
       ['😊', 'The mystery is fun: no scary crimes, no real people blamed'],
       ['🔒', 'Fingerprints stay in class and are thrown away after']
-    ],
-    rules: [
-      ['🧪', 'Test every ink the same way'],
-      ['🤐', 'Keep the answer secret']
     ]
   },
 
@@ -778,10 +689,6 @@ window.T3_PACKS = {
       ['🧗', 'Drops only from a safe spot a facilitator chooses'],
       ['🙅', 'Never drop on or near people'],
       ['🥚', 'Clean up every cracked egg straight away']
-    ],
-    rules: [
-      ['🔮', 'Predict before every drop'],
-      ['📝', 'Record every drop']
     ]
   },
 
@@ -809,10 +716,6 @@ window.T3_PACKS = {
       ['⚡', 'Never near power lines or trees'],
       ['🌧️', 'Not in storms or strong wind'],
       ['🧵', 'Wind the string up after: no tangles to trip on']
-    ],
-    rules: [
-      ['🧪', 'Test one change at a time'],
-      ['👀', 'Look around before you launch']
     ]
   },
 
@@ -839,10 +742,6 @@ window.T3_PACKS = {
       ['🔋', 'Only small coin batteries. Never mains power.'],
       ['👶', 'Keep coin batteries away from little children and mouths'],
       ['🗑️', 'Old batteries go to a facilitator']
-    ],
-    rules: [
-      ['✏️', 'Draw the circuit first'],
-      ['🔍', 'Test before you glue']
     ]
   },
 
@@ -868,10 +767,6 @@ window.T3_PACKS = {
     bounds: [
       ['✂️', 'Craft knives only with a facilitator'],
       ['🥤', 'Only light, unbreakable things to pick up']
-    ],
-    rules: [
-      ['✋', 'Measure a real hand first'],
-      ['🧪', 'Test each finger as you go']
     ]
   },
 
@@ -898,10 +793,6 @@ window.T3_PACKS = {
       ['🧗', 'Never climb on the dome'],
       ['🔥', 'No lights with flames inside'],
       ['🚪', 'Keep the door clear']
-    ],
-    rules: [
-      ['📏', 'Check every stick’s length'],
-      ['🔺', 'Triangles everywhere']
     ]
   },
 
@@ -928,10 +819,6 @@ window.T3_PACKS = {
       ['🔥', 'Only a facilitator lights or moves the tea-light'],
       ['💧', 'Boats only in the water tub, on a tray'],
       ['🧯', 'Water ready nearby every time']
-    ],
-    rules: [
-      ['🧪', 'Change one thing at a time'],
-      ['⏱️', 'Time every run']
     ]
   },
 
@@ -959,10 +846,6 @@ window.T3_PACKS = {
       ['😎', 'Never look at the sun'],
       ['🔌', 'Solar power only: no mains plugs'],
       ['🛣️', 'Race only on the marked track']
-    ],
-    rules: [
-      ['⏱️', 'Time every run'],
-      ['🔧', 'Keep spare parts ready']
     ]
   },
 
@@ -989,10 +872,6 @@ window.T3_PACKS = {
       ['🌀', 'Hands away from spinning blades'],
       ['🔌', 'Fans only with a facilitator: no other mains use'],
       ['✂️', 'No sharp blade edges']
-    ],
-    rules: [
-      ['🧪', 'Same fan, same distance for every test'],
-      ['📝', 'Record every test']
     ]
   }
 };
