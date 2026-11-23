@@ -41,6 +41,120 @@ window.T3_PACKS = {
 
   /* ---------- Make it for LifeHub ---------- */
 
+  'sol-sciencekits': {
+    goal: 'Make science kits that co-op families can borrow and do at home, with no help.',
+    who: 'Co-op families. Ask 5 of them what science is hard at home, and let real families test every kit.',
+    make: [
+      ['📦', '4 kits', 'Everything for one experiment in each'],
+      ['📄', '4 instruction cards', 'Steps, pictures and the science'],
+      ['👨‍👩‍👧', '4 family tests', 'A real family tries each kit'],
+      ['🔄', '1 borrowing sheet', 'Who has which kit, and when it’s back'],
+      ['📋', '1 restock list', 'What to refill after each loan']
+    ],
+    done: [
+      'Every kit has everything needed, nothing missing',
+      'A family did each kit with no help from you',
+      'You fixed the card after every family test',
+      'Each card explains the science in simple words',
+      'At least 4 loans on the borrowing sheet'
+    ],
+    notDone: 'a bag of things with “do the experiment” on it.',
+    skills: [['Maths', 'Measure amounts and plan what to restock'], ['Science', 'Understand an experiment well enough to explain it'], ['Language', 'Write instructions someone can follow with no help']],
+    uses: [['Maths', 'Measuring, counting, lists'], ['Science', 'The experiments you choose'], ['Language', 'Steps in order, with pictures']],
+    show: ['A family’s test: what went wrong, and what you changed', 'Do one kit with us'],
+    bounds: [
+      ['🧪', 'Safe home things only: no fire, no strong chemicals'],
+      ['🧑‍🏫', 'A facilitator checks every kit before it goes home'],
+      ['🧸', 'No small bits that little siblings could swallow']
+    ]
+  },
+
+  'sol-playspace': {
+    goal: 'Design a more fun play space with everyone’s ideas, win the vote, and build one part.',
+    who: 'Everyone who plays outside at LifeHub, and the parents and facilitators who decide. Ask them, then pitch to them.',
+    make: [
+      ['🗳️', '1 survey', '15 Risers and parents'],
+      ['📏', '1 measured plan', 'The real space'],
+      ['🏗️', '1 scale model', '1 cm for every 50 cm'],
+      ['🎤', '1 pitch', 'To parents and facilitators'],
+      ['🛝', '1 part built', 'The one everyone voted for']
+    ],
+    done: [
+      '15 people asked, and the design uses what they said',
+      'The model is to scale: you can show the maths',
+      'The pitch is given and the vote is counted',
+      'The winning part is built and safe',
+      'Risers have played with it for a week'
+    ],
+    notDone: 'a drawing of a dream playground.',
+    skills: [['Maths', 'Measure a space and build a model to scale'], ['Science', 'Test that what you build is strong and safe'], ['Language', 'Pitch a design and answer questions']],
+    uses: [['Maths', 'Measuring in m and cm, multiplying and dividing'], ['Science', 'Forces and materials'], ['Language', 'Asking questions and persuading']],
+    show: ['Your model next to the real space', 'The part you built'],
+    bounds: [
+      ['🧑‍🏫', 'Parents and facilitators decide what gets built'],
+      ['🪚', 'Tools only with a facilitator'],
+      ['🔨', 'No sharp bits, nails or splinters'],
+      ['🧗', 'Nothing to climb higher than your knees']
+    ]
+  },
+
+  'sol-cookbook': {
+    goal: 'Make a real cookbook of co-op family recipes, with the amounts worked out right.',
+    who: 'Every co-op family. Ask each one for a recipe, and give each one a cookbook.',
+    make: [
+      ['📝', 'A recipe from every family', 'And the story behind it'],
+      ['🔢', 'Amounts for half and double', 'For every recipe'],
+      ['🥗', '2 tested recipes', 'No-cook, made by you'],
+      ['📸', 'Photos', 'Of the dishes'],
+      ['📚', 'The cookbook', 'Printed for every family'],
+      ['🍽️', 'Tasting day', 'Families try the dishes']
+    ],
+    done: [
+      'A recipe from every family',
+      'Every recipe has half and double amounts, checked',
+      'Two recipes tested by you, following your own steps',
+      'Every family has a copy',
+      'Families say the steps are easy to follow'
+    ],
+    notDone: 'recipes copied onto pages.',
+    skills: [['Maths', 'Double and halve amounts, and use measuring units'], ['Science', 'How mixing changes food'], ['Language', 'Write steps someone else can follow']],
+    uses: [['Maths', 'Multiplying and dividing by 2, measuring'], ['Science', 'Food and healthy eating'], ['Language', 'Steps in order, asking questions']],
+    show: ['How you doubled a recipe', 'Make one of your tested recipes for us'],
+    bounds: [
+      ['🔥', 'No cooking on fire or stoves without a facilitator'],
+      ['🥜', 'Check for allergies before anyone tastes'],
+      ['🧼', 'Wash hands before touching food']
+    ]
+  },
+
+  'sol-pollinators': {
+    goal: 'Bring more bees and butterflies to the LifeHub garden, and prove it with counts.',
+    who: 'The bees and butterflies, and everyone who uses the garden. Teach them with your guide.',
+    make: [
+      ['🔍', 'Before count', '10 minutes a day for 5 days'],
+      ['🌼', '1 flower patch', 'Flowers bees and butterflies need'],
+      ['🏨', '1 bee hotel', 'Wood and bamboo tubes'],
+      ['📊', 'After count and chart', 'Did more come?'],
+      ['📖', '1 garden guide', 'What lives here, with pictures']
+    ],
+    done: [
+      'Insects counted for 5 days before planting',
+      'The patch planted with flowers bees and butterflies use',
+      'The bee hotel built and put up',
+      'Insects counted again, and the chart shows before and after',
+      'You can explain how bees help plants make food'
+    ],
+    notDone: 'a few flowers planted with no counts.',
+    skills: [['Maths', 'Count, tally and draw a before-and-after chart'], ['Science', 'Learn how pollination works'], ['Language', 'Write a garden guide with facts and pictures']],
+    uses: [['Maths', 'Tally marks and bar charts'], ['Science', 'Plants, insects and habitats'], ['Language', 'Short facts and labels']],
+    show: ['Your before-and-after chart', 'How a bee helps a flower make seeds'],
+    bounds: [
+      ['🐝', 'Never touch or swat bees: stand still and let them pass'],
+      ['🧤', 'Gloves for digging'],
+      ['🚫', 'No bug sprays in the garden']
+    ]
+  },
+
   'sol-mathkits': {
     goal: 'Make a class set of exact maths tools that younger Risers learn with.',
     who: 'The facilitators who teach maths, and the younger Risers. Ask the facilitators what they need, and test with the Risers.',

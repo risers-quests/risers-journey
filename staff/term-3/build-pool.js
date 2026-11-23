@@ -1,4 +1,4 @@
-/* Term 3 Quests — the build pool: 66 projects (64 offered) the groups choose from, in
+/* Term 3 Quests — the build pool: 70 projects (64 offered) the groups choose from, in
    two kinds, "Science in action" (sci) and "Make it for LifeHub" (sol).
    Each one has a name, what it is, the idea or reason behind it (hook),
    what the group ends up with (make), the science concept or skill they
@@ -13,7 +13,8 @@
    added: the date a project joined the pool. Newer projects come first on
    the quest picker (and on the staff page), then the older ones.
    retired: no longer offered (no space for an escape room; a go-kart is
-   too much for 8–10 year olds). Kept so teams that did it still see it
+   too much for 8–10 year olds; timers, clay pot fridge, microgreens and
+   maths kits replaced by stronger quests). Kept so teams that did it still see it
    in their finished quests. */
 window.T3_POOL = [
   /* ---------- Science in action ---------- */
@@ -373,7 +374,51 @@ window.T3_POOL = [
     ] },
 
   /* ---------- Make it for LifeHub ---------- */
-  { id: 'sol-mathkits', cat: 'sol', level: 2, title: 'Maths kit makers', added: '2026-11-23',
+  { id: 'sol-sciencekits', cat: 'sol', level: 2, title: 'Take-home science kits', added: '2026-11-23',
+    what: 'Co-op families teach at home, and science is the hardest to set up. You design science kits that families borrow: everything needed for one experiment in a box, with a card so clear that a family can do it with no help. A real family tests every kit, and you fix what went wrong.',
+    hook: 'Anyone can do an experiment with a teacher there. A kit that works with nobody to help is real design.',
+    make: 'Four science kits in boxes, an instruction card for each, a borrowing sheet, and test reports from real families.',
+    learn: 'Science explained clearly, and testing with real users',
+    lo: 'We can explain the science in each kit, write instructions a family can follow alone, and show what we changed after each family tested it.',
+    resp: [
+      ['Ask 5 families which science they find hard to do at home', 'Try each experiment and find out the science behind it', 'Watch a family use a kit and note every problem', 'Find out what families learned from each kit'],
+      ['Choose four experiments', 'Write and draw the instruction card for each', 'Make the borrowing sheet and the restock list', 'Fix the cards after each family test'],
+      ['Collect and pack everything for each kit', 'Make the boxes strong and labelled', 'Restock kits when they come back', 'Make the final four kits ready to lend']
+    ] },
+  { id: 'sol-playspace', cat: 'sol', level: 2, title: 'Design our play space', added: '2026-11-23',
+    what: 'What would make LifeHub’s outdoor space more fun? You ask everyone, measure the space, and build a model of your design to scale. Then you pitch it to the parents and facilitators. Everyone votes for one part, like a mud kitchen, a water wall or a ball-run wall, and you build it.',
+    hook: 'Real designers ask the people who will use the space, make a model, and win a yes before they build.',
+    make: 'A survey, a measured scale model of the play space, a pitch to parents, and the winning part built for real.',
+    learn: 'Measuring, scale and persuading',
+    lo: 'We can measure a space and build a model to scale, explain our design with what people told us, and build the part everyone chose.',
+    resp: [
+      ['Ask 15 Risers and parents what would make the space more fun', 'Find out what makes play safe', 'Count the votes after the pitch', 'Watch Risers play with the new part and ask what they think'],
+      ['Measure the space and draw the plan', 'Make the scale: 1 cm for every 50 cm', 'Make the slides for the pitch', 'Draw the plan for the winning part'],
+      ['Build the scale model', 'Give the pitch to parents and facilitators', 'Collect the materials', 'Build the winning part with a facilitator']
+    ] },
+  { id: 'sol-cookbook', cat: 'sol', level: 1, title: 'LifeHub family cookbook', added: '2026-11-23',
+    what: 'Every co-op family has a favourite dish. You collect the recipes, test some no-cook ones, work out how much is needed for 2 people or for 20, take photos, and make a real cookbook for every family.',
+    hook: 'A recipe only works if the amounts are right. Making it for 20 people means getting the maths right.',
+    make: 'A printed cookbook with a recipe from every family, photos, amounts for different sizes, and a cookbook tasting day.',
+    learn: 'Measuring, doubling and halving, and clear instructions',
+    lo: 'We can double and halve recipe amounts, write steps someone else can follow, and show our cookbook to the families.',
+    resp: [
+      ['Ask every family for a favourite recipe and its story', 'Find out the measuring words: cups, spoons, grams', 'Test two no-cook recipes', 'Ask families what they think of the cookbook'],
+      ['Plan the cookbook pages', 'Write each recipe in clear steps', 'Work out amounts for half and double', 'Design the cover and the contents page'],
+      ['Photograph the dishes', 'Make the pages', 'Print and bind the cookbooks', 'Set up the tasting day']
+    ] },
+  { id: 'sol-pollinators', cat: 'sol', level: 1, title: 'Bee and butterfly garden', added: '2026-11-23',
+    what: 'Bees and butterflies are disappearing. You count the insects in the LifeHub garden, plant the flowers they need, build a bee hotel, and count again to see if more come.',
+    hook: 'One in three bites of our food needs a bee or a butterfly. Gardens can help them.',
+    make: 'A flower patch for bees and butterflies, a bee hotel, a before-and-after insect count, and a garden guide.',
+    learn: 'Pollination and habitats',
+    lo: 'We can explain how bees and butterflies help plants make food, and show from our counts whether our garden brought more of them.',
+    resp: [
+      ['Count bees and butterflies in the garden for 10 minutes a day', 'Find out which flowers they need', 'Count again after planting', 'Find out if more came, and why'],
+      ['Plan the flower patch: what goes where', 'Plan the bee hotel with sizes', 'Make the count chart', 'Make the garden guide with pictures'],
+      ['Dig and plant the patch', 'Build the bee hotel from wood and bamboo', 'Water and weed every day', 'Put up the guide']
+    ] },
+  { id: 'sol-mathkits', cat: 'sol', level: 2, title: 'Maths kit makers', retired: true, added: '2026-11-23',
     what: 'Younger Risers learn maths best with things they can hold. You find out what the facilitators teach next, then make a class set of maths tools: fraction strips, place-value blocks, geoboards and clocks with hands that turn. Every piece must be exact, because a wrong piece teaches wrong maths.',
     hook: 'A fraction strip that is 2 mm too long teaches the wrong answer. Making tools for others means getting it exactly right.',
     make: 'A class set of maths tools in labelled boxes, a how-to card for each, and a maths lesson you help teach with them.',
@@ -395,7 +440,7 @@ window.T3_POOL = [
       ['Make the cost sheet: travel, tickets and food per family', 'Make the timetable from leaving to getting back', 'Make the packing list and the permission slip', 'Make the slides for the parents’ talk'],
       ['Count the votes and choose the place', 'Write the safety plan with a facilitator', 'Give the talk to parents and answer questions', 'Lead the groups and do head counts on the day']
     ] },
-  { id: 'sol-timers', cat: 'sol', level: 2, title: 'Timers for every room', added: '2026-11-23',
+  { id: 'sol-timers', cat: 'sol', level: 2, title: 'Timers for every room', retired: true, added: '2026-11-23',
     what: 'LifeHub rooms need to time things: two minutes of tooth brushing, five minutes of clean-up, a turn on the swing. You build sand timers and water clocks from bottles, and tune them until each one is right to within 5 seconds. Then every room gets a set.',
     hook: 'People timed things with sand and water for thousands of years. Getting one exactly right is harder than it looks.',
     make: 'A set of 1, 2 and 5 minute timers for every room, a tuning chart, and a timer guide.',
@@ -417,7 +462,7 @@ window.T3_POOL = [
       ['Draw the plan with measurements', 'Plan the steering and the brake', 'Mark the test course with a corner and a slope', 'Make the delivery booking sheet'],
       ['Build a small model with steering', 'Build the frame and fit the axles with a facilitator', 'Fit the steering, the handle and the brake', 'Fix what breaks in the load test']
     ] },
-  { id: 'sol-claypot', cat: 'sol', level: 1, title: 'Clay pot fridge', added: '2026-11-23',
+  { id: 'sol-claypot', cat: 'sol', level: 1, title: 'Clay pot fridge', retired: true, added: '2026-11-23',
     what: 'A fridge with no electricity. You put one clay pot inside a bigger one, fill the gap with wet sand, and the water drying off keeps the inside cool. You build three designs, find the coolest, and the kitchen uses the winner to keep fruit and vegetables fresh.',
     hook: 'Millions of homes have no fridge. When water dries off, it takes heat with it.',
     make: 'Three test fridges, a temperature chart, a freshness test, and the best fridge working in the LifeHub kitchen.',
@@ -461,7 +506,7 @@ window.T3_POOL = [
       ['Map the garden and measure the pipe lengths', 'Plan the drip-rate test', 'Draw the full system with tank height', 'Make the shopping list within the budget'],
       ['Build a test dripper and time it', 'Raise the tank on a strong stand with a facilitator', 'Lay the pipes and fit a dripper at every plant', 'Fix leaks and blocks']
     ] },
-  { id: 'sol-microgreens', cat: 'sol', level: 1, title: 'Microgreens farm', added: '2026-11-23',
+  { id: 'sol-microgreens', cat: 'sol', level: 1, title: 'Microgreens farm', retired: true, added: '2026-11-23',
     what: 'Microgreens are baby plants you can eat in about ten days. You grow trays of them, like mustard, fenugreek (methi) and green gram, and give the harvest to the LifeHub kitchen.',
     hook: 'Fresh, healthy food can grow on a windowsill, and fast.',
     make: 'Trays of microgreens, a growth chart, and a harvest for the LifeHub kitchen.',
@@ -753,6 +798,10 @@ window.T3_POOL = [
    make (short), what you'll learn (short) and a feel tag. A project without
    a card here shows its plain name and description. */
 window.T3_CARDS = {
+  'sol-sciencekits': { icon: '🧰', tag: 'Science kits families can do with no help.', make: '4 take-home kits, tested by families', learn: 'Explaining science clearly', feel: '🧪 Testing' },
+  'sol-playspace': { icon: '🛝', tag: 'Design it, pitch it, build it.', make: 'A scale model, a pitch and one part built', learn: 'Scale and persuading', feel: '🏗️ Building' },
+  'sol-cookbook': { icon: '🍲', tag: 'Every family’s favourite dish in one book.', make: 'A printed family cookbook', learn: 'Doubling and halving', feel: '🍽️ Food' },
+  'sol-pollinators': { icon: '🐝', tag: 'Bring the bees back, and prove it.', make: 'A flower patch and a bee hotel', learn: 'Pollination', feel: '🌳 Outdoors' },
   'sol-mathkits': { icon: '📐', tag: 'Make the maths tools younger Risers learn with.', make: 'A class set of maths tools', learn: 'Fractions and exact measuring', feel: '✂️ Making' },
   'sol-fieldtrip': { icon: '🚌', tag: 'Plan a real trip. Win the parents’ yes.', make: 'A trip plan and the trip', learn: 'Money and time', feel: '🗺️ Planning' },
   'sol-timers': { icon: '⏳', tag: 'Timers that are right to the second.', make: 'Sand and water timers for every room', learn: 'Time and flow', feel: '🧪 Testing' },
