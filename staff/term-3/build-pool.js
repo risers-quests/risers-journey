@@ -14,7 +14,8 @@
    the quest picker (and on the staff page), then the older ones.
    retired: no longer offered (no space for an escape room; a go-kart is
    too much for 8–10 year olds; timers, clay pot fridge, microgreens and
-   maths kits replaced by stronger quests). Kept so teams that did it still see it
+   maths kits, field trip, bee garden, play space and cookbook not
+   wanted). Kept so teams that did it still see it
    in their finished quests. */
 window.T3_POOL = [
   /* ---------- Science in action ---------- */
@@ -385,7 +386,7 @@ window.T3_POOL = [
       ['Choose one experiment for each topic', 'Write and draw the instruction card for each', 'Make the borrowing sheet and the restock list', 'Fix the cards after each family test'],
       ['Collect and pack everything for each kit', 'Make the boxes strong and labelled', 'Restock kits when they come back', 'Make the final four kits ready to lend']
     ] },
-  { id: 'sol-playspace', cat: 'sol', level: 2, title: 'Design our play space', added: '2026-11-23',
+  { id: 'sol-playspace', cat: 'sol', level: 2, title: 'Design our play space', retired: true, added: '2026-11-23',
     what: 'What would make LifeHub’s outdoor space more fun? You ask everyone, measure the space, and build a model of your design to scale. Then you pitch it to the parents and facilitators. Everyone votes for one part, like a mud kitchen, a water wall or a ball-run wall, and you build it.',
     hook: 'Real designers ask the people who will use the space, make a model, and win a yes before they build.',
     make: 'A survey, a measured scale model of the play space, a pitch to parents, and the winning part built for real.',
@@ -396,7 +397,7 @@ window.T3_POOL = [
       ['Measure the space and draw the plan', 'Work out the area and perimeter of the space and of each part', 'Make the scale: 1 cm for every 50 cm', 'Make the slides for the pitch', 'Draw the plan for the winning part'],
       ['Build the scale model', 'Give the pitch to parents and facilitators', 'Collect the materials', 'Build the winning part with a facilitator']
     ] },
-  { id: 'sol-cookbook', cat: 'sol', level: 1, title: 'LifeHub family cookbook', added: '2026-11-23',
+  { id: 'sol-cookbook', cat: 'sol', level: 1, title: 'LifeHub family cookbook', retired: true, added: '2026-11-23',
     what: 'Every co-op family has a favourite dish. You collect the recipes, test some no-cook ones, work out how much is needed for 2 people or for 20, take photos, and make a real cookbook for every family.',
     hook: 'A recipe only works if the amounts are right. Making it for 20 people means getting the maths right.',
     make: 'A printed cookbook with a recipe from every family, photos, amounts for different sizes, and a cookbook tasting day.',
@@ -407,7 +408,7 @@ window.T3_POOL = [
       ['Plan the cookbook pages', 'Write each recipe in clear steps', 'Work out amounts for half and double', 'Design the cover and the contents page'],
       ['Photograph the dishes', 'Make the pages', 'Print and bind the cookbooks', 'Set up the tasting day']
     ] },
-  { id: 'sol-pollinators', cat: 'sol', level: 1, title: 'Bee and butterfly garden', added: '2026-11-23',
+  { id: 'sol-pollinators', cat: 'sol', level: 1, title: 'Bee and butterfly garden', retired: true, added: '2026-11-23',
     what: 'Bees and butterflies are disappearing. You count the insects in the LifeHub garden, plant the flowers they need, build a bee hotel, and count again to see if more come.',
     hook: 'One in three bites of our food needs a bee or a butterfly. Gardens can help them.',
     make: 'A flower patch for bees and butterflies, a bee hotel, a before-and-after insect count, and a garden guide.',
@@ -429,7 +430,7 @@ window.T3_POOL = [
       ['Choose four tools and plan how many of each', 'Draw each piece with exact sizes', 'Make the how-to card for each tool', 'Plan the lesson you help teach'],
       ['Make one test piece of each tool', 'Make the full class set', 'Fix any piece that is not exact', 'Box and label the sets']
     ] },
-  { id: 'sol-fieldtrip', cat: 'sol', level: 2, title: 'Plan our field trip', added: '2026-11-23',
+  { id: 'sol-fieldtrip', cat: 'sol', level: 2, title: 'Plan our field trip', retired: true, added: '2026-11-23',
     what: 'You plan a real field trip for the co-op, from start to finish. Ask everyone where to go, work out the cost for each family, make the timetable, the safety plan and the packing list. Then present it to the parents. If they say yes, you run the trip on the day.',
     hook: 'Trips happen because someone plans them. This time, it is you.',
     make: 'A trip plan with a cost sheet, timetable, safety plan and packing list, a talk to parents, and the trip itself.',
