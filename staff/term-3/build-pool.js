@@ -1,4 +1,4 @@
-/* Term 3 Quests — the build pool: 72 projects (62 offered) the groups choose from, in
+/* Term 3 Quests — the build pool: 72 projects (61 offered) the groups choose from, in
    two kinds, "Science in action" (sci) and "Make it for LifeHub" (sol).
    Each one has a name, what it is, the idea or reason behind it (hook),
    what the group ends up with (make), the science concept or skill they
@@ -15,7 +15,7 @@
    retired: no longer offered (no space for an escape room; a go-kart is
    too much for 8–10 year olds; timers, clay pot fridge, microgreens and
    maths kits, field trip, bee garden, play space and cookbook not
-   wanted). Kept so teams that did it still see it
+   wanted; reading nook removed). Kept so teams that did it still see it
    in their finished quests. */
 window.T3_POOL = [
   /* ---------- Science in action ---------- */
@@ -683,7 +683,7 @@ window.T3_POOL = [
       ['Plan and measure where the wire will run', 'Make the first cards', 'Put up the rules and guide', 'Make a message log'],
       ['Build the test circuit on the table', 'Find and fix weak joins', 'Add a second switch and buzzer', 'Keep the line working']
     ] },
-  { id: 'sol-readingnook', cat: 'sol', level: 2, title: 'Reading nook makeover',
+  { id: 'sol-readingnook', cat: 'sol', level: 2, title: 'Reading nook makeover', retired: true,
     what: 'You design and build a reading nook: cardboard stools, a bench, floor cushions and a book display, all strong enough to really use.',
     hook: 'A cosy nook makes everyone want to read.',
     make: 'A reading nook with four cardboard stools, a bench and a book display.',
