@@ -41,6 +41,66 @@ window.T3_PACKS = {
 
   /* ---------- Make it for LifeHub ---------- */
 
+  'sol-mathkits': {
+    goal: 'Make a class set of exact maths tools that younger Risers learn with.',
+    who: 'The facilitators who teach maths, and the younger Risers. Ask the facilitators what they need, and test with the Risers.',
+    make: [
+      ['🟦', 'Fraction strips', 'Halves to tenths, exact'],
+      ['🧱', 'Place-value blocks', 'Ones, tens and hundreds'],
+      ['📍', 'Geoboards', 'Pins and bands for shapes'],
+      ['🕒', 'Learning clocks', 'Hands that turn'],
+      ['📦', 'Labelled boxes', 'A how-to card in each'],
+      ['👩‍🏫', '1 lesson', 'You help teach it']
+    ],
+    done: [
+      'Enough of each tool for a whole class',
+      'Every piece within 1 mm of its size',
+      'Two halves match one whole, every time',
+      '3 younger Risers have tried each tool',
+      'A facilitator has used them in a lesson',
+      'You can explain the maths each tool teaches'
+    ],
+    notDone: 'paper strips cut by eye.',
+    skills: [['Maths', 'Measure and cut to the millimetre, and explain fractions and place value'], ['Science', 'Test which material lasts best'], ['Language', 'Write how-to cards a younger Riser can follow']],
+    uses: [['Maths', 'Measuring in mm and cm, fractions, place value'], ['Science', 'Materials: strong, light, lasting'], ['Language', 'Instructions in order']],
+    show: ['Show that your fraction strips are exact', 'Teach us with one of your tools'],
+    bounds: [
+      ['✂️', 'Craft knives and saws only with a facilitator'],
+      ['🧸', 'No small loose bits for little ones to swallow'],
+      ['🔨', 'Smooth edges, no splinters']
+    ]
+  },
+
+  'sol-fieldtrip': {
+    goal: 'Plan and run a real field trip for the co-op.',
+    who: 'Every Riser and family in the co-op. Ask them where to go, and win the parents’ yes.',
+    make: [
+      ['🗳️', '1 survey', 'Where should we go, and why?'],
+      ['💰', '1 cost sheet', 'Travel, tickets and food per family'],
+      ['🕘', '1 timetable', 'From leaving to getting back'],
+      ['🦺', '1 safety plan', 'What could go wrong, and what we do'],
+      ['🎒', 'Packing list and permission slip', 'For every family'],
+      ['🎤', 'Parents’ talk', 'Your plan, and their questions']
+    ],
+    done: [
+      'Everyone in the co-op asked where to go',
+      'The cost per family is worked out and checked',
+      'The timetable adds up, with travel and breaks',
+      'The safety plan is checked by a facilitator',
+      'The parents said yes to the plan',
+      'The trip happened, and you asked everyone how it went'
+    ],
+    notDone: 'a list of places we would like to go.',
+    skills: [['Maths', 'Work out costs per family and plan time'], ['Science', 'Plan what to bring for the weather and the place'], ['Language', 'Present a plan to grown-ups and answer questions']],
+    uses: [['Maths', 'Money, adding, dividing, telling the time'], ['Science', 'Weather, keeping safe and healthy'], ['Language', 'Asking questions and speaking to an audience']],
+    show: ['Your plan, and how you worked out the cost', 'What went well on the trip, and what you’d change'],
+    bounds: [
+      ['🧑‍🏫', 'The parents and facilitators decide yes or no'],
+      ['📞', 'No booking or paying without a grown-up'],
+      ['👥', 'Never leave the group on the trip']
+    ]
+  },
+
   'sol-timers': {
     goal: 'Give every room at LifeHub a set of timers that are right to within 5 seconds.',
     who: 'Every room at LifeHub. Ask what they need to time, and teach them how to use the set.',
@@ -154,35 +214,6 @@ window.T3_PACKS = {
       ['💦', 'Keep the floor dry: add a tray'],
       ['🔨', 'No sharp edges or nails'],
       ['🧪', 'Only soap from the LifeHub supply']
-    ]
-  },
-
-  'sol-zerowaste': {
-    goal: 'Cut LifeHub’s rubbish by one third, and prove it with weights.',
-    who: 'Every room at LifeHub and the kitchen. Ask why waste happens, and get them on your side.',
-    make: [
-      ['⚖️', '1 week of weights', 'Every bin, every day'],
-      ['🔍', '1 sort day', 'What is in the rubbish?'],
-      ['📄', '1 waste report', 'The three biggest wastes'],
-      ['🔄', '3 changes', 'Running at LifeHub'],
-      ['📊', '1 before-and-after chart', 'Did it work?']
-    ],
-    done: [
-      'Every bin weighed every day for a week, before',
-      'The three biggest wastes found by sorting',
-      'Three changes running for at least a week',
-      'Every bin weighed again, after',
-      'You can show the drop as a fraction or percentage',
-      'Rubbish cut by one third, or you can explain why not'
-    ],
-    notDone: 'posters saying “Don’t waste!”.',
-    skills: [['Maths', 'Weigh, add totals and work out a percentage drop'], ['Science', 'Sort waste: what rots, what recycles, what lasts'], ['Language', 'Write a report and persuade people to change']],
-    uses: [['Maths', 'Weighing in kg, fractions, bar charts'], ['Science', 'Materials and recycling'], ['Language', 'Asking questions and explaining']],
-    show: ['Your before-and-after chart', 'The change that worked best, and why'],
-    bounds: [
-      ['🧤', 'Gloves on when sorting rubbish'],
-      ['🚫', 'Never touch glass, sharps or medicine: tell a facilitator'],
-      ['🧼', 'Wash hands every time']
     ]
   },
 

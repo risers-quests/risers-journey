@@ -1,4 +1,4 @@
-/* Term 3 Quests — the build pool: 65 projects (63 offered) the groups choose from, in
+/* Term 3 Quests — the build pool: 66 projects (64 offered) the groups choose from, in
    two kinds, "Science in action" (sci) and "Make it for LifeHub" (sol).
    Each one has a name, what it is, the idea or reason behind it (hook),
    what the group ends up with (make), the science concept or skill they
@@ -373,6 +373,28 @@ window.T3_POOL = [
     ] },
 
   /* ---------- Make it for LifeHub ---------- */
+  { id: 'sol-mathkits', cat: 'sol', level: 2, title: 'Maths kit makers', added: '2026-11-23',
+    what: 'Younger Risers learn maths best with things they can hold. You find out what the facilitators teach next, then make a class set of maths tools: fraction strips, place-value blocks, geoboards and clocks with hands that turn. Every piece must be exact, because a wrong piece teaches wrong maths.',
+    hook: 'A fraction strip that is 2 mm too long teaches the wrong answer. Making tools for others means getting it exactly right.',
+    make: 'A class set of maths tools in labelled boxes, a how-to card for each, and a maths lesson you help teach with them.',
+    learn: 'Fractions, place value and measuring exactly',
+    lo: 'We can measure and cut to the millimetre, explain the maths each tool teaches, and show younger Risers how to use it.',
+    resp: [
+      ['Ask facilitators what they teach next and which tools help', 'Find out how each tool teaches its maths', 'Check every piece against the plan', 'Try the tools with 3 younger Risers and note what goes wrong'],
+      ['Choose four tools and plan how many of each', 'Draw each piece with exact sizes', 'Make the how-to card for each tool', 'Plan the lesson you help teach'],
+      ['Make one test piece of each tool', 'Make the full class set', 'Fix any piece that is not exact', 'Box and label the sets']
+    ] },
+  { id: 'sol-fieldtrip', cat: 'sol', level: 2, title: 'Plan our field trip', added: '2026-11-23',
+    what: 'You plan a real field trip for the co-op, from start to finish. Ask everyone where to go, work out the cost for each family, make the timetable, the safety plan and the packing list. Then present it to the parents. If they say yes, you run the trip on the day.',
+    hook: 'Trips happen because someone plans them. This time, it is you.',
+    make: 'A trip plan with a cost sheet, timetable, safety plan and packing list, a talk to parents, and the trip itself.',
+    learn: 'Planning, money and time',
+    lo: 'We can work out a trip’s cost per family and a timetable that works, plan for safety, and explain our plan to parents.',
+    resp: [
+      ['Ask every Riser and parent where to go and why', 'Find out the cost, opening times and rules of the top 3 places', 'Find out what could go wrong and how to stop it', 'Ask everyone after the trip what went well'],
+      ['Make the cost sheet: travel, tickets and food per family', 'Make the timetable from leaving to getting back', 'Make the packing list and the permission slip', 'Make the slides for the parents’ talk'],
+      ['Count the votes and choose the place', 'Write the safety plan with a facilitator', 'Give the talk to parents and answer questions', 'Lead the groups and do head counts on the day']
+    ] },
   { id: 'sol-timers', cat: 'sol', level: 2, title: 'Timers for every room', added: '2026-11-23',
     what: 'LifeHub rooms need to time things: two minutes of tooth brushing, five minutes of clean-up, a turn on the swing. You build sand timers and water clocks from bottles, and tune them until each one is right to within 5 seconds. Then every room gets a set.',
     hook: 'People timed things with sand and water for thousands of years. Getting one exactly right is harder than it looks.',
@@ -406,7 +428,7 @@ window.T3_POOL = [
       ['Draw three designs with sizes', 'Plan the temperature and freshness tests', 'Make the results table', 'Make the how-to-use card for the kitchen'],
       ['Build fridge 1 with wet sand', 'Build fridges 2 and 3 with one change each', 'Wet them every day and fix cracks', 'Build the best one again for the kitchen']
     ] },
-  { id: 'sol-handwash', cat: 'sol', level: 2, title: 'Foot-pedal handwash station', added: '2026-11-23',
+  { id: 'sol-handwash', cat: 'sol', level: 3, title: 'Foot-pedal handwash station', added: '2026-11-23',
     what: 'Taps get touched by dirty hands all day. You design and build a handwash station where you press a pedal with your foot for water and soap, so your hands never touch anything. Then you prove it uses less water than the tap.',
     hook: 'Most germs pass from hand to tap to hand. A pedal stops that, and can save water too.',
     make: 'A working foot-pedal handwash station with water and soap, a water-use test, and a test of 50 handwashes.',
@@ -416,17 +438,6 @@ window.T3_POOL = [
       ['Find out how levers and pulleys pass a push along', 'Measure how much water one tap handwash uses', 'Watch 10 people use the station and note problems', 'Work out water saved per wash and per week'],
       ['Sketch three pedal ideas', 'Draw the plan with sizes and the cutting list', 'Plan the 50-wash test', 'Make the how-to-use sign'],
       ['Build a small model of the pedal', 'Build the frame and water pedal with a facilitator', 'Add the soap pedal', 'Fix what breaks in the 50-wash test']
-    ] },
-  { id: 'sol-zerowaste', cat: 'sol', level: 2, title: 'Zero-waste challenge', added: '2026-11-23',
-    what: 'How much rubbish does LifeHub throw away? You weigh every bin for a week to find out. Then you find the three biggest kinds of waste, change how LifeHub does things to cut them, and weigh again. Your target: one third less rubbish.',
-    hook: 'You can’t fix what you don’t measure. Real waste teams start by weighing the bins.',
-    make: 'A week of bin weights, a waste report, three changes running at LifeHub, and an after chart that shows the drop.',
-    learn: 'Data, percentages and changing habits',
-    lo: 'We can measure LifeHub’s waste, find the biggest kinds, and show with before-and-after weights how much our changes cut it.',
-    resp: [
-      ['Weigh every bin every day for a week', 'Sort one day’s rubbish to find the biggest kinds', 'Ask rooms and the kitchen why that waste happens', 'Weigh again and work out the drop'],
-      ['Make the bin weight table', 'Plan three changes to cut the biggest wastes', 'Make the before-and-after charts', 'Write the waste report'],
-      ['Make the sorting bins and signs', 'Set up change 1, like refill or reuse', 'Set up changes 2 and 3', 'Visit each room to explain the changes']
     ] },
   { id: 'sol-vending', cat: 'sol', level: 3, title: 'LifeHub vending machine', added: '2026-11-23',
     what: 'You build a real vending machine from wood and card. Put in the right coin, and one snack drops out. Put in the wrong coin, and you get it back. Then you stock it and run it for a week.',
@@ -742,12 +753,13 @@ window.T3_POOL = [
    make (short), what you'll learn (short) and a feel tag. A project without
    a card here shows its plain name and description. */
 window.T3_CARDS = {
+  'sol-mathkits': { icon: '📐', tag: 'Make the maths tools younger Risers learn with.', make: 'A class set of maths tools', learn: 'Fractions and exact measuring', feel: '✂️ Making' },
+  'sol-fieldtrip': { icon: '🚌', tag: 'Plan a real trip. Win the parents’ yes.', make: 'A trip plan and the trip', learn: 'Money and time', feel: '🗺️ Planning' },
   'sol-timers': { icon: '⏳', tag: 'Timers that are right to the second.', make: 'Sand and water timers for every room', learn: 'Time and flow', feel: '🧪 Testing' },
   'sci-lightmaze': { icon: '🔦', tag: 'Bounce light round five corners.', make: 'A light maze and periscopes', learn: 'Light and mirrors', feel: '🧩 Puzzles' },
   'sol-cart': { icon: '🛒', tag: 'Move 20 kg round LifeHub. Nobody rides.', make: 'A cargo cart that steers and brakes', learn: 'Wheels, axles and friction', feel: '🔨 Woodwork' },
   'sol-claypot': { icon: '🏺', tag: 'A fridge with no electricity.', make: 'A clay pot fridge for the kitchen', learn: 'Evaporation', feel: '🧪 Testing' },
   'sol-handwash': { icon: '🧼', tag: 'Wash your hands without touching a thing.', make: 'A foot-pedal handwash station', learn: 'Levers and pulleys', feel: '🔨 Building' },
-  'sol-zerowaste': { icon: '♻️', tag: 'Cut LifeHub’s rubbish by a third.', make: 'A waste report and three changes', learn: 'Data and percentages', feel: '📊 Data' },
   'sol-vending': { icon: '🪙', tag: 'Coin in. Snack out.', make: 'A real vending machine', learn: 'Mechanisms and money', feel: '🔨 Woodwork' },
   'sol-watering': { icon: '💦', tag: 'Keep the garden alive with nobody there.', make: 'A drip system for the garden', learn: 'Water flow and gravity', feel: '🌳 Outdoors' },
   'sci-fizz': { icon: '🛁', tag: 'Make bath bombs that fizz and fizz.', make: 'Bath bombs and a gift box', learn: 'Acids and gases', feel: '🧪 Messy' },
