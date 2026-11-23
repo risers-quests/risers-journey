@@ -1,4 +1,4 @@
-/* Term 3 Quests — the build pool: 63 projects (61 offered) the groups choose from, in
+/* Term 3 Quests — the build pool: 65 projects (63 offered) the groups choose from, in
    two kinds, "Science in action" (sci) and "Make it for LifeHub" (sol).
    Each one has a name, what it is, the idea or reason behind it (hook),
    what the group ends up with (make), the science concept or skill they
@@ -17,6 +17,17 @@
    in their finished quests. */
 window.T3_POOL = [
   /* ---------- Science in action ---------- */
+  { id: 'sci-lightmaze', cat: 'sci', level: 2, title: 'Light maze', added: '2026-11-23',
+    what: 'You shine a torch beam into a maze and use mirrors to bounce it round five corners until it hits a target. You measure the angles to find out how mirrors work, then build a periscope to see over walls.',
+    hook: 'Light bounces off a mirror at the same angle it hits it. Get the angle right, and light goes where you want.',
+    make: 'A light maze with five mirror turns and a target, a periscope for each of you, and an angle chart.',
+    learn: 'Light and reflection',
+    lo: 'We can explain that light bounces off a mirror at the same angle it hits, and show it with our angle measurements and our maze.',
+    resp: [
+      ['Find out how light travels and bounces', 'Predict where the beam will go', 'Find the rule in our angle chart', 'Explain the maze to visitors'],
+      ['Make the slit torch and test one mirror', 'Build the maze base with five turns', 'Fit and tune the mirrors', 'Build the periscopes'],
+      ['Plan the angle test and table', 'Measure angles in and out with a protractor', 'Chart the angles', 'Run the maze challenge for visitors']
+    ] },
   { id: 'sci-fizz', cat: 'sci', level: 1, title: 'Fizzy bath bomb lab', added: '2026-11-23',
     what: 'You mix baking soda and citric acid into balls that fizz when they hit water. Then you change the recipe, one thing at a time, to find the bath bomb that fizzes the longest.',
     hook: 'When an acid meets baking soda in water, they make a gas. The gas is the fizz.',
@@ -362,6 +373,17 @@ window.T3_POOL = [
     ] },
 
   /* ---------- Make it for LifeHub ---------- */
+  { id: 'sol-timers', cat: 'sol', level: 2, title: 'Timers for every room', added: '2026-11-23',
+    what: 'LifeHub rooms need to time things: two minutes of tooth brushing, five minutes of clean-up, a turn on the swing. You build sand timers and water clocks from bottles, and tune them until each one is right to within 5 seconds. Then every room gets a set.',
+    hook: 'People timed things with sand and water for thousands of years. Getting one exactly right is harder than it looks.',
+    make: 'A set of 1, 2 and 5 minute timers for every room, a tuning chart, and a timer guide.',
+    learn: 'Measuring time, flow and fair testing',
+    lo: 'We can explain how hole size and amount change the time, and show from our tuning chart that every timer is right to within 5 seconds.',
+    resp: [
+      ['Ask each room what they need to time', 'Find out how hole size and amount change the flow', 'Check every finished timer with a stopwatch', 'Teach each room how to use their set'],
+      ['Plan the set: which times, how many', 'Make the tuning chart', 'Draw how the timers are built', 'Make the timer guide and labels'],
+      ['Build a test timer and time it', 'Change the hole or amount until it is right', 'Build a full set', 'Build the sets for every room']
+    ] },
   { id: 'sol-cart', cat: 'sol', level: 3, title: 'LifeHub cargo cart', added: '2026-11-23',
     what: 'Books, plants, sports gear and water bottles get carried around LifeHub by hand. You design and build a pull cart with four wheels, front wheels that steer, and a brake. It must carry 20 kg across LifeHub without tipping. Nobody rides it.',
     hook: 'Wheels make heavy things easy to move. Getting them to steer, hold a load and stop is the hard part.',
@@ -720,6 +742,8 @@ window.T3_POOL = [
    make (short), what you'll learn (short) and a feel tag. A project without
    a card here shows its plain name and description. */
 window.T3_CARDS = {
+  'sol-timers': { icon: '⏳', tag: 'Timers that are right to the second.', make: 'Sand and water timers for every room', learn: 'Time and flow', feel: '🧪 Testing' },
+  'sci-lightmaze': { icon: '🔦', tag: 'Bounce light round five corners.', make: 'A light maze and periscopes', learn: 'Light and mirrors', feel: '🧩 Puzzles' },
   'sol-cart': { icon: '🛒', tag: 'Move 20 kg round LifeHub. Nobody rides.', make: 'A cargo cart that steers and brakes', learn: 'Wheels, axles and friction', feel: '🔨 Woodwork' },
   'sol-claypot': { icon: '🏺', tag: 'A fridge with no electricity.', make: 'A clay pot fridge for the kitchen', learn: 'Evaporation', feel: '🧪 Testing' },
   'sol-handwash': { icon: '🧼', tag: 'Wash your hands without touching a thing.', make: 'A foot-pedal handwash station', learn: 'Levers and pulleys', feel: '🔨 Building' },

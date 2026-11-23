@@ -41,6 +41,34 @@ window.T3_PACKS = {
 
   /* ---------- Make it for LifeHub ---------- */
 
+  'sol-timers': {
+    goal: 'Give every room at LifeHub a set of timers that are right to within 5 seconds.',
+    who: 'Every room at LifeHub. Ask what they need to time, and teach them how to use the set.',
+    make: [
+      ['⏳', '1, 2 and 5 minute timers', 'A set for every room'],
+      ['🧪', 'Test timers', 'To find the right hole and amount'],
+      ['📊', '1 tuning chart', 'Every timer, checked with a stopwatch'],
+      ['🏷️', 'Labels', 'How long each one runs'],
+      ['📖', '1 timer guide', 'What to time with which one']
+    ],
+    done: [
+      'Every timer is right to within 5 seconds',
+      'Every timer checked 3 times with a stopwatch',
+      'Every room has its set and a guide',
+      'You can explain how hole size and amount change the time',
+      'Still right after a week of use'
+    ],
+    notDone: 'a bottle of sand that runs out “about” a minute later.',
+    skills: [['Maths', 'Time to the second and find the difference'], ['Science', 'Test how hole size and amount change the flow'], ['Language', 'Write a simple guide for each room']],
+    uses: [['Maths', 'Minutes and seconds, measuring in grams and ml'], ['Science', 'Gravity, and solids and liquids flowing'], ['Language', 'Short, clear labels']],
+    show: ['Race your timer against a stopwatch', 'Your tuning chart'],
+    bounds: [
+      ['🔒', 'Lids taped shut: no sand or water spills'],
+      ['✂️', 'A facilitator cuts and makes holes in bottles'],
+      ['🚫', 'No glass bottles']
+    ]
+  },
+
   'sol-cart': {
     goal: 'Build a pull cart that carries 20 kg round LifeHub, steers and stops safely.',
     who: 'Every room that carries heavy things. Ask them what they carry, and let them book deliveries.',
@@ -429,6 +457,33 @@ window.T3_PACKS = {
   },
 
   /* ---------- Science in action ---------- */
+
+  'sci-lightmaze': {
+    goal: 'Bounce a beam of light round five corners to hit a target, and find the rule mirrors follow.',
+    who: 'Visitors to your maze. Let them try to hit the target.',
+    make: [
+      ['🔦', '1 slit torch', 'A thin beam you can see'],
+      ['🪞', '1 light maze', 'Five mirror turns and a target'],
+      ['📐', '1 angle chart', 'Angle in and angle out'],
+      ['👀', 'A periscope each', 'See over a wall']
+    ],
+    done: [
+      'The beam hits the target after five turns',
+      'At least 10 angles measured in and out',
+      'The chart shows angle in = angle out',
+      'Every periscope works',
+      'You can explain how a mirror bounces light'
+    ],
+    notDone: 'a torch pointed at one mirror.',
+    skills: [['Maths', 'Measure angles with a protractor'], ['Science', 'Test how light bounces off mirrors'], ['Language', 'Explain the rule to visitors']],
+    uses: [['Maths', 'Angles, measuring and tables'], ['Science', 'Light and shadows'], ['Language', 'Predicting and explaining']],
+    show: ['Hit the target', 'Your chart: angle in and angle out'],
+    bounds: [
+      ['🔦', 'Torches only: no laser pointers'],
+      ['👁️', 'Never shine light in anyone’s eyes'],
+      ['🪞', 'Plastic mirrors only: no glass']
+    ]
+  },
 
   'sci-fizz': {
     goal: 'Find the bath bomb recipe that fizzes the longest, changing one thing at a time.',
