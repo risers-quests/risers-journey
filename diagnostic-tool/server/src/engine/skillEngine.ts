@@ -1,5 +1,5 @@
-import { BLOOM_CEILING, BLOOM_ORDER, CPA_ORDER, BloomLevel, CPAStage, cellId } from "../types.js";
-import { SessionState, logTrace } from "./state.js";
+import { BLOOM_CEILING, BLOOM_ORDER, CPA_ORDER, BloomLevel, CPAStage, ENTRY_BLOOM, ENTRY_CPA, cellId } from "../types.js";
+import { SessionState, TopicEngineState, logTrace } from "./state.js";
 import { findItem, getItemById, getTopic, ALL_ITEMS } from "../itemBank/index.js";
 import { generateItem, hasTemplate, isGenerated, signature } from "../itemBank/generate/index.js";
 import { Item } from "../types.js";
@@ -60,6 +60,27 @@ function endExhaustedTopic(state: SessionState, topicId: string) {
   logTrace(state, `${getTopic(topicId).shortLabel}: no unasked questions left — topic stopped here instead of repeating.`);
 }
 
+/**
+ * Whether a prerequisite keeps the topics built on it closed. It used to take
+ * full mastery (Abstract·Analyze), so one shaky early topic hid most of the
+ * book. Now only a clear gap holds back: a topic still being tested, or one
+ * that stalled before climbing two levels from where it starts (Pictorial·
+ * Understand, then Apply), with no right answer in symbols. Two levels, not
+ * one, because a single right answer can be a lucky guess. A child who got
+ * further has the basics, so the topics built on it are tested too.
+ */
+const LEVELS_TO_OPEN = 2;
+function levelsClimbed(t: TopicEngineState): number {
+  const steps = CLIMB_BLOOM_ORDER.length;
+  return (CPA_ORDER.indexOf(t.frontierCpa) - CPA_ORDER.indexOf(ENTRY_CPA)) * steps + CLIMB_BLOOM_ORDER.indexOf(t.frontierBloom) - CLIMB_BLOOM_ORDER.indexOf(ENTRY_BLOOM);
+}
+function holdsBack(t: TopicEngineState): boolean {
+  if (t.status === "mastered") return false;
+  if (t.status !== "lag_point") return true;
+  if (t.proceduralCheck?.correct) return false;
+  return levelsClimbed(t) < LEVELS_TO_OPEN;
+}
+
 /** Picks whichever unlocked topic still has work left, in prerequisite order. */
 function activeTopicId(state: SessionState): string | null {
   for (const topicId of state.topicOrder) {
@@ -71,9 +92,9 @@ function activeTopicId(state: SessionState): string | null {
     const t = state.topics[topicId];
     if (t.status !== "locked") continue;
     const topic = getTopic(topicId);
-    // A prerequisite from a strand not in this test is assumed known (the
-    // report says so); otherwise it has to be mastered first.
-    const prereqsMet = topic.dependsOn.every((dep) => !state.topics[dep] || state.topics[dep].status === "mastered");
+    // A prerequisite not in this test is assumed known (the report says so);
+    // otherwise it has to be finished and not a clear gap.
+    const prereqsMet = topic.dependsOn.every((dep) => !state.topics[dep] || !holdsBack(state.topics[dep]));
     if (prereqsMet) {
       t.status = "in_progress";
       logTrace(state, `Prerequisites cleared → unlocked ${topic.name}.`);

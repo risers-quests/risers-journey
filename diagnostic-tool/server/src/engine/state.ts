@@ -87,10 +87,10 @@ export interface SessionState {
   emailStatus?: { at: string; child: boolean; staff: boolean; note?: string };
 }
 
-/** `topics`: Grade 4 and Grade 8 tests are chosen topic by topic (GRADE4_TOPICS, GRADE8_TOPICS); Grade 5 by strand. */
+/** `topics`: maths and language tests are chosen topic by topic (GRADE4_TOPICS, GRADE5_TOPICS, ...); strands only for a grade with no topic list. */
 export function createInitialState(strands: string[] = STRANDS, grade = 5, chosenTopics?: string[], subject = "Maths"): SessionState {
   const english = isLanguage(subject);
-  // Language subjects and chapter-by-chapter maths grades: the topics chosen (in book order); Grade 5 maths: by strand.
+  // The topics chosen, in book order (every grade with maths is chosen chapter by chapter).
   const ready = english ? languageTopics(subject, grade) : mathsTopics(grade);
   const topicOrder = ready
     ? TOPICS.filter((t) => ready.includes(t.id) && (!chosenTopics || chosenTopics.includes(t.id))).map((t) => t.id)
@@ -115,8 +115,8 @@ export function createInitialState(strands: string[] = STRANDS, grade = 5, chose
 
   return {
     grade,
-    // English: the strands of the topics chosen.
-    strands: english ? [...new Set(topicOrder.map((id) => TOPICS.find((t) => t.id === id)!.strand))] : STRANDS.filter((s) => strands.includes(s)),
+    // Topics chosen one by one: the strands those topics are in (so the report marks the right strands as tested).
+    strands: ready ? [...new Set(topicOrder.map((id) => TOPICS.find((t) => t.id === id)!.strand))] : STRANDS.filter((s) => strands.includes(s)),
     ...(english ? { subject } : {}),
     topicOrder,
     currentTopicIndex: 0,

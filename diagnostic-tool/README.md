@@ -16,9 +16,13 @@ Multiples → Fractions and Division → Four Operations of Fractions →
 Decimals → Geometry → Measurement → Perimeter and Area → Volume and Nets
 of Solids → Time and Temperature → Life Mathematics → Scales and
 Directions → Data Handling → Patterns and Symmetry. Topics are tested in
-that order, but each one unlocks as soon as the topics it really builds on
-are mastered (see `itemBank/topics.ts`), so a gap holds back only the
-topics that depend on it and the rest of the book is still assessed.
+that order, and each one opens once the topics it really builds on are
+finished without a clear gap (see `itemBank/topics.ts` and `holdsBack` in
+`engine/skillEngine.ts`): a topic holds back the ones built on it only if
+the child stalled before climbing two levels from where it starts
+(Pictorial·Understand, then Apply). It used to take full mastery, so one
+shaky early topic hid most of the book. Staff choose the topics chapter by
+chapter, like every other grade.
 
 **Methodology note (read this before the rest):** the original design doc
 proposed detecting anxiety *live, from within the math questions*, via a
@@ -518,8 +522,11 @@ item in every topic was rewritten against two rules:
 - **Geometry/Patterns/Data Handling lean on lighter representations** than
   the original two fraction topics — see *The item bank's four
   representation kinds* above.
-- **One strand per sitting (or more).** Staff choose which strands a test
-  covers when it starts (Number & Algebra by default). In simulations:
+- **One chapter per sitting (or more).** Staff choose which chapters a test
+  covers when it starts (Chapter 1 by default), as at every other grade;
+  the report marks the strands of the chosen chapters as tested. (Grade 5
+  used to be chosen by strand.) Strand sizes from older simulations, under
+  the old mastery-only rule: In simulations:
   Number & Algebra 38–46 questions, Measurement & Geometry 38–48, Ratio &
   Proportion 14, Data Handling 8, the whole book 72–162. Only the chosen
   topics are tested and reported; a prerequisite from a strand not in the

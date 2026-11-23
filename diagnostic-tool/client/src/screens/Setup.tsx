@@ -3,15 +3,15 @@ import { staffSignedIn } from "../staff";
 import { createSession, getSessionStatus } from "../api";
 import { SessionStatus } from "../types";
 import { forgetTest, rememberTest, savedTests } from "../saved";
-import { ENGLISH8_TOPIC_CHOICES, GRADE7_TOPIC_CHOICES, LA7_TOPIC_CHOICES, W7_TOPIC_CHOICES, W4_TOPIC_CHOICES, GRADE3_TOPIC_CHOICES, LA4_TOPIC_CHOICES, W3_TOPIC_CHOICES, LA6_TOPIC_CHOICES, W6_TOPIC_CHOICES, GRADE4_TOPIC_CHOICES, GRADE8_TOPIC_CHOICES, STRAND_CHOICES } from "../strands";
+import { ENGLISH8_TOPIC_CHOICES, GRADE7_TOPIC_CHOICES, LA7_TOPIC_CHOICES, W7_TOPIC_CHOICES, W4_TOPIC_CHOICES, GRADE3_TOPIC_CHOICES, LA4_TOPIC_CHOICES, W3_TOPIC_CHOICES, LA6_TOPIC_CHOICES, W6_TOPIC_CHOICES, GRADE4_TOPIC_CHOICES, GRADE5_TOPIC_CHOICES, GRADE8_TOPIC_CHOICES } from "../strands";
 
 // The 12 Risers. Their report email addresses are kept only in the email
 // script (diagnostic-tool/email), never on the site; it matches by name.
 const RISERS = ["Benjamin", "Chris", "Elyon", "Eva", "Gabby", "Karis", "Michael", "Owen", "Pranavi", "Shalom", "Yokesh", "Zach"];
 // Risers working from another grade's book; everyone else starts at Grade 5 (staff can still change it).
 const RISER_GRADE: Record<string, string> = { Eva: "Grade 4", Elyon: "Grade 4", Gabby: "Grade 4", Karis: "Grade 7", Michael: "Grade 7", Shalom: "Grade 7", Benjamin: "Grade 8" };
-// Grades tested chapter by chapter (their own book), and the chapters ready.
-const CHAPTERS: Record<string, typeof GRADE4_TOPIC_CHOICES> = { "Grade 3": GRADE3_TOPIC_CHOICES, "Grade 4": GRADE4_TOPIC_CHOICES, "Grade 8": GRADE8_TOPIC_CHOICES, ...(GRADE7_TOPIC_CHOICES.length ? { "Grade 7": GRADE7_TOPIC_CHOICES } : {}) };
+// Maths, tested chapter by chapter (each grade's own book), and the chapters ready.
+const CHAPTERS: Record<string, typeof GRADE4_TOPIC_CHOICES> = { "Grade 3": GRADE3_TOPIC_CHOICES, "Grade 4": GRADE4_TOPIC_CHOICES, "Grade 5": GRADE5_TOPIC_CHOICES, "Grade 8": GRADE8_TOPIC_CHOICES, ...(GRADE7_TOPIC_CHOICES.length ? { "Grade 7": GRADE7_TOPIC_CHOICES } : {}) };
 const gradeFor = (name: string) => RISER_GRADE[name] ?? "Grade 5";
 // Language subjects, per grade: the name on the start page, the subject the
 // server knows, and the topics offered. Grade 8 English is shown as two:
@@ -39,8 +39,8 @@ const LANGUAGE: Record<string, Record<string, { server: string; choices: Choice[
     Literature: { server: "English", choices: ENGLISH8_TOPIC_CHOICES.filter(isLit), note: "The reader's stories, poems and play (English Rose Reader 8)." },
   },
 };
-// Maths only where it is ready (Grade 5 by strand, other grades chapter by chapter).
-const subjectsFor = (grade: string) => [...(grade === "Grade 5" || CHAPTERS[grade] ? ["Maths"] : []), ...Object.keys(LANGUAGE[grade] ?? {})];
+// Maths only where it is ready.
+const subjectsFor = (grade: string) => [...(CHAPTERS[grade] ? ["Maths"] : []), ...Object.keys(LANGUAGE[grade] ?? {})];
 const GRADES = ["Grade 3", "Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grade 8"];
 // Each Riser's subjects and the grade for each (matches staff/riser-grades.js).
 // A Riser on their own device sees only these, and only the ones built so far;
@@ -74,13 +74,10 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [unfinished, setUnfinished] = useState<SessionStatus[]>([]);
-  // One strand per sitting by default, so a test stays well under an hour.
-  const [strands, setStrands] = useState<string[]>(["Number & Algebra"]);
   const [grade, setGrade] = useState(kidMode ? kidReady[0]?.[1] ?? gradeFor(me) : gradeFor(me || forName));
-  // Grade 4 and 8: one chapter per sitting by default; tick more to test them together.
+  // One chapter per sitting by default; tick more to test them together.
   const [g4Topics, setG4Topics] = useState<string[]>([(CHAPTERS[gradeFor(me || forName)] ?? GRADE4_TOPIC_CHOICES)[0].id]);
   const lang = LANGUAGE[grade]?.[subject];
-  const english = !!lang;
   const chapters = lang ? lang.choices : CHAPTERS[grade];
   useEffect(() => {
     if (chapters) setG4Topics([chapters[0].id]);
@@ -91,10 +88,6 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
   }, [grade]);
   function toggleTopic(id: string) {
     setG4Topics((list) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id]));
-  }
-  const topicCount = STRAND_CHOICES.filter((c) => strands.includes(c.name)).reduce((n, c) => n + c.topics.length, 0);
-  function toggleStrand(name: string) {
-    setStrands((list) => (list.includes(name) ? list.filter((x) => x !== name) : [...list, name]));
   }
 
   // Tests started on this device that aren't finished yet.
@@ -117,7 +110,7 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
     setError(null);
     try {
       const name = childName.trim();
-      const sessionId = await createSession(name, grade, chapters ? ["Number & Algebra"] : strands, chapters ? g4Topics : undefined, lang ? lang.server : "Maths");
+      const sessionId = await createSession(name, grade, ["Number & Algebra"], chapters ? g4Topics : undefined, lang ? lang.server : "Maths");
       rememberTest({ id: sessionId, childName: name, startedAt: new Date().toISOString() });
       const status = await getSessionStatus(sessionId);
       if (!status) throw new Error("Couldn't start the test");
@@ -145,7 +138,7 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
             how the subject feels.
           </p>
           <p className="lede" style={{ marginTop: -8 }}>
-            Choose what to check. One strand or topic per sitting keeps it short enough for a child to stay fresh; there are
+            Choose what to check. One topic or a few per sitting keeps it short enough for a child to stay fresh; there are
             no breaks during a test.
           </p>
         </>
@@ -227,25 +220,8 @@ export function Setup({ onStart, signedIn }: { onStart: (status: SessionStatus) 
             <small className="grade-note">More {grade} chapters are being added.</small>
           </fieldset>
         )}
-        {grade === "Grade 5" && !english && <fieldset className="strand-pick">
-          <legend>What to test</legend>
-          {STRAND_CHOICES.map((c) => (
-            <label key={c.name} className={"strand-option" + (strands.includes(c.name) ? " on" : "")}>
-              <input type="checkbox" checked={strands.includes(c.name)} onChange={() => toggleStrand(c.name)} />
-              <span>
-                <b>{c.name}</b>
-                <small>
-                  {c.topics.join(", ")}
-                </small>
-              </span>
-            </label>
-          ))}
-          <div className="strand-total">
-            {topicCount ? `${topicCount} topic${topicCount > 1 ? "s" : ""}` : "Choose at least one strand"}
-          </div>
-        </fieldset>}
         {error && <div style={{ color: "var(--soft-clay)", fontSize: "0.85rem" }}>{error}</div>}
-        <button className="btn btn-primary" type="submit" disabled={loading || !childName.trim() || (kidMode && !kidReady.length) || (chapters ? !g4Topics.length : !strands.length)}>
+        <button className="btn btn-primary" type="submit" disabled={loading || !childName.trim() || (kidMode && !kidReady.length) || !chapters || !g4Topics.length}>
           {loading ? "Starting…" : "Start the test"}
         </button>
       </form>

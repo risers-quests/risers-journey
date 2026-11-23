@@ -347,6 +347,8 @@ export const GRADE4_TOPICS = ["more-large-numbers", "g4-addsub", "g4-mult", "g4-
 
 /** Grade 8 chapters ready, in book order (offered one by one on the start page). */
 export const GRADE8_TOPICS = Object.keys(GRADE8_TEMPLATES);
+/** Grade 5: all 15 topics, in book order (TOPICS without a grade of their own). */
+export const GRADE5_TOPICS = ["more-large-numbers", "operations-large-numbers", "factors-multiples", "fractions-division", "four-operations-fractions", "decimals", "geometry", "measurement", "perimeter-area", "volume-nets", "time-temperature", "life-mathematics", "scales-directions", "data-handling", "patterns-symmetry"];
 
 /** Grade 8 English topics ready, in the order offered (one by one on the start page). */
 export const ENGLISH8_TOPICS = Object.keys(ENGLISH8_TEMPLATES);
@@ -418,7 +420,7 @@ export function languageTopics(subject: string, grade = 7): string[] {
   if (subject === "Language Arts" && grade === 4) return Object.keys(L4_TEMPLATES);
   return subject === "English" ? ENGLISH8_TOPICS : subject === "Language Arts" ? Object.keys(LA7_TEMPLATES) : subject === "Writing" ? Object.keys(W7_TEMPLATES) : [];
 }
-/** The maths topics ready at a grade chosen chapter by chapter (null: Grade 5, chosen by strand). */
+/** The maths topics ready at a grade, chosen chapter by chapter (null: no maths at that grade yet). */
 export function mathsTopics(grade: number): string[] | null {
-  return grade === 3 ? Object.keys(GRADE3_TEMPLATES) : grade === 4 ? GRADE4_TOPICS : grade === 7 ? Object.keys(GRADE7_TEMPLATES) : grade === 8 ? GRADE8_TOPICS : null;
+  return grade === 3 ? Object.keys(GRADE3_TEMPLATES) : grade === 4 ? GRADE4_TOPICS : grade === 5 ? GRADE5_TOPICS : grade === 7 ? Object.keys(GRADE7_TEMPLATES) : grade === 8 ? GRADE8_TOPICS : null;
 }

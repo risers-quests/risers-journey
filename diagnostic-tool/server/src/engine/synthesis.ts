@@ -61,7 +61,7 @@ const TAG_RECOMMENDATION: Record<DiagnosisTag, string> = {
   mastered: "Move on — no intervention needed.",
   skill_gap: "Reteach the identified prerequisite directly.",
   procedural_not_conceptual: "Visual / hands-on practice before further abstract drilling.",
-  not_yet_reached: "Will be assessed once its prerequisite gap closes.",
+  not_yet_reached: "Will be assessed once the gap in the topic it builds on closes.",
 };
 
 const MATHS_STRANDS = ["Number & Algebra", "Measurement & Geometry", "Ratio & Proportion", "Data Handling"];
@@ -122,7 +122,7 @@ function buildTopicDiagnosis(topicId: string, state: SessionState, responses: Re
   if (t.status === "locked") {
     tag = "not_yet_reached";
     const deps = topic.dependsOn.map((d) => getTopic(d).name).join(", ");
-    evidence.push(`${topic.name} was not yet reached this session because it depends on ${deps || "an earlier topic"} being cleared first.`);
+    evidence.push(`${topic.name} was not yet reached this session because it builds on ${deps || "an earlier topic"}, which showed a clear gap (stuck on the first questions).`);
   } else if (t.status === "mastered") {
     tag = "mastered";
     evidence.push(`Reached Abstract·Analyze with consistent accuracy across representations.`);

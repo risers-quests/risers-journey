@@ -9,8 +9,10 @@ import { Topic } from "../types.js";
  * prerequisite (Geometry, Perimeter and Area, Time and Temperature, Scales
  * and Directions, Data Handling) are always tested.
  *
- * So a gap holds back only the topics that depend on it; every other topic
- * is still assessed in the same sitting. (This replaced a single linear
+ * So a clear gap (stuck on the first questions: holdsBack in
+ * engine/skillEngine.ts) holds back only the topics that depend on it; a
+ * topic that is shaky but not a clear gap still lets them be tested, and
+ * every other topic is still assessed in the same sitting. (This replaced a single linear
  * chain, where one early gap ended the whole test.)
  *
  * "Fractions" is split into two topics (Fractions and Division, then Four

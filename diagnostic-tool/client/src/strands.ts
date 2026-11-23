@@ -84,12 +84,24 @@ export const ENGLISH8_TOPIC_CHOICES = [
   { id: "e8-spelling", chapter: "Spelling · Pronunciation", name: "Spelling and Pronunciation", about: "ie / ei, doubling, -tion / -sion, -ance / -ence, dis-, British spelling, syllables and stress, -ed sounds" },
 ];
 
-// The book's strands, as offered on the start page.
-export const STRAND_CHOICES = [
-  { name: "Number & Algebra", topics: ["Large numbers", "Operations on large numbers", "Factors and multiples", "Fractions and division", "Four operations of fractions", "Decimals"] },
-  { name: "Measurement & Geometry", topics: ["Geometry", "Measurement", "Perimeter and area", "Volume and nets", "Time and temperature", "Patterns and symmetry"] },
-  { name: "Ratio & Proportion", topics: ["Life mathematics", "Scales and directions"] },
-  { name: "Data Handling", topics: ["Data handling"] },
+// Grade 5 (CPA Maths 5): chapters offered one by one, in book order (ids
+// match the server's GRADE5_TOPICS). The Fractions chapter is two topics.
+export const GRADE5_TOPIC_CHOICES = [
+  { id: "more-large-numbers", chapter: "Chapter 1", name: "More on Large Numbers", about: "Indian and international systems, place value, comparing, rounding, Roman numerals" },
+  { id: "operations-large-numbers", chapter: "Chapter 2", name: "Operations on Large Numbers", about: "The four operations with large numbers, properties, word problems, averages" },
+  { id: "factors-multiples", chapter: "Chapter 3", name: "Factors and Multiples", about: "Tests of divisibility, prime factors, HCF and LCM" },
+  { id: "fractions-division", chapter: "Chapter 4 (part 1)", name: "Fractions and Division", about: "Sharing equally, fractions as division, unit fractions, word problems" },
+  { id: "four-operations-fractions", chapter: "Chapter 4 (part 2)", name: "Four Operations of Fractions", about: "Comparing, adding, subtracting, multiplying and dividing fractions; mixed numbers" },
+  { id: "decimals", chapter: "Chapter 5", name: "Decimals", about: "Place value, lining up decimals, multiplying and dividing decimals" },
+  { id: "geometry", chapter: "Chapter 6", name: "Geometry", about: "Kinds of angles, the protractor, parallel and perpendicular lines, triangles and quadrilaterals" },
+  { id: "measurement", chapter: "Chapter 7", name: "Measurement", about: "km, m, cm, mm; kg, g, mg; L and mL; converting and mixed units" },
+  { id: "perimeter-area", chapter: "Chapter 8", name: "Perimeter and Area", about: "Perimeter and area of rectangles, squares and triangles" },
+  { id: "volume-nets", chapter: "Chapter 9", name: "Volume and Nets of Solids", about: "Volume of cubes and cuboids, nets of solids" },
+  { id: "time-temperature", chapter: "Chapter 10", name: "Time and Temperature", about: "Converting time units, durations, converting temperatures" },
+  { id: "life-mathematics", chapter: "Chapter 11", name: "Life Mathematics", about: "Profit and loss, the unitary method" },
+  { id: "scales-directions", chapter: "Chapter 12", name: "Scales and Directions", about: "Using a scale, directions and the angles between them" },
+  { id: "data-handling", chapter: "Chapter 13", name: "Data Handling", about: "Tally marks, tables, bar graphs, line graphs, averages" },
+  { id: "patterns-symmetry", chapter: "Chapter 14", name: "Patterns and Symmetry", about: "Number patterns, symmetry, turns" },
 ];
 
 // Grade 7 Language Arts (Spectrum Language Arts Grade 7) and Writing
