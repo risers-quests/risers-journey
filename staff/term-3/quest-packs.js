@@ -41,6 +41,65 @@ window.T3_PACKS = {
 
   /* ---------- Make it for LifeHub ---------- */
 
+  'sol-foosball': {
+    goal: 'Build a fair, working tabletop football table that LifeHub plays at recess.',
+    who: 'Every Riser who plays at recess. Let 10 of them test it, and fix what goes wrong.',
+    make: [
+      ['🧩', '1 card model', 'One rod, to test the kick'],
+      ['⚽', '1 table', 'Box, pitch and two goals'],
+      ['🎮', '8 rods', '4 a side, with players'],
+      ['🔢', '1 score counter', 'Slide or flip to keep score'],
+      ['📜', 'Rules card', 'How to play, fair for both'],
+      ['🏆', 'Recess tournament', 'At least 8 players']
+    ],
+    done: [
+      'Every rod turns and every player kicks the ball',
+      'Both halves of the pitch match: you can show the measurements',
+      'The ball can reach both goals and can’t get stuck',
+      'You can show your kick test: which leg length kicks furthest',
+      'Still working after 20 test games',
+      'The tournament has a winner'
+    ],
+    notDone: 'a box with sticks pushed through that the ball gets stuck in.',
+    skills: [['Science', 'Explain how a turning rod works as a lever, and test the kick'], ['Maths', 'Measure exactly and make both halves symmetrical'], ['Language', 'Write fair rules a new player can follow']],
+    uses: [['Science', 'Forces: push, pull, turning'], ['Maths', 'Measuring in cm and mm, symmetry'], ['Language', 'Instructions in order']],
+    show: ['Play a game against us', 'Your kick test, and why that leg length won'],
+    bounds: [
+      ['🪚', 'Saws and drills only with a facilitator'],
+      ['🔨', 'No sharp ends on the rods: cap them'],
+      ['🙅', 'No spinning rods hard: keep fingers safe']
+    ]
+  },
+
+  'sol-musicwall': {
+    goal: 'Turn a wall into a tuned instrument that everyone at LifeHub can play.',
+    who: 'Everyone at LifeHub. Let them play, and teach them your songs.',
+    make: [
+      ['🎶', '8 tuned notes or more', 'Pipes, pots, pans and bottles'],
+      ['🥢', 'Beaters', 'Tied on so they don’t get lost'],
+      ['📏', '1 length-and-note chart', 'The pattern you found'],
+      ['🎵', '1 song card', '3 easy songs to play'],
+      ['🎤', 'First concert', 'Play a song together']
+    ],
+    done: [
+      'At least 8 notes, from low to high, in order',
+      'Every pipe measured and cut to its length',
+      'The chart shows the pattern: longer pipe, lower note',
+      'You can explain that sound is a vibration',
+      'Someone new can play a song from the card',
+      'Still tuned and working after a week'
+    ],
+    notDone: 'pots hung on a fence that all sound the same.',
+    skills: [['Science', 'Explain vibration and pitch, and test how length changes the note'], ['Maths', 'Measure and cut to the cm, and find a pattern in a chart'], ['Language', 'Write song cards and a sign anyone can follow']],
+    uses: [['Science', 'Sound and vibration'], ['Maths', 'Measuring in cm, ordering, patterns'], ['Language', 'Clear, short instructions']],
+    show: ['Play a song on the wall', 'Your chart: how length changes the note'],
+    bounds: [
+      ['🪚', 'A facilitator cuts the pipes'],
+      ['✂️', 'File every cut edge smooth'],
+      ['🔊', 'Play at break only: not near classes working']
+    ]
+  },
+
   'sol-sciencekits': {
     goal: 'Make science kits that co-op families can borrow and do at home, with no help.',
     who: 'Co-op families. Ask 5 of them what science is hard at home, and let real families test every kit.',

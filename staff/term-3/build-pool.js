@@ -1,4 +1,4 @@
-/* Term 3 Quests — the build pool: 70 projects (64 offered) the groups choose from, in
+/* Term 3 Quests — the build pool: 72 projects (62 offered) the groups choose from, in
    two kinds, "Science in action" (sci) and "Make it for LifeHub" (sol).
    Each one has a name, what it is, the idea or reason behind it (hook),
    what the group ends up with (make), the science concept or skill they
@@ -375,6 +375,28 @@ window.T3_POOL = [
     ] },
 
   /* ---------- Make it for LifeHub ---------- */
+  { id: 'sol-foosball', cat: 'sol', level: 2, title: 'Tabletop football table', added: '2026-11-23',
+    what: 'You build a tabletop football (foosball) game for LifeHub from wood and strong card. Rods go through the sides with players on them. Turn a rod and the players kick the ball. Both teams must get exactly the same pitch, so it is fair. Then you run a recess tournament.',
+    hook: 'Turn a rod and a player kicks. That is a lever, and getting the kick just right is the hard part.',
+    make: 'A working tabletop football table with 4 rods a side, goals and a score counter, the rules, and a recess tournament.',
+    learn: 'Science: levers and forces. Maths: measuring and symmetry',
+    lo: 'We can explain how turning a rod makes a player kick (a lever), test how player length changes the kick, and show with measurements that both halves of the pitch are the same.',
+    resp: [
+      ['Find out how a turning rod makes a lever that kicks', 'Test short and long player legs: which kicks the ball furthest?', 'Write the rules and the tournament plan', 'Run the tournament and keep the scores'],
+      ['Draw the table with exact sizes, both halves the same', 'Plan where each rod and player goes', 'Check with a ruler that both halves match (symmetry)', 'Make the score counter and the team colours'],
+      ['Build a card model with one rod', 'Build the box and the goals with a facilitator', 'Fit the rods and players', 'Fix what breaks after 20 test games']
+    ] },
+  { id: 'sol-musicwall', cat: 'sol', level: 1, title: 'Outdoor music wall', added: '2026-11-23',
+    what: 'You turn a fence or wall into a giant instrument. Pipes cut to different lengths, pots, pans and bottles, all tuned to real notes, with beaters on strings. Everyone can play it at break. You find the pattern between length and note, and write easy songs to play.',
+    hook: 'Longer pipes make lower notes. Find the pattern, and you can tune a whole wall.',
+    make: 'A music wall with at least 8 tuned notes, beaters, a song card with 3 easy songs, and a first concert.',
+    learn: 'Science: sound and pitch. Maths: measuring and patterns',
+    lo: 'We can explain that sound is a vibration and that longer pipes make lower notes, measure and cut pipes to tune them, and show the pattern in a chart.',
+    resp: [
+      ['Find out how a vibration makes a sound', 'Test pipes of different lengths and listen for high and low', 'Find the pattern: length against note, in a chart', 'Teach everyone how to play'],
+      ['Plan the wall: which notes go where', 'Measure each pipe length before cutting', 'Write 3 easy songs as colour or number cards', 'Make the sign for the wall'],
+      ['Cut and test the first pipes with a facilitator', 'Tune each pipe by trimming it', 'Hang pipes, pots and beaters on the wall', 'Fix and retune after a week of playing']
+    ] },
   { id: 'sol-sciencekits', cat: 'sol', level: 2, title: 'Take-home science kits', added: '2026-11-23',
     what: 'Co-op families teach at home, and science is the hardest to set up. You design four science kits that families borrow, one each on magnets, floating and sinking, dissolving, and light and shadows: everything needed for one experiment in a box, with a card so clear that a family can do it with no help. A real family tests every kit, and you fix what went wrong.',
     hook: 'Anyone can do an experiment with a teacher there. A kit that works with nobody to help is real design.',
@@ -799,6 +821,8 @@ window.T3_POOL = [
    make (short), what you'll learn (short) and a feel tag. A project without
    a card here shows its plain name and description. */
 window.T3_CARDS = {
+  'sol-foosball': { icon: '⚽', tag: 'Build a football table. Win the tournament.', make: 'A tabletop football table and a tournament', learn: 'Levers and symmetry', feel: '🔨 Building' },
+  'sol-musicwall': { icon: '🎶', tag: 'Turn a wall into an instrument.', make: 'A tuned music wall and a concert', learn: 'Sound, pitch and patterns', feel: '🎵 Music' },
   'sol-sciencekits': { icon: '🧰', tag: 'Science kits families can do with no help.', make: '4 take-home kits, tested by families', learn: 'Magnets, floating, dissolving, light', feel: '🧪 Testing' },
   'sol-playspace': { icon: '🛝', tag: 'Design it, pitch it, build it.', make: 'A scale model, a pitch and one part built', learn: 'Area, perimeter and scale', feel: '🏗️ Building' },
   'sol-cookbook': { icon: '🍲', tag: 'Every family’s favourite dish in one book.', make: 'A printed family cookbook', learn: 'Fractions and measuring', feel: '🍽️ Food' },
