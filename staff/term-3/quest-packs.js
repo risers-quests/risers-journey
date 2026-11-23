@@ -45,7 +45,7 @@ window.T3_PACKS = {
     goal: 'Make science kits that co-op families can borrow and do at home, with no help.',
     who: 'Co-op families. Ask 5 of them what science is hard at home, and let real families test every kit.',
     make: [
-      ['📦', '4 kits', 'Everything for one experiment in each'],
+      ['📦', '4 kits', 'Magnets, floating and sinking, dissolving, light and shadows'],
       ['📄', '4 instruction cards', 'Steps, pictures and the science'],
       ['👨‍👩‍👧', '4 family tests', 'A real family tries each kit'],
       ['🔄', '1 borrowing sheet', 'Who has which kit, and when it’s back'],
@@ -56,11 +56,12 @@ window.T3_PACKS = {
       'A family did each kit with no help from you',
       'You fixed the card after every family test',
       'Each card explains the science in simple words',
+      'Every one of you can explain all four topics and answer a “why?” question',
       'At least 4 loans on the borrowing sheet'
     ],
     notDone: 'a bag of things with “do the experiment” on it.',
-    skills: [['Maths', 'Measure amounts and plan what to restock'], ['Science', 'Understand an experiment well enough to explain it'], ['Language', 'Write instructions someone can follow with no help']],
-    uses: [['Maths', 'Measuring, counting, lists'], ['Science', 'The experiments you choose'], ['Language', 'Steps in order, with pictures']],
+    skills: [['Science', 'Learn magnets, floating and sinking, dissolving, and light and shadows well enough to teach them'], ['Maths', 'Measure amounts in ml and g so every kit works the same'], ['Language', 'Write instructions someone can follow with no help']],
+    uses: [['Science', 'Materials and their properties, forces'], ['Maths', 'Measuring, counting, lists'], ['Language', 'Steps in order, with pictures']],
     show: ['A family’s test: what went wrong, and what you changed', 'Do one kit with us'],
     bounds: [
       ['🧪', 'Safe home things only: no fire, no strong chemicals'],
@@ -81,13 +82,14 @@ window.T3_PACKS = {
     ],
     done: [
       '15 people asked, and the design uses what they said',
+      'The plan shows the area and perimeter, worked out by you',
       'The model is to scale: you can show the maths',
       'The pitch is given and the vote is counted',
       'The winning part is built and safe',
       'Risers have played with it for a week'
     ],
     notDone: 'a drawing of a dream playground.',
-    skills: [['Maths', 'Measure a space and build a model to scale'], ['Science', 'Test that what you build is strong and safe'], ['Language', 'Pitch a design and answer questions']],
+    skills: [['Maths', 'Work out area and perimeter, and build a model to scale'], ['Science', 'Test that what you build is strong and safe'], ['Language', 'Pitch a design and answer questions']],
     uses: [['Maths', 'Measuring in m and cm, multiplying and dividing'], ['Science', 'Forces and materials'], ['Language', 'Asking questions and persuading']],
     show: ['Your model next to the real space', 'The part you built'],
     bounds: [
@@ -111,13 +113,14 @@ window.T3_PACKS = {
     ],
     done: [
       'A recipe from every family',
-      'Every recipe has half and double amounts, checked',
+      'Every recipe has half and double amounts, checked, fractions included',
+      'You can show how you doubled ¾ cup, or halved 1 kg',
       'Two recipes tested by you, following your own steps',
       'Every family has a copy',
       'Families say the steps are easy to follow'
     ],
     notDone: 'recipes copied onto pages.',
-    skills: [['Maths', 'Double and halve amounts, and use measuring units'], ['Science', 'How mixing changes food'], ['Language', 'Write steps someone else can follow']],
+    skills: [['Maths', 'Double and halve amounts, fractions (½, ¼, ¾) and units (g, kg, ml, l)'], ['Science', 'How mixing changes food'], ['Language', 'Write steps someone else can follow']],
     uses: [['Maths', 'Multiplying and dividing by 2, measuring'], ['Science', 'Food and healthy eating'], ['Language', 'Steps in order, asking questions']],
     show: ['How you doubled a recipe', 'Make one of your tested recipes for us'],
     bounds: [
@@ -142,10 +145,11 @@ window.T3_PACKS = {
       'The patch planted with flowers bees and butterflies use',
       'The bee hotel built and put up',
       'Insects counted again, and the chart shows before and after',
+      'You can show the average count per day, before and after',
       'You can explain how bees help plants make food'
     ],
     notDone: 'a few flowers planted with no counts.',
-    skills: [['Maths', 'Count, tally and draw a before-and-after chart'], ['Science', 'Learn how pollination works'], ['Language', 'Write a garden guide with facts and pictures']],
+    skills: [['Science', 'Learn how pollination turns flowers into seeds and fruit'], ['Maths', 'Tally, find the average per day, and plan the patch by area'], ['Language', 'Write a garden guide with facts and pictures']],
     uses: [['Maths', 'Tally marks and bar charts'], ['Science', 'Plants, insects and habitats'], ['Language', 'Short facts and labels']],
     show: ['Your before-and-after chart', 'How a bee helps a flower make seeds'],
     bounds: [
@@ -198,8 +202,8 @@ window.T3_PACKS = {
     ],
     done: [
       'Everyone in the co-op asked where to go',
-      'The cost per family is worked out and checked',
-      'The timetable adds up, with travel and breaks',
+      'The cost per family is worked out and checked: you can show the adding and sharing',
+      'The timetable adds up: you can show how long each part takes, start to end',
       'The safety plan is checked by a facilitator',
       'The parents said yes to the plan',
       'The trip happened, and you asked everyone how it went'
