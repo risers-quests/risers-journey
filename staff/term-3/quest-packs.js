@@ -437,7 +437,8 @@ window.T3_PACKS = {
       '5 friends have tried every hole',
       'A new player knows what to do from the sign',
       'Easy to set up and put away',
-      'Still works after 30 games'
+      'Still works after 30 games',
+      'You can show with a protractor how the bounce angle matches the hit angle'
     ],
     notDone: 'flat card with a cup at the end.',
     skills: [['Maths', 'Draw a course plan to scale'], ['Science', 'Test how angle and force change where a ball goes'], ['Language', 'Write instructions a new player can follow']],
@@ -475,7 +476,8 @@ window.T3_PACKS = {
       'The books are easy to see and reach',
       '5 Risers have read there and said it’s cosy',
       'The sign and rules are up',
-      'Still strong after a week of use'
+      'Still strong after a week of use',
+      'You can show your load test: which shape held most, and why'
     ],
     notDone: 'a box to sit on that squashes.',
     skills: [['Maths', 'Draw the nook to scale and plan the space'], ['Science', 'Test what makes a seat strong and steady'], ['Language', 'Ask survey questions and report what people said']],
@@ -504,7 +506,8 @@ window.T3_PACKS = {
       'Each model can walk the runway without it falling apart',
       'The outfits match the sketches',
       'The host says what each outfit is made from',
-      'The show runs from start to end'
+      'The show runs from start to end',
+      'Every outfit made from a measured pattern: you can show the measurements'
     ],
     notDone: 'a T-shirt with paper stuck on.',
     skills: [['Maths', 'Measure a person and turn it into a pattern'], ['Science', 'Test which materials stretch, bend or tear'], ['Language', 'Write and perform a show script']],
@@ -533,7 +536,8 @@ window.T3_PACKS = {
       'The map is to scale and has a key',
       'North on the map is really north',
       'A new player can find every clue with the map',
-      'Teams finish the hunt in about 30 minutes'
+      'Teams finish the hunt in about 30 minutes',
+      'You can show the scale: 1 cm on the map is how far for real'
     ],
     notDone: 'a drawing that isn’t measured.',
     skills: [['Maths', 'Turn real distances into a scale map'], ['Science', 'Use a compass to find north'], ['Language', 'Write clues that are tricky but fair']],
@@ -591,7 +595,8 @@ window.T3_PACKS = {
       'Nothing falls out on the way',
       'The stopper stops it gently',
       '10 safe test runs in a row',
-      'A facilitator has checked both ends are tied safely'
+      'A facilitator has checked both ends are tied safely',
+      'You can show your times for each slope and load, and explain the fastest'
     ],
     notDone: 'a string with a cup that gets stuck.',
     skills: [['Maths', 'Measure the slope and record times for different loads'], ['Science', 'Test how slope, friction and pulleys change speed'], ['Language', 'Write safety rules and delivery cards']],
