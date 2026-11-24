@@ -35,12 +35,19 @@ export const TOPICS: Topic[] = [
     grade4Name: "Addition, Subtraction, Multiplication and Division",
     dependsOn: ["more-large-numbers"],
   },
+  // Chapter 2 as four topics, one per operation, so a report names the
+  // operation with the gap. Each needs only place value (Large Numbers);
+  // Division also needs Multiplication.
+  { id: "g5-add", strand: "Number & Algebra", name: "Addition", shortLabel: "Addition", dependsOn: ["more-large-numbers"] },
+  { id: "g5-sub", strand: "Number & Algebra", name: "Subtraction", shortLabel: "Subtraction", dependsOn: ["more-large-numbers"] },
+  { id: "g5-mult", strand: "Number & Algebra", name: "Multiplication", shortLabel: "Multiplication", dependsOn: ["more-large-numbers"] },
+  { id: "g5-div", strand: "Number & Algebra", name: "Division", shortLabel: "Division", dependsOn: ["g5-mult"] },
   {
     id: "factors-multiples",
     strand: "Number & Algebra",
     name: "Factors and Multiples",
     shortLabel: "Factors & Multiples",
-    dependsOn: ["operations-large-numbers"],
+    dependsOn: ["g5-div"],
   },
   {
     id: "fractions-division",

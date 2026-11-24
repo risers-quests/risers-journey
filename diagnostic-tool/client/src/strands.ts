@@ -88,7 +88,10 @@ export const ENGLISH8_TOPIC_CHOICES = [
 // match the server's GRADE5_TOPICS). The Fractions chapter is two topics.
 export const GRADE5_TOPIC_CHOICES = [
   { id: "more-large-numbers", chapter: "Chapter 1", name: "More on Large Numbers", about: "Indian and international systems, place value, comparing, rounding, Roman numerals" },
-  { id: "operations-large-numbers", chapter: "Chapter 2", name: "Operations on Large Numbers", about: "The four operations with large numbers, properties, word problems, averages" },
+  { id: "g5-add", chapter: "Chapter 2", name: "Addition", about: "Up to 7 digits with carrying, adding three numbers, missing addends, estimating sums" },
+  { id: "g5-sub", chapter: "Chapter 2", name: "Subtraction", about: "Up to 7 digits with borrowing, across zeros, checking by adding, estimating differences" },
+  { id: "g5-mult", chapter: "Chapter 2", name: "Multiplication", about: "× 10, 100, 1000; properties; 3- and 4-digit × 2- and 3-digit; estimating products" },
+  { id: "g5-div", chapter: "Chapter 2", name: "Division", about: "÷ 10, 100, 1000; 5-digit ÷ 2- and 3-digit; remainders; averages; estimating quotients" },
   { id: "factors-multiples", chapter: "Chapter 3", name: "Factors and Multiples", about: "Tests of divisibility, prime factors, HCF and LCM" },
   { id: "fractions-division", chapter: "Chapter 4 (part 1)", name: "Fractions and Division", about: "Sharing equally, fractions as division, unit fractions, word problems" },
   { id: "four-operations-fractions", chapter: "Chapter 4 (part 2)", name: "Four Operations of Fractions", about: "Comparing, adding, subtracting, multiplying and dividing fractions; mixed numbers" },

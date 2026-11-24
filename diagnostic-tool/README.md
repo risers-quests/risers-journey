@@ -148,7 +148,7 @@ writing skills by choice/tap/tiles; an essay itself isn't marked.
 |---|---|---|---|
 | 3 | `g3-` (CPA Maths 3, 11 chapters, `generate/m3/`) | — | `w3-` (Spectrum Writing 3, `generate/w3/`) |
 | 4 | Ch 1, 5–7 shared topics; Ch 2–4 `g4-addsub/mult/div` (`generate/m4/ops.ts`); Ch 8–14 `g4-` (`generate/m4/more.ts`) | `l4-` (Spectrum LA 4, `generate/l4/`) | `w4-` (Spectrum Writing 4, `generate/w4/`) |
-| 5 | All 15 topics generated: Ch 3–14 in `generate/m5/a.ts`, `b.ts`; Ch 1–2 shared generators plus Grade 5 extras (international system, Roman numerals, averages, properties) mixed in 2 in 5 (`generate/m5/extra.ts`, `GRADE5_EXTRA` in `generate/index.ts`) | — | — |
+| 5 | Chapter 2 is four topics, one per operation (`g5-add`, `g5-sub`, `g5-mult`, `g5-div`, in `generate/m5/ops.ts`), so a report names the operation with the gap (staff feedback, Nov 2026; the old combined `operations-large-numbers` stays for earlier reports). All topics generated: Ch 3–14 in `generate/m5/a.ts`, `b.ts`; Ch 1–2 shared generators plus Grade 5 extras (international system, Roman numerals, averages, properties) mixed in 2 in 5 (`generate/m5/extra.ts`, `GRADE5_EXTRA` in `generate/index.ts`) | — | — |
 | 6 | — | `l6-` (Spectrum LA 6, `generate/l6/`) | `w6-` (Spectrum Writing 6, `generate/w6/`) |
 
 Language topics are chosen by subject and grade (`languageTopics(subject, grade)`).

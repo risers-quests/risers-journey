@@ -68,6 +68,10 @@ export interface Insights {
 const AT_HOME: Record<string, string> = {
   "more-large-numbers": "Read big numbers aloud together: prices in an advert, a car's cost, a city's population. Ask which is bigger, and by how much.",
   "operations-large-numbers": "Add up a shopping bill together before the cashier does, then check who was right.",
+  "g5-add": "Add up a shopping bill together before the cashier does, then check who was right.",
+  "g5-sub": "Work out change together when paying in a shop: if we pay ₹2,000 for ₹1,365, what do we get back?",
+  "g5-mult": "Work out costs together: 12 notebooks at ₹45 each, or a month's milk at ₹68 a day.",
+  "g5-div": "Share costs together: a ₹1,560 bill split among 4 people, or how many ₹50 notes make ₹2,350.",
   "factors-multiples": "Arrange biscuits or coins into equal rows. How many different ways can 24 be laid out?",
   "fractions-division": "Share rotis, a pizza or a cake at dinner: if 3 rotis are shared by 4 people, how much does each get? Let them do the cutting.",
   "four-operations-fractions": "Cook with measuring cups: half a cup and a quarter cup together make how much?",

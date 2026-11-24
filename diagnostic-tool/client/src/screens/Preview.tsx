@@ -47,7 +47,7 @@ export function Preview() {
     <div className="preview">
       <h1>Question preview: {data.topic}</h1>
       <p className="lede">
-        Grade 5: <a href="?preview=more-large-numbers">Large Numbers</a> · <a href="?preview=operations-large-numbers">Operations</a> · <a href="?preview=fractions-division">Fractions and Division</a>
+        Grade 5: <a href="?preview=more-large-numbers">Large Numbers</a> · <a href="?preview=g5-add&grade=5">Addition</a> · <a href="?preview=g5-sub&grade=5">Subtraction</a> · <a href="?preview=g5-mult&grade=5">Multiplication</a> · <a href="?preview=g5-div&grade=5">Division</a> · <a href="?preview=fractions-division">Fractions and Division</a>
         <br />
         Grade 4: <a href="?preview=more-large-numbers&grade=4">Large Numbers</a> · <a href="?preview=operations-large-numbers&grade=4">Operations</a> · <a href="?preview=factors-multiples&grade=4">Factors and Multiples</a>
         <br />

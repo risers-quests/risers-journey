@@ -62,6 +62,7 @@ import * as W3 from "./w3/writing.js";
 import * as L6 from "./l6/la.js";
 import * as W6 from "./w6/writing.js";
 import { ADDSUB_G4, MULT_G4, DIV_G4 } from "./m4/ops.js";
+import { ADD_G5, SUB_G5, MULT_G5, DIV_G5 } from "./m5/ops.js";
 import { FACTORS_G5, FRACTIONS_G5, DECIMALS_G5, GEOMETRY_G5, MEASUREMENT_G5, AREA_G5, MISCONCEPTIONS as M5A_MIS } from "./m5/a.js";
 import { LARGE_EXTRA_G5, OPS_EXTRA_G5, MISCONCEPTIONS as M5X_MIS } from "./m5/extra.js";
 import { VOLUME_G5, TIME_TEMP_G5, LIFE_G5, SCALES_G5, DATA_G5, PATTERNS_G5, MISCONCEPTIONS as M5B_MIS } from "./m5/b.js";
@@ -95,6 +96,11 @@ const TEMPLATES: Record<string, Record<string, Template>> = {
   "fractions-division": FRACTIONS_DIVISION_TEMPLATES,
   "more-large-numbers": MORE_ON_LARGE_NUMBERS_TEMPLATES,
   "operations-large-numbers": OPERATIONS_ON_LARGE_NUMBERS_TEMPLATES,
+  // Grade 5 Chapter 2, one topic per operation (m5/ops.ts).
+  "g5-add": ADD_G5,
+  "g5-sub": SUB_G5,
+  "g5-mult": MULT_G5,
+  "g5-div": DIV_G5,
   "factors-multiples": FACTORS_G5,
   "four-operations-fractions": FRACTIONS_G5,
   decimals: DECIMALS_G5,
@@ -347,8 +353,8 @@ export const GRADE4_TOPICS = ["more-large-numbers", "g4-addsub", "g4-mult", "g4-
 
 /** Grade 8 chapters ready, in book order (offered one by one on the start page). */
 export const GRADE8_TOPICS = Object.keys(GRADE8_TEMPLATES);
-/** Grade 5: all 15 topics, in book order (TOPICS without a grade of their own). */
-export const GRADE5_TOPICS = ["more-large-numbers", "operations-large-numbers", "factors-multiples", "fractions-division", "four-operations-fractions", "decimals", "geometry", "measurement", "perimeter-area", "volume-nets", "time-temperature", "life-mathematics", "scales-directions", "data-handling", "patterns-symmetry"];
+/** Grade 5: the topics offered, in book order. Chapter 2 is four topics, one per operation (the old combined "operations-large-numbers" stays in TOPICS for earlier reports only). */
+export const GRADE5_TOPICS = ["more-large-numbers", "g5-add", "g5-sub", "g5-mult", "g5-div", "factors-multiples", "fractions-division", "four-operations-fractions", "decimals", "geometry", "measurement", "perimeter-area", "volume-nets", "time-temperature", "life-mathematics", "scales-directions", "data-handling", "patterns-symmetry"];
 
 /** Grade 8 English topics ready, in the order offered (one by one on the start page). */
 export const ENGLISH8_TOPICS = Object.keys(ENGLISH8_TEMPLATES);
