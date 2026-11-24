@@ -200,13 +200,13 @@ export function buildInsights(state: SessionState, responses: ResponseRecord[], 
     if (t.status === "gap") {
       return {
         topic: t.name,
-        what: m ? `Reteach. Main mistake: ${m.label.toLowerCase()}${m.sureCount ? ` (made ${m.sureCount}× while sure)` : ""}.` : "Reteach from the start of the topic.",
+        what: m ? `Reteach lesson. Fix: ${m.label.toLowerCase()}${m.sureCount ? ` (made ${m.sureCount}× while sure)` : ""}.` : "Reteach lesson, from the start of the topic.",
         how: `Start with ${(isLanguage(report.subject) ? STAGE_WORDS_EN : STAGE_WORDS)[t.startAt ?? "concrete"]}, then move up.`,
       };
     }
     return isProcedural(t)
-      ? { topic: t.name, what: `Connect the method to what it means${m ? ` (main mistake: ${m.label.toLowerCase()})` : ""}.`, how: isLanguage(report.subject) ? "Have them mark the parts of real sentences from their reader and say why each is right." : "Have them draw or build each sum they can already calculate." }
-      : { topic: t.name, what: "Mastered but unsure: build confidence.", how: "Short mixed practice; ask them to explain answers aloud." };
+      ? { topic: t.name, what: `Meaning lesson: connect the method to what it means${m ? `. Fix: ${m.label.toLowerCase()}` : ""}.`, how: isLanguage(report.subject) ? "Have them mark the parts of real sentences from their reader and say why each is right." : "Have them draw or build each sum they can already calculate." }
+      : { topic: t.name, what: "Confidence practice: they get it right but aren't sure.", how: "Short mixed practice; ask them to explain answers aloud." };
   });
 
   const first = priority[0];

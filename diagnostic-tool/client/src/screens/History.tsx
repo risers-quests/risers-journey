@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { getHistory } from "../api";
 import { CombinedTopic, History as HistoryData, TopicStatus, fmtDate } from "../reportTypes";
 import { Downloads } from "../components/Downloads";
-import { STAFF_WORD, StaffSection, TopicRing, WorkOn } from "../components/ReportParts";
+import { Lessons, STAFF_WORD, StaffSection, TopicRing, WorkOn } from "../components/ReportParts";
+import { staffSignedIn } from "../staff";
 
 const RANK: Record<TopicStatus, number> = { gap: 0, notReached: 0, fragile: 1, secure: 2 };
 
@@ -52,7 +53,7 @@ export function History({ kid }: { kid: string }) {
 
       <TopicRing topics={c.topics.map((t) => ({ name: t.name, status: t.status, tag: tag(t) }))} extra={`All ${c.tests} check${c.tests === 1 ? "" : "s"} together: each topic's latest result.`} />
 
-      <WorkOn topics={c.topics} empty="Nothing to work on right now." />
+      {staffSignedIn() ? <Lessons topics={c.topics} /> : <WorkOn topics={c.topics} empty="Nothing to work on right now." />}
 
       <section className="rp-card">
         <h2>Every check</h2>
@@ -83,20 +84,7 @@ export function History({ kid }: { kid: string }) {
             ct.timesTested > 1 ? `Tested ${ct.timesTested} times; latest ${fmtDate(ct.date)}.` : "",
           ];
         }}
-      >
-        {c.mistakes.length > 0 && (
-          <div className="rp-staff-block">
-            <h3>Mistakes to work on</h3>
-            <ul>
-              {c.mistakes.map((m) => (
-                <li key={m.topic + m.label}>
-                  <b>{m.label}</b> ({m.topic}{m.sureCount ? `, ${m.sureCount}× while sure` : ""}). <span>{m.childTip}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </StaffSection>
+      />
     </div>
   );
 }

@@ -159,7 +159,7 @@ export function staffEmail(ins: Insights): { subject: string; html: string } {
   // 1. Do next
   if (ins.actions.length) {
     body += section(
-      h2("Do next") +
+      h2("Lessons to focus on") +
         ins.actions
           .map(
             (a, i) => `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:8px;"><tr>
@@ -169,7 +169,7 @@ export function staffEmail(ins: Insights): { subject: string; html: string } {
           .join("")
     );
   } else {
-    body += section(h2("Do next") + `<div style="font-size:14px;">Nothing to reteach in what was tested. Move on, or test another strand.</div>`);
+    body += section(h2("Lessons to focus on") + `<div style="font-size:14px;">No lessons needed from what was tested. Move on, or test another topic.</div>`);
   }
 
   // 2. Topics

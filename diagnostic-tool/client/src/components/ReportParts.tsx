@@ -272,6 +272,103 @@ export function WorkOn({ topics, empty }: { topics: ReportTopic[]; empty: string
   );
 }
 
+/* ---- Lessons to focus on: for staff, a ready-made lesson per topic ---- */
+
+type LessonKind = "reteach" | "meaning" | "confidence";
+const LESSON: Record<LessonKind, { name: string; chip: string; what: string }> = {
+  reteach: { name: "Reteach lesson", chip: "rp-chip rp-chip-gap", what: "Teach the topic again from the start, step by step." },
+  meaning: { name: "Meaning lesson", chip: "rp-chip rp-chip-near", what: "They can do the steps but don't see why. Connect the method to what it means; no more drills." },
+  confidence: { name: "Confidence practice", chip: "rp-chip rp-chip-sure", what: "They get it right but aren't sure. Short mixed practice, answers said aloud." },
+};
+const START = {
+  maths: { concrete: "Real objects: cutting, sharing, counting, building.", pictorial: "Pictures and bar models.", abstract: "Numbers and symbols only." },
+  lang: { concrete: "Hands-on: word cards, building and marking real sentences.", pictorial: "Marked-up sentences and short passages.", abstract: "The rule and its terms on their own." },
+} as const;
+
+export function lessonFor(t: ReportTopic): { kind: LessonKind; start: string; focus: string; activity: string; done: string } | null {
+  if (t.status !== "gap" && t.status !== "fragile") return null;
+  const lang = isLangTopic(t.topicId);
+  const st = lang ? START.lang : START.maths;
+  const m = t.mistakes[0];
+  const kind: LessonKind = t.status === "gap" ? "reteach" : /^Right in /.test(t.why) ? "meaning" : "confidence";
+  const start =
+    kind === "reteach" ? st[(t.startAt as keyof typeof st) ?? "concrete"] ?? st.concrete
+    : kind === "meaning" ? st.pictorial
+    : st.abstract;
+  const focus = m ? `${m.label}${m.count > 1 ? ` (${m.count} times${m.sureCount ? `, ${m.sureCount} while sure` : ""})` : m.sureCount ? " (while sure)" : ""}.` : kind === "confidence" ? "No repeated mistake: build sureness." : kind === "meaning" ? "Why the method works, not just the steps." : "The basics of the topic.";
+  const activity =
+    kind === "meaning"
+      ? lang ? "Take sentences from their reader: they mark the parts and say why each is right." : "Give back sums they can already do: they draw or build each one, then explain it."
+      : kind === "confidence"
+        ? "Five to eight mixed questions; before checking, they say how they know it's right."
+        : m ? `Show it with ${start.split(":")[0].toLowerCase().replace(/\.$/, "")} first. Key point to teach: ${m.childTip}` : lang ? "Begin hands-on with word cards, then marked sentences, then the rule on its own." : `Begin with ${start.toLowerCase().replace(/\.$/, "")}, then move to pictures, then numbers.`;
+  const done =
+    kind === "reteach" ? (lang ? "Gets three in a row right in their own sentences." : "Gets three in a row right with numbers only, no objects.")
+    : kind === "meaning" ? (lang ? "Explains why for three sentences in their own words." : "Draws or builds three sums correctly and explains them.")
+    : "Gets five mixed questions right and is sure of each.";
+  return { kind, start, focus, activity, done };
+}
+
+/**
+ * Lessons to focus on (staff): one ready-made lesson per topic still
+ * growing, most important first: the kind of lesson, where to start, the
+ * mistake to fix, an activity and when it's done. Staff read this instead of
+ * working it out from the grids.
+ */
+export function Lessons({ topics }: { topics: ReportTopic[] }) {
+  const order: Record<LessonKind, number> = { reteach: 0, meaning: 1, confidence: 2 };
+  const list = topics
+    .map((t, i) => ({ t, i, l: lessonFor(t) }))
+    .filter((x): x is { t: ReportTopic; i: number; l: NonNullable<ReturnType<typeof lessonFor>> } => !!x.l)
+    .sort((a, b) => order[a.l.kind] - order[b.l.kind] || (b.l.focus.includes("while sure") ? 1 : 0) - (a.l.focus.includes("while sure") ? 1 : 0) || a.i - b.i);
+  return (
+    <section className="rp-card rp-work rp-lessons">
+      <h2>
+        Lessons to focus on<span className="rp-count">{list.length}</span>
+      </h2>
+      {list.length ? (
+        <>
+          <p className="rp-lessons-key">Most important first. Each one is a lesson ready to teach.</p>
+          <ol className="rp-work-list">
+            {list.map(({ t, l }, n) => (
+              <li key={t.topicId}>
+                <div className="rp-work-head">
+                  <b>
+                    {n + 1}. {t.name}
+                  </b>
+                  <em className={LESSON[l.kind].chip}>{LESSON[l.kind].name}</em>
+                </div>
+                <p>
+                  <span className="rp-k">Why</span>
+                  {LESSON[l.kind].what}
+                </p>
+                <p>
+                  <span className="rp-k">Start with</span>
+                  {l.start}
+                </p>
+                <p>
+                  <span className="rp-k">Fix</span>
+                  {l.focus}
+                </p>
+                <p>
+                  <span className="rp-k">Activity</span>
+                  {l.activity}
+                </p>
+                <p>
+                  <span className="rp-k">Done when</span>
+                  {l.done}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </>
+      ) : (
+        <p className="rp-empty">No lessons needed from what was tested. Move on to the next topic.</p>
+      )}
+    </section>
+  );
+}
+
 /* ---- Topic ring: green "Got it", amber "Nearly there", with a key that names them ---- */
 
 type RingTopic = { name: string; status: TopicStatus; tag?: string };
