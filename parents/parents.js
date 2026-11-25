@@ -49,9 +49,9 @@
     var i = forms.map(function (f) { return f.id; }).indexOf(formId);
     if (i === -1) { location.replace('?kid=' + encodeURIComponent(kid.slug) + '&form=' + forms[0].id); return; }
     var next = forms[i + 1];
-    box.innerHTML = forms.length > 1
-      ? '<p class="pf-msg" style="margin:0 0 6px">Form ' + (i + 1) + ' of ' + forms.length + ' for ' + esc(kid.name) + '’s parents</p>'
-      : '';
+    var justSent = params.get('sent') === '1' && i > 0;
+    box.innerHTML = (justSent ? '<p class="si-ok" style="margin:0 0 10px">✓ Form ' + i + ' sent. ' + (next ? 'Next' : 'Last one') + ': form ' + (i + 1) + ' of ' + forms.length + '.</p>' : '') +
+      (forms.length > 1 && !justSent ? '<p class="pf-msg" style="margin:0 0 6px">Form ' + (i + 1) + ' of ' + forms.length + ' for ' + esc(kid.name) + '’s parents</p>' : '');
 
     // What the engine expects from a Term 3 page, pointed at this child.
     window.EOT2_KIDS = [kid];
@@ -83,16 +83,18 @@
       if (done && !done.dataset.pf) {
         done.dataset.pf = '1';
         Array.prototype.forEach.call(done.querySelectorAll('button'), function (b) { b.hidden = true; });
-        done.insertAdjacentHTML('beforeend', next
-          ? '<p><a class="eot2-btn" href="?kid=' + encodeURIComponent(kid.slug) + '&form=' + next.id + '">Next: ' + esc(next.title) + ' →</a></p>'
-          : '<p><strong>That’s everything. You can close this page.</strong></p>');
+        // More to come: straight on to the next form (no "thank you" that looks like the end).
+        if (next) { done.hidden = true; location.replace('?kid=' + encodeURIComponent(kid.slug) + '&form=' + next.id + '&sent=1'); return; }
+        done.insertAdjacentHTML('beforeend', '<p><strong>That’s everything. You can close this page.</strong></p>');
       }
     }).observe(document.getElementById('app'), { childList: true, subtree: true });
 
     load(FILES[forms[i].id], function () {
       // Here nothing is kept until Submit, so say that instead.
       var G = window.G10;
-      if (G && G.intro) G.intro = G.intro.replace(/\s*It saves as you type\.?/, '') + ' Press Submit at the end to send it.';
+      if (G && G.intro) G.intro = G.intro.replace(/\s*It saves as you type\.?/, '') + (next ? ' This is form ' + (i + 1) + ' of ' + forms.length + '; the next one follows straight after.' : ' Press Submit at the end to send it.');
+      // Before the last form, the button says where it goes.
+      if (G && next) { G.text = G.text || {}; G.text.send = 'Send and go to form ' + (i + 2) + ' of ' + forms.length + ' →'; }
       load('/term-3/grade10/grade10.js');
     });
   });

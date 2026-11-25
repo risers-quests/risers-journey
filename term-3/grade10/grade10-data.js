@@ -1,31 +1,31 @@
-/* 10th Boards: the pre-meeting form parents fill in before we meet. The
-   meeting is where we ask them whether their child takes the 10th boards
-   route or not; this form only finds out where they are now, so nothing
-   here asks them to decide (no fixed years or plan lengths).
+/* 10th Boards: the form parents fill in before we discuss the 10th boards
+   with them in person. It only finds out where they are now, so nothing
+   here asks them to decide (no fixed years or plan lengths). Staying at
+   LifeHub or not is asked in Next year at LifeHub, not here.
    {name} is the child's name.
    Each question: id, text, kind ('text' | 'one' | 'many'), options, hint,
    why (a box for "why?" after a choice), optional. A section or question
-   with when: 'exam' shows only if they're leaning towards the 10th boards
-   (or aren't sure). The form only explores the 10th boards route: not
-   taking it means carrying on at LifeHub as now, so that answer (in G.NO)
-   needs no questions of its own. Staff OK it before families see it. */
+   with when: 'exam' shows only if they're leaning towards the 10th boards.
+   Not taking them (an answer in G.NO) needs no questions of its own.
+   Staff OK it before families see it. */
 window.G10 = {
   title: '10th Boards: Before We Meet',
-  intro: 'At our meeting we will ask whether you would like {name} to take the 10th boards. If not, {name} simply carries on learning at LifeHub as now. Nothing here is a decision. This form helps us understand where you are now and, if you are thinking about the 10th boards, what you have already looked into and how you would like it to work, so the meeting can start from there. There are no right or wrong answers. It saves as you type.',
-  // The answers that mean "not the 10th boards" (carry on as now). The
-  // last two are wordings of earlier versions, so answers given before
-  // still show the right questions.
-  NO: ['We’re leaning towards carrying on as we are at LifeHub', 'We’d like to carry on as we are at LifeHub', 'We’re leaning towards a different path', 'No, we’re not aiming for 10th grade'],
+  intro: 'This form helps us understand where you are now on the 10th boards for {name}: which way you are leaning and, if you are thinking about the 10th boards, what you have already looked into and how you would like it to work. Nothing here is a decision. We will go through it with you in detail in person, and will be in touch soon to schedule a time. There are no right or wrong answers. It saves as you type.',
+  // The answers that mean "not the 10th boards". The rest are wordings of
+  // earlier versions, so answers given before still show the right
+  // questions. (Staying at LifeHub or not is asked in Next year at LifeHub.)
+  NO: ['We’re leaning towards not taking the 10th boards', 'We’re leaning towards carrying on as we are at LifeHub', 'We’d like to carry on as we are at LifeHub', 'We’re leaning towards a different path', 'No, we’re not aiming for 10th grade'],
   conds: { exam: 'Shown only if they are leaning towards the 10th boards' },
   text: {
     sub: 'For {name}’s parents, to fill in before our meeting',
     hideOptional: true,
-    staffIntro: 'Parents fill this in before the meeting where we ask them whether their child takes the 10th boards route (if not, the child carries on at LifeHub as now): where they are now and, for the 10th boards, what they have already researched, the materials and ways of working they would like, and the support they need. Families only see it once it’s OK’d here; they fill it in from the one parents’ link (Staff → Parents’ form), and only staff see the answers.'
+    thanks: 'Thank you! You submitted this on {date}. We will go through it with you in person, and will be in touch soon to schedule a time.',
+    staffIntro: 'Parents fill this in before we discuss the 10th boards with them in person: which way they are leaning (staying at LifeHub or not is asked separately, in Next year at LifeHub), where they are now and, for the 10th boards, what they have already researched, the materials and ways of working they would like, and the support they need. Families only see it once it’s OK’d here; they fill it in from the one parents’ link (Staff → Parents’ form), and only staff see the answers.'
   },
   sections: [
     { title: 'Where you are now', qs: [
       { id: 'route', text: 'Right now, are you thinking of {name} taking the 10th boards?', kind: 'one',
-        options: ['We’re leaning towards the 10th boards', 'We’re leaning towards carrying on as we are at LifeHub'],
+        options: ['We’re leaning towards the 10th boards', 'We’re leaning towards not taking the 10th boards'],
         why: 'What makes you lean this way?' },
       { id: 'feel', text: 'How do you feel about it?', kind: 'one',
         options: ['Confident', 'Excited', 'Unsure', 'Worried'], why: 'Tell us a little more.' },
@@ -49,8 +49,6 @@ window.G10 = {
       { id: 'strengths', text: 'Which subjects or areas does {name} enjoy or find easier, and which do they find hard?', kind: 'text' },
       { id: 'learns', text: 'Is there anything about how {name} learns that we should keep in mind?', kind: 'text',
         hint: 'For example: needing more time, finding exams stressful, a learning difficulty, how they like to study.', optional: true },
-      { id: 'school', text: 'Might {name} join a school, or study somewhere else, later on?', kind: 'one',
-        options: ['Leaning towards yes', 'Leaning towards no'], why: 'Where are you thinking of?' },
       { id: 'after', text: 'What do you hope {name} will go on to do later?', kind: 'text', hint: 'Further studies, a field they love, work, something else…' }
     ] },
     { title: 'Support for the 10th boards', when: 'exam', qs: [
