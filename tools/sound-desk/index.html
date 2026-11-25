@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script src="/assets/session.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Church Sound Desk Simulator</title>
 <style>
@@ -1069,7 +1070,7 @@ const ACTS=[
 const RANKS=[[0,'🎧 Trainee'],[4,'🎚️ Desk helper'],[10,'🎛️ Desk operator'],[17,'🔊 Sound engineer'],[22,'⭐ Head of sound']];
 const KID=(()=>{try{return (localStorage.getItem('imm-l3-kid')||'').toLowerCase();}catch(e){return '';}})();
 const PKEY='sounddesk-progress::'+(KID||'guest');
-const WORKER='https://risers-term2-digital-quests-progress.highergrade.workers.dev', SITE_KEY='RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
+const WORKER='https://risers-term2-digital-quests-progress.highergrade.workers.dev';
 const SYNC=()=>WORKER+'/sync?group=sound-desk&kid='+encodeURIComponent(KID)+'&week=progress';
 let PG={results:[]}, syncState='';
 const stars=n=>'★'.repeat(n)+'☆'.repeat(3-n);
@@ -1092,12 +1093,12 @@ function startOver(){
 function saveLocal(){ try{ localStorage.setItem(PKEY,JSON.stringify(PG)); }catch(e){} }
 async function pull(){
   if(!KID) return false;
-  try{ const r=await fetch(SYNC(),{headers:{'X-Site-Key':SITE_KEY}}); if(!r.ok) return false; const d=await r.json();
+  try{ const r=await fetch(SYNC(),{headers:{'X-Site-Key':window.RJ_STORE_KEY()}}); if(!r.ok) return false; const d=await r.json();
     if(d.found&&d.data&&d.data.state) mergeResults(d.data.state.results,d.data.state.resetAt); return true; }catch(e){ return false; }
 }
 async function push(){
   if(!KID) return false;
-  try{ const r=await fetch(SYNC(),{method:'POST',headers:{'Content-Type':'application/json','X-Site-Key':SITE_KEY},
+  try{ const r=await fetch(SYNC(),{method:'POST',headers:{'Content-Type':'application/json','X-Site-Key':window.RJ_STORE_KEY()},
       body:JSON.stringify({group:'sound-desk',kid:KID,week:'progress',state:PG})}); const d=await r.json(); return r.ok&&!!d.ok; }catch(e){ return false; }
 }
 async function syncNow(){

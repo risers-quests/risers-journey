@@ -1,4 +1,5 @@
 import { AsyncLocalStorage } from "node:async_hooks";
+import { createHmac } from "node:crypto";
 import { customAlphabet } from "nanoid";
 import { SessionState, createInitialState } from "./engine/state.js";
 
@@ -10,7 +11,20 @@ import { SessionState, createInitialState } from "./engine/state.js";
 // The Worker's URL and site key are the public ones in the site's pages;
 // DIAGNOSTIC_STORE_URL / DIAGNOSTIC_STORE_KEY override them (e.g. to test).
 const STORE_URL = (process.env.DIAGNOSTIC_STORE_URL || "https://risers-term2-digital-quests-progress.highergrade.workers.dev").replace(/\/$/, "");
-const STORE_KEY = process.env.DIAGNOSTIC_STORE_KEY || "RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM";
+const LEGACY_STORE_KEY = process.env.DIAGNOSTIC_STORE_KEY || "RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM";
+
+// With the sign-in set up (AUTH_SECRET in Vercel), the server signs its own
+// short pass for the Worker, the same format as lib/rj-auth.ts; the old
+// shared key is only a fallback until then.
+function b64url(buf: Buffer): string {
+  return buf.toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function storeKey(): string {
+  const secret = process.env.AUTH_SECRET;
+  if (!secret || secret.length < 32) return LEGACY_STORE_KEY;
+  const body = b64url(Buffer.from(JSON.stringify({ t: "server", e: Date.now() + 5 * 60e3 })));
+  return body + "." + b64url(createHmac("sha256", secret).update("rj1." + body).digest());
+}
 const GROUP = "diagnostic";
 const WEEK = "session";
 
@@ -76,7 +90,7 @@ async function load(sessionId: string): Promise<StoredSession> {
   const cached = requestCache.getStore()?.get(sessionId);
   if (cached) return cached;
   if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(sessionId)) throw new Error(`Session ${sessionId} not found`);
-  const res = await fetch(syncUrl(sessionId), { headers: { "X-Site-Key": STORE_KEY } });
+  const res = await fetch(syncUrl(sessionId), { headers: { "X-Site-Key": storeKey() } });
   if (!res.ok) throw new Error(`store read failed (${res.status})`);
   const body = (await res.json()) as { found: boolean; data?: { state: StoredSession } };
   if (!body.found || !body.data) throw new Error(`Session ${sessionId} not found`);
@@ -87,7 +101,7 @@ async function load(sessionId: string): Promise<StoredSession> {
 async function save(sessionId: string, session: StoredSession): Promise<void> {
   const res = await fetch(`${STORE_URL}/sync`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", "X-Site-Key": STORE_KEY },
+    headers: { "Content-Type": "application/json", "X-Site-Key": storeKey() },
     body: JSON.stringify({ group: GROUP, kid: sessionId, week: WEEK, state: session }),
   });
   if (!res.ok) throw new Error(`store write failed (${res.status}): ${await res.text()}`);
@@ -144,7 +158,7 @@ export async function loadHistory(child: string): Promise<Record<string, string[
   const url = historyUrl(child);
   if (!url) return {};
   try {
-    const res = await fetch(url, { headers: { "X-Site-Key": STORE_KEY } });
+    const res = await fetch(url, { headers: { "X-Site-Key": storeKey() } });
     const body = (await res.json()) as { found: boolean; data?: { state: { topics: Record<string, string[]> } } };
     return body.found && body.data ? body.data.state.topics ?? {} : {};
   } catch {
@@ -159,7 +173,7 @@ export async function saveHistory(child: string, topics: Record<string, string[]
   const trimmed = Object.fromEntries(Object.entries(topics).map(([t, list]) => [t, [...new Set(list)].slice(-600)]));
   await fetch(`${STORE_URL}/sync`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", "X-Site-Key": STORE_KEY },
+    headers: { "Content-Type": "application/json", "X-Site-Key": storeKey() },
     body: JSON.stringify({ group: "diagnostic-history", kid, week: "seen", state: { topics: trimmed } }),
   }).catch(() => undefined);
 }
@@ -208,7 +222,7 @@ function reportsUrl(kid: string): string {
 
 export async function loadReports(kid: string): Promise<ReportHistory> {
   if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(kid)) return { childName: "", reports: [] };
-  const res = await fetch(reportsUrl(kid), { headers: { "X-Site-Key": STORE_KEY } });
+  const res = await fetch(reportsUrl(kid), { headers: { "X-Site-Key": storeKey() } });
   if (!res.ok) throw new Error(`store read failed (${res.status})`);
   const body = (await res.json()) as { found: boolean; data?: { state: ReportHistory } };
   return body.found && body.data ? { childName: body.data.state.childName ?? "", reports: body.data.state.reports ?? [] } : { childName: "", reports: [] };
@@ -224,7 +238,7 @@ export async function saveReport(childName: string, entry: ReportEntry): Promise
     .slice(0, 60);
   const res = await fetch(`${STORE_URL}/sync`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", "X-Site-Key": STORE_KEY },
+    headers: { "Content-Type": "application/json", "X-Site-Key": storeKey() },
     body: JSON.stringify({ group: "diagnostic-history", kid, week: "reports", state: { childName: childName.trim(), reports } }),
   });
   if (!res.ok) throw new Error(`store write failed (${res.status})`);
@@ -241,7 +255,7 @@ export async function replaceReports(kid: string, updated: ReportEntry[]): Promi
   const reports = h.reports.map((r) => byId.get(r.id) ?? r);
   const res = await fetch(`${STORE_URL}/sync`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", "X-Site-Key": STORE_KEY },
+    headers: { "Content-Type": "application/json", "X-Site-Key": storeKey() },
     body: JSON.stringify({ group: "diagnostic-history", kid, week: "reports", state: { childName: h.childName, reports } }),
   });
   if (!res.ok) throw new Error(`store write failed (${res.status})`);

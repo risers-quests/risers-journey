@@ -1960,7 +1960,7 @@
 
     function headers() {
       var h = { 'Content-Type': 'application/json' };
-      if (siteKey) h['X-Site-Key'] = siteKey;
+      if (window.QUEST_SYNC_KEY) h['X-Site-Key'] = window.QUEST_SYNC_KEY;
       return h;
     }
 

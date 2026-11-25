@@ -66,6 +66,7 @@
     check: '<rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="m8 12.5 2.8 2.8L16.5 9"/>',
     link: '<path d="M10 13.5a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1.2 1.2"/><path d="M14 10.5a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1.2-1.2"/>',
     sound: '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>',
+    lock: '<rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>',
     logout: '<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5M5 12h11"/>',
   };
   function svg(name, cls) {
@@ -140,6 +141,7 @@
     { section: 'Risers' },
     { label: 'Risers’ grades', href: root + 'staff/risers/index.html', icon: 'sel', short: 'Grades', match: /\/staff\/risers\// },
     { label: 'Risers’ links', href: root + 'staff/links/index.html', icon: 'link', short: 'Links', match: /\/staff\/links\//, noTab: true },
+    { label: 'Sign-in & PINs', href: root + 'staff/sign-in/index.html', icon: 'lock', short: 'Sign-in', match: /\/staff\/sign-in\//, noTab: true },
     { section: 'Past terms' },
     { label: 'Term 2', href: root + 'staff/term-2/index.html', icon: 'term', short: 'Term 2', match: /\/(staff\/term-2|end-of-term-2|staff\/quests)\// },
     { label: 'Term 1', href: root + 'staff/term-1/index.html', icon: 'conf', short: 'Term 1', match: /\/(staff\/term-1|term-1-conference)\// }
@@ -214,6 +216,8 @@
 
   function logout(e) {
     e.preventDefault();
+    // Signed in through the server (assets/session.js): sign out there.
+    if (window.RJ_SESSION) return window.RJ_SESSION.signOut();
     try { localStorage.removeItem(isStaff ? STAFF_KEY : KID_KEY); } catch (err) {}
     location.href = root + (isStaff ? 'staff/index.html' : 'index.html');
   }

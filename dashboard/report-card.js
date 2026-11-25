@@ -27,7 +27,6 @@
 (function () {
   var QD = window.QUEST_DATA;
   var WORKER_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
-  var SITE_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
   var BANDS = ['Beginning', 'Developing', 'Secure', 'Excelling'];
   // Work that wasn't done isn't "Beginning" — it's Undone, and it is never
   // scored. Beginning is for work that was done but is still early.
@@ -659,7 +658,7 @@
     return WORKER_URL + '/sync?group=' + encodeURIComponent(group) + '&kid=' + encodeURIComponent(kid) + '&week=' + encodeURIComponent(week + '-report');
   }
   function fetchReport(group, kid, week) {
-    return fetch(reportUrl(group, kid, week), { headers: { 'X-Site-Key': SITE_KEY } })
+    return fetch(reportUrl(group, kid, week), { headers: { 'X-Site-Key': window.RJ_STORE_KEY() } })
       .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('http')); })
       .then(function (res) { return { ok: true, report: (res && res.found && res.data.state) || null }; })
       .catch(function () { return { ok: false, report: null }; });
@@ -667,7 +666,7 @@
   function saveReport(group, kid, week, report) {
     return fetch(WORKER_URL + '/sync', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Site-Key': SITE_KEY },
+      headers: { 'Content-Type': 'application/json', 'X-Site-Key': window.RJ_STORE_KEY() },
       body: JSON.stringify({ group: group, kid: kid, week: week + '-report', state: report })
     }).then(function (r) { return r.ok ? r.json() : null; })
       .then(function (out) { return { ok: !!(out && out.ok) }; })
@@ -687,7 +686,7 @@
   function fetchBuildPhotos(group, kid, week) {
     return Promise.all(PHOTO_SLOTS.map(function (_, i) {
       var url = WORKER_URL + '/sync?group=' + encodeURIComponent(group) + '&kid=' + encodeURIComponent(kid) + '&week=' + encodeURIComponent(photoWeek(week, i));
-      return fetch(url, { headers: { 'X-Site-Key': SITE_KEY } })
+      return fetch(url, { headers: { 'X-Site-Key': window.RJ_STORE_KEY() } })
         .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('http')); })
         .then(function (res) { return (res && res.found && res.data.state && res.data.state.img) || ''; });
     })).then(function (slots) { return { ok: true, slots: slots }; }, function () { return { ok: false, slots: ['', '', ''] }; });
@@ -695,7 +694,7 @@
   function saveBuildPhoto(group, kid, week, slot, img, by) {
     return fetch(WORKER_URL + '/sync', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Site-Key': SITE_KEY },
+      headers: { 'Content-Type': 'application/json', 'X-Site-Key': window.RJ_STORE_KEY() },
       body: JSON.stringify({ group: group, kid: kid, week: photoWeek(week, slot), state: { img: img || '', at: new Date().toISOString(), by: by || '' } })
     }).then(function (r) { return r.ok ? r.json() : null; })
       .then(function (out) { return { ok: !!(out && out.ok) }; })
@@ -712,12 +711,12 @@
       '&slot=build-video-' + encodeURIComponent(week) + (extra || '');
   }
   function fetchBuildVideo(group, kid, week) {
-    return fetch(videoUrl(group, kid, week, '&meta=1'), { headers: { 'X-Site-Key': SITE_KEY } })
+    return fetch(videoUrl(group, kid, week, '&meta=1'), { headers: { 'X-Site-Key': window.RJ_STORE_KEY() } })
       .then(function (r) {
         if (r.status === 400) return { ok: true, supported: false, url: '' };
         if (!r.ok) throw new Error('http');
         return r.json().then(function (res) {
-          return { ok: true, supported: true, url: res && res.found ? videoUrl(group, kid, week, '&key=' + SITE_KEY + '&inline=1&v=' + encodeURIComponent(res.file.uploadedAt)) : '' };
+          return { ok: true, supported: true, url: res && res.found ? videoUrl(group, kid, week, '&key=' + window.RJ_STORE_KEY() + '&inline=1&v=' + encodeURIComponent(res.file.uploadedAt)) : '' };
         });
       })
       .catch(function () { return { ok: false, supported: true, url: '' }; });
@@ -728,7 +727,7 @@
       var ext = (file.name.match(/\.([a-z0-9]+)$/i) || [])[1] || 'mp4';
       var xhr = new XMLHttpRequest();
       xhr.open('POST', videoUrl(group, kid, week, '&name=' + encodeURIComponent(kid + '_' + week + '_build.' + ext.toLowerCase())));
-      xhr.setRequestHeader('X-Site-Key', SITE_KEY);
+      xhr.setRequestHeader('X-Site-Key', window.RJ_STORE_KEY());
       xhr.upload.onprogress = function (e) { if (e.lengthComputable && onProgress) onProgress(e.loaded / e.total); };
       xhr.onload = function () {
         var res = {}; try { res = JSON.parse(xhr.responseText); } catch (e) {}
@@ -739,7 +738,7 @@
     });
   }
   function deleteBuildVideo(group, kid, week) {
-    return fetch(videoUrl(group, kid, week), { method: 'DELETE', headers: { 'X-Site-Key': SITE_KEY } })
+    return fetch(videoUrl(group, kid, week), { method: 'DELETE', headers: { 'X-Site-Key': window.RJ_STORE_KEY() } })
       .then(function (r) { return { ok: r.ok }; })
       .catch(function () { return { ok: false }; });
   }

@@ -4,7 +4,6 @@
    staff Feedback page and the staff Quests status badges. */
 (function () {
   var WORKER_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
-  var SITE_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
   var BLOOM_LEVELS = ['Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate'];
 
   function workerUrl(endpoint, group, kid, week) {
@@ -21,14 +20,14 @@
   // tab saving its whole state can't wipe it. A week counts as completed
   // if either the Riser's record or that staff record says so.
   function fetchStaffComplete(group, kid, week) {
-    return fetch(workerUrl('/sync', group, kid, week + '-staff'), { headers: { 'X-Site-Key': SITE_KEY } })
+    return fetch(workerUrl('/sync', group, kid, week + '-staff'), { headers: { 'X-Site-Key': window.RJ_STORE_KEY() } })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (res) { return !!(res && res.found && res.data.state && res.data.state.completed); })
       .catch(function () { return false; });
   }
 
   function fetchWeekState(group, kid, week) {
-    var main = fetch(workerUrl('/sync', group, kid, week), { headers: { 'X-Site-Key': SITE_KEY } })
+    var main = fetch(workerUrl('/sync', group, kid, week), { headers: { 'X-Site-Key': window.RJ_STORE_KEY() } })
       .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('http ' + r.status)); })
       .then(function (res) {
         var found = res && res.found;
@@ -44,7 +43,7 @@
   }
 
   function fetchRating(group, kid, week) {
-    return fetch(workerUrl('/rating', group, kid, week), { headers: { 'X-Site-Key': SITE_KEY } })
+    return fetch(workerUrl('/rating', group, kid, week), { headers: { 'X-Site-Key': window.RJ_STORE_KEY() } })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (res) { return (res && res.found) ? res.data : null; })
       .catch(function () { return null; });

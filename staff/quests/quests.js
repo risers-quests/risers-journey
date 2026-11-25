@@ -12,7 +12,6 @@
    unless the kid has since actually finished. */
 (function () {
   var WORKER_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
-  var SITE_KEY = 'RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM';
   var QD = window.QUEST_DATA;
   var ROSTER = window.DASHBOARD_ROSTER || {};
   var app = document.getElementById('app');
@@ -36,7 +35,7 @@
 
   function fetchIncomplete(group, kid, week) {
     var url = WORKER_URL + '/status?group=' + encodeURIComponent(group) + '&kid=' + encodeURIComponent(kid) + '&week=' + encodeURIComponent(week);
-    return fetch(url, { headers: { 'X-Site-Key': SITE_KEY } })
+    return fetch(url, { headers: { 'X-Site-Key': window.RJ_STORE_KEY() } })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (res) { return !!(res && res.incomplete); })
       .catch(function () { return false; });
