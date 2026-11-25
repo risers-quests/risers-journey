@@ -64,3 +64,18 @@ Not used by the site: risers-term2-digital-quests, core-skills-observation
 Internet-safety-course, quest-engine-docs, Claude-quest-generator,
 Risers-quest-generator-tool, Risers-quests-field-log, Risers-tracker.
 Archive (not delete) on GitHub.
+
+## One lifehub.in for everyone (your idea, 25 Nov)
+
+One address that serves everyone:
+- **The public** sees the normal LifeHub site. The home page is never a
+  sign-in page.
+- **Riser parents, Primary parents, staff and children** sign in from a
+  "Sign in" button. They see the same public site, plus their own part:
+  their child's information, updates and check-ins.
+- A Riser parent sees nothing about Primary beyond what the public sees,
+  and the same the other way round.
+
+To build on the Risers sign-in (one sign-in for all of lifehub.in). This
+needs parent accounts (parents use their own phones, so an email code
+works for them) and a list of which child belongs to which parent.
