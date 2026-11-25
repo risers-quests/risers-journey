@@ -122,6 +122,12 @@ export default async function middleware(request: Request): Promise<Response> {
   const oldLink = /^\/([a-z]+)-[a-z]+-[a-z]+\/?(index\.html)?$/.exec(path);
   if (oldLink && isKid(oldLink[1])) return home(url);
 
+  // A quest page's Facilitator View (?fac=1) is for staff: a Riser gets the page without it.
+  if (user.r === 'kid' && url.searchParams.has('fac')) {
+    url.searchParams.delete('fac');
+    return Response.redirect(url, 302);
+  }
+
   if (user.r === 'kid' && kidBlocked(user, path, url)) {
     if (path.startsWith('/api/') || !isPage(request, path)) {
       return new Response(JSON.stringify({ error: 'not yours' }), { status: 403, headers: { 'content-type': 'application/json' } });
