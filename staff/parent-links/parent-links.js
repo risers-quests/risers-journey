@@ -16,7 +16,7 @@
   var linkSec = el('section', 'sg-sec', '<h2>The link</h2><p>Loading…</p>');
   var whoSec = el('section', 'sg-sec', '<h2>Who gets what</h2><p>To change this, open the questionnaire’s staff page, OK it and pick the families: ' +
     '<a href="/term-3/next-year/index.html?view=staff">Next year at LifeHub</a> · <a href="/term-3/grade10/index.html?view=staff">10th Boards</a>. ' +
-    'Answers show there, and on each child’s Term 3 page.</p><ul class="sg-list"></ul>');
+    'Answers show there, for staff only.</p><ul class="sg-list"></ul>');
   wrap.appendChild(linkSec);
   wrap.appendChild(whoSec);
 

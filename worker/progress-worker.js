@@ -535,7 +535,7 @@ async function readPass(env, token) {
 
 // No list of Risers here: the site only signs passes for real ones.
 // Records about a Riser that only facilitators may see.
-const STAFF_ONLY_WEEKS = [/^term3-tracking$/, /^term2-self-assessment-(jeran|nishitha|blessy)$/];
+const STAFF_ONLY_WEEKS = [/^term3-tracking$/, /^term2-self-assessment-(jeran|nishitha|blessy)$/, /^term3-(grade10|next-year)$/];
 // Records a Riser may read but only facilitators write (feedback, marks,
 // the agreed self-assessment).
 const KID_READ_ONLY_WEEKS = [/-staff$/, /-marks$/, /^term2-self-assessment-consolidated$/];

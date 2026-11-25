@@ -52,19 +52,8 @@
     document.querySelector('.hd-tiles').insertAdjacentHTML('beforeend', window.LH_tiles([{ title: 'Passion Finder', desc: 'What do you love doing? Tell us, so you get time to do more of it.', href: 'passion/index.html', icon: 'skills', tone: 'violet' }]));
   });
 
-  // The parents' 10th grade questionnaire: only once staff OK it for this family.
-  if (window.eot2Fetch) window.eot2Fetch('term-3', 'staff', 'grade10-approval').then(function (r) {
-    var ap = r && r.state;
-    if (!ap || !ap.approved || (ap.kids || []).indexOf(kid) === -1) return;
-    document.querySelector('.hd-tiles').insertAdjacentHTML('beforeend', window.LH_tiles([{ title: 'For parents: Before we meet', desc: 'A short form for parents to fill in before our meeting about the 10th boards or another path.', href: 'grade10/index.html', icon: 'paper', tone: 'amber' }]));
-  });
-
-  // Parents' plans for next year: only once staff OK it for this family.
-  if (window.eot2Fetch) window.eot2Fetch('term-3', 'staff', 'next-year-approval').then(function (r) {
-    var ap = r && r.state;
-    if (!ap || !ap.approved || (ap.kids || []).indexOf(kid) === -1) return;
-    document.querySelector('.hd-tiles').insertAdjacentHTML('beforeend', window.LH_tiles([{ title: 'For parents: Next year at LifeHub', desc: 'Your parents’ plans for next year. They can also fill it in from their own link.', href: 'next-year/index.html', icon: 'paper', tone: 'green' }]));
-  });
+  // The parents' questionnaires (10th Boards, Next year) are for staff only:
+  // parents fill them in from the parents' link (/parents/), not here.
 
   var Q = window.T3Q, info = window.T3_reflectInfo;
   var group = Q && Q.groupOf(kid);

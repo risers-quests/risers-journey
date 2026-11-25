@@ -42,6 +42,8 @@ const OPEN = [
 // Facilitators only.
 const STAFF_ONLY = [
   /^\/staff(\/|$)/,
+  // Parents' answers (filled in from /parents/): staff only.
+  /^\/term-3\/(grade10|next-year)(\/|$)/,
   /^\/end-of-term-2\/(staff|consolidate)(\/|$)/
 ];
 
