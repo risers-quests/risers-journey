@@ -11,7 +11,7 @@
    activity; Incomplete is staff's own manual override via /status, shown
    unless the kid has since actually finished. */
 (function () {
-  var WORKER_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  var WORKER_URL = 'https://risers-data.highergrade.workers.dev';
   var QD = window.QUEST_DATA;
   var ROSTER = window.DASHBOARD_ROSTER || {};
   var app = document.getElementById('app');

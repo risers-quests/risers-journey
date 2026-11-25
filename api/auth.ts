@@ -26,7 +26,7 @@ import {
   sign, verify, readCookie, randomId, serverToken, isKid, isStaff, Role
 } from '../lib/rj-auth.js';
 
-const STORE_URL = (process.env.RJ_STORE_URL || 'https://risers-term2-digital-quests-progress.highergrade.workers.dev').replace(/\/$/, '');
+const STORE_URL = (process.env.RJ_STORE_URL || 'https://risers-data.highergrade.workers.dev').replace(/\/$/, '');
 const STAFF_EMAIL = 'highergrade@lifehub.in';
 
 type Req = { method?: string; url?: string; headers: Record<string, string | string[] | undefined>; body?: any };

@@ -10,7 +10,7 @@ import { SessionState, createInitialState } from "./engine/state.js";
 //   state = { child_name, grade, created_at, status, state, responses }
 // The Worker's URL and site key are the public ones in the site's pages;
 // DIAGNOSTIC_STORE_URL / DIAGNOSTIC_STORE_KEY override them (e.g. to test).
-const STORE_URL = (process.env.DIAGNOSTIC_STORE_URL || "https://risers-term2-digital-quests-progress.highergrade.workers.dev").replace(/\/$/, "");
+const STORE_URL = (process.env.DIAGNOSTIC_STORE_URL || "https://risers-data.highergrade.workers.dev").replace(/\/$/, "");
 const LEGACY_STORE_KEY = process.env.DIAGNOSTIC_STORE_KEY || "RsmI8VwuJZ-IIieNmVss5JyChP2nf7y8mVYU5ReJLYM";
 
 // With the sign-in set up (AUTH_SECRET in Vercel), the server signs its own

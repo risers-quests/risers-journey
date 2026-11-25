@@ -26,7 +26,7 @@
    keyword checks, per-question attempt counts) never appear. */
 (function () {
   var QD = window.QUEST_DATA;
-  var WORKER_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  var WORKER_URL = 'https://risers-data.highergrade.workers.dev';
   var BANDS = ['Beginning', 'Developing', 'Secure', 'Excelling'];
   // Work that wasn't done isn't "Beginning" — it's Undone, and it is never
   // scored. Beginning is for work that was done but is still early.

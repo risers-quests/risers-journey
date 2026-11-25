@@ -3,7 +3,7 @@
    understood", or "how high the thinking reached" mean. Same rules as the
    staff Feedback page and the staff Quests status badges. */
 (function () {
-  var WORKER_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+  var WORKER_URL = 'https://risers-data.highergrade.workers.dev';
   var BLOOM_LEVELS = ['Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate'];
 
   function workerUrl(endpoint, group, kid, week) {

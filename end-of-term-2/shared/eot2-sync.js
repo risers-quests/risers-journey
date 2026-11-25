@@ -7,7 +7,7 @@
      term2-mom
    That keeps every EOT2 record in the same KV store, addressed the same
    way, with zero backend risk to the live quest sync data. */
-window.EOT2_WORKER_URL = 'https://risers-term2-digital-quests-progress.highergrade.workers.dev';
+window.EOT2_WORKER_URL = 'https://risers-data.highergrade.workers.dev';
 // The data-store pass (window.EOT2_SITE_KEY) comes from assets/session.js.
 
 function eot2SyncUrl(group, kid, weekKey) {
