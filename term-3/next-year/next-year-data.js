@@ -37,8 +37,7 @@
       ] },
       { title: 'Moving on', when: is(LEAVE), whenLabel: 'Shown only if they lean towards leaving', qs: [
         { id: 'where', text: 'Where are you thinking {name} will go?', kind: 'one',
-          options: ['A school', 'Another homeschool group', 'Homeschooling on our own', 'Something else'], why: 'Tell us a little more, if you like.' },
-        { id: 'stay_if', text: 'Is there anything that would make you stay?', kind: 'text', optional: true }
+          options: ['A school', 'Another homeschool group', 'Homeschooling on our own', 'Something else'], why: 'Tell us a little more, if you like.' }
       ] },
       { title: 'Anything else', qs: [
         { id: 'meet', text: 'Would you like a meeting with us about next year?', kind: 'one',
