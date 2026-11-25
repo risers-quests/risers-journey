@@ -93,9 +93,16 @@ function kidBlocked(user: Claims, path: string, url: URL): boolean {
 }
 
 export default async function middleware(request: Request): Promise<Response> {
+  const url = new URL(request.url);
+
+  // Every page is a folder (…/index.html). Without the closing slash the
+  // page loads but its own scripts and styles don't, so add it.
+  if (request.method === 'GET' && !url.pathname.startsWith('/api/') && !/\/$|\.[a-z0-9]+$/i.test(url.pathname)) {
+    return Response.redirect(new URL(url.pathname + '/' + url.search, url), 308);
+  }
+
   if (process.env.RJ_AUTH !== 'on') return pass();
 
-  const url = new URL(request.url);
   let path = url.pathname;
   try { path = decodeURIComponent(path); } catch { /* keep as is */ }
   path = path.replace(/\/{2,}/g, '/');
