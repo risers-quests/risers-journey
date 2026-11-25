@@ -3,7 +3,8 @@
    in Vercel's Edge middleware and in a Node function.
 
    How sign-in works (see SIGN-IN.md for the whole picture):
-     rj_dev    this device has been set up by a facilitator (60 days)
+     rj_dev    this browser's own id, given on its first visit to the
+               sign-in page (a sign-in only counts in its own browser)
      rj_user   who is using it right now: a Riser or a facilitator; ends
                after 15 minutes without activity, or on "Log out"
      rj_store  a short pass for the data store (the Cloudflare Worker),
@@ -36,10 +37,10 @@ export const STAFF: { id: string; name: string }[] = [
 
 export type Role = 'kid' | 'staff';
 
-export const DEVICE_DAYS = 60;
+export const DEVICE_DAYS = 365;
 export const IDLE_MINUTES = 15;
 export const STORE_HOURS = 12;
-export const KID_PIN_LENGTH = 4;
+export const KID_PIN_LENGTH = 6;
 export const STAFF_PIN_LENGTH = 6;
 
 export function isKid(id: string): boolean { return KIDS.some((k) => k.id === id); }

@@ -117,17 +117,19 @@ export default async function handler(req: Req, res: Res) {
   const body = (req.body && typeof req.body === 'object') ? req.body : {};
 
   try {
+    // No setting up devices: each browser just gets its own id the first
+    // time it opens the sign-in page (a sign-in only counts in the browser
+    // it was made in).
     if (method === 'GET' && path === 'state') {
       return send(res, 200, {
         configured: true,
         gate: process.env.RJ_AUTH === 'on',
-        device: !!device,
+        device: true,
         user: user ? { role: user.r, id: user.k } : null,
         idleMinutes: IDLE_MINUTES,
-        kids: device ? KIDS.map((k) => ({ id: k.id, name: k.name })) : [],
-        staff: device ? STAFF : [],
-        mail: !!(process.env.DIAGNOSTIC_MAIL_URL && process.env.DIAGNOSTIC_MAIL_SECRET)
-      });
+        kids: KIDS.map((k) => ({ id: k.id, name: k.name })),
+        staff: STAFF
+      }, device ? [] : [await deviceCookie(secret)]);
     }
 
     if (method === 'POST' && path === 'device/email') {
@@ -158,7 +160,7 @@ export default async function handler(req: Req, res: Res) {
     }
 
     if (method === 'POST' && path === 'signin') {
-      if (!device) return send(res, 401, { error: 'This device isn’t set up yet.' });
+      if (!device) return send(res, 401, { error: 'Please reload the page and try again.' });
       const role: Role = body.role === 'staff' ? 'staff' : 'kid';
       const id = String(body.id || '').toLowerCase();
       if (!(role === 'kid' ? isKid(id) : isStaff(id))) return send(res, 400, { error: 'Unknown name.' });
@@ -174,7 +176,7 @@ export default async function handler(req: Req, res: Res) {
     // the set-up code (RJ_SETUP_CODE) as proof. Once they have one, this
     // refuses; a forgotten PIN is reset by a colleague on the staff page.
     if (method === 'POST' && path === 'first-pin') {
-      if (!device) return send(res, 401, { error: 'This device isn’t set up yet.' });
+      if (!device) return send(res, 401, { error: 'Please reload the page and try again.' });
       const id = String(body.id || '').toLowerCase();
       if (!isStaff(id)) return send(res, 400, { error: 'Unknown name.' });
       if (!isSetupCode(String(body.setupCode || '').toUpperCase().replace(/[^A-Z0-9]/g, ''))) {

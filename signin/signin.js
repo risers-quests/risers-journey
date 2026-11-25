@@ -1,9 +1,5 @@
-/* Risers Journey sign-in page.
-   1. A device nobody has set up: a facilitator sets it up once, with a
-      code emailed to highergrade@lifehub.in or a device code made on the
-      staff Sign-in page.
-   2. A set-up device: tap your name, type your PIN (Risers 4 digits,
-      facilitators 6). */
+/* Risers Journey sign-in page: tap your name, type your 6-digit PIN.
+   A facilitator's very first time: make their PIN with the set-up code. */
 (function () {
   var app = document.getElementById('si-app');
   var params = new URLSearchParams(location.search);
@@ -55,80 +51,13 @@
         document.getElementById('si-retry').onclick = load;
       } else if (s.user) {
         location.replace(destination(s.user.role));
-      } else if (!s.device) {
-        setupDevice();
       } else {
         pickName('kid');
       }
     });
   }
 
-  /* ---------- 1. setting up a device ---------- */
-
-  function setupDevice() {
-    show(
-      '<h1>Set up this device</h1>' +
-      '<p class="si-sub">A facilitator does this once on each device. After that, Risers sign in with their name and PIN.</p>' +
-      (state.mail ? '<button class="si-btn" type="button" id="si-email">Email a code to highergrade@lifehub.in</button>' +
-        '<div class="si-divider">or</div>' : '') +
-      '<label for="si-dcode" class="si-note" style="display:block;margin:0 0 8px">Type a device code (from a facilitator’s <b>Sign-in &amp; PINs</b> page) or the set-up code:</label>' +
-      '<input id="si-dcode" class="si-field" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="16" placeholder="Device or set-up code">' +
-      '<button class="si-btn' + (state.mail ? ' is-quiet' : '') + '" type="button" id="si-dgo">Set up with this code</button>' +
-      '<p class="si-err" id="si-err"></p>', true);
-    var err = document.getElementById('si-err');
-    var input = document.getElementById('si-dcode'), go = document.getElementById('si-dgo');
-    function useCode() {
-      go.disabled = true; err.textContent = '';
-      api('device/code', { code: input.value }).then(function (r) {
-        go.disabled = false;
-        if (r.ok) return deviceReady();
-        err.textContent = r.error || 'That didn’t work. Try again.';
-      });
-    }
-    go.onclick = useCode;
-    input.onkeydown = function (e) { if (e.key === 'Enter') useCode(); };
-    var email = document.getElementById('si-email');
-    if (email) email.onclick = function () {
-      email.disabled = true; err.textContent = '';
-      api('device/email', {}).then(function (r) {
-        email.disabled = false;
-        if (r.ok) return enterEmailCode(r.to);
-        err.textContent = r.error || 'The email couldn’t be sent.';
-      });
-    };
-  }
-
-  function enterEmailCode(to) {
-    show(
-      '<h1>Check the email</h1>' +
-      '<p class="si-sub">We sent a 6-digit code to <b>' + esc(to) + '</b>. Type it here within 10 minutes.</p>' +
-      '<input id="si-ecode" class="si-field" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456">' +
-      '<button class="si-btn" type="button" id="si-ego">Set up this device</button>' +
-      '<p class="si-err" id="si-err"></p>' +
-      '<div class="si-links"><button class="si-link" type="button" id="si-back">Back</button></div>', true);
-    var input = document.getElementById('si-ecode'), go = document.getElementById('si-ego'), err = document.getElementById('si-err');
-    input.focus();
-    function check() {
-      go.disabled = true; err.textContent = '';
-      api('device/verify', { code: input.value }).then(function (r) {
-        go.disabled = false;
-        if (r.ok) return deviceReady();
-        err.textContent = r.error || 'That code isn’t right.';
-      });
-    }
-    go.onclick = check;
-    input.onkeydown = function (e) { if (e.key === 'Enter') check(); };
-    document.getElementById('si-back').onclick = setupDevice;
-  }
-
-  function deviceReady() {
-    api('state').then(function (s) {
-      state = s;
-      pickName('kid', 'This device is set up. Risers can sign in now.');
-    });
-  }
-
-  /* ---------- 2. who's using it ---------- */
+  /* ---------- who's using it ---------- */
 
   function pickName(role, okMessage) {
     var list = role === 'staff' ? state.staff : state.kids;
@@ -160,7 +89,7 @@
   }
 
   function enterPin(role, person) {
-    var length = role === 'staff' ? 6 : 4;
+    var length = 6;
     var pin = '', busy = false;
     show(
       '<div class="si-who"><span class="si-av">' + esc(person.name.charAt(0)) + '</span><h1>Hi, ' + esc(person.name) + '</h1></div>' +

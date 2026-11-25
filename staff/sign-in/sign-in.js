@@ -1,7 +1,6 @@
-/* Staff: Sign-in & PINs. Set or reset each Riser's 4-digit PIN and each
-   facilitator's 6-digit PIN, make a code to set up another device, and
-   see what the data store recently refused (a page that stops saving
-   after the sign-in went live shows up here). */
+/* Staff: Sign-in & PINs. Set or reset each Riser's and facilitator's
+   6-digit PIN, and see what the data store recently refused (a page that
+   stops saving after the sign-in went live shows up here). */
 (function () {
   var app = document.getElementById('app');
 
@@ -20,7 +19,7 @@
     }, function () { return { status: 0, error: 'No connection.' }; });
   }
 
-  app.appendChild(el('header', 'hd-welcome', '<h1>Sign-in &amp; PINs</h1><p>Risers sign in with their name and a 4-digit PIN, facilitators with a 6-digit PIN, on devices a facilitator has set up.</p>'));
+  app.appendChild(el('header', 'hd-welcome', '<h1>Sign-in &amp; PINs</h1><p>Everyone signs in by tapping their name and typing their 6-digit PIN.</p>'));
   var wrap = el('div', 'sg');
   app.appendChild(wrap);
 
@@ -29,19 +28,13 @@
     return;
   }
 
-  var kidsSec = el('section', 'sg-sec', '<h2>Risers’ PINs</h2><p>Give each Riser a 4-digit PIN they’ll remember. Setting a new one replaces the old one and unlocks them if they were locked out after wrong tries. Don’t reuse the same PIN for everyone.</p><ul class="sg-list"><li class="sg-row">Loading…</li></ul>');
-  var staffSec = el('section', 'sg-sec', '<h2>Facilitators’ PINs</h2><p>6 digits. Change your own here; if a colleague forgot theirs, set them a new one.</p><ul class="sg-list"><li class="sg-row">Loading…</li></ul>');
-  var devSec = el('section', 'sg-sec',
-    '<h2>Set up another device</h2><p>On the new device, open Risers Journey and type this code. It works once, for 30 minutes. (Or use “Email a code” there; the code goes to highergrade@lifehub.in.)</p>' +
-    '<button class="sg-btn" type="button" id="sg-make">Make a device code</button><div id="sg-code"></div>');
-  var thisSec = el('section', 'sg-sec',
-    '<h2>This device</h2><p>“Forget this device” signs you out and un-sets it up: next time it needs a device code again. Use it on a device that’s leaving LifeHub.</p>' +
-    '<button class="sg-btn is-quiet" type="button" id="sg-forget">Forget this device</button>');
+  var kidsSec = el('section', 'sg-sec', '<h2>Risers’ PINs</h2><p>Give each Riser a 6-digit PIN they’ll remember. Setting a new one replaces the old one and unlocks them if they were locked out after wrong tries. Don’t reuse the same PIN for everyone.</p><ul class="sg-list"><li class="sg-row">Loading…</li></ul>');
+  var staffSec = el('section', 'sg-sec', '<h2>Facilitators’ PINs</h2><p>Change your own here; if a colleague forgot theirs, set them a new one.</p><ul class="sg-list"><li class="sg-row">Loading…</li></ul>');
   var logSec = el('section', 'sg-sec', '<h2>Recently refused</h2><p>Saves the data store turned down because a Riser’s page asked for something that isn’t theirs. If a Riser says their work won’t save, look here and tell whoever looks after the site.</p><div id="sg-log">Loading…</div>');
-  [kidsSec, staffSec, devSec, thisSec, logSec].forEach(function (s) { wrap.appendChild(s); });
+  [kidsSec, staffSec, logSec].forEach(function (s) { wrap.appendChild(s); });
 
   function rows(sec, role, people, set, locked) {
-    var len = role === 'kid' ? 4 : 6;
+    var len = 6;
     var ul = sec.querySelector('.sg-list');
     ul.innerHTML = people.map(function (p) {
       var key = role + ':' + p.id;
@@ -76,22 +69,6 @@
     rows(kidsSec, 'kid', r.kids, r.set, r.locked);
     rows(staffSec, 'staff', r.staff, r.set, r.locked);
   });
-
-  document.getElementById('sg-make').onclick = function () {
-    var out = document.getElementById('sg-code');
-    out.innerHTML = '';
-    api('device-code', {}).then(function (r) {
-      if (!r.ok) { out.innerHTML = '<p class="sg-err">' + esc(r.error || 'Couldn’t make a code.') + '</p>'; return; }
-      var until = new Date(r.until).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-      out.innerHTML = '<div class="sg-code">' + esc(r.code.slice(0, 4) + ' ' + r.code.slice(4)) + '</div><p class="sg-log">Works once, until ' + esc(until) + '.</p>';
-    });
-  };
-
-  document.getElementById('sg-forget').onclick = function () {
-    if (!confirm('Forget this device? It will need a device code before anyone can sign in on it again.')) return;
-    try { localStorage.removeItem('imm-l3-kid'); localStorage.removeItem('rj-staff-name'); } catch (e) {}
-    api('signout', { device: true }).then(function () { location.replace('/signin/'); });
-  };
 
   api('blocked').then(function (r) {
     var box = document.getElementById('sg-log');
