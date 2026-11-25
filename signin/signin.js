@@ -30,6 +30,8 @@
   function destination(role) {
     var next = params.get('next') || '';
     if (/^\/(?!\/)/.test(next) && next.indexOf('/signin') !== 0) {
+      // A facilitator asking for the Risers' home goes to the staff home.
+      if (role === 'staff' && /^\/(index\.html)?(\?|$)/.test(next)) return '/staff/';
       if (role === 'staff' || !/^\/staff(\/|$)/.test(next)) return next;
     }
     return role === 'staff' ? '/staff/' : '/';

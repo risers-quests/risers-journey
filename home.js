@@ -59,6 +59,8 @@
   }
 
   function init() {
+    // Signed in as a facilitator: their home is the staff one.
+    if (window.RJ_SESSION && window.RJ_SESSION.role === 'staff') { location.replace('staff/'); return; }
     var roster = window.DASHBOARD_ROSTER || {};
     var kid = null;
     try { kid = (localStorage.getItem(KID_KEY) || '').toLowerCase(); } catch (e) {}
