@@ -162,7 +162,7 @@
       var cb = item.querySelector('input[type=checkbox]');
       if (!cb) return;
       // Facilitator View shows the Riser's ticks but can't change them.
-      if (window.QUEST_FACILITATOR_MODE) cb.disabled = true;
+      if (window.QUEST_SEALED) cb.disabled = true;
       if (state[i]) { cb.checked = true; item.classList.add('checked'); }
       cb.addEventListener('change', function () {
         item.classList.toggle('checked', cb.checked);
@@ -369,7 +369,7 @@
      bypasses this entirely — a facilitator previewing the page needs to see
      everything in one pass, not be gated by a kid's own progress. */
   function initSectionLock(pageKey) {
-    if (window.QUEST_FACILITATOR_MODE) return;
+    if (window.QUEST_SEALED) return;
 
     var headings = Array.prototype.filter.call(document.querySelectorAll('h3'), function (h) {
       return h.querySelector('.sec-num');
@@ -452,7 +452,7 @@
      entirely, same as section lock, so a facilitator can preview the whole
      quest in one pass. */
   function initDayLock(pageKey) {
-    if (window.QUEST_FACILITATOR_MODE) return;
+    if (window.QUEST_SEALED) return;
 
     var blocks = Array.prototype.slice.call(document.querySelectorAll('.day-block'));
     if (blocks.length < 2) return;
@@ -568,7 +568,7 @@
       block.classList.add('show');
     }
 
-    if ((current && current.toLowerCase() === expectedName.toLowerCase()) || (!current && staff) || (staff && window.QUEST_FACILITATOR_MODE)) {
+    if ((current && current.toLowerCase() === expectedName.toLowerCase()) || (!current && staff) || (staff && window.QUEST_SEALED)) {
       unlock();
     } else {
       showBlocked();
@@ -1774,8 +1774,8 @@
     // "Completed" (see collectSyncState below), same as a real classroom
     // submission — not just a silent threshold crossing.
     function render() {
-      if (!isDone() && window.QUEST_FACILITATOR_MODE) {
-        section.innerHTML = '<div class="qc-pending"><p>Facilitator View is a preview — only the Riser can complete their quest, from their own page.</p></div>';
+      if (!isDone() && window.QUEST_SEALED) {
+        section.innerHTML = '<div class="qc-pending"><p>Term 2 is finished, so this quest can’t be completed any more.</p></div>';
         return;
       }
       if (isDone()) {
@@ -1794,7 +1794,7 @@
 
     section.addEventListener('click', function (e) {
       if (!e.target || e.target.id !== 'qc-finish-btn') return;
-      if (window.QUEST_FACILITATOR_MODE) return;
+      if (window.QUEST_SEALED) return;
       try { localStorage.setItem(doneKey, '1'); } catch (err) {}
       render();
       showCelebration();
@@ -1921,7 +1921,7 @@
     }
 
     function tick() {
-      if (!active || document.hidden || window.QUEST_FACILITATOR_MODE) { render(); return; }
+      if (!active || document.hidden || window.QUEST_SEALED) { render(); return; }
       time[active] = (time[active] || 0) + 1000;
       persist();
       render();
@@ -2033,7 +2033,7 @@
       if (!localSyncedAt || new Date(data.updatedAt) > new Date(localSyncedAt)) {
         try { localStorage.setItem(syncedAtKey, data.updatedAt); } catch (e) {}
       }
-      if (!window.QUEST_FACILITATOR_MODE && !syncSame(merged, server)) markPending();
+      if (!window.QUEST_SEALED && !syncSame(merged, server)) markPending();
     }
 
     function fetchServerCopy() {
@@ -2069,7 +2069,7 @@
     // straight away (keepalive) — the copy was merged when the page
     // loaded and again whenever the tab came back into view.
     function pushNow(force, closing) {
-      if ((window.QUEST_FACILITATOR_MODE && !force) || (!isPending() && !force) || inFlight) return;
+      if ((window.QUEST_SEALED && !force) || (!isPending() && !force) || inFlight) return;
       inFlight = true;
       var ready = closing ? Promise.resolve() : fetchServerCopy()
         .then(function (res) { if (res && res.found) mergeServerCopy(res.data); })
@@ -2100,7 +2100,7 @@
       // Facilitator View is a preview: nothing done in it is queued for
       // the Riser's real record (it used to be, and then got sent the next
       // time the Riser's normal view opened on the same device).
-      if (window.QUEST_FACILITATOR_MODE) return;
+      if (window.QUEST_SEALED) return;
       markPending();
       clearTimeout(pushTimer);
       pushTimer = setTimeout(pushNow, 2500);
@@ -2124,7 +2124,7 @@
         // "Complete My Quest" is the one click that must never wait: send it
         // now, so closing the tab or going back straight away can't strand
         // the completion on this device.
-        if (e.target.closest('#qc-finish-btn') && !window.QUEST_FACILITATOR_MODE) { clearTimeout(pushTimer); pushNow(); }
+        if (e.target.closest('#qc-finish-btn') && !window.QUEST_SEALED) { clearTimeout(pushTimer); pushNow(); }
       }
     });
     window.addEventListener('beforeunload', function () { pushNow(false, true); });
@@ -2162,38 +2162,18 @@
   }
 
 
-  /* ---- Facilitator View ----
-     window.QUEST_FACILITATOR_MODE is set synchronously by the page's own
-     inline <head> script (reading ?fac=1 from the URL), BEFORE this file
-     or any of its init calls ever run — so there is no window between
-     page-load and "the facilitator remembers to flip a switch" where
-     tracking could slip through. Toggling always goes through a full
-     reload into the correct clean state in both directions, never an
-     in-place flip: entering re-navigates to this exact page + ?fac=1,
-     exiting re-navigates to it with that param stripped. The initial pull
-     (reading, not writing) still happens normally in this mode, since
-     that's harmless regardless of who's viewing — only the day-timer's
-     accumulation and every sync push are suppressed. A persistent banner
-     (not just the corner button) makes the mode unmistakable at any
-     scroll position, since the URL itself is now what carries the state —
-     unlike the old per-click toggle, leaving a tab sitting on a ?fac=1
-     link is now visible at a glance, not just invisible in memory. */
-  function initFacilitatorCheck() {
-    var btn = document.getElementById('facilitator-check-btn');
-    var banner = document.getElementById('facilitator-banner');
-    var active = !!window.QUEST_FACILITATOR_MODE;
-
-    document.documentElement.classList.toggle('facilitator-mode', active);
-    if (banner) banner.style.display = active ? 'block' : 'none';
-    if (!btn) return;
-    btn.classList.toggle('active', active);
-    btn.textContent = active ? '🧑‍🏫 Exit Facilitator View' : '🧑‍🏫 Facilitator View';
-
-    btn.addEventListener('click', function () {
-      var url = new URL(window.location.href);
-      if (active) url.searchParams.delete('fac');
-      else url.searchParams.set('fac', '1');
-      window.location.href = url.toString();
+  /* Term 2 is finished: this page is sealed. It opens with the Riser's
+     saved work, read-only: nothing is timed, changed or saved
+     (window.QUEST_SEALED, set by the page). */
+  function initSealed() {
+    if (!window.QUEST_SEALED) return;
+    var note = document.createElement('div');
+    note.setAttribute('role', 'note');
+    note.style.cssText = 'margin:12px auto;max-width:900px;padding:12px 16px;border-radius:12px;background:#eef6e2;color:#2f5e10;font-weight:600;text-align:center;font-family:inherit';
+    note.textContent = 'Term 2 is finished. This is your quest as you left it: you can read it, but nothing here can be changed.';
+    document.body.insertBefore(note, document.body.firstChild);
+    Array.prototype.forEach.call(document.querySelectorAll('textarea, input'), function (x) {
+      if (x.type === 'checkbox' || x.type === 'radio') x.disabled = true; else x.readOnly = true;
     });
   }
 
@@ -2441,7 +2421,7 @@
     initFieldAutosave: initFieldAutosave, initProgressBar: initProgressBar,
     initMatchGame: initMatchGame, initQuizGame: initQuizGame, initSequenceGame: initSequenceGame, initProgressSync: initProgressSync, initDayTimer: initDayTimer,
     initSectionLock: initSectionLock, initCompleteQuest: initCompleteQuest, initDayLock: initDayLock,
-    initFacilitatorCheck: initFacilitatorCheck,
+    initSealed: initSealed,
     initPresentationAutofill: initPresentationAutofill,
     initCalcQuest: initCalcQuest,
     KID_KEY: KID_KEY

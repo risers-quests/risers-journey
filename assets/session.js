@@ -72,14 +72,6 @@
 
   window.RJ_SESSION = { role: role, id: id, signOut: function () { signOut('button'); } };
 
-  // Staff-only buttons on shared pages (a quest's "Facilitator View"):
-  // hidden for Risers. The server also strips ?fac=1 for them.
-  document.documentElement.classList.add(role === 'kid' ? 'rj-kid' : 'rj-staff');
-  if (role === 'kid') {
-    var hide = document.createElement('style');
-    hide.textContent = 'html.rj-kid #facilitator-check-btn, html.rj-kid #facilitator-banner, html.rj-kid .fac-review { display: none !important; }';
-    document.head.appendChild(hide);
-  }
 
   // ---- staying signed in while active; signing out when not ----
   var IDLE = 15 * 60e3, WARN = 60e3, PING_EVERY = 2 * 60e3;

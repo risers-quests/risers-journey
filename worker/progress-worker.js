@@ -687,6 +687,21 @@ async function handleAuth(request, env, cors) {
   return json({ error: 'unknown op' }, 400, cors);
 }
 
+// ---- Term 2 is finished: its quest records are sealed ----
+// They can be read, never changed, by anyone (staff and the site's server
+// included): each Riser's quest weeks (group-00…group-04, week-NN, with
+// their -staff feedback, -report and -buildphoto… records), the staff
+// status flags and Day 3 ratings, and the build videos.
+const TERM2_WEEK = /^week-\d\d(-staff|-report|-buildphoto[a-z0-9-]*)?$/;
+function term2Sealed(path, method, url, body) {
+  if (method === 'GET' || method === 'HEAD') return false;
+  if (path === '/status' || path === '/rating') return true;
+  if (path === '/file') return VIDEO_SLOT.test(String(url.searchParams.get('slot') || '').toLowerCase());
+  if (path !== '/sync') return false;
+  const src = body || {};
+  return /^group-0\d$/.test(String(src.group || '').toLowerCase()) && TERM2_WEEK.test(String(src.week || '').toLowerCase());
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -721,12 +736,16 @@ export default {
       return who.role === 'server' ? handleAuth(request, env, cors) : json({ error: 'forbidden' }, 403, cors);
     }
 
+    // A /sync save names its record in the body; read it from a copy.
+    let body = null;
+    if (request.method === 'POST' && path === '/sync') {
+      try { body = await request.clone().json(); } catch (e) { body = {}; }
+    }
+    if (term2Sealed(path, request.method, url, body)) {
+      return json({ error: 'Term 2 is finished: its quests are sealed' }, 403, cors);
+    }
+
     if (who.role === 'kid') {
-      // A /sync save names its record in the body; read it from a copy.
-      let body = null;
-      if (request.method === 'POST' && path === '/sync') {
-        try { body = await request.clone().json(); } catch (e) { body = {}; }
-      }
       if (!kidAllowed(who.id, path, request.method, url, body)) {
         const src = body || {};
         await logRefusal(env, {

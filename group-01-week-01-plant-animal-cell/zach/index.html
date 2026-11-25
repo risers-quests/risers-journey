@@ -7,12 +7,8 @@
 <title>Plant & Animal Cell — Body Connector</title>
 <script>
   (function () {
-    // Facilitator View: ?fac=1 must be read and set BEFORE quest.js or any
-    // of its init calls run, so tracking never has a chance to start before
-    // this takes effect — see initFacilitatorCheck's comment in quest.js.
-    try {
-      window.QUEST_FACILITATOR_MODE = new URLSearchParams(window.location.search).get('fac') === '1';
-    } catch (e) { window.QUEST_FACILITATOR_MODE = false; }
+    // Term 2 is finished: this page is sealed (read-only, nothing saved).
+    window.QUEST_SEALED = true;
     try {
       var kid = localStorage.getItem('imm-l3-kid');
       if (!kid || kid.toLowerCase() !== 'zach') document.documentElement.classList.add('gate-locked');
@@ -21,7 +17,6 @@
 </script>
 <style>
   html.gate-locked main, html.gate-locked .progress-summary { display: none !important; }
-  html.facilitator-mode #facilitator-banner { display: block; }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,7 +25,6 @@
 </head>
 <body class="lens-zach">
 
-<div id="facilitator-banner" style="display:none;">🧑‍🏫 Facilitator View — nothing on this page is being timed, saved, or synced. <a href="?" id="facilitator-banner-exit">Exit Facilitator View →</a></div>
 
 <header class="site-header">
   <div class="container">
@@ -455,7 +449,7 @@
 <script src="../js/quest.js"></script>
 <script>
   QuestUI.initKidGate('Zach');
-  QuestUI.initFacilitatorCheck();
+  QuestUI.initSealed();
 
   QuestUI.initProgressSync('zach', 'group-01', 'week-01').then(function () {
     QuestUI.initHighlighter('zach');

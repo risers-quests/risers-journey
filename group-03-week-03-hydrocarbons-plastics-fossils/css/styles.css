@@ -85,25 +85,7 @@ table { border-collapse: collapse; width: 100%; }
   padding: 5px 12px; border-radius: 999px; white-space: nowrap;
 }
 
-.facilitator-check-btn {
-  position: fixed; right: 16px; bottom: 16px; z-index: 40;
-  font-family: var(--font-mono); font-size: .7rem; font-weight: 600;
-  color: var(--ink-faint); background: var(--paper); border: 1px solid var(--border);
-  padding: 6px 12px; border-radius: 999px; cursor: pointer; opacity: .55;
-  transition: opacity .15s, background .15s, color .15s, border-color .15s;
-}
-.facilitator-check-btn:hover { opacity: 1; }
-.facilitator-check-btn.active {
-  opacity: 1; color: #92400e; background: #fef3c7; border-color: #fcd34d;
-}
 
-#facilitator-banner {
-  position: sticky; top: 0; z-index: 60; text-align: center;
-  background: #fef3c7; color: #78350f; border-bottom: 1.5px solid #fcd34d;
-  font-family: var(--font-mono); font-size: .8rem; font-weight: 600;
-  padding: 9px 16px;
-}
-#facilitator-banner a { color: #78350f; text-decoration: underline; font-weight: 700; margin-left: 6px; }
 .brand small { display: block; font-family: var(--font-body); font-weight: 700; font-size: .64rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); }
 .day-nav { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; border-top: 1px solid var(--border); padding-top: 10px; }
 .day-nav a {
@@ -187,16 +169,6 @@ table { border-collapse: collapse; width: 100%; }
 /* Facilitator answer review — a second, independent evaluation layer,
    only ever rendered (see quest.js) in Facilitator View after the kid
    has completed the quest, so a kid never sees this box at all. */
-.fac-review { display: none; margin-top: 10px; padding: 10px 14px; border-radius: 10px; background: #fdf4ff; border: 1.5px dashed #d8b4fe; }
-html.facilitator-mode .fac-review.show { display: block; }
-.fac-review-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
-.fac-review-row:first-child { margin-top: 0; }
-.fac-review-label { font-family: var(--font-mono); font-weight: 700; font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: #6b21a8; min-width: 112px; }
-.fac-review-btn { padding: 5px 12px; font-size: .78rem; border-radius: 999px; border: 1.5px solid #d8b4fe; background: #fff; color: #6b21a8; cursor: pointer; }
-.fac-review-btn:hover { background: #f3e8ff; }
-.fac-review-btn.active { background: #6b21a8; color: #fff; border-color: #6b21a8; }
-.fac-review-saved { font-size: .75rem; color: #6b21a8; opacity: 0; transition: opacity .3s; margin-left: 4px; }
-.fac-review-saved.show { opacity: 1; }
 .reflect-hint a { color: #1d4ed8; font-weight: 700; text-decoration: none; }
 .reflect-hint a:hover { text-decoration: underline; }
 
@@ -343,7 +315,6 @@ table.data-table td.num { font-family: var(--font-mono); }
   display: none;
   border: 1.5px dashed var(--ink-soft); border-radius: 12px; padding: 16px 20px; margin: 22px 0; background: #fafafa;
 }
-html.facilitator-mode .facilitator-tip { display: block; }
 .facilitator-tip .fac-label {
   display: inline-block; font-family: var(--font-mono); font-weight: 700; font-size: .72rem; text-transform: uppercase; letter-spacing: .05em;
   color: #fff; background: var(--ink-soft); padding: 3px 10px; border-radius: 5px; margin-bottom: 8px;
