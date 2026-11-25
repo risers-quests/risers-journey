@@ -19,7 +19,12 @@
      GET  pins             who has a PIN
      POST pin              {role, id, pin}  set or reset a PIN
      POST device-code      make a one-use code to set up another device
-     GET  blocked          the data store's recent refusals */
+     GET  blocked          the data store's recent refusals
+     GET  parent-form      the parents' link, and which forms each child gets
+   The parents' form (no sign-in):
+     GET  parent           the Risers; with ?kid=, which forms are open
+     GET  parent/record    ?kid=&week=  whether that form is open
+     POST parent/record    {kid, week, state}  a submitted form */
 import {
   KIDS, STAFF, KID_PIN_LENGTH, STAFF_PIN_LENGTH, IDLE_MINUTES,
   readSession, userCookies, signedOutCookies, deviceCookie, clearCookie, cookie,
@@ -97,6 +102,39 @@ async function emailCode(code: string): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+
+/* ---- The parents' form: one open link, no sign-in ----
+   /parents/ lists the Risers; a parent picks their child and gets the
+   questionnaires switched on for that child (the staff "OK" and family
+   list on each questionnaire's staff page). Anyone with the link can send,
+   so it only ever writes: it never shows saved answers, drafts aren't
+   kept, and a second submission keeps the earlier one (in _earlier). */
+const PARENT_FORMS: { id: string; week: string; approval: string; title: string; desc: string }[] = [
+  { id: 'next-year', week: 'term3-next-year', approval: 'next-year-approval', title: 'Next year at LifeHub', desc: 'Your plans for next academic year (2027–28). About 3 minutes.' },
+  { id: 'grade10', week: 'term3-grade10', approval: 'grade10-approval', title: '10th Boards: Before We Meet', desc: 'Where you are now on the 10th boards, before our meeting.' }
+];
+
+async function storeGet(secret: string, group: string, kid: string, week: string): Promise<any> {
+  const q = new URLSearchParams({ group, kid, week });
+  const r = await fetch(STORE_URL + '/sync?' + q, { headers: { 'X-Site-Key': await serverToken(secret) } });
+  if (!r.ok) throw new Error('data store ' + r.status);
+  return r.json();
+}
+async function storePut(secret: string, group: string, kid: string, week: string, state: unknown): Promise<any> {
+  const r = await fetch(STORE_URL + '/sync', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Site-Key': await serverToken(secret) },
+    body: JSON.stringify({ group, kid, week, state })
+  });
+  return r.json().catch(() => ({ ok: false }));
+}
+/* Is this questionnaire switched on for this family? */
+async function formOpen(secret: string, form: { approval: string }, kid: string): Promise<boolean> {
+  const r = await storeGet(secret, 'term-3', 'staff', form.approval);
+  const ap = r && r.found && r.data && r.data.state;
+  return !!(ap && ap.approved && (ap.kids || []).indexOf(kid) !== -1);
 }
 
 export default async function handler(req: Req, res: Res) {
@@ -202,6 +240,41 @@ export default async function handler(req: Req, res: Res) {
       return send(res, 200, { ok: true }, cookies);
     }
 
+    // ---- the parents' form (no sign-in) ----
+    if (path === 'parent' || path === 'parent/record') {
+      const sp = new URL(req.url || '/', 'http://x').searchParams;
+      const kidId = String((method === 'GET' ? sp.get('kid') : body.kid) || '').toLowerCase();
+      if (method === 'GET' && path === 'parent' && !kidId) {
+        return send(res, 200, { ok: true, kids: KIDS.map((k) => ({ slug: k.id, name: k.name, group: k.group })) });
+      }
+      const kid = KIDS.filter((k) => k.id === kidId)[0];
+      if (!kid) return send(res, 404, { error: 'Unknown child.' });
+      if (method === 'GET' && path === 'parent') {
+        const forms = [];
+        for (const form of PARENT_FORMS) if (await formOpen(secret, form, kid.id)) forms.push({ id: form.id, title: form.title, desc: form.desc });
+        return send(res, 200, { ok: true, kid: { slug: kid.id, name: kid.name, group: kid.group }, forms });
+      }
+      const week = String(method === 'GET' ? sp.get('week') : body.week || '');
+      const form = PARENT_FORMS.filter((x) => x.week === week || x.approval === week)[0];
+      if (!form) return send(res, 403, { error: 'not this one' });
+      const open = await formOpen(secret, form, kid.id);
+      if (method === 'GET') {
+        // Whether it's on for this child (not who else it's for); saved answers are never shown here.
+        if (week === form.approval) return send(res, 200, { found: true, data: { state: { approved: open, kids: open ? [kid.id] : [] } } });
+        return send(res, 200, { found: false });
+      }
+      if (!open) return send(res, 403, { error: 'This form isn’t open right now.' });
+      const state = body.state;
+      if (method !== 'POST' || week !== form.week || !state || typeof state !== 'object') return send(res, 400, { error: 'bad request' });
+      if (!state._sent) return send(res, 200, { ok: true, updatedAt: new Date().toISOString() }); // drafts aren't kept
+      const old = await storeGet(secret, kid.group, kid.id, form.week);
+      const prev = old && old.found && old.data && old.data.state;
+      const earlier = (prev && prev._earlier) || [];
+      if (prev && prev._sent) earlier.unshift({ answers: prev.answers || {}, _sent: prev._sent, via: prev._via || '' });
+      const record = { answers: state.answers || {}, _sent: new Date().toISOString(), _via: 'parents link', _earlier: earlier.slice(0, 5) };
+      return send(res, 200, await storePut(secret, kid.group, kid.id, form.week, record));
+    }
+
     // ---- facilitators only ----
     if (!device || !user || user.r !== 'staff') return send(res, 403, { error: 'Facilitators only.' });
 
@@ -222,6 +295,16 @@ export default async function handler(req: Req, res: Res) {
     if (method === 'POST' && path === 'device-code') {
       const out = await store(secret, 'devcode-new', { uses: 1, minutes: 30 });
       return send(res, out.ok ? 200 : 400, out);
+    }
+
+    if (method === 'GET' && path === 'parent-form') {
+      const out = [];
+      for (const k of KIDS) {
+        const forms = [];
+        for (const form of PARENT_FORMS) if (await formOpen(secret, form, k.id)) forms.push(form.title);
+        out.push({ id: k.id, name: k.name, forms });
+      }
+      return send(res, 200, { ok: true, link: 'https://' + header(req, 'host') + '/parents/', kids: out });
     }
 
     if (method === 'GET' && path === 'blocked') {

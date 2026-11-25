@@ -448,7 +448,8 @@
         }
         var i = kids.map(function (k) { return k.slug; }).indexOf(shown), a = answers[i];
         NAME = kids[i].name;
-        view.appendChild(el('p', '', a._sent ? '<span class="g10-pill is-ok">Submitted ' + day(a._sent) + '</span>' : a.answers && Object.keys(a.answers).length ? '<span class="g10-pill">Started, not submitted yet</span>' : '<span class="g10-pill">Not started</span>'));
+        if (a._earlier && a._earlier.length) view.appendChild(el('p', 'g10-cond', 'Sent more than once. Showing the latest; earlier: ' + a._earlier.map(function (e) { return day(e._sent); }).join(', ') + '.'));
+        view.appendChild(el('p', '', a._sent ? '<span class="g10-pill is-ok">Submitted ' + day(a._sent) + (a._via ? ' (' + esc(a._via) + ')' : '') + '</span>' : a.answers && Object.keys(a.answers).length ? '<span class="g10-pill">Started, not submitted yet</span>' : '<span class="g10-pill">Not started</span>'));
         view.appendChild(formEl(a, 'read'));
       }
       paintTabs();

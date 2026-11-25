@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<script src="/assets/session.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Parents’ form — Risers Journey — Staff</title>
+<link rel="stylesheet" href="../../home.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/lifehub.css" />
+<script src="../../assets/brand.js" data-area="staff"></script>
+<style>
+.sg { max-width: 820px; }
+.sg-sec { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 22px 24px; margin: 0 0 18px; }
+.sg-sec h2 { font-family: var(--font-head); font-size: 1.15rem; margin: 0 0 4px; }
+.sg-sec > p { color: var(--ink-soft); margin: 0 0 14px; font-size: .95rem; line-height: 1.5; }
+.sg-list { list-style: none; margin: 0; padding: 0; }
+.sg-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--border); flex-wrap: wrap; }
+.sg-row:first-child { border-top: 0; }
+.sg-name { font-weight: 600; min-width: 110px; }
+.sg-tag { font-size: .8rem; font-weight: 700; padding: 3px 10px; border-radius: 99px; background: var(--good-soft); color: var(--good); }
+.sg-tag.is-none { background: var(--warn-soft); color: var(--warn); }
+.sg-tag.is-locked { background: #fbeae6; color: #a23a2a; }
+.sg-row form { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.sg-row input { width: 110px; font: 600 1rem var(--font-body); letter-spacing: .2em; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 10px; }
+.sg-row input:focus { outline: none; border-color: var(--accent); }
+.sg-btn { font: 700 .9rem var(--font-body); color: #fff; background: var(--accent); border: 0; border-radius: 99px; padding: 9px 16px; cursor: pointer; }
+.sg-btn:hover { background: var(--accent-dark); }
+.sg-btn.is-quiet { background: var(--paper); color: var(--ink); border: 1.5px solid var(--border); }
+.sg-msg { font-size: .88rem; font-weight: 600; color: var(--good); }
+.sg-msg.is-err { color: #a23a2a; }
+.sg-code { font: 700 1.8rem var(--font-head); letter-spacing: .18em; margin: 12px 0 4px; }
+.sg-log { font-size: .85rem; color: var(--ink-soft); }
+.sg-log td { padding: 6px 10px 6px 0; vertical-align: top; }
+.sg-err { color: #a23a2a; font-weight: 600; }
+@media (max-width: 560px) { .sg-sec { padding: 18px 16px; } .sg-row form { margin-left: 0; width: 100%; } .sg-row input { flex: 1; } }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="parent-links.js"></script>
+</body>
+</html>

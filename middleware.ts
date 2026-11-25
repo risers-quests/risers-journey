@@ -27,6 +27,12 @@ const HIDDEN = [
 // Open to anyone: the sign-in page and what it needs to draw itself.
 const OPEN = [
   /^\/signin(\/|$)/,
+  // The parents' form (no sign-in) and the questionnaire files it runs.
+  // They hold questions only; answers go through /api/auth/parent.
+  /^\/parents(\/|$)/,
+  /^\/term-3\/grade10\/(grade10\.js|grade10\.css|grade10-data\.js)$/,
+  /^\/term-3\/next-year\/next-year-data\.js$/,
+  /^\/end-of-term-2\/shared\/eot2\.css$/,
   /^\/api\/auth(\/|$)/,
   /^\/assets\/(lifehub\.css|mobile\.css|lifehub-logo\.png|lifehub-mark\.png|icon-192\.png|icon-512\.png|session\.js)$/,
   /^\/(staff\/)?manifest\.webmanifest$/,
