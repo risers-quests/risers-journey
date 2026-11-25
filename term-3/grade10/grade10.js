@@ -41,6 +41,8 @@
     });
   }
   function filled(v) { return Array.isArray(v) ? v.length > 0 : v && String(v).trim(); }
+  // Answered: the choice or text, plus its "why" box when the question needs one (whyRequired).
+  function answered(q, a) { return filled(a[q.id]) && (!q.whyRequired || filled(a[q.id + '_why'])); }
   function day(iso) { return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }); }
   function fetchApproval() {
     return window.eot2Fetch('term-3', 'staff', APPROVAL).then(function (r) { return (r && r.state) || { approved: false, kids: T.defaultKids.slice() }; });
@@ -305,7 +307,7 @@
       var prog = el('span', 'g10-prog');
       function progress() {
         var qs = allQs(ans.answers).filter(function (q) { return !q.optional; });
-        var n = qs.filter(function (q) { return filled(ans.answers[q.id]); }).length;
+        var n = qs.filter(function (q) { return answered(q, ans.answers); }).length;
         prog.textContent = n + ' of ' + qs.length + ' answered';
         prog.classList.toggle('is-ok', n === qs.length);
       }
@@ -314,7 +316,7 @@
       send.type = 'button';
       var msg = el('span', 'g10-msg');
       send.addEventListener('click', function () {
-        var miss = allQs(ans.answers).filter(function (q) { var v = ans.answers[q.id]; return (!q.optional && !filled(v)) || (q.check && filled(v) && q.check(v)); });
+        var miss = allQs(ans.answers).filter(function (q) { var v = ans.answers[q.id]; return (!q.optional && !answered(q, ans.answers)) || (q.check && filled(v) && q.check(v)); });
         Array.prototype.forEach.call(document.querySelectorAll('.g10-q'), function (x) { x.classList.toggle('is-missing', miss.some(function (q) { return q.id === x.dataset.q; })); });
         if (miss.length) {
           msg.textContent = 'Please answer or change ' + (miss.length === 1 ? 'the question' : 'the ' + miss.length + ' questions') + ' outlined in red first.';
@@ -416,7 +418,7 @@
           var pprog = el('span', 'g10-prog'), pmsg = el('span', 'g10-msg');
           var progress = function () {
             var qs = allQs(pa.answers || {}).filter(function (q) { return !q.optional; });
-            var n = qs.filter(function (q) { return filled(pa.answers[q.id]); }).length;
+            var n = qs.filter(function (q) { return answered(q, pa.answers); }).length;
             pprog.textContent = n + ' of ' + qs.length + ' answered';
             pprog.classList.toggle('is-ok', n === qs.length);
           };
@@ -425,7 +427,7 @@
           var psend = el('button', 'eot2-btn', esc(T.send));
           psend.type = 'button';
           psend.addEventListener('click', function () {
-            var miss = allQs(pa.answers).filter(function (q) { var v = pa.answers[q.id]; return (!q.optional && !filled(v)) || (q.check && filled(v) && q.check(v)); });
+            var miss = allQs(pa.answers).filter(function (q) { var v = pa.answers[q.id]; return (!q.optional && !answered(q, pa.answers)) || (q.check && filled(v) && q.check(v)); });
             Array.prototype.forEach.call(view.querySelectorAll('.g10-q'), function (x) { x.classList.toggle('is-missing', miss.some(function (q) { return q.id === x.dataset.q; })); });
             if (miss.length) {
               pmsg.textContent = 'Please answer or change ' + (miss.length === 1 ? 'the question' : 'the ' + miss.length + ' questions') + ' outlined in red first.';

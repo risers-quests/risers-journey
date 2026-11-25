@@ -38,7 +38,7 @@
       ] },
       { title: 'Next academic year', qs: [
         { id: 'route', text: 'Which way are you leaning for {name} next academic year (2027–28)?', kind: 'one',
-          options: [STAY, LEAVE], why: 'What makes you lean this way?' },
+          options: [STAY, LEAVE], why: 'What makes you lean this way?', whyRequired: true },
         { id: 'where', text: 'Where are you thinking {name} will go?', kind: 'one', when: is(LEAVE), whenLabel: 'Shown only if they lean towards leaving',
           options: ['A school', 'Another homeschool group', 'Homeschooling on our own', 'Something else'], why: 'Tell us a little more, if you like.' }
       ] },

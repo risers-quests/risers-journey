@@ -4,7 +4,7 @@
    LifeHub or not is asked in Next year at LifeHub, not here.
    {name} is the child's name.
    Each question: id, text, kind ('text' | 'one' | 'many'), options, hint,
-   why (a box for "why?" after a choice), optional. A section or question
+   why (a box for "why?" after a choice; whyRequired: it must be filled), optional. A section or question
    with when: 'exam' shows only if they're leaning towards the 10th boards.
    Not taking them (an answer in G.NO) needs no questions of its own.
    Staff OK it before families see it. */
@@ -26,7 +26,7 @@ window.G10 = {
     { title: 'Where you are now', qs: [
       { id: 'route', text: 'Right now, are you thinking of {name} taking the 10th boards?', kind: 'one',
         options: ['We’re leaning towards the 10th boards', 'We’re leaning towards not taking the 10th boards'],
-        why: 'What makes you lean this way?' },
+        why: 'What makes you lean this way?', whyRequired: true },
       { id: 'feel', text: 'How do you feel about it?', kind: 'one',
         options: ['Confident', 'Excited', 'Unsure', 'Worried'], why: 'Tell us a little more.' },
       { id: 'child', text: 'What does {name} think about it, from what you have seen or heard?', kind: 'text' }
@@ -42,7 +42,7 @@ window.G10 = {
       { id: 'materials_more', text: 'Tell us which ones (names, links, publishers) and what you like about them.', kind: 'text', optional: true },
       { id: 'prepare', text: 'How would you like {name} to prepare? Choose all that fit.', kind: 'many',
         options: ['Studying on their own', 'Online classes', 'A tutor', 'Studying with friends', 'Practice tests'] },
-      { id: 'how', text: 'Is there a particular way you would like it to work, at LifeHub and at home?', kind: 'text',
+      { id: 'how', text: 'Is there a particular way you would like it to work, at LifeHub and at home?', kind: 'text', optional: true,
         hint: 'For example: a daily routine, a tutor for some subjects, keeping projects and quests alongside it, regular practice tests.' }
     ] },
     { title: 'About {name}', qs: [
