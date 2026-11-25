@@ -529,12 +529,11 @@ async function readPass(env, token) {
   if (!c || typeof c.e !== 'number' || c.e < Date.now()) return null;
   if (c.t === 'server') return { role: 'server' };
   if (c.t === 'store' && c.r === 'staff') return { role: 'staff', id: String(c.k) };
-  if (c.t === 'store' && c.r === 'kid' && KID_IDS.indexOf(String(c.k)) !== -1) return { role: 'kid', id: String(c.k) };
+  if (c.t === 'store' && c.r === 'kid' && SAFE_SEGMENT.test(String(c.k))) return { role: 'kid', id: String(c.k) };
   return null;
 }
 
-// The Risers (same list as the site's lib/rj-auth.ts).
-const KID_IDS = ['eva', 'gabby', 'elyon', 'chris', 'yokesh', 'zach', 'owen', 'pranavi', 'shalom', 'michael', 'karis', 'benjamin'];
+// No list of Risers here: the site only signs passes for real ones.
 // Records about a Riser that only facilitators may see.
 const STAFF_ONLY_WEEKS = [/^term3-tracking$/, /^term2-self-assessment-(jeran|nishitha|blessy)$/];
 // Records a Riser may read but only facilitators write (feedback, marks,
@@ -554,8 +553,7 @@ function kidAllowed(me, path, method, url, body) {
     if (method === 'POST' && KID_READ_ONLY_WEEKS.some((r) => r.test(week))) return false;
     return true;
   }
-  if (KID_IDS.indexOf(kid) !== -1) return false; // another Riser's
-  return method === 'GET'; // shared records ('staff', a group): read only
+  return kid === 'staff' && method === 'GET'; // shared staff records (approvals, papers): read only; anyone else's: no
 }
 
 async function logRefusal(env, entry) {

@@ -16,7 +16,9 @@ window.EOT2_KIDS = [
   { slug: 'shalom', name: 'Shalom', group: 'group-03', ageBand: '11-13' },
   { slug: 'michael', name: 'Michael', group: 'group-03', ageBand: '11-13' },
   { slug: 'karis', name: 'Karis', group: 'group-03', ageBand: '11-13' },
-  { slug: 'benjamin', name: 'Benjamin', group: 'group-04', ageBand: '11-13' }
+  { slug: 'benjamin', name: 'Benjamin', group: 'group-04', ageBand: '11-13' },
+  // A pretend Riser for trying things out. Remove when not needed.
+  { slug: 'tester', name: 'Test Riser', group: 'group-03', ageBand: '11-13' }
 ];
 
 /* The three staff raters plus the manually-authored consolidated copy.

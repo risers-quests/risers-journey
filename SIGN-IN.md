@@ -23,9 +23,10 @@ everything.
 | Every page's sign-in helper (first script in `<head>`) | `assets/session.js` |
 | The data store (Cloudflare Worker); this is a copy, the live one is pasted into Cloudflare | `worker/progress-worker.js` |
 
-**Adding a Riser or facilitator:** add them to `lib/rj-auth.ts`. A Riser
-also goes in `KID_IDS` in `worker/progress-worker.js`, which then has to be
-pasted into Cloudflare again.
+**Adding a Riser or facilitator:** add them to `lib/rj-auth.ts` (and a
+Riser to `dashboard/roster.js` and `end-of-term-2/shared/eot2-data.js`).
+The data store needs no change. The pretend Riser `tester` ("Test Riser")
+is for trying things out; remove it from those three files when done.
 
 ## Settings
 
