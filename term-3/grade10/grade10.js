@@ -106,7 +106,7 @@
             var fromI = a[q.id + '_ideas'] || [];
             row.appendChild(el('p', 'g10-ans', v.map(function (c) { return esc(c) + (fromI.indexOf(c) !== -1 ? ' <small class="g10-from-idea">(from ideas)</small>' : ' <small class="g10-typed">(typed)</small>'); }).join(', ')));
           } else
-          row.appendChild(el('p', 'g10-ans' + (filled(v) ? '' : ' is-blank'), filled(v) ? esc(Array.isArray(v) ? v.join(', ') : v) : 'No answer'));
+          row.appendChild(el('p', 'g10-ans' + (filled(v) ? '' : ' is-blank'), filled(v) ? esc(nm(Array.isArray(v) ? v.join(', ') : v)) : 'No answer'));
           if (q.check && filled(v) && q.check(v)) row.appendChild(el('p', 'g10-warn', esc(T.flagNote || 'Flagged.')));
           if (q.why && filled(a[q.id + '_why'])) row.appendChild(el('p', 'g10-ans', '<b>Why:</b> ' + esc(a[q.id + '_why'])));
         } else if (q.kind === 'chips') {
@@ -171,7 +171,7 @@
                 var opts = el('div', 'g10-opts g10-ideas');
                 q.options.forEach(function (o) {
                   var on = has(o);
-                  var b = el('button', 'g10-opt' + (on ? ' is-on' : ''), esc(o));
+                  var b = el('button', 'g10-opt' + (on ? ' is-on' : ''), esc(nm(o)));
                   b.type = 'button'; b.setAttribute('aria-pressed', on);
                   b.addEventListener('click', function () { if (has(o)) remove(o); else add(o, true); });
                   opts.appendChild(b);
@@ -204,7 +204,7 @@
           if (q.optionsFrom && !optsOf(q, a).length && q.emptyHint) row.appendChild(el('p', 'g10-hint', esc(q.emptyHint)));
           qo.forEach(function (o) {
             var on = q.kind === 'many' ? (a[q.id] || []).indexOf(o) !== -1 : a[q.id] === o;
-            var b = el('button', 'g10-opt' + (on ? ' is-on' : ''), esc(o));
+            var b = el('button', 'g10-opt' + (on ? ' is-on' : ''), esc(nm(o)));
             b.type = 'button';
             b.setAttribute('aria-pressed', on);
             b.addEventListener('click', function () {
