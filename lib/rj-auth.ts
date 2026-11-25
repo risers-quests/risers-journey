@@ -28,7 +28,7 @@ export const KIDS: { id: string; name: string; group: string }[] = [
   { id: 'karis', name: 'Karis', group: 'group-03' },
   { id: 'benjamin', name: 'Benjamin', group: 'group-04' },
   // A pretend Riser for trying things out. Remove when not needed.
-  { id: 'tester', name: 'Test Riser', group: 'group-03' }
+  { id: 'tester', name: 'Aarav', group: 'group-03' }
 ];
 
 export const STAFF: { id: string; name: string }[] = [

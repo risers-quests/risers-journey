@@ -25,7 +25,7 @@ everything.
 
 **Adding a Riser or facilitator:** add them to `lib/rj-auth.ts` (and a
 Riser to `dashboard/roster.js` and `end-of-term-2/shared/eot2-data.js`).
-The data store needs no change. The pretend Riser `tester` ("Test Riser")
+The data store needs no change. The pretend Riser `tester` (shown as "Aarav")
 is for trying things out; remove it from those three files when done.
 
 ## Settings

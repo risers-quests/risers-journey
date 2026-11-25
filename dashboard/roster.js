@@ -920,7 +920,7 @@ Object.assign(window.DASHBOARD_ROSTER, {
   },
   // A pretend Riser for trying things out (no Term 2 quests). Remove when not needed.
   tester: {
-    displayName: 'Test Riser',
+    displayName: 'Aarav',
     weeks: []
   },
   karis: {
