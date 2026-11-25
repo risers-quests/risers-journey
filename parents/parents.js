@@ -49,9 +49,18 @@
     var i = forms.map(function (f) { return f.id; }).indexOf(formId);
     if (i === -1) { location.replace('?kid=' + encodeURIComponent(kid.slug) + '&form=' + forms[0].id); return; }
     var next = forms[i + 1];
+    var prev = forms[i - 1];
     var justSent = params.get('sent') === '1' && i > 0;
-    box.innerHTML = (justSent ? '<p class="si-ok" style="margin:0 0 10px">✓ Form ' + i + ' sent. ' + (next ? 'Next' : 'Last one') + ': form ' + (i + 1) + ' of ' + forms.length + '.</p>' : '') +
-      (forms.length > 1 && !justSent ? '<p class="pf-msg" style="margin:0 0 6px">Form ' + (i + 1) + ' of ' + forms.length + ' for ' + esc(kid.name) + '’s parents</p>' : '');
+    var editing = params.get('edit') === '1';
+    // What this tab sent, kept only for this tab (gone when it's closed),
+    // so a parent can go back to an earlier form and change their answers.
+    var keyOf = function (week) { return 'rj-parent::' + kid.slug + '::' + week; };
+    var keptHere = function (week) { try { return JSON.parse(sessionStorage.getItem(keyOf(week)) || 'null'); } catch (e) { return null; } };
+    var prevWeek = prev && { 'next-year': 'term3-next-year', grade10: 'term3-grade10' }[prev.id];
+    var back = prev && keptHere(prevWeek)
+      ? ' <a href="?kid=' + encodeURIComponent(kid.slug) + '&form=' + prev.id + '&edit=1">← Back to form ' + i + ' to change your answers</a>' : '';
+    box.innerHTML = (justSent ? '<p class="si-ok" style="margin:0 0 10px">✓ Form ' + i + ' sent. ' + (next ? 'Next' : 'Last one') + ': form ' + (i + 1) + ' of ' + forms.length + '.' + back + '</p>' : '') +
+      (forms.length > 1 && !justSent ? '<p class="pf-msg" style="margin:0 0 6px">Form ' + (i + 1) + ' of ' + forms.length + ' for ' + esc(kid.name) + '’s parents' + (back ? '.' + back : '') + '</p>' : '');
 
     // What the engine expects from a Term 3 page, pointed at this child.
     window.EOT2_KIDS = [kid];
@@ -62,6 +71,9 @@
     var sentHere = {};
     window.eot2Fetch = function (group, k, week) {
       if (sentHere[week]) return Promise.resolve({ state: sentHere[week] });
+      // Coming back to change answers: what this tab sent, ready to edit.
+      var kept = editing && keptHere(week);
+      if (kept) return Promise.resolve({ state: { answers: kept.answers || {} } });
       return get('/record?kid=' + encodeURIComponent(kid.slug) + '&week=' + encodeURIComponent(week))
         .then(function (d) { return d && d.found && d.data ? d.data : null; });
     };
@@ -70,15 +82,19 @@
         method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ kid: kid.slug, week: week, state: state })
       }).then(function (r) { return r.json(); }).then(function (d) {
-        if (d && d.ok && state._sent) sentHere[week] = JSON.parse(JSON.stringify(state));
+        if (d && d.ok && state._sent) {
+          sentHere[week] = JSON.parse(JSON.stringify(state));
+          try { sessionStorage.setItem(keyOf(week), JSON.stringify({ answers: state.answers || {} })); } catch (e) {}
+        }
         return { ok: !!(d && d.ok), updatedAt: d && d.updatedAt };
       }, function () { return { ok: false }; });
     };
 
-    // Point the engine's "back" link here; after Submit, offer the next form.
+    // Remove the engine's "back" link; after Submit, go on to the next form.
     new MutationObserver(function () {
-      var crumb = document.querySelector('#app .eot2-crumb a');
-      if (crumb && crumb.getAttribute('href') !== '/parents/') { crumb.setAttribute('href', '/parents/'); crumb.textContent = '← Choose another child'; }
+      // No "back" link here: once a child is chosen, the parent goes straight through.
+      var crumb = document.querySelector('#app .eot2-crumb');
+      if (crumb) crumb.remove();
       var done = document.querySelector('#app .g10-done');
       if (done && !done.dataset.pf) {
         done.dataset.pf = '1';
